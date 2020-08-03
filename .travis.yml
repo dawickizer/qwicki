@@ -11,7 +11,4 @@ script:
   - docker-compose up --build
 
 after_script:
-  - curl localhost:4200
-  - curl localhost:3000
-  - curl localhost:27017
   - docker-compose down
