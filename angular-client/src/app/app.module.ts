@@ -4,10 +4,14 @@ import { HttpClientModule } from '@angular/common/http'; // add http client modu
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { GameComponent } from './game/game.component';
+import { TestApiComponent } from './test-api/test-api.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    GameComponent,
+    TestApiComponent
   ],
   imports: [
     BrowserModule,
