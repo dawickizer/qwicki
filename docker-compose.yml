@@ -18,6 +18,8 @@ services:
     networks:
       - front-end
       - back-end
+    depends_on:
+      - database
 
   database: # name of the third service
     image: mongo # specify image to build container from
