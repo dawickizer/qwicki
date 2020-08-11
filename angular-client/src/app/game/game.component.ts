@@ -27,6 +27,10 @@ export class GameComponent implements OnInit {
   ngOnInit() {
     this.phaserGame = new Phaser.Game(this.config);
   }
+
+  ngOnDestroy() {
+    this.phaserGame.destroy(true);
+  }
 }
 
 class MainScene extends Phaser.Scene {
