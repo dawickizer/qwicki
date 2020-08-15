@@ -11,6 +11,9 @@ import { TestSocketComponent } from './components/test-socket/test-socket.compon
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
+// Services
+import { SocketService } from './services/socket/socket.service';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -25,7 +28,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     HttpClientModule,
     BrowserAnimationsModule, // import http client module
   ],
-  providers: [],
+  providers: [SocketService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -1,14 +1,12 @@
 // Get dependencies
-const express = require('express');
-const path = require('path');
-const http = require('http');
+const app = require('express')();
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
 const bodyParser = require('body-parser');
-const io = require('socket.io')(http);
+const path = require('path');
 
 // Get our API routes
 const api = require('./routes/api');
-
-const app = express();
 
 // Parsers for POST data
 app.use(bodyParser.json());
@@ -25,15 +23,23 @@ app.use(function(req, res, next) {
 app.use('/', api);
 
 // Get port from environment and store in Express.
-
 const port = process.env.PORT || '3000';
 app.set('port', port);
 
-// Create HTTP server._
-const server = http.createServer(app);
-
 io.on('connection', (socket) => {
+
+  console.log(socket.handshake.query.token);
   console.log('a user connected');
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
+
+  socket.on('my message', (msg) => {
+    console.log('message: ' + msg);
+    msg = 'Hello from Express!';
+    io.emit('my broadcast', `server: ${msg}`);
+  });
 });
 
  // Listen on provided port, on all network interfaces.
