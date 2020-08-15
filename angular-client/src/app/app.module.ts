@@ -5,10 +5,10 @@ import { HttpClientModule } from '@angular/common/http'; // add http client modu
 // Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GameComponent } from './game/game.component';
-import { TestApiComponent } from './test-api/test-api.component';
-import { ChatComponent } from './chat/chat.component';
-import { NavbarComponent } from './navbar/navbar.component';
+import { GameComponent } from './components/game/game.component';
+import { TestApiComponent } from './components/test-api/test-api.component';
+import { TestSocketComponent } from './components/test-socket/test-socket.component';
+import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 @NgModule({
@@ -16,7 +16,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     AppComponent,
     GameComponent,
     TestApiComponent,
-    ChatComponent,
+    TestSocketComponent,
     NavbarComponent
   ],
   imports: [

@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { GameComponent } from './game/game.component';
-import { TestApiComponent } from './test-api/test-api.component';
-import { ChatComponent } from './chat/chat.component';
+import { GameComponent } from './components/game/game.component';
+import { TestApiComponent } from './components/test-api/test-api.component';
+import { TestSocketComponent } from './components/test-socket/test-socket.component';
 
 const routes: Routes = [
   { path: 'game', component: GameComponent },
   { path: 'test-api', component: TestApiComponent },
-  { path: 'chat', component: ChatComponent }
+  { path: 'test-socket', component: TestSocketComponent }
 ];
 
 @NgModule({
