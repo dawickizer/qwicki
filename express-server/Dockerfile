@@ -13,6 +13,9 @@ COPY package*.json /usr/src/app/
 # Install dependecies
 RUN npm install
 
+# Install nodemon globally in the image. --save-dev seems to cause issues on Windows
+RUN npm install -g nodemon
+
 # Get all the code needed to run the app
 COPY . /usr/src/app/
 
