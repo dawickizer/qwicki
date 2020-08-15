@@ -18,18 +18,20 @@ Run Locally
 10. Navigate to localhost:4200 in your browser (Chrome for example). See the basic starter game.
 11. Run docker-compose down to stop the app from being served.
 
+Endpoints
+----------
+
+1. Angular Endpoint: localhost:4200
+2. Express API endpoint: localhost:3000
+3. MongoDB endpoint: localhost:27017
+
 Note
 ----------
 
-Endpoints:
-a. Angular Endpoint: localhost:4200
-b. Express API endpoint: localhost:3000
-c. MongoDB endpoint: localhost:27017
-
-If you are using Docker Desktop for Windows you might have to set a file sharing path to work with one of the bind mounts in the docker-compose.yml file.
-a. Go to Docker Desktop (from toolbar) > Settings > Resources > File Sharing
-b. Add the path wherever/you/downloaded/mean/angular-client
-c. Add the path wherever/you/downloaded/mean/express-server
-d. Restart Docker Desktop
+1. If you are using Docker Desktop for Windows you might have to set a file sharing path to work with one of the bind mounts in the docker-compose.yml file.
+2. Go to Docker Desktop (from toolbar) > Settings > Resources > File Sharing
+3. Add the path wherever/you/downloaded/mean/angular-client
+4. Add the path wherever/you/downloaded/mean/express-server
+5. Restart Docker Desktop
 
 
