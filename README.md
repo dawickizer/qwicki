@@ -8,7 +8,7 @@ Run Locally
 
 1. Make sure Docker is installed on your system (https://docs.docker.com/get-docker/).
 2. Make sure docker-compose is installed on your system (https://docs.docker.com/compose/install/).
-3. Make sure npm ins installed on your system (https://www.npmjs.com/get-npm)
+3. Make sure npm is installed on your system (https://www.npmjs.com/get-npm)
 4. Open your terminal/cmd prompt and `cd wherever/you/downloaded/mean/angular-client`
 5. Run `npm install`
 6. Open your terminal/cmd prompt and `cd wherever/you/downloaded/mean/express-server`
