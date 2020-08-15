@@ -17,6 +17,8 @@ services:
       context: ./express-server
     ports:
       - "3000:3000" #specify ports forewarding
+    volumes:
+      - ./express-server:/usr/src/app # this will enable changes made to the express app reflect in the container
     networks:
       - front-end
       - back-end
