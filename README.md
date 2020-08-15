@@ -1,4 +1,4 @@
-Summary
+Summary\n
 This code base contains the starter code for a Phaser game. It is integrated with a MEAN stack and it is Dockerized. The Phaser game is running client side with Angular and being served up on localhost:4200. Socket.io is also integrated at a base level. This is a good starting point for anyone who wants to create client side Phaser game while also being able to build a website around the game using the MEAN stack.
 
 Run Locally
