@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { ApiService } from '../../services/api/api.service';
+import { map } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
 
 @Component({
   selector: 'test-api',
@@ -7,15 +9,11 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./test-api.component.css']
 })
 export class TestApiComponent implements OnInit {
-  title = 'angular client';
-
-  // Link to our api, pointing to localhost
-  API = 'http://localhost:3000';
 
   // Declare empty list of people
   people: any[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
   // Angular 2 Life Cycle event when component has been initialized
   ngOnInit() {
@@ -24,18 +22,15 @@ export class TestApiComponent implements OnInit {
 
   // Add one person to the API
   addPerson(name, age) {
-    this.http.post(`${this.API}/users`, {name, age})
-      .subscribe(() => {
-        this.getAllPeople();
-      })
+    this.apiService.addPerson(name, age).subscribe(response => {
+      this.getAllPeople();
+    });
   }
 
   // Get all users from the API
   getAllPeople() {
-    this.http.get(`${this.API}/users`)
-      .subscribe((people: any) => {
-        console.log(people)
-        this.people = people
-      })
+    this.apiService.getAllPeople().subscribe(response => {
+      this.people = response;
+    });
   }
 }

@@ -13,6 +13,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Services
 import { SocketService } from './services/socket/socket.service';
+import { ApiService } from './services/api/api.service';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { SocketService } from './services/socket/socket.service';
     HttpClientModule,
     BrowserAnimationsModule, // import http client module
   ],
-  providers: [SocketService],
+  providers: [SocketService,
+              ApiService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
