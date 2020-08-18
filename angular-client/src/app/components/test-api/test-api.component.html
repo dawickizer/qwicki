@@ -1,5 +1,5 @@
 <div class="container">
-    <h3>Add new person</h3>
+    <h3>Add new User</h3>
     <form>
       <div class="form-group">
         <label for="name">Name</label>
@@ -9,12 +9,15 @@
         <label for="age">Age</label>
         <input type="number" class="form-control" id="age" #age>
       </div>
-      <button type="button" (click)="addPerson(name.value, age.value)" class="btn btn-primary">Add person</button>
+      <button type="button" (click)="add(name.value, age.value)" class="btn btn-primary">Add</button>
+      <button type="button" (click)="delete()" class="btn btn-primary">Delete</button>
+      <button type="button" (click)="get()" class="btn btn-primary">Get</button>
+      <button type="button" (click)="update()" class="btn btn-primary">Update</button>
     </form>
 
-    <h3>People</h3>
+    <h3>Users</h3>
     <!-- Bootstrap Card -->
-    <div class="card card-block col-md-3" *ngFor="let person of people">
-      <h4 class="card-title">{{person.name}}  {{person.age}}</h4>
+    <div class="card card-block col-md-3" *ngFor="let user of users">
+      <h4 class="card-title">{{user.name}}  {{user.age}}</h4>
     </div>
 </div>
