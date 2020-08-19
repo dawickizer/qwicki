@@ -25,12 +25,13 @@ export class ApiService {
     return this.http.get(`${this.API}/users`);
   }
 
-  add(): Observable<any> {
-    return null;
+  add(user: User): Observable<User> {
+    return this.http.post<User>(`${this.API}/users`, user)
+      .pipe(catchError(this.handleError('add', user)));
   }
 
-  get(id: string): Observable<User> {
-    return this.http.get<User>(`${this.API}/users/${id}`)
+  get(user: User): Observable<User> {
+    return this.http.get<User>(`${this.API}/users/${user.id}`)
     .pipe(catchError(this.handleError));
   }
 
