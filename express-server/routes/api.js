@@ -35,10 +35,28 @@ router.get('/users', (req, res) => {
 
 // GET one users.
 router.get('/users/:id', (req, res) => {
-    User.findById(req.param.id, (err, users) => {
+    User.findById(req.params.id, (err, user) => {
         if (err) res.status(500).send(error)
 
-        res.status(200).json(users);
+        res.status(200).json(user);
+    });
+});
+
+// PUT (update) one user.
+router.put('/users/:id', (req, res) => {
+    User.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, user) => {
+        if (err) res.status(500).send(error)
+
+        res.status(200).json(user);
+    });
+});
+
+// DELETE one user.
+router.delete('/users/:id', (req, res) => {
+    User.deleteOne({_id: req.params.id}, (err, result) => {
+        if (err) res.status(500).send(error)
+
+        res.status(200).json(result);
     });
 });
 
@@ -53,7 +71,8 @@ router.post('/users', (req, res) => {
         if (error) res.status(500).send(error);
 
         res.status(201).json({
-            message: 'User created successfully'
+            message: 'User created successfully',
+            user: user
         });
     });
 });
