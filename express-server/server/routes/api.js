@@ -10,13 +10,32 @@ const dbHost = 'mongodb://database/mean';
 mongoose.connect(dbHost);
 
 // create mongoose schema
-const userSchema = new mongoose.Schema({
+const AddressSchema = new mongoose.Schema({
+  primaryAddress: String,
+  secondaryAddress: String,
+  city: String,
+  state: String,
+  zip: String,
+  country: String
+});
+
+// create mongoose schema
+const CarSchema = new mongoose.Schema({
+  year: Number,
+  make: String,
+  model: String,
+  engine: String
+});
+// create mongoose schema
+const UserSchema = new mongoose.Schema({
   name: String,
-  age: Number
+  age: Number,
+  cars: [CarSchema],
+  address: AddressSchema
 });
 
 // create mongoose model
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('User', UserSchema);
 
 
 // GET api listing.
@@ -62,9 +81,13 @@ router.delete('/users/:id', (req, res) => {
 
 // Create a user.
 router.post('/users', (req, res) => {
+    console.log(req.body);
+
     let user = new User({
         name: req.body.name,
-        age: req.body.age
+        age: req.body.age,
+        cars: req.body.cars,
+        address: req.body.address
     });
 
     user.save(error => {

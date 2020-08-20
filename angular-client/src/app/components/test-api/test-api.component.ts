@@ -5,6 +5,8 @@ import { Observable, of, from } from 'rxjs';
 
 // components
 import { User } from '../../models/user/user';
+import { Car } from '../../models/car/car';
+import { Address } from '../../models/address/address';
 
 @Component({
   selector: 'test-api',
@@ -25,9 +27,34 @@ export class TestApiComponent implements OnInit {
 
   // Add one person to the API
   add(name, age) {
+    let cars: Car[] = [
+      {
+        year: 2019,
+        make: 'Toyota',
+        model: 'Camry XSE',
+        engine: '3.5L V6'
+      },
+      {
+        year: 2007,
+        make: 'Mercedes Benz',
+        model: 'C280',
+        engine: '2.5L 4cyl'
+      }
+    ];
+
+    let address: Address = {
+      primaryAddress: '7201 Trappers Pl',
+      city: 'Springfield',
+      state: 'VA',
+      zip: '22153',
+      country: 'USA'
+    }
+
     let user: User = {
       name: name,
-      age: age
+      age: age,
+      cars: cars,
+      address: address
     };
 
     this.apiService.add(user).subscribe(response => {
@@ -59,6 +86,7 @@ export class TestApiComponent implements OnInit {
   getAll() {
     this.apiService.getAll().subscribe((response: User[]) => {
       this.users = response;
+      console.log(this.users);
     });
   }
 }
