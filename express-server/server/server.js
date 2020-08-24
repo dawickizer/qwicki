@@ -20,7 +20,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cors());
 
 // Set our api routes
-//app.use('/', api);
+app.use('/', api);
 app.use('/users', users);
 app.use('/cars', cars);
 app.use('/addresses', addresses);
