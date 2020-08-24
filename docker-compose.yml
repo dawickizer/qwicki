@@ -8,7 +8,7 @@ services:
     ports:
       - "4200:4200" # specify port forewarding
     volumes:
-      - ./angular-client:/app # this will enable changes made to the angular app reflect in the container
+      - ./angular-client/src:/app/src # this will enable changes made to the angular app reflect in the container
     networks:
       - front-end
 
@@ -18,7 +18,7 @@ services:
     ports:
       - "3000:3000" #specify ports forewarding
     volumes:
-      - ./express-server:/usr/src/app # this will enable changes made to the express app reflect in the container
+      - ./express-server/server:/usr/src/app/server # this will enable changes made to the express app reflect in the container
     networks:
       - front-end
       - back-end

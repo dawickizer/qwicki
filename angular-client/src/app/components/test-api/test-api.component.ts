@@ -1,5 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { ApiService } from '../../services/api/api.service';
+import { map } from 'rxjs/operators';
+import { Observable, of, from } from 'rxjs';
+
+// components
+import { User } from '../../models/user/user';
+import { Car } from '../../models/car/car';
+import { Address } from '../../models/address/address';
 
 @Component({
   selector: 'test-api',
@@ -7,35 +14,79 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./test-api.component.css']
 })
 export class TestApiComponent implements OnInit {
-  title = 'angular client';
-
-  // Link to our api, pointing to localhost
-  API = 'http://localhost:3000';
 
   // Declare empty list of people
-  people: any[] = [];
+  users: User[] = [];
 
-  constructor(private http: HttpClient) {}
+  constructor(private apiService: ApiService) {}
 
   // Angular 2 Life Cycle event when component has been initialized
   ngOnInit() {
-    this.getAllPeople();
+    this.getAll();
   }
 
   // Add one person to the API
-  addPerson(name, age) {
-    this.http.post(`${this.API}/users`, {name, age})
-      .subscribe(() => {
-        this.getAllPeople();
-      })
+  add(name, age) {
+    let cars: Car[] = [
+      {
+        year: 2019,
+        make: 'Toyota',
+        model: 'Camry XSE',
+        engine: '3.5L V6'
+      },
+      {
+        year: 2007,
+        make: 'Mercedes Benz',
+        model: 'C280',
+        engine: '2.5L 4cyl'
+      }
+    ];
+
+    let address: Address = {
+      primaryAddress: '7201 Trappers Pl',
+      city: 'Springfield',
+      state: 'VA',
+      zip: '22153',
+      country: 'USA'
+    }
+
+    let user: User = {
+      name: name,
+      age: age,
+      cars: cars,
+      address: address
+    };
+
+    this.apiService.add(user).subscribe(response => {
+      this.getAll();
+    });
+  }
+
+  delete() {
+    this.apiService.delete(this.users[0]).subscribe(response => {
+      this.getAll();
+    });
+  }
+
+  get() {
+    this.apiService.get(this.users[0]).subscribe((response: User) => {
+      console.log(response);
+    });
+  }
+
+  update() {
+    this.users[0].name = 'JOE RAINES';
+    this.apiService.update(this.users[0]).subscribe((response: User) => {
+      console.log(response);
+      this.getAll();
+    });
   }
 
   // Get all users from the API
-  getAllPeople() {
-    this.http.get(`${this.API}/users`)
-      .subscribe((people: any) => {
-        console.log(people)
-        this.people = people
-      })
+  getAll() {
+    this.apiService.getAll().subscribe((response: User[]) => {
+      this.users = response;
+      console.log(this.users);
+    });
   }
 }
