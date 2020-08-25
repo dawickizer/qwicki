@@ -1,19 +1,20 @@
 // Import dependencies
 const mongoose = require('mongoose');
+const db = require('../config/db');
 const User = require('../models/user').User;
 const Car = require('../models/car').Car;
 const Address = require('../models/address').Address;
 
-// MongoDB URL from the docker-compose file
-const dbHost = 'mongodb://database/mean';
-
 // Connect to mongodb
-mongoose.connect(dbHost);
+mongoose.connect(db);
 
 class UserService {
 
-  getAll() {
-    return 'get all';
+  async getAll() {
+    return await User.find({}, (err, users) => {
+        if (err) return err;
+        else return users;
+    });
   }
 
   async post(body) {
@@ -28,18 +29,26 @@ class UserService {
     return await user.save();
   }
 
-  get() {
-    return 'get';
+  async get(id) {
+    return await User.findById(id, (err, user) => {
+        if (err) return err;
+        else return user;
+    });
   }
 
-  put() {
-    return 'put';
+  async put(id, body) {
+    return await User.findByIdAndUpdate(id, body, {new: true}, (err, user) => {
+        if (err) return err;
+        else return user;
+    });
   }
 
-  delete() {
-    return 'delete';
+  async delete(id) {
+    return await User.deleteOne({_id: id}, (err, result) => {
+        if (err) return err;
+        else return result;
+    });
   }
-
 }
 
 module.exports = UserService;
