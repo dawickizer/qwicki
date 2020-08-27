@@ -12,8 +12,8 @@ let userService = new UserService();
 
 // Middleware
 var requestTime = function (req, res, next) {
-  console.log('Time: ', Date.now())
-  next()
+  console.log('Time: ', Date.now());
+  next();
 }
 
 // Use middleware (Gets called before any endpoint)
