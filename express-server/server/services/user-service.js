@@ -35,8 +35,8 @@ class UserService {
     });
   }
 
-  async delete(id) {
-    return await User.deleteOne({_id: id}, (err, result) => {
+  async delete(ids) {
+    return await User.deleteMany({_id: {$in: ids}}, (err, result) => {
         if (err) return err;
         else return result;
     });

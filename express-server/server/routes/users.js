@@ -43,14 +43,14 @@ router.get('/:id', async (req, res) => {
 // PUT (update) one user.
 router.put('/:id', async (req, res) => {
     let result = await userService.put(req.params.id, req.body);
-    if (result) res.status(200).json(result);
+    if (result) res.status(200).json({ message: 'Users updated successfully', users: result });
     else res.status(500).send('Problem updating user');
 });
 
 // DELETE one user.
-router.delete('/:id', async (req, res) => {
-    let result = await userService.delete(req.params.id);
-    if (result) res.status(200).json(result);
+router.delete('/', async (req, res) => {
+    let result = await userService.delete(req.query.ids.split(','));
+    if (result) res.status(200).json({ message: 'User deleted successfully', result: result });
     else res.status(500).send('Problem deleting user');
 });
 
