@@ -29,7 +29,7 @@ router.get('/', async (req, res) => {
 // Create a user.
 router.post('/', async (req, res) => {
     let result = await userService.post(req.body);
-    if (result) res.status(201).json({ message: 'User created successfully', user: result });
+    if (result) res.status(201).json({ message: 'User created successfully', users: result });
     else res.status(500).send('Problem creating user');
 });
 

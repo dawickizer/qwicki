@@ -18,15 +18,7 @@ class UserService {
   }
 
   async post(body) {
-
-    let user = new User({
-        name: body.name,
-        age: body.age,
-        cars: body.cars,
-        address: body.address
-    });
-
-    return await user.save();
+    return await User.insertMany(body);
   }
 
   async get(id) {
