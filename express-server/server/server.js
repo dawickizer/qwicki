@@ -11,6 +11,8 @@ const api = require('./routes/api');
 const users = require('./routes/users');
 const cars = require('./routes/cars');
 const addresses = require('./routes/addresses');
+const dogs = require('./routes/dogs');
+const contacts = require('./routes/contacts');
 
 // Parsers for POST data
 app.use(bodyParser.json());
@@ -24,6 +26,8 @@ app.use('/', api);
 app.use('/users', users);
 app.use('/cars', cars);
 app.use('/addresses', addresses);
+app.use('/dogs', dogs);
+app.use('/contacts', contacts);
 
 // Get port from environment and store in Express.
 const port = process.env.PORT || '3000';

@@ -4,6 +4,7 @@ const db = require('../config/db');
 const User = require('../models/user').User;
 const Car = require('../models/car').Car;
 const CarService = require('../services/car-service');
+const ContactService = require('../services/contact-service');
 
 // Connect to mongodb
 mongoose.connect(db);
@@ -12,6 +13,7 @@ class UserService {
 
   // create CreateService
   carService = new CarService();
+  contactService = new ContactService();
 
   async getAll() {
     return await User.find({}, (err, users) => {
@@ -25,24 +27,29 @@ class UserService {
   }
 
   async postNestedData(body) {
-      await this.postNestedArray(body, 'cars');
+      await this.postNestedArray(body, 'cars', this.carService);
+      await this.postNestedObject(body, 'contact', this.contactService);
       return body;
   }
 
-  async postNestedArray(body, arrayName) {
-
+  async postNestedArray(body, arrayName, service) {
       let temp = [];
-
       for (let i = 0; i < body.length; i++) {
-
-        if (body[i][arrayName] == undefined || body[i][arrayName] == null) break;
-
+        if (body[i][arrayName] == undefined || body[i][arrayName] == null) body[i][arrayName] = [];
         for (let k = 0; k < body[i][arrayName].length; k++) temp.push(body[i][arrayName][k]);
-
-        body[i][arrayName] = await this.carService.post(temp);
+        body[i][arrayName] = await service.post(temp);
         temp = [];
       }
+      return body;
+  }
 
+  async postNestedObject(body, objectName, service) {
+      for (let i = 0; i < body.length; i++) {
+        if (body[i][objectName] != undefined) {
+          let result = await service.post([body[i][objectName]]);
+          body[i][objectName] = result[0];
+        }
+      }
       return body;
   }
 
