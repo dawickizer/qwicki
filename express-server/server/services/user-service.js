@@ -3,12 +3,15 @@ const mongoose = require('mongoose');
 const db = require('../config/db');
 const User = require('../models/user').User;
 const Car = require('../models/car').Car;
-const Address = require('../models/address').Address;
+const CarService = require('../services/car-service');
 
 // Connect to mongodb
 mongoose.connect(db);
 
 class UserService {
+
+  // create CreateService
+  carService = new CarService();
 
   async getAll() {
     return await User.find({}, (err, users) => {
@@ -18,7 +21,29 @@ class UserService {
   }
 
   async post(body) {
-    return await User.insertMany(body);
+    return await User.insertMany(await this.postNestedData(body));
+  }
+
+  async postNestedData(body) {
+      await this.postNestedArray(body, 'cars');
+      return body;
+  }
+
+  async postNestedArray(body, arrayName) {
+
+      let temp = [];
+
+      for (let i = 0; i < body.length; i++) {
+
+        if (body[i][arrayName] == undefined || body[i][arrayName] == null) break;
+
+        for (let k = 0; k < body[i][arrayName].length; k++) temp.push(body[i][arrayName][k]);
+
+        body[i][arrayName] = await this.carService.post(temp);
+        temp = [];
+      }
+
+      return body;
   }
 
   async get(id) {
@@ -41,6 +66,7 @@ class UserService {
         else return result;
     });
   }
+
 }
 
 module.exports = UserService;

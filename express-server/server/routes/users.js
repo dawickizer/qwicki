@@ -26,14 +26,14 @@ router.get('/', async (req, res) => {
     else res.status(500).send('Problem getting users');
 });
 
-// Create a user.
+// Create one to many users
 router.post('/', async (req, res) => {
     let result = await userService.post(req.body);
     if (result) res.status(201).json({ message: 'User created successfully', users: result });
     else res.status(500).send('Problem creating user');
 });
 
-// GET one users.
+// GET one user.
 router.get('/:id', async (req, res) => {
     let result = await userService.get(req.params.id);
     if (result) res.status(200).json(result);
@@ -47,7 +47,7 @@ router.put('/:id', async (req, res) => {
     else res.status(500).send('Problem updating user');
 });
 
-// DELETE one user.
+// DELETE one to many users
 router.delete('/', async (req, res) => {
     let result = await userService.delete(req.query.ids.split(','));
     if (result) res.status(200).json({ message: 'User deleted successfully', result: result });
