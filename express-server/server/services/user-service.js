@@ -22,35 +22,37 @@ class UserService {
     });
   }
 
-  async post(body) {
-    return await User.insertMany(await this.postNestedData(body));
+  async post(users) {
+    return await User.insertMany(await this.postNestedData(users));
+
+    // MAYBE modify return type if data is object vs array
   }
 
-  async postNestedData(body) {
-      await this.postNestedArray(body, 'cars', this.carService);
-      await this.postNestedObject(body, 'contact', this.contactService);
-      return body;
+  async postNestedData(users) {
+      await this.postNestedArray(users, 'cars', this.carService);
+      await this.postNestedObject(users, 'contact', this.contactService);
+      return users;
   }
 
-  async postNestedArray(body, arrayName, service) {
+  async postNestedArray(users, arrayName, service) {
       let temp = [];
-      for (let i = 0; i < body.length; i++) {
-        if (body[i][arrayName] == undefined || body[i][arrayName] == null) body[i][arrayName] = [];
-        for (let k = 0; k < body[i][arrayName].length; k++) temp.push(body[i][arrayName][k]);
-        body[i][arrayName] = await service.post(temp);
+      for (let i = 0; i < users.length; i++) {
+        if (users[i][arrayName] == undefined || users[i][arrayName] == null) users[i][arrayName] = [];
+        for (let k = 0; k < users[i][arrayName].length; k++) temp.push(users[i][arrayName][k]);
+        users[i][arrayName] = await service.post(temp);
         temp = [];
       }
-      return body;
+      return users;
   }
 
-  async postNestedObject(body, objectName, service) {
-      for (let i = 0; i < body.length; i++) {
-        if (body[i][objectName] != undefined) {
-          let result = await service.post([body[i][objectName]]);
-          body[i][objectName] = result[0];
+  async postNestedObject(users, objectName, service) {
+      for (let i = 0; i < users.length; i++) {
+        if (users[i][objectName] != undefined) {
+          let result = await service.post([users[i][objectName]]);
+          users[i][objectName] = result[0];
         }
       }
-      return body;
+      return users;
   }
 
   async get(id) {
@@ -60,10 +62,10 @@ class UserService {
     });
   }
 
-  async put(id, body) {
-    return await User.findByIdAndUpdate(id, body, {new: true}, (err, user) => {
+  async put(id, user) {
+    return await User.findByIdAndUpdate(id, user, {new: true}, (err, updatedUser) => {
         if (err) return err;
-        else return user;
+        else return updatedUser;
     });
   }
 
