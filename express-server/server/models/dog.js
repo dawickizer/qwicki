@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 
 // create mongoose schema
 const DogSchema = new mongoose.Schema({
-  name: String,
-  breed: String  
+  name: { type: String, default: null },
+  breed: { type: String, default: null }  
 });
 
 // create mongoose model
