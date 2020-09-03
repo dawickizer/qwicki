@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const db = require('../config/db');
 const User = require('../models/user').User;
 const Car = require('../models/car').Car;
+const Address = require('../models/address').Address;
 const CarService = require('../services/car-service');
 const ContactService = require('../services/contact-service');
 
@@ -42,20 +43,51 @@ class UserService {
   async postNestedData(users) {
       await this.postNestedArray(users, 'cars', this.carService);
       await this.postNestedObject(users, 'contact', this.contactService);
+      //await this.postNestedArray(users, 'address.cars', this.carService);
       return users;
   }
 
+  // // Helper function for posting nested reference arrays
+  // async postNestedArray(users, path, service) {
+  //     const get = (p, o) => p.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, o); // nested path by string
+  //
+  //     let temp = [];
+  //     for (let i = 0; i < users.length; i++) {
+  //       //if (get([i, ...path], users) == undefined || get([i, ...path], users) == null) users[i][path] = [];
+  //       for (let k = 0; k < get([i, ...path], users).length; k++) temp.push(get([i, ...path], users)[k]);
+  //
+  //       //users[i][path] = await service.post(temp);
+  //       temp = [];
+  //     }
+  //     return users;
+  // }
+
   // Helper function for posting nested reference arrays
-  async postNestedArray(users, arrayName, service) {
+  // async postNestedArray(users, path, service) {
+  //
+  //     let temp = [];
+  //     for (let i = 0; i < users.length; i++) {
+  //       eval('if (users[i].' + path + ' == undefined || users[i].' + path + ' == null) users[i].' + path + ' = [];');
+  //       console.log(eval('users[i].' + path));
+  //       eval('for (let k = 0; k < users[i].' + path + '.length; k++) temp.push(users[i].' + path + '[k]);');
+  //       eval('async () => users[i]. ' + path + ' = await service.post(temp);');
+  //       temp = [];
+  //     }
+  //     return users;
+  // }
+
+  // Helper function for posting nested reference arrays
+  async postNestedArray(users, path, service) {
       let temp = [];
       for (let i = 0; i < users.length; i++) {
-        if (users[i][arrayName] == undefined || users[i][arrayName] == null) users[i][arrayName] = [];
-        for (let k = 0; k < users[i][arrayName].length; k++) temp.push(users[i][arrayName][k]);
-        users[i][arrayName] = await service.post(temp);
+        if (users[i][path] == undefined || users[i][path] == null) users[i][path] = [];
+        for (let k = 0; k < users[i][path].length; k++) temp.push(users[i][path][k]);
+        users[i][path] = await service.post(temp);
         temp = [];
       }
       return users;
   }
+
 
   // Helper function for posting nested reference objects
   async postNestedObject(users, objectName, service) {

@@ -1,4 +1,6 @@
 var mongoose = require('mongoose');
+const DogSchema = require('./dog').DogSchema;
+const ContactSchema = require('./contact').ContactSchema;
 
 // create mongoose schema
 const AddressSchema = new mongoose.Schema({
@@ -7,7 +9,11 @@ const AddressSchema = new mongoose.Schema({
   city: { type: String, default: null },
   state: { type: String, default: null },
   zip: { type: String, default: null },
-  country: { type: String, default: null }
+  country: { type: String, default: null },
+  cars: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Car' }],
+  dogs: [DogSchema],
+  contact: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Contact' },
+  contactEmbedded: ContactSchema
 });
 
 // create mongoose model
