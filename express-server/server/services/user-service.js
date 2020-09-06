@@ -25,7 +25,7 @@ class UserService {
   async post(users) {
     return await User.insertMany(await this.postNestedData(users));
 
-    // MAYBE modify return type if data is object vs array
+    // MAYBE modify users if data is object vs array
   }
 
   async postNestedData(users) {
