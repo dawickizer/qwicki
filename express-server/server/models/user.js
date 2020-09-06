@@ -4,12 +4,12 @@ const DogSchema = require('./dog').DogSchema;
 
 // create mongoose schema
 const UserSchema = new mongoose.Schema({
-  name: String,
-  age: Number,
+  name: { type: String, default: null },
+  age: { type: Number, default: null },
   cars: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Car' }],
   dogs: [DogSchema],
-  contact: { type: mongoose.Schema.Types.ObjectId, ref: 'Contact' },
-  address: AddressSchema
+  contact: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Contact' },
+  address: { type: AddressSchema, default: null }
 });
 
 // create mongoose model

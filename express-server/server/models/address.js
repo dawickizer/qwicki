@@ -1,13 +1,19 @@
 var mongoose = require('mongoose');
+const DogSchema = require('./dog').DogSchema;
+const ContactSchema = require('./contact').ContactSchema;
 
 // create mongoose schema
 const AddressSchema = new mongoose.Schema({
-  primaryAddress: String,
-  secondaryAddress: String,
-  city: String,
-  state: String,
-  zip: String,
-  country: String
+  primaryAddress: { type: String, default: null },
+  secondaryAddress: { type: String, default: null },
+  city: { type: String, default: null },
+  state: { type: String, default: null },
+  zip: { type: String, default: null },
+  country: { type: String, default: null },
+  cars: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Car' }],
+  dogs: [DogSchema],
+  contact: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Contact' },
+  contactEmbedded: ContactSchema
 });
 
 // create mongoose model

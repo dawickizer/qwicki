@@ -2,8 +2,8 @@ var mongoose = require('mongoose');
 
 // create mongoose schema
 const ContactSchema = new mongoose.Schema({
-  email: String,
-  phone: String
+  email: { type: String, default: null },
+  phone: { type: String, default: null }
 });
 
 // create mongoose model

@@ -2,10 +2,10 @@ var mongoose = require('mongoose');
 
 // create mongoose schema
 const CarSchema = new mongoose.Schema({
-  year: Number,
-  make: String,
-  model: String,
-  engine: String
+  year: { type: Number, default: null },
+  make: { type: String, default: null },
+  model: { type: String, default: null },
+  engine: { type: String, default: null }
 });
 
 // create mongoose model
