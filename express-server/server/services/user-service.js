@@ -41,26 +41,43 @@ class UserService {
 
   // Helper function for posted nested reference objects/arrays
   async postNestedData(users) {
-      await this.postNestedArray(users, 'cars', this.carService);
-      await this.postNestedObject(users, 'contact', this.contactService);
-      //await this.postNestedArray(users, 'address.cars', this.carService);
+      // await this.postNestedArray(users, ['cars'], this.carService);
+      // await this.postNestedObject(users, 'contact', this.contactService);
+      await this.postNestedArray(users, ['address', 'cars'], this.carService);
       return users;
   }
 
-  // // Helper function for posting nested reference arrays
-  // async postNestedArray(users, path, service) {
-  //     const get = (p, o) => p.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, o); // nested path by string
-  //
-  //     let temp = [];
-  //     for (let i = 0; i < users.length; i++) {
-  //       //if (get([i, ...path], users) == undefined || get([i, ...path], users) == null) users[i][path] = [];
-  //       for (let k = 0; k < get([i, ...path], users).length; k++) temp.push(get([i, ...path], users)[k]);
-  //
-  //       //users[i][path] = await service.post(temp);
-  //       temp = [];
-  //     }
-  //     return users;
-  // }
+  // Helper function for posting nested reference arrays
+  async postNestedArray(users, path, service) {
+      // const get = (path, object) => path.reduce((xs, x) => (xs && xs[x]) ? xs[x] : null, object); // nested path by string
+      //
+      // console.log(get(path, users[0]));
+
+      const array1 = [1, 2, 3, 4];
+      const reducer = (accumulator, currentValue) => {
+        console.log('Accumulator: ' + accumulator);
+        console.log('Current Value: ' + currentValue);
+        return accumulator + currentValue;
+      }
+
+      // 1 + 2 + 3 + 4
+      console.log(array1.reduce(reducer));
+      // expected output: 10
+
+      // 5 + 1 + 2 + 3 + 4
+      console.log(array1.reduce(reducer, 5));
+      // expected output: 15
+
+      // let temp = [];
+      // for (let i = 0; i < users.length; i++) {
+      //   //if (get([i, ...path], users) == undefined || get([i, ...path], users) == null) users[i][path] = [];
+      //   for (let k = 0; k < get([i, ...path], users).length; k++) temp.push(get([i, ...path], users)[k]);
+      //
+      //   //users[i][path] = await service.post(temp);
+      //   temp = [];
+      // }
+      // return users;
+  }
 
   // Helper function for posting nested reference arrays
   // async postNestedArray(users, path, service) {
@@ -76,17 +93,17 @@ class UserService {
   //     return users;
   // }
 
-  // Helper function for posting nested reference arrays
-  async postNestedArray(users, path, service) {
-      let temp = [];
-      for (let i = 0; i < users.length; i++) {
-        if (users[i][path] == undefined || users[i][path] == null) users[i][path] = [];
-        for (let k = 0; k < users[i][path].length; k++) temp.push(users[i][path][k]);
-        users[i][path] = await service.post(temp);
-        temp = [];
-      }
-      return users;
-  }
+  // // Helper function for posting nested reference arrays
+  // async postNestedArray(users, path, service) {
+  //     let temp = [];
+  //     for (let i = 0; i < users.length; i++) {
+  //       if (users[i][path] == undefined || users[i][path] == null) users[i][path] = [];
+  //       for (let k = 0; k < users[i][path].length; k++) temp.push(users[i][path][k]);
+  //       users[i][path] = await service.post(temp);
+  //       temp = [];
+  //     }
+  //     return users;
+  // }
 
 
   // Helper function for posting nested reference objects
