@@ -26,7 +26,9 @@ class UserService {
   async getAll() {
     return await User.find({}).
     populate('cars').
-    populate('contact');
+    populate('contact').
+    populate('address.cars').
+    populate('address.contact');
   }
 
   // Post one to many users. If an object is passed in it will be converted to
@@ -56,7 +58,6 @@ class UserService {
         if (_.get(users[i], path) == null) _.set(users[i], path, []); // if null...set empty array
         _.set(users[i], path, await service.post(_.get(users[i], path, []))); // if undefined...empty array will be used
       }
-      console.log(users);
       return users;
   }
 
