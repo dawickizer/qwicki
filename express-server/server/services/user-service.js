@@ -76,7 +76,9 @@ class UserService {
   async get(id) {
     return await User.findById(id).
     populate('cars').
-    populate('contact');
+    populate('contact').
+    populate('address.cars').
+    populate('address.contact');
   }
 
   // Update a user
