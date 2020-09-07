@@ -32,7 +32,8 @@ class UserService {
   // Post one to many users. If an object is passed in it will be converted to
   // an array of size one. Returns an array of users or a single user
   async post(users) {
-    return await User.insertMany((!Array.isArray(users)) ? await this.postNestedData([users])[0] : await this.postNestedData(users));
+    return (!Array.isArray(users)) ? (await User.insertMany(await this.postNestedData([users])))[0]
+                                   : await User.insertMany(await this.postNestedData(users));
   }
 
   // Helper function for posted nested reference objects/arrays

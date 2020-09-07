@@ -22,7 +22,8 @@ class CarService {
   // Post one to many cars. If an object is passed in it will be converted to
   // an array of size one. Returns an array of cars
   async post(cars) {
-    return await Car.insertMany((!Array.isArray(cars)) ? await this.postNestedData([cars])[0] : await this.postNestedData(cars));
+    return (!Array.isArray(cars)) ? (await Car.insertMany(await this.postNestedData([cars])))[0]
+                                  : await Car.insertMany(await this.postNestedData(cars));
   }
 
   // Helper function for posted nested reference objects/arrays

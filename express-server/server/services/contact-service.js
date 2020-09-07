@@ -22,27 +22,15 @@ class ContactService {
   // Post one to many contacts. If an object is passed in it will be converted to
   // an array of size one. Returns an array of contacts
   async post(contacts) {
-
-    // handle if contacts is a single object being posted
-    if (!Array.isArray(contacts)) return (await Contact.insertMany(await this.postNestedData([contacts])))[0];
-    else return await Contact.insertMany(await this.postNestedData(contacts));
+    return (!Array.isArray(contacts)) ? (await Contact.insertMany(await this.postNestedData([contacts])))[0]
+                                      : await Contact.insertMany(await this.postNestedData(contacts));
   }
 
   // Helper function for posted nested reference objects/arrays
   async postNestedData(contacts) {
-      return contacts;
+    let nest = async (contacts, path, service) => { for (let i = 0; i < contacts.length; i++) _.set(contacts[i], path, (_.get(contacts[i], path) ? await service.post(_.get(contacts[i], path)) : undefined)); }
+    return contacts;
   }
-
-  // async post(contacts) {
-  //   return await Contact.insertMany((!Array.isArray(contacts)) ? await this.postNestedData([contacts])[0] : await this.postNestedData(contacts));
-  // }
-  //
-  // // Helper function for posted nested reference objects/arrays
-  // async postNestedData(contacts) {
-  //   let nest = async (contacts, path, service) => { for (let i = 0; i < contacts.length; i++) _.set(contacts[i], path, (_.get(contacts[i], path) ? await service.post(_.get(contacts[i], path)) : undefined)); }
-  //   return contacts;
-  // }
-  // CAUSING ISSUES with CONTACT^
 
   // Get a specific contact
   async get(id) {
