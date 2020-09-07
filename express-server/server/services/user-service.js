@@ -36,40 +36,23 @@ class UserService {
   async post(users) {
 
     // handle if users is a single object being posted
-    if (!Array.isArray(users)) {
-      let temp = users;
-      users = [];
-      users.push(temp);
-    }
-    return await User.insertMany(await this.postNestedData(users));
+    if (!Array.isArray(users)) return (await User.insertMany(await this.postNestedData([users])))[0];
+    else return await User.insertMany(await this.postNestedData(users));
   }
 
   // Helper function for posted nested reference objects/arrays
   async postNestedData(users) {
-      await this.postNestedArray(users, ['cars'], this.carService);
-      await this.postNestedObject(users, 'contact', this.contactService);
-      await this.postNestedArray(users, ['address', 'cars'], this.carService);
-      return users;
+    await this.nest(users, ['cars'], this.carService);
+    await this.nest(users, ['contact'], this.contactService);
+    await this.nest(users, ['address', 'cars'], this.carService);
+    await this.nest(users, ['address', 'contact'], this.contactService);
+    return users;
   }
 
   // Helper function for posting nested reference arrays
-  async postNestedArray(users, path, service) {
-      for (let i = 0; i < users.length; i++) {
-        if (_.get(users[i], path) == null) _.set(users[i], path, []); // if null...set empty array
-        _.set(users[i], path, await service.post(_.get(users[i], path, []))); // if undefined...empty array will be used
-      }
-      return users;
-  }
-
-  // Helper function for posting nested reference objects
-  async postNestedObject(users, objectName, service) {
-      for (let i = 0; i < users.length; i++) {
-        if (users[i][objectName] != undefined) {
-          let result = await service.post(users[i][objectName]);
-          users[i][objectName] = result[0]; // data is returned as an array
-        }
-      }
-      return users;
+  async nest(users, path, service) {
+    for (let i = 0; i < users.length; i++) _.set(users[i], path, (_.get(users[i], path) ? await service.post(_.get(users[i], path)) : undefined));
+    return users;
   }
 
   // Get a specific user
@@ -84,36 +67,36 @@ class UserService {
   // Update a user
   async put(id, user) {
     return await User.findByIdAndUpdate(id, user, {new: true}, (err, updatedUser) => {
-        if (err) return err;
-        else return updatedUser;
+      if (err) return err;
+      else return updatedUser;
     });
   }
 
   // Delete one to many users
   async delete(ids) {
-      await this.deleteNestedData(await User.find({_id: {$in: ids}}));
-      return await User.deleteMany({_id: {$in: ids}});
+    await this.deleteNestedData(await User.find({_id: {$in: ids}}));
+    return await User.deleteMany({_id: {$in: ids}});
   }
 
   async deleteNestedData(users) {
-      await this.deleteNestedArray(users, 'cars', this.carService);
-      await this.deleteNestedObject(users, 'contact', this.contactService);
-      return users;
+    await this.deleteNestedArray(users, 'cars', this.carService);
+    await this.deleteNestedObject(users, 'contact', this.contactService);
+    return users;
   }
 
   async deleteNestedArray(users, arrayName, service) {
-      let temp = [];
-      for (let i = 0; i < users.length; i++)
-        for (let k = 0; k < users[i][arrayName].length; k++) temp.push(users[i][arrayName][k]);
-      return await service.delete(temp);
+    let temp = [];
+    for (let i = 0; i < users.length; i++)
+      for (let k = 0; k < users[i][arrayName].length; k++) temp.push(users[i][arrayName][k]);
+    return await service.delete(temp);
   }
 
   async deleteNestedObject(users, objectName, service) {
-      let temp = [];
-      for (let i = 0; i < users.length; i++)
-        if (users[i][objectName] != undefined)
-          temp.push(users[i][objectName]);
-      return await service.delete(temp);
+    let temp = [];
+    for (let i = 0; i < users.length; i++)
+      if (users[i][objectName] != undefined)
+        temp.push(users[i][objectName]);
+    return await service.delete(temp);
   }
 }
 

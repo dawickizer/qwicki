@@ -24,12 +24,8 @@ class CarService {
   async post(cars) {
 
     // handle if cars is a single object being posted
-    if (!Array.isArray(cars)) {
-      let temp = cars;
-      cars = [];
-      cars.push(temp);
-    }
-    return await Car.insertMany(await this.postNestedData(cars));
+    if (!Array.isArray(cars)) return (await Car.insertMany(await this.postNestedData([cars])))[0];
+    else return await Car.insertMany(await this.postNestedData(cars));
   }
 
   // Helper function for posted nested reference objects/arrays

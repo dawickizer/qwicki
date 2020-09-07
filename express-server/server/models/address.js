@@ -10,7 +10,7 @@ const AddressSchema = new mongoose.Schema({
   state: { type: String, default: null },
   zip: { type: String, default: null },
   country: { type: String, default: null },
-  cars: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Car' }],
+  cars: [{ type: mongoose.Schema.Types.ObjectId, default: [], ref: 'Car' }],
   dogs: [DogSchema],
   contact: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Contact' },
   contactEmbedded: ContactSchema

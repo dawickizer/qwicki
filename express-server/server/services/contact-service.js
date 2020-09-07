@@ -21,12 +21,8 @@ class ContactService {
   async post(contacts) {
 
     // handle if contacts is a single object being posted
-    if (!Array.isArray(contacts)) {
-      let temp = contacts;
-      contacts = [];
-      contacts.push(temp);
-    }
-    return await Contact.insertMany(await this.postNestedData(contacts));
+    if (!Array.isArray(contacts)) return (await Contact.insertMany(await this.postNestedData([contacts])))[0];
+    else return await Contact.insertMany(await this.postNestedData(contacts));
   }
 
   // Helper function for posted nested reference objects/arrays

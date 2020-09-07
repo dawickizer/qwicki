@@ -6,7 +6,7 @@ const DogSchema = require('./dog').DogSchema;
 const UserSchema = new mongoose.Schema({
   name: { type: String, default: null },
   age: { type: Number, default: null },
-  cars: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Car' }],
+  cars: [{ type: mongoose.Schema.Types.ObjectId, default: [], ref: 'Car' }],
   dogs: [DogSchema],
   contact: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Contact' },
   address: { type: AddressSchema, default: null }
