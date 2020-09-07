@@ -65,29 +65,24 @@ class UserService {
 
   // Delete one to many users
   async delete(ids) {
-    await this.deleteNestedData(await User.find({_id: {$in: ids}}));
-    return await User.deleteMany({_id: {$in: ids}});
+    if (!Array.isArray(ids)) {
+      await this.deleteNestedData(await User.find({_id: {$in: [ids]}}));
+      return await User.deleteMany({_id: {$in: [ids]}});
+    }
+    else {
+      await this.deleteNestedData(await User.find({_id: {$in: ids}}));
+      return await User.deleteMany({_id: {$in: ids}});
+    }
   }
 
+  // Helper function for posted nested reference objects/arrays
   async deleteNestedData(users) {
-    await this.deleteNestedArray(users, 'cars', this.carService);
-    await this.deleteNestedObject(users, 'contact', this.contactService);
+    let nest = async (users, path, service) => { for (let i = 0; i < users.length; i++) await service.delete(_.get(users[i], path)); }
+    await nest(users, ['cars'], this.carService);
+    await nest(users, ['contact'], this.contactService);
+    await nest(users, ['address', 'cars'], this.carService);
+    await nest(users, ['address', 'contact'], this.contactService);
     return users;
-  }
-
-  async deleteNestedArray(users, arrayName, service) {
-    let temp = [];
-    for (let i = 0; i < users.length; i++)
-      for (let k = 0; k < users[i][arrayName].length; k++) temp.push(users[i][arrayName][k]);
-    return await service.delete(temp);
-  }
-
-  async deleteNestedObject(users, objectName, service) {
-    let temp = [];
-    for (let i = 0; i < users.length; i++)
-      if (users[i][objectName] != undefined)
-        temp.push(users[i][objectName]);
-    return await service.delete(temp);
   }
 }
 

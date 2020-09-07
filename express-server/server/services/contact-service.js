@@ -68,8 +68,14 @@ class ContactService {
 
   // Delete one to many contacts
   async delete(ids) {
+    if (!Array.isArray(ids)) {
+      await this.deleteNestedData(await Contact.find({_id: {$in: [ids]}}));
+      return await Contact.deleteMany({_id: {$in: [ids]}});
+    }
+    else {
       await this.deleteNestedData(await Contact.find({_id: {$in: ids}}));
       return await Contact.deleteMany({_id: {$in: ids}});
+    }
   }
 
   async deleteNestedData(contacts) {

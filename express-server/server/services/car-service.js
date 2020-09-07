@@ -69,8 +69,14 @@ class CarService {
 
   // Delete one to many cars
   async delete(ids) {
+    if (!Array.isArray(ids)) {
+      await this.deleteNestedData(await Car.find({_id: {$in: [ids]}}));
+      return await Car.deleteMany({_id: {$in: [ids]}});
+    }
+    else {
       await this.deleteNestedData(await Car.find({_id: {$in: ids}}));
       return await Car.deleteMany({_id: {$in: ids}});
+    }
   }
 
   async deleteNestedData(cars) {
