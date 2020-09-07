@@ -1,5 +1,8 @@
-// Import dependencies
+// Import dependencies (node_modules)
 const mongoose = require('mongoose');
+const _ = require('lodash');
+
+// Import dependencies (module.exports)
 const db = require('../config/db');
 const Car = require('../models/car').Car;
 
@@ -35,14 +38,12 @@ class CarService {
   }
 
   // Helper function for posting nested reference arrays
-  async postNestedArray(cars, arrayName, service) {
-      let temp = [];
+  async postNestedArray(cars, path, service) {
       for (let i = 0; i < cars.length; i++) {
-        if (cars[i][arrayName] == undefined || cars[i][arrayName] == null) cars[i][arrayName] = [];
-        for (let k = 0; k < cars[i][arrayName].length; k++) temp.push(cars[i][arrayName][k]);
-        cars[i][arrayName] = await service.post(temp);
-        temp = [];
+        if (_.get(cars[i], path) == null) _.set(cars[i], path, []); // if null...set empty array
+        _.set(cars[i], path, await service.post(_.get(cars[i], path, []))); // if undefined...empty array will be used
       }
+      console.log(cars);
       return cars;
   }
 
