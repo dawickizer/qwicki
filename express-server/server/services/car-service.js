@@ -22,36 +22,13 @@ class CarService {
   // Post one to many cars. If an object is passed in it will be converted to
   // an array of size one. Returns an array of cars
   async post(cars) {
-
-    // handle if cars is a single object being posted
-    if (!Array.isArray(cars)) return (await Car.insertMany(await this.postNestedData([cars])))[0];
-    else return await Car.insertMany(await this.postNestedData(cars));
+    return await Car.insertMany((!Array.isArray(cars)) ? await this.postNestedData([cars])[0] : await this.postNestedData(cars));
   }
 
   // Helper function for posted nested reference objects/arrays
   async postNestedData(cars) {
-      return cars;
-  }
-
-  // Helper function for posting nested reference arrays
-  async postNestedArray(cars, path, service) {
-      for (let i = 0; i < cars.length; i++) {
-        if (_.get(cars[i], path) == null) _.set(cars[i], path, []); // if null...set empty array
-        _.set(cars[i], path, await service.post(_.get(cars[i], path, []))); // if undefined...empty array will be used
-      }
-      console.log(cars);
-      return cars;
-  }
-
-  // Helper function for posting nested reference objects
-  async postNestedObject(cars, objectName, service) {
-      for (let i = 0; i < cars.length; i++) {
-        if (cars[i][objectName] != undefined) {
-          let result = await service.post(cars[i][objectName]);
-          cars[i][objectName] = result[0]; // data is returned as an array
-        }
-      }
-      return cars;
+    let nest = async (cars, path, service) => { for (let i = 0; i < cars.length; i++) _.set(cars[i], path, (_.get(cars[i], path) ? await service.post(_.get(cars[i], path)) : undefined)); }
+    return cars;
   }
 
   // Get a specific car
@@ -69,33 +46,14 @@ class CarService {
 
   // Delete one to many cars
   async delete(ids) {
-    if (!Array.isArray(ids)) {
-      await this.deleteNestedData(await Car.find({_id: {$in: [ids]}}));
-      return await Car.deleteMany({_id: {$in: [ids]}});
-    }
-    else {
-      await this.deleteNestedData(await Car.find({_id: {$in: ids}}));
-      return await Car.deleteMany({_id: {$in: ids}});
-    }
+    await this.deleteNestedData(await Car.find({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}}));
+    return await Car.deleteMany({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}});
   }
 
+  // Helper function for posted nested reference objects/arrays
   async deleteNestedData(cars) {
-      return cars;
-  }
-
-  async deleteNestedArray(cars, arrayName, service) {
-      let temp = [];
-      for (let i = 0; i < cars.length; i++)
-        for (let k = 0; k < cars[i][arrayName].length; k++) temp.push(cars[i][arrayName][k]);
-      return await service.delete(temp);
-  }
-
-  async deleteNestedObject(cars, objectName, service) {
-      let temp = [];
-      for (let i = 0; i < cars.length; i++)
-        if (cars[i][objectName] != undefined)
-          temp.push(cars[i][objectName]);
-      return await service.delete(temp);
+    let unnest = async (cars, path, service) => { for (let i = 0; i < cars.length; i++) await service.delete(_.get(cars[i], path)); }
+    return cars;
   }
 }
 

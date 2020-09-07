@@ -32,8 +32,7 @@ class UserService {
   // Post one to many users. If an object is passed in it will be converted to
   // an array of size one. Returns an array of users or a single user
   async post(users) {
-    if (!Array.isArray(users)) return (await User.insertMany(await this.postNestedData([users])))[0];
-    else return await User.insertMany(await this.postNestedData(users));
+    return await User.insertMany((!Array.isArray(users)) ? await this.postNestedData([users])[0] : await this.postNestedData(users));
   }
 
   // Helper function for posted nested reference objects/arrays
@@ -65,23 +64,17 @@ class UserService {
 
   // Delete one to many users
   async delete(ids) {
-    if (!Array.isArray(ids)) {
-      await this.deleteNestedData(await User.find({_id: {$in: [ids]}}));
-      return await User.deleteMany({_id: {$in: [ids]}});
-    }
-    else {
-      await this.deleteNestedData(await User.find({_id: {$in: ids}}));
-      return await User.deleteMany({_id: {$in: ids}});
-    }
+    await this.deleteNestedData(await User.find({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}}));
+    return await User.deleteMany({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}});
   }
 
   // Helper function for posted nested reference objects/arrays
   async deleteNestedData(users) {
-    let nest = async (users, path, service) => { for (let i = 0; i < users.length; i++) await service.delete(_.get(users[i], path)); }
-    await nest(users, ['cars'], this.carService);
-    await nest(users, ['contact'], this.contactService);
-    await nest(users, ['address', 'cars'], this.carService);
-    await nest(users, ['address', 'contact'], this.contactService);
+    let unnest = async (users, path, service) => { for (let i = 0; i < users.length; i++) await service.delete(_.get(users[i], path)); }
+    await unnest(users, ['cars'], this.carService);
+    await unnest(users, ['contact'], this.contactService);
+    await unnest(users, ['address', 'cars'], this.carService);
+    await unnest(users, ['address', 'contact'], this.contactService);
     return users;
   }
 }

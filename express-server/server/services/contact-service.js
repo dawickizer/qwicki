@@ -1,5 +1,8 @@
-// Import dependencies
+// Import dependencies (node_modules)
 const mongoose = require('mongoose');
+const _ = require('lodash');
+
+// Import dependencies (module.exports)
 const db = require('../config/db');
 const Contact = require('../models/contact').Contact;
 
@@ -30,28 +33,16 @@ class ContactService {
       return contacts;
   }
 
-  // Helper function for posting nested reference arrays
-  async postNestedArray(contacts, arrayName, service) {
-      let temp = [];
-      for (let i = 0; i < contacts.length; i++) {
-        if (contacts[i][arrayName] == undefined || contacts[i][arrayName] == null) contacts[i][arrayName] = [];
-        for (let k = 0; k < contacts[i][arrayName].length; k++) temp.push(contacts[i][arrayName][k]);
-        contacts[i][arrayName] = await service.post(temp);
-        temp = [];
-      }
-      return contacts;
-  }
-
-  // Helper function for posting nested reference objects
-  async postNestedObject(contacts, objectName, service) {
-      for (let i = 0; i < contacts.length; i++) {
-        if (contacts[i][objectName] != undefined) {
-          let result = await service.post(contacts[i][objectName]);
-          contacts[i][objectName] = result[0]; // data is returned as an array
-        }
-      }
-      return contacts;
-  }
+  // async post(contacts) {
+  //   return await Contact.insertMany((!Array.isArray(contacts)) ? await this.postNestedData([contacts])[0] : await this.postNestedData(contacts));
+  // }
+  //
+  // // Helper function for posted nested reference objects/arrays
+  // async postNestedData(contacts) {
+  //   let nest = async (contacts, path, service) => { for (let i = 0; i < contacts.length; i++) _.set(contacts[i], path, (_.get(contacts[i], path) ? await service.post(_.get(contacts[i], path)) : undefined)); }
+  //   return contacts;
+  // }
+  // CAUSING ISSUES with CONTACT^
 
   // Get a specific contact
   async get(id) {
@@ -68,33 +59,14 @@ class ContactService {
 
   // Delete one to many contacts
   async delete(ids) {
-    if (!Array.isArray(ids)) {
-      await this.deleteNestedData(await Contact.find({_id: {$in: [ids]}}));
-      return await Contact.deleteMany({_id: {$in: [ids]}});
-    }
-    else {
-      await this.deleteNestedData(await Contact.find({_id: {$in: ids}}));
-      return await Contact.deleteMany({_id: {$in: ids}});
-    }
+    await this.deleteNestedData(await Contact.find({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}}));
+    return await Contact.deleteMany({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}});
   }
 
+  // Helper function for posted nested reference objects/arrays
   async deleteNestedData(contacts) {
-      return contacts;
-  }
-
-  async deleteNestedArray(contacts, arrayName, service) {
-      let temp = [];
-      for (let i = 0; i < contacts.length; i++)
-        for (let k = 0; k < contacts[i][arrayName].length; k++) temp.push(contacts[i][arrayName][k]);
-      return await service.delete(temp);
-  }
-
-  async deleteNestedObject(contacts, objectName, service) {
-      let temp = [];
-      for (let i = 0; i < contacts.length; i++)
-        if (contacts[i][objectName] != undefined)
-          temp.push(contacts[i][objectName]);
-      return await service.delete(temp);
+    let unnest = async (contacts, path, service) => { for (let i = 0; i < contacts.length; i++) await service.delete(_.get(contacts[i], path)); }
+    return contacts;
   }
 }
 
