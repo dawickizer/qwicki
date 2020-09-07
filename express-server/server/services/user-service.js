@@ -5,8 +5,6 @@ const _ = require('lodash');
 // Import dependencies (module.exports)
 const db = require('../config/db');
 const User = require('../models/user').User;
-const Car = require('../models/car').Car;
-const Address = require('../models/address').Address;
 const CarService = require('../services/car-service');
 const ContactService = require('../services/contact-service');
 
@@ -32,26 +30,19 @@ class UserService {
   }
 
   // Post one to many users. If an object is passed in it will be converted to
-  // an array of size one. Returns an array of users
+  // an array of size one. Returns an array of users or a single user
   async post(users) {
-
-    // handle if users is a single object being posted
     if (!Array.isArray(users)) return (await User.insertMany(await this.postNestedData([users])))[0];
     else return await User.insertMany(await this.postNestedData(users));
   }
 
   // Helper function for posted nested reference objects/arrays
   async postNestedData(users) {
-    await this.nest(users, ['cars'], this.carService);
-    await this.nest(users, ['contact'], this.contactService);
-    await this.nest(users, ['address', 'cars'], this.carService);
-    await this.nest(users, ['address', 'contact'], this.contactService);
-    return users;
-  }
-
-  // Helper function for posting nested reference arrays
-  async nest(users, path, service) {
-    for (let i = 0; i < users.length; i++) _.set(users[i], path, (_.get(users[i], path) ? await service.post(_.get(users[i], path)) : undefined));
+    let nest = async (users, path, service) => { for (let i = 0; i < users.length; i++) _.set(users[i], path, (_.get(users[i], path) ? await service.post(_.get(users[i], path)) : undefined)); }
+    await nest(users, ['cars'], this.carService);
+    await nest(users, ['contact'], this.contactService);
+    await nest(users, ['address', 'cars'], this.carService);
+    await nest(users, ['address', 'contact'], this.contactService);
     return users;
   }
 
