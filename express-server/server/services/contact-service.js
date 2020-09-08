@@ -5,6 +5,7 @@ const _ = require('lodash');
 // Import dependencies (module.exports)
 const db = require('../config/db');
 const Contact = require('../models/contact').Contact;
+const DogService = require('../services/dog-service');
 
 // Connect to mongodb
 mongoose.connect(db);
@@ -14,14 +15,21 @@ mongoose.connect(db);
 // operations for embedded and referenced fields (nested objects and arrays supported)
 class ContactService {
 
+  // create services for nested data
+  dogService = new DogService();
+
   // Returns all the contacts
   async getAll() {
-    return await Contact.find({});
+    return await Contact.find({}).
+    populate('dogs').
+    populate('dog');
   }
 
   // Get a specific contact
   async get(id) {
-    return await Contact.findById(id);
+    return await Contact.findById(id).
+    populate('dogs').
+    populate('dog');
   }
 
   // Post one to many contacts. If an object is passed in it will be converted to
@@ -34,6 +42,8 @@ class ContactService {
   // Helper function for posted nested reference objects/arrays
   async postNestedData(contacts) {
     let nest = async (contacts, path, service) => { for (let i = 0; i < contacts.length; i++) _.set(contacts[i], path, (_.get(contacts[i], path) ? await service.post(_.get(contacts[i], path)) : undefined)); }
+    await nest(contacts, ['dogs'], this.dogService);
+    await nest(contacts, ['dog'], this.dogService);
     return contacts;
   }
 

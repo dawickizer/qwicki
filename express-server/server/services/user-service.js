@@ -7,6 +7,7 @@ const db = require('../config/db');
 const User = require('../models/user').User;
 const CarService = require('../services/car-service');
 const ContactService = require('../services/contact-service');
+const DogService = require('../services/dog-service');
 
 // Connect to mongodb
 mongoose.connect(db);
@@ -19,14 +20,21 @@ class UserService {
   // create services for nested data
   carService = new CarService();
   contactService = new ContactService();
+  dogService = new DogService();
 
   // Returns all the users
   async getAll() {
     return await User.find({}).
     populate('cars').
     populate('contact').
+    populate('contact.dog'). // try to make solution to handle in child
+    populate('contact.dogs'). // try to make solution to handle in child
     populate('address.cars').
-    populate('address.contact');
+    populate('address.contact').
+    populate('address.contact.dog'). // try to make solution to handle in child
+    populate('address.contact.dogs'). // try to make solution to handle in child
+    populate('address.contactEmbedded.dog').
+    populate('address.contactEmbedded.dogs');
   }
 
   // Get a specific user
@@ -34,8 +42,14 @@ class UserService {
     return await User.findById(id).
     populate('cars').
     populate('contact').
+    populate('contact.dog'). // try to make solution to handle in child
+    populate('contact.dogs'). // try to make solution to handle in child
     populate('address.cars').
-    populate('address.contact');
+    populate('address.contact').
+    populate('address.contact.dog'). // try to make solution to handle in child
+    populate('address.contact.dogs'). // try to make solution to handle in child
+    populate('address.contactEmbedded.dog').
+    populate('address.contactEmbedded.dogs');
   }
 
   // Post one to many users. If an object is passed in it will be converted to
@@ -52,6 +66,8 @@ class UserService {
     await nest(users, ['contact'], this.contactService);
     await nest(users, ['address', 'cars'], this.carService);
     await nest(users, ['address', 'contact'], this.contactService);
+    await nest(users, ['address', 'contactEmbedded', 'dog'], this.dogService);
+    await nest(users, ['address', 'contactEmbedded', 'dogs'], this.dogService);
     return users;
   }
 

@@ -1,9 +1,14 @@
 var mongoose = require('mongoose');
+const DogSchema = require('./dog').DogSchema;
 
 // create mongoose schema
 const ContactSchema = new mongoose.Schema({
   email: { type: String, default: null },
-  phone: { type: String, default: null }
+  phone: { type: String, default: null },
+  dogs: [{ type: mongoose.Schema.Types.ObjectId, default: [], ref: 'Dog' }],
+  dog: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Dog' },
+  dogsEmbedded: [DogSchema],
+  dogEmbedded: { type: DogSchema, default: null }
 });
 
 // create mongoose model
