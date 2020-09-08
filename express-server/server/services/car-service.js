@@ -19,6 +19,11 @@ class CarService {
     return await Car.find({});
   }
 
+  // Get a specific car
+  async get(id) {
+    return await Car.findById(id);
+  }
+
   // Post one to many cars. If an object is passed in it will be converted to
   // an array of size one. Returns an array of cars
   async post(cars) {
@@ -30,11 +35,6 @@ class CarService {
   async postNestedData(cars) {
     let nest = async (cars, path, service) => { for (let i = 0; i < cars.length; i++) _.set(cars[i], path, (_.get(cars[i], path) ? await service.post(_.get(cars[i], path)) : undefined)); }
     return cars;
-  }
-
-  // Get a specific car
-  async get(id) {
-    return await Car.findById(id);
   }
 
   // Update a car

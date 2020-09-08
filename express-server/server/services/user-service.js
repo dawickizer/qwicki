@@ -29,6 +29,15 @@ class UserService {
     populate('address.contact');
   }
 
+  // Get a specific user
+  async get(id) {
+    return await User.findById(id).
+    populate('cars').
+    populate('contact').
+    populate('address.cars').
+    populate('address.contact');
+  }
+
   // Post one to many users. If an object is passed in it will be converted to
   // an array of size one. Returns an array of users or a single user
   async post(users) {
@@ -44,15 +53,6 @@ class UserService {
     await nest(users, ['address', 'cars'], this.carService);
     await nest(users, ['address', 'contact'], this.contactService);
     return users;
-  }
-
-  // Get a specific user
-  async get(id) {
-    return await User.findById(id).
-    populate('cars').
-    populate('contact').
-    populate('address.cars').
-    populate('address.contact');
   }
 
   // Update a user

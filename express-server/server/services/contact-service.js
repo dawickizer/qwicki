@@ -19,6 +19,11 @@ class ContactService {
     return await Contact.find({});
   }
 
+  // Get a specific contact
+  async get(id) {
+    return await Contact.findById(id);
+  }
+
   // Post one to many contacts. If an object is passed in it will be converted to
   // an array of size one. Returns an array of contacts
   async post(contacts) {
@@ -30,11 +35,6 @@ class ContactService {
   async postNestedData(contacts) {
     let nest = async (contacts, path, service) => { for (let i = 0; i < contacts.length; i++) _.set(contacts[i], path, (_.get(contacts[i], path) ? await service.post(_.get(contacts[i], path)) : undefined)); }
     return contacts;
-  }
-
-  // Get a specific contact
-  async get(id) {
-    return await Contact.findById(id);
   }
 
   // Update a contact
