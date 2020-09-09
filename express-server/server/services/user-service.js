@@ -26,53 +26,54 @@ class UserService {
   async getAll() {
     return await User.find({}).
     populate('cars').
-    populate([ // reference within a reference
+    populate('cars'). // reference
+    populate([ // reference
         {
           path: 'contact',
           model: 'Contact',
-		      populate: [
+          populate: [ // reference
             {
-		          path: 'dog',
-			        model: 'Dog',
-		        },
+              path: 'dog',
+              model: 'Dog',
+            },
             {
-		          path: 'dogs',
-			        model: 'Dog',
-		        },
+              path: 'dogs',
+              model: 'Dog',
+            },
           ]
         }
     ]).
-    populate('address.cars').
-    populate([
+    populate('address.cars'). // embedded => reference
+    populate([ // reference
         {
           path: 'address.contact',
           model: 'Contact',
-		      populate: [
+          populate: [ // reference
             {
-		          path: 'dog',
-			        model: 'Dog',
-		        },
+              path: 'dog',
+              model: 'Dog',
+            },
             {
-		          path: 'dogs',
-			        model: 'Dog',
-		        },
+              path: 'dogs',
+              model: 'Dog',
+            },
           ]
         }
     ]).
-    populate('address.contactEmbedded.dog').
-    populate('address.contactEmbedded.dogs');
+    populate('address.contactEmbedded.dog'). // embedded => embedded => reference
+    populate('address.contactEmbedded.dogs'); // embedded => embedded => reference
 
   }
 
   // Get a specific user
   async get(id) {
     return await User.findById(id).
-        populate('cars').
-        populate([ // reference within a reference
+        populate('cars'). // reference
+        populate([ // reference
             {
               path: 'contact',
               model: 'Contact',
-    		      populate: [
+    		      populate: [ // reference
                 {
     		          path: 'dog',
     			        model: 'Dog',
@@ -84,12 +85,12 @@ class UserService {
               ]
             }
         ]).
-        populate('address.cars').
-        populate([
+        populate('address.cars'). // embedded => reference
+        populate([ // reference
             {
               path: 'address.contact',
               model: 'Contact',
-    		      populate: [
+    		      populate: [ // reference
                 {
     		          path: 'dog',
     			        model: 'Dog',
@@ -101,8 +102,8 @@ class UserService {
               ]
             }
         ]).
-        populate('address.contactEmbedded.dog').
-        populate('address.contactEmbedded.dogs');
+        populate('address.contactEmbedded.dog'). // embedded => embedded => reference
+        populate('address.contactEmbedded.dogs'); // embedded => embedded => reference
   }
 
   // Post one to many users. If an object is passed in it will be converted to
