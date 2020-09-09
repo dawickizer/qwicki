@@ -26,30 +26,83 @@ class UserService {
   async getAll() {
     return await User.find({}).
     populate('cars').
-    populate('contact').
-    populate('contact.dog'). // try to make solution to handle in child
-    populate('contact.dogs'). // try to make solution to handle in child
+    populate([ // reference within a reference
+        {
+          path: 'contact',
+          model: 'Contact',
+		      populate: [
+            {
+		          path: 'dog',
+			        model: 'Dog',
+		        },
+            {
+		          path: 'dogs',
+			        model: 'Dog',
+		        },
+          ]
+        }
+    ]).
     populate('address.cars').
-    populate('address.contact').
-    populate('address.contact.dog'). // try to make solution to handle in child
-    populate('address.contact.dogs'). // try to make solution to handle in child
+    populate([
+        {
+          path: 'address.contact',
+          model: 'Contact',
+		      populate: [
+            {
+		          path: 'dog',
+			        model: 'Dog',
+		        },
+            {
+		          path: 'dogs',
+			        model: 'Dog',
+		        },
+          ]
+        }
+    ]).
     populate('address.contactEmbedded.dog').
     populate('address.contactEmbedded.dogs');
+
   }
 
   // Get a specific user
   async get(id) {
     return await User.findById(id).
-    populate('cars').
-    populate('contact').
-    populate('contact.dog'). // try to make solution to handle in child
-    populate('contact.dogs'). // try to make solution to handle in child
-    populate('address.cars').
-    populate('address.contact').
-    populate('address.contact.dog'). // try to make solution to handle in child
-    populate('address.contact.dogs'). // try to make solution to handle in child
-    populate('address.contactEmbedded.dog').
-    populate('address.contactEmbedded.dogs');
+        populate('cars').
+        populate([ // reference within a reference
+            {
+              path: 'contact',
+              model: 'Contact',
+    		      populate: [
+                {
+    		          path: 'dog',
+    			        model: 'Dog',
+    		        },
+                {
+    		          path: 'dogs',
+    			        model: 'Dog',
+    		        },
+              ]
+            }
+        ]).
+        populate('address.cars').
+        populate([
+            {
+              path: 'address.contact',
+              model: 'Contact',
+    		      populate: [
+                {
+    		          path: 'dog',
+    			        model: 'Dog',
+    		        },
+                {
+    		          path: 'dogs',
+    			        model: 'Dog',
+    		        },
+              ]
+            }
+        ]).
+        populate('address.contactEmbedded.dog').
+        populate('address.contactEmbedded.dogs');
   }
 
   // Post one to many users. If an object is passed in it will be converted to
