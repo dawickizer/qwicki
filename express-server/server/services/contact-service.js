@@ -64,6 +64,8 @@ class ContactService {
   // Helper function for posted nested reference objects/arrays
   async deleteNestedData(contacts) {
     let unnest = async (contacts, path, service) => { for (let i = 0; i < contacts.length; i++) await service.delete(_.get(contacts[i], path)); }
+    await unnest(contacts, ['dogs'], this.dogService);
+    await unnest(contacts, ['dog'], this.dogService);
     return contacts;
   }
 }

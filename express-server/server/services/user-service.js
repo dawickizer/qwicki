@@ -146,6 +146,8 @@ class UserService {
     await unnest(users, ['contact'], this.contactService);
     await unnest(users, ['address', 'cars'], this.carService);
     await unnest(users, ['address', 'contact'], this.contactService);
+    await unnest(users, ['address', 'contactEmbedded', 'dog'], this.dogService);
+    await unnest(users, ['address', 'contactEmbedded', 'dogs'], this.dogService);
     return users;
   }
 }
