@@ -13,7 +13,7 @@ const AddressSchema = new mongoose.Schema({
   cars: [{ type: mongoose.Schema.Types.ObjectId, default: [], ref: 'Car' }],
   dogs: [DogSchema],
   contact: { type: mongoose.Schema.Types.ObjectId, default: null, ref: 'Contact' },
-  contactEmbedded: ContactSchema
+  contactEmbedded: { type: ContactSchema, default: null }
 });
 
 // create mongoose model
