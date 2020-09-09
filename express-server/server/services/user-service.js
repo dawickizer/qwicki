@@ -25,7 +25,6 @@ class UserService {
   // Returns all the users
   async getAll() {
     return await User.find({}).
-    populate('cars').
     populate('cars'). // reference
     populate([ // reference
         {
