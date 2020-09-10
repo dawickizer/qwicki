@@ -125,11 +125,27 @@ class UserService {
   }
 
   // Update a user
-  async put(id, user) {
-    return await User.findByIdAndUpdate(id, user, {new: true}, (err, updatedUser) => {
+  async put(id, updatedUser) {
+
+    this.putNestedData(await this.get(id), updatedUser);
+
+    return await User.findByIdAndUpdate(id, updatedUser, {new: true}, (err, updatedUser) => {
       if (err) return err;
       else return updatedUser;
     });
+  }
+
+  // Helper function for putting nested reference objects/arrays
+  async putNestedData(oldUser, updatedUser) {
+    let nest = async (oldUser, updatedUser, path, service) => {
+      _.get(oldUser, path) ? await service.put(_.get(oldUser, path)._id, _.get(updatedUser, path)) : undefined;
+    }
+
+    await nest(oldUser, updatedUser, ['contact'], this.contactService);
+
+    console.log(updatedUser);
+
+    return updatedUser;
   }
 
   // Delete one to many users
