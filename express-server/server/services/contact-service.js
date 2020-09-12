@@ -49,9 +49,9 @@ class ContactService {
 
   // Update a contact
   async put(id, contact) {
+    console.log("HELLO");
 
     return await Contact.findByIdAndUpdate(id, contact, {new: true}, (err, updatedContact) => {
-        console.log(updatedContact);
         if (err) return err;
         else return updatedContact;
     });

@@ -127,9 +127,16 @@ class UserService {
   // Update a user
   async put(id, updatedUser) {
 
-    this.putNestedData(await this.get(id), updatedUser);
+    console.log('PUT: updatedUser');
+    console.log(updatedUser);
+
+    await this.putNestedData(await this.get(id), updatedUser);
+
+    console.log("PUTTING: USER");
+    console.log(updatedUser);
 
     return await User.findByIdAndUpdate(id, updatedUser, {new: true}, (err, updatedUser) => {
+      console.log("COMPLETE");
       if (err) return err;
       else return updatedUser;
     });
@@ -137,13 +144,38 @@ class UserService {
 
   // Helper function for putting nested reference objects/arrays
   async putNestedData(oldUser, updatedUser) {
+
+    console.log('PUT NESTED: updatedUser');
+    console.log(updatedUser);
+
+    console.log('PUT NESTED: oldUser');
+    console.log(oldUser);
+
+
     let nest = async (oldUser, updatedUser, path, service) => {
-      _.get(oldUser, path) ? await service.put(_.get(oldUser, path)._id, _.get(updatedUser, path)) : undefined;
+      //_.set(updatedUser, path, _.get(oldUser, path) ? await service.put(_.get(oldUser, path)._id, _.get(updatedUser, path)) : await service.post(_.get(updatedUser, path)));
+
+      let oldRef = _.get(oldUser, path); // get the old user's specified ref object
+      let newRef = _.get(updatedUser, path); // get the updated user's specified ref object
+
+      // if it exists do a PUT
+      if (oldRef) {
+        console.log('ref exists...doing a PUT...');
+        await service.put(oldRef._id, newRef);
+      } else {  // else POST
+        console.log('ref does not exist...doing a POST...');
+        let id = (await service.post(newRef))._id;
+        console.log('new ref id: ' + id);
+
+        //console.log(_.set(updatedUser, path, id)); //update the newRef to just be the id
+      }
     }
 
     await nest(oldUser, updatedUser, ['contact'], this.contactService);
 
+    console.log('AFTER NESTED: updatedUser');
     console.log(updatedUser);
+
 
     return updatedUser;
   }
