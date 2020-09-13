@@ -127,6 +127,10 @@ class UserService {
   // Update a user
   async put(id, updatedUser) {
 
+    // Consider what happens when an update happens with deleted reference data
+    // Consider updating nested ref arrays
+    // Consider ref within ref and ref within embedded
+
     console.log('PUT: updatedUser');
     console.log(updatedUser);
 
@@ -137,6 +141,7 @@ class UserService {
 
     return await User.findByIdAndUpdate(id, updatedUser, {new: true}, (err, updatedUser) => {
       console.log("COMPLETE");
+      console.log(updatedUser);
       if (err) return err;
       else return updatedUser;
     });
@@ -161,16 +166,21 @@ class UserService {
       // if it exists do a PUT
       if (oldRef) {
         console.log('ref exists...doing a PUT...');
-        await service.put(oldRef._id, newRef);
+        let also = await service.put(oldRef._id, newRef);
+        console.log('updated: ' + also);
+
+        console.log(_.set(updatedUser, path, also));
+
       } else {  // else POST
         console.log('ref does not exist...doing a POST...');
-        let id = (await service.post(newRef))._id;
-        console.log('new ref id: ' + id);
+        let me = (await service.post(newRef));
+        console.log('created: ' + me);
 
-        //console.log(_.set(updatedUser, path, id)); //update the newRef to just be the id
+        console.log(_.set(updatedUser, path, me));
       }
     }
 
+    await nest(oldUser, updatedUser, ['cars'], this.carService);
     await nest(oldUser, updatedUser, ['contact'], this.contactService);
 
     console.log('AFTER NESTED: updatedUser');
