@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-//import * as BABYLON from 'babylonjs';
+import * as BABYLON from 'babylonjs';
 
 @Component({
   selector: 'app-test-babylon',
@@ -8,9 +8,12 @@ import { Component, OnInit } from '@angular/core';
 })
 export class TestBabylonComponent implements OnInit {
 
-  constructor() { }
+
+  constructor() {}
 
   ngOnInit() {
+
   }
+
 
 }
