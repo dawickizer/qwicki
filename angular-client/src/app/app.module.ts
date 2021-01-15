@@ -5,7 +5,7 @@ import { HttpClientModule } from '@angular/common/http'; // add http client modu
 // Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { GameComponent } from './components/game/game.component';
+import { TestPhaserComponent } from './components/test-phaser/test-phaser.component';
 import { TestBabylonComponent } from './components/test-babylon/test-babylon.component';
 import { TestApiComponent } from './components/test-api/test-api.component';
 import { TestSocketComponent } from './components/test-socket/test-socket.component';
@@ -19,11 +19,11 @@ import { ApiService } from './services/api/api.service';
 @NgModule({
   declarations: [
     AppComponent,
-    GameComponent,
+    TestPhaserComponent,
+    TestBabylonComponent,
     TestApiComponent,
     TestSocketComponent,
-    NavbarComponent,
-    TestBabylonComponent
+    NavbarComponent
   ],
   imports: [
     BrowserModule,

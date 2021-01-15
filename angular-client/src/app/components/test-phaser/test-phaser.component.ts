@@ -2,11 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import Phaser from 'phaser';
 
 @Component({
-  selector: 'game',
-  templateUrl: './game.component.html',
-  styleUrls: ['./game.component.css']
+  selector: 'test-phaser',
+  templateUrl: './test-phaser.component.html',
+  styleUrls: ['./test-phaser.component.css']
 })
-export class GameComponent implements OnInit {
+export class TestPhaserComponent implements OnInit {
   phaserGame: Phaser.Game;
   config: Phaser.Types.Core.GameConfig;
   constructor() {
