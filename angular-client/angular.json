@@ -121,5 +121,8 @@
       }
     }
   },
-  "defaultProject": "angular-client"
+  "defaultProject": "angular-client",
+  "cli": {
+    "analytics": false
+  }
 }
