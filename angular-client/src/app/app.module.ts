@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http'; // add http client modu
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { GameComponent } from './components/game/game.component';
+import { TestBabylonComponent } from './components/test-babylon/test-babylon.component';
 import { TestApiComponent } from './components/test-api/test-api.component';
 import { TestSocketComponent } from './components/test-socket/test-socket.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
@@ -21,7 +22,8 @@ import { ApiService } from './services/api/api.service';
     GameComponent,
     TestApiComponent,
     TestSocketComponent,
-    NavbarComponent
+    NavbarComponent,
+    TestBabylonComponent
   ],
   imports: [
     BrowserModule,
