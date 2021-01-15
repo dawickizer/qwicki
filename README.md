@@ -1,7 +1,7 @@
 Summary
 ----------
 
-This code base contains the starter code for a Phaser and BabylonJS game. It is integrated with a MEAN stack and it is Dockerized. The Phaser game is running client side with Angular and being served up on localhost:4200. Socket.io is also integrated at a base level. This is a good starting point for anyone who wants to create client side Phaser game while also being able to build a website around the game using the MEAN stack.
+This code base contains the starter code for a Phaser and BabylonJS game. It is integrated with a MEAN stack and it is Dockerized. The Phaser game and BabylonJS game is running client side with Angular and being served up on localhost:4200. Socket.io is also integrated at a base level. This is a good starting point for anyone who wants to create client side Phaser game or BabylonJS game while also being able to build a website around the game using the MEAN stack.
 
 Run Locally
 -----------
@@ -15,7 +15,7 @@ Run Locally
 7. Run `npm install`
 8. Navigate back to the root directory of this project (`cd ..`)
 9. Run `docker-compose up --build`
-10. Navigate to `localhost:4200` in your browser (Chrome for example). See the basic starter game.
+10. Navigate to `localhost:4200` in your browser (Chrome for example). Navigate through the tabs and see the Phaser, Babylon, Express API, and Socket.io integrations.
 11. Run `docker-compose down` to stop the app from being served.
 
 Endpoints
