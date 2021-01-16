@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
 import { Engine, FreeCamera, HemisphericLight, Mesh, Scene, Vector3 } from '@babylonjs/core';
 import * as BabylonViewer from '@babylonjs/viewer';
-//import * as BABYLON from 'babylonjs';
 
 @Component({
   selector: 'app-test-babylon',
