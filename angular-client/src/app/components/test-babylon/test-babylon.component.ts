@@ -1,5 +1,4 @@
-import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, FreeCamera, HemisphericLight, Mesh, Scene, Vector3 } from '@babylonjs/core';
+import { Component, OnInit } from '@angular/core';
 import * as BabylonViewer from '@babylonjs/viewer';
 
 @Component({
@@ -9,49 +8,21 @@ import * as BabylonViewer from '@babylonjs/viewer';
 })
 export class TestBabylonComponent implements OnInit {
 
-  @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
-
-  @Output() engine: Engine;
-  @Output() scene: Scene;
-  @Output() camera: FreeCamera;
-
   constructor() {}
 
-  ngOnInit() {
-    BabylonViewer.InitTags("my-tag");
-    this.engine = new Engine(this.canvas.nativeElement, true);
-    this.scene = new Scene(this.engine);
-
-    // creating camera
-    this.camera = this.createCamera(this.scene);
-
-    // allow mouse deplacement
-    this.camera.attachControl(this.canvas.nativeElement, true);
-
-    // creating minimal scean
-    this.createScene(this.scene, this.canvas.nativeElement);
-
-    // running babylonJS
-    this.engine.runRenderLoop(() => {
-      this.scene.render();
+  ngOnInit(): void {
+    BabylonViewer.viewerManager.getViewerPromiseById('babylon-viewer').then(function (viewer) {
+      console.log(viewer);
+      // this will resolve only after the viewer with this specific ID is initialized
+      viewer.onEngineInitObservable.add(function (scene) {
+        console.log(scene);
+        viewer.loadModel({
+            title: "Helmet",
+            subtitle: "BabylonJS",
+            url: "https://www.babylonjs.com/Assets/DamagedHelmet/glTF/DamagedHelmet.gltf"
+        });
+      });
     });
-  }
-
-  createCamera(scene: Scene) {
-    const camera = new FreeCamera('camera1', new Vector3(0, 5, -10), scene);
-
-    camera.setTarget(Vector3.Zero());
-
-    return camera;
-  }
-
-  createScene(scene: Scene, canvas: HTMLCanvasElement) {
-    const light = new HemisphericLight('light', new Vector3(0, 1, 0), scene);
-    light.intensity = 0.7;
-
-    const sphere = Mesh.CreateSphere('sphere', 16, 2, scene);
-    sphere.position.y = 1;
-
-    Mesh.CreateGround('ground', 6, 6, 2, scene);
+    BabylonViewer.InitTags("my-tag");
   }
 }

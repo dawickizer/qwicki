@@ -9,6 +9,7 @@ import { TestPhaserComponent } from './components/test-phaser/test-phaser.compon
 import { TestBabylonComponent } from './components/test-babylon/test-babylon.component';
 import { TestApiComponent } from './components/test-api/test-api.component';
 import { TestSocketComponent } from './components/test-socket/test-socket.component';
+import { PlaygroundComponent } from './components/playground/playground.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -23,7 +24,8 @@ import { ApiService } from './services/api/api.service';
     TestBabylonComponent,
     TestApiComponent,
     TestSocketComponent,
-    NavbarComponent
+    NavbarComponent,
+    PlaygroundComponent
   ],
   imports: [
     BrowserModule,
