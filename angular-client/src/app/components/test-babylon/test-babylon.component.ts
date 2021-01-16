@@ -1,7 +1,6 @@
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, FreeCamera, HemisphericLight, Mesh, Scene, Vector3 } from 'babylonjs';
-
-//import * as BABYLON from 'babylonjs';
+import { Engine, FreeCamera, HemisphericLight, Mesh, Scene, Vector3 } from '@babylonjs/core';
+import * as BabylonViewer from '@babylonjs/viewer';
 
 @Component({
   selector: 'app-test-babylon',
@@ -19,6 +18,7 @@ export class TestBabylonComponent implements OnInit {
   constructor() {}
 
   ngOnInit() {
+    BabylonViewer.InitTags("my-tag");
     this.engine = new Engine(this.canvas.nativeElement, true);
     this.scene = new Scene(this.engine);
 
