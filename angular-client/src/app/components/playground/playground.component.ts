@@ -1,5 +1,7 @@
 import { Component, ElementRef, OnInit, OnDestroy, Output, ViewChild } from '@angular/core';
 import { Engine, ArcRotateCamera, HemisphericLight, Sprite, SpriteManager, Mesh, MeshBuilder, AbstractMesh, InstancedMesh, Scene, Vector3, SceneLoader, Sound, StandardMaterial, Texture, Color3, CubeTexture } from '@babylonjs/core';
+import "@babylonjs/core/Debug/debugLayer";
+import '@babylonjs/inspector';
 // import * as BABYLON from '@babylonjs/core';
 
 @Component({
@@ -43,6 +45,7 @@ export class PlaygroundComponent implements OnInit {
 
     // running babylonJS
     this.render();
+    this.scene.debugLayer.show();
 
   }
 
