@@ -5,6 +5,7 @@ services:
   angular: # name of the first service
     build:
       context: ./angular-client
+      dockerfile: Dockerfile
     ports:
       - "4200:4200" # specify port forewarding
     environment:
