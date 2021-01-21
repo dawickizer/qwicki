@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, OnDestroy, Output, ViewChild } from '@angular/core';
-import { Engine, ArcRotateCamera, HemisphericLight, Sprite, SpriteManager, Mesh, MeshBuilder, AbstractMesh, InstancedMesh, Scene, Vector3, SceneLoader, Sound, StandardMaterial, Texture, Color3, CubeTexture } from '@babylonjs/core';
+import { Engine, ArcRotateCamera, FreeCamera, HemisphericLight, Sprite, SpriteManager, Mesh, MeshBuilder, AbstractMesh, InstancedMesh, Scene, Vector3, SceneLoader, Sound, StandardMaterial, Texture, Color3, CubeTexture } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 // import * as BABYLON from '@babylonjs/core';
@@ -16,6 +16,7 @@ export class PlaygroundComponent implements OnInit {
   @Output() engine: Engine;
   @Output() scene: Scene;
   @Output() camera: ArcRotateCamera;
+  @Output() freeCam: FreeCamera;
   @Output() light: HemisphericLight;
   @Output() music: Sound;
   @Output() ground: Mesh;
@@ -56,6 +57,10 @@ export class PlaygroundComponent implements OnInit {
     this.camera.attachControl(this.canvas.nativeElement, true);
     this.camera.upperBetaLimit = Math.PI / 2.2;
     this.camera.radius = 30;
+
+    // this.freeCam = new FreeCamera('freeCam', new Vector3(0, 4, 0), this.scene);
+    // this.freeCam.attachControl(this.canvas.nativeElement, true);
+
     this.scene.registerBeforeRender(() => { 
       if (this.camera.radius > 70) this.camera.radius = 70;
       if (this.camera.radius < 30) this.camera.radius = 30; 
@@ -120,7 +125,7 @@ export class PlaygroundComponent implements OnInit {
   }
 
   async importHouse(scene: Scene): Promise<Mesh> {
-    let result = await SceneLoader.ImportMeshAsync('', 'assets/playground/models/', 'house.babylon', scene);
+    let result = await SceneLoader.ImportMeshAsync('', 'assets/playground/models/', 'test-export.babylon', scene);
     result.meshes[0].position.x = -4;
     result.meshes[0].position.y = 0;
     result.meshes[0].rotation.y = 14;
