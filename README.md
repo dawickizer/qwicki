@@ -94,10 +94,10 @@ Tear Down Resources
 --------------------
 1. Make sure you are in the `/angular-client` directory of the project
 2. Run `kubectl delete -f angular.yml` to delete your `Kubernetes` resources
-
+<br />
 3. Make sure you are in the `/express-server` directory of the project
 4. Run `kubectl delete -f express.yml` to delete your `Kubernetes` resources
-
+<br />
 5. Run `eksctl delete cluster --name mean` to delete the `AWS` provisioned resources
 
 Update Docker Images To Be Deployed
@@ -106,7 +106,7 @@ Update Docker Images To Be Deployed
 2. Run `docker build . -t dwickizer1/mean:angular_prod -f Dockerfile.prod`
 3. This will build and tag a new version of the angular image to `DockerHub` which can then be deployed to `AWS EKS`
 4. Run `kubectl apply -f angular.yml` to update the image deployed on `AWS EKS`
-
+<br />
 1. Make sure you are in the `/express-server` directory of the project
 2. Run `docker build . -t dwickizer1/mean:express_prod -f Dockerfile.prod`
 3. This will build and tag a new version of the express image to `DockerHub` which can then be deployed to `AWS EKS`
