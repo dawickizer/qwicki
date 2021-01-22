@@ -18,6 +18,7 @@ services:
   express: #name of the second service
     build:
       context: ./express-server
+      dockerfile: Dockerfile
     ports:
       - "3000:3000" #specify ports forewarding
     volumes:
