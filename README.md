@@ -34,10 +34,10 @@ Note
 4. Add the path `wherever/you/downloaded/mean/express-server`
 5. Restart Docker Desktop
 
-Deploy to Amazon EKS (Angular App)
-======================================
+Deploy to Amazon EKS
+=====================
 
-AWS CONSOLE SETUP 
+AWS Console Setup
 -----------------
 1. Create `Amazon AWS Account`. Note: You will be logged in as `Root User` (https://aws.amazon.com/)
 2. Setup an `Admin` account through `IAM` so that you can perform your operations as `Admin` and NOT `Root`. Note: This is AWS Best Practice (https://docs.aws.amazon.com/IAM/latest/UserGuide/getting-started_create-admin-group.html)
@@ -46,7 +46,7 @@ AWS CONSOLE SETUP
 5. Click on the `Create access key` button
 6. Click on the `Download .csv file` button to save on your local machine (Keep safe and remember where you store this)
 
-AWS CLI SETUP
+AWS CLI Setup
 -----------------
 1. Install `AWS CLI` to interact with your AWS account via the command line (https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 2. Open a Terminal/Command Prompt and type `aws configure` and follow the prompts entering your `Access Key/Secret Access Key` (generated from step 5 and 6 above):
@@ -56,42 +56,58 @@ AWS CLI SETUP
 6. `Default output format [None]: json`
 7. This will save/modify a `config` file and a `credentials` file in your `~/.aws` directory so that the `AWS CLI` can now interact with your `Admin` AWS Account
 
-KUBERNETES SETUP
+Kubernetes Setup
 -----------------
 1. Install `kubectl` to interact with `Kubernetes Clusters` via the command line (https://kubernetes.io/docs/tasks/tools/install-kubectl/)
 2. Install `eksctl` to provision/deprovision a `Kubernetes Cluster` via `AWS EKS` service. `eksctl` uses the `AWS CLI` to provision a `Kubernetes Cluster` via the command line (https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html)
 
-DEPLOYMENT
+Provision AWS Resources
 -----------------
-1. Provision a `Kubernetes Cluster` by running `eksctl create cluster --name angular --region us-east-1 --node-type t2.medium --nodes 2 --managed` (you can tweak these settings to your liking). This will take about 5-10 minutes to provision the AWS Resources
-2. While the resources are provisioning log in to `AWS Console` and check `CloudFormation` to verify a stack is being provisioned. You should see a `eksctl-angular-cluster` stack with a status of `CREATE_IN_PROGRESS` (https://console.aws.amazon.com/cloudformation)
-3. Sometimes when you run the `eksctl create cluster...` command you will get an error message in the terminal like: `Cannot create cluster 'angular' because us-east-1e, the targeted availability zone, does not currently have sufficient capacity to support the cluster. Retry and choose from these availability zones: us-east-1a, us-east-1b, us-east-1c, us-east-1d, us-east-1f` and you will notice your `CloudFormation` stack has a status of `ROLLBACK_IN_PROGRESS`. If this happens then DELETE the `CloudFormation` stack via the `AWS Console` and rerun the `eksctl create cluster --name angular --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.medium --nodes 2 --managed` command with the `--zones` flag specified with two of the recommended availability zones from the error message.
+1. Provision a `Kubernetes Cluster` by running `eksctl create cluster --name mean --region us-east-1 --node-type t2.micro --nodes 2 --managed` (you can tweak these settings to your liking). This will take about 10-15 minutes to provision the AWS Resources
+2. While the resources are provisioning log in to `AWS Console` and check `CloudFormation` to verify a stack is being provisioned. You should see a `eksctl-mean-cluster` stack with a status of `CREATE_IN_PROGRESS` (https://console.aws.amazon.com/cloudformation)
+3. Sometimes when you run the `eksctl create cluster...` command you will get an error message in the terminal like: `Cannot create cluster 'mean' because us-east-1e, the targeted availability zone, does not currently have sufficient capacity to support the cluster. Retry and choose from these availability zones: us-east-1a, us-east-1b, us-east-1c, us-east-1d, us-east-1f` and you will notice your `CloudFormation` stack has a status of `ROLLBACK_IN_PROGRESS`. If this happens then DELETE the `CloudFormation` stack via the `AWS Console` and rerun the `eksctl create cluster --name mean --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.micro --nodes 2 --managed` command with the `--zones` flag specified with two of the recommended availability zones from the error message.
 4. Upon successful launch of a `Kubernetes Cluster` you can look over your provioned resources in the `AWS Console` by navigating to `Elastic Kubernetes Service` (https://console.aws.amazon.com/eks) which will display your cluster info. You can also check the `EC2` instances that are being used for your `Kubernetes Cluster` by navigating to `EC2` (https://console.aws.amazon.com/ec2)
 5. Now that the `Kubernetes Cluster` is provioned on `AWS EKS` you can iteract with it via `kubectl` on the command line. `eksctl` automatically makes updates to your `~/.kube` directory upon successsful provioning of `AWS` resources for the `Kubernetes Cluster` on your local machine so that you dont have to worry about configuration 
-6. In your terminal navigate to `/angular-client` of the project. This directory contains `angular.yml` which is a config file for `kubectl` that you will use to create `Kubernetes` resources (specifically a `deployment` and `service` to expose the `deployment`)
-7. Run `kubectl apply -f angular.yml` to create the resources. Note: This will provision a `Load Balancer` on `AWS` which you can observe via the `AWS Console`
-8. You can verify your resources by running `kubectl get all` to display all of the resources you just created (as well as some default resources). Specifically you can run:
-9. `kubectl get deployments` to see your `deployment`
-10. `kubectl get pods` to see your pods (which runs the `Docker` `container` the `Angular` app is in)
-11. `kubectl logs {your pod name}` to display the output of the `Docker` `container` running in the `pod`
-12. `kubectl exec -it {your pod name} bash` to jump inside the `Docker` `container` running in the `pod` (type `exit` when done)
-13. `kubectl get services/angular-service` to see your `service` (which exposes your `deployment` to the web)
-14. Run `kubectl get services/angular-service` and copy the `EXTERNAL-IP`
-15. Paste it a browser to see the webapp
+6. Some key commands to run to interact with your `Kubernetes Cluster` after you follow the deployment steps below:
+7. `kubectl get all` to display all of the resources you will (as well as some default resources)
+8. `kubectl get deployments` to see your `deployment`
+9. `kubectl get pods` to see your pods (which runs the `Docker` `containers` the apps are in)
+10. `kubectl logs {your pod name}` to display the output of the `Docker` `container` running in the `pod`
+11. `kubectl exec -it {your pod name} bash` to jump inside the `Docker` `container` running in the `pod` (type `exit` when done)
+12. `kubectl get services/{app name}-service` to see your `service` (which exposes your `deployment` to the web)
 
-TEAR DOWN RESOURCES
+Deploy Angular App
+------------------
+1. In your terminal navigate to `/angular-client` of the project. This directory contains `angular.yml` which is a config file for `kubectl` that you will use to create `Kubernetes` resources (specifically a `deployment` and `service` to expose the `deployment`)
+2. Run `kubectl apply -f angular.yml` to create the resources. Note: This will provision a `Load Balancer` on `AWS` which you can observe via the `AWS Console`
+3. Run `kubectl get services/angular-service` and copy the `EXTERNAL-IP`
+4. Paste it a browser to see the webapp
+
+Deploy Express App
+-----------------
+1. In your terminal navigate to `/express-server` of the project. This directory contains `express.yml` which is a config file for `kubectl` that you will use to create `Kubernetes` resources (specifically a `deployment` and `service` to expose the `deployment`)
+2. Run `kubectl apply -f express.yml` to create the resources. Note: This will provision a `Load Balancer` on `AWS` which you can observe via the `AWS Console`
+3. Run `kubectl get services/express-service` and copy the `EXTERNAL-IP`
+4. Paste it a browser to see the webapp
+
+Tear Down Resources
 --------------------
 1. Make sure you are in the `/angular-client` directory of the project
 2. Run `kubectl delete -f angular.yml` to delete your `Kubernetes` resources
-3. Run `eksctl delete cluster --name angular` to delete the `AWS` provisioned resources
 
+3. Make sure you are in the `/express-server` directory of the project
+4. Run `kubectl delete -f express.yml` to delete your `Kubernetes` resources
 
-UPDATE DOCKER IMAGE TO BE DEPLOYED
+5. Run `eksctl delete cluster --name mean` to delete the `AWS` provisioned resources
+
+Update Docker Images To Be Deployed
 -----------------------------------
 1. Make sure you are in the `/angular-client` directory of the project
 2. Run `docker build . -t dwickizer1/mean:angular_prod -f Dockerfile.prod`
 3. This will build and tag a new version of the angular image to `DockerHub` which can then be deployed to `AWS EKS`
 4. Run `kubectl apply -f angular.yml` to update the image deployed on `AWS EKS`
 
-
-
+1. Make sure you are in the `/express-server` directory of the project
+2. Run `docker build . -t dwickizer1/mean:express_prod -f Dockerfile.prod`
+3. This will build and tag a new version of the express image to `DockerHub` which can then be deployed to `AWS EKS`
+4. Run `kubectl apply -f express.yml` to update the image deployed on `AWS EKS`
