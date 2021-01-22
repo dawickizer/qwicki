@@ -7,7 +7,7 @@ const db = require('../config/db');
 const Car = require('../models/car').Car;
 
 // Connect to mongodb
-mongoose.connect(db);
+//mongoose.connect(db);
 
 // This class is responsible for handling the database operations for Cars and
 // its nested fields. Basic CRUD operations are supported as well as the CRUD

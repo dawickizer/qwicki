@@ -8,7 +8,7 @@ const Contact = require('../models/contact').Contact;
 const DogService = require('../services/dog-service');
 
 // Connect to mongodb
-mongoose.connect(db);
+//mongoose.connect(db);
 
 // This class is responsible for handling the database operations for Contacts and
 // its nested fields. Basic CRUD operations are supported as well as the CRUD

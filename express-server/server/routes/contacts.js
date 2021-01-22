@@ -1,11 +1,6 @@
 // Import dependencies
-const mongoose = require('mongoose');
 const router = require('express').Router();
-const db = require('../config/db');
 const ContactService = require('../services/contact-service');
-
-// Connect to mongodb
-mongoose.connect(db);
 
 // create ContactService
 let contactService = new ContactService();

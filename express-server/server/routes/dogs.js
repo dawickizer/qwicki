@@ -1,11 +1,6 @@
 // Import dependencies
-const mongoose = require('mongoose');
 const router = require('express').Router();
-const db = require('../config/db');
 const DogService = require('../services/dog-service');
-
-// Connect to mongodb
-mongoose.connect(db);
 
 // create DogService
 let dogService = new DogService();
