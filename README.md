@@ -36,7 +36,9 @@ Note
 
 -------------
 
-1. fdsfsdad
+1. You might have to increase the memory allocation that your local machine allows Docker to use. The default allocated memory is 2GB. Increasing to 4GB seems to prevent memory allocation bugs when building Docker images.
+2. If you are on Docker Desktop for Windows go to Docker Desktop (from toolbar) > Settings > Resources > Advanced
+3. Increase Memory
 
 Deploy to Amazon EKS
 =====================
