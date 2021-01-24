@@ -16,6 +16,9 @@ RUN npm install --production
 # Get all the code needed to run the app
 COPY . /usr/src/app/
 
+# Set NODE_ENV so that the app knows its in prod and to use prod config
+ENV NODE_ENV="production"
+
 # Expose the port the app runs in
 EXPOSE 3000
 
