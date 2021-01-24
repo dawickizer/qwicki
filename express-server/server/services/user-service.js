@@ -13,7 +13,7 @@ const DogService = require('../services/dog-service');
 const env = process.env.NODE_ENV || 'development';
 
 // temporary solution to allow builds for dev and prod
-if (env ==  'development') {
+if (env == 'development') {
   // Connect to mongodb
   mongoose.connect(config[env].db);
 }

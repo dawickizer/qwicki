@@ -7,9 +7,6 @@ RUN mkdir -p /app
 # Change directory so that our commands run inside this new directory
 WORKDIR /app
 
-# # Upon building the image via --build-arg EXPRESS_ENDPOINT={http://endpoint} set the env variable
-# ENV EXPRESS_ENDPOINT=${EXPRESS_ENDPOINT}
-
 # Copy dependency definitions
 COPY package*.json /app/
 

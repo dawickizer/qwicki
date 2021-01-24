@@ -19,6 +19,12 @@ COPY . /usr/src/app/
 # Set NODE_ENV so that the app knows its in prod and to use prod config
 ENV NODE_ENV="production"
 
+# Upon building the image with --build-arg MONGO_DB_ENDPOINT={http://endpoint} set the arg 
+ARG MONGO_DB_ENDPOINT
+
+# Use the MONGO_DB_ENDPOINT arg to set the ENV variable in the container
+ENV MONGO_DB_ENDPOINT=${MONGO_DB_ENDPOINT}
+
 # Expose the port the app runs in
 EXPOSE 3000
 
