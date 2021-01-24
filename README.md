@@ -82,35 +82,33 @@ Provision AWS Resources
 11. `kubectl exec -it {your pod name} bash` to jump inside the `Docker` `container` running in the `pod` (type `exit` when done)
 12. `kubectl get services/{app name}-service` to see your `service` (which exposes your `deployment` to the web)
 
-Deploy Angular App
-------------------
-1. In your terminal navigate to `/angular-client` of the project. This directory contains `angular.yml` which is a config file for `kubectl` that you will use to create `Kubernetes` resources (specifically a `deployment` and `service` to expose the `deployment`)
-2. Run `kubectl apply -f angular.yml` to create the resources. Note: This will provision a `Load Balancer` on `AWS` which you can observe via the `AWS Console`
-3. Run `kubectl get services/angular-service` and copy the `EXTERNAL-IP`
-4. Paste it a browser to see the webapp
 
-Deploy Express App
------------------
-1. In your terminal navigate to `/express-server` of the project. This directory contains `express.yml` which is a config file for `kubectl` that you will use to create `Kubernetes` resources (specifically a `deployment` and `service` to expose the `deployment`)
-2. Run `kubectl apply -f express.yml` to create the resources. Note: This will provision a `Load Balancer` on `AWS` which you can observe via the `AWS Console`
-3. Run `kubectl get services/express-service` and copy the `EXTERNAL-IP`
-4. Paste it a browser to see the webapp
-
-Tear Down Resources
---------------------
-1. Make sure you are in the `/angular-client` directory of the project
-2. Run `kubectl delete -f angular.yml` to delete your `Kubernetes` resources
-3. Make sure you are in the `/express-server` directory of the project
-4. Run `kubectl delete -f express.yml` to delete your `Kubernetes` resources
-5. Run `eksctl delete cluster --name mean` to delete the `AWS` provisioned resources
+Deploy the Apps
+----------------
+1. `cd /mean`
+2. `eksctl create cluster --name mean --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.small --nodes 2 --managed`
+3. `kubectl apply -f ./mongo-db/mongo-secret.yml (HOLD OFF)`
+4. `kubectl apply -f ./mongo-db/mongo.yml`
+5. `kubectl apply -f ./mongo-db/mongo-configmap.yml`
+6. `docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`
+7. `docker push dwickizer1/mean:express_prod`
+8. `kubectl apply -f ./express-server/express.yml`
+9. `kubectl get services/express-service`
+10. copy EXTERNAL_IP 
+11. Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Express API
+12. update EXPRESS_ENDPOINT with copied EXTERNAL_IP in `./angular-client/src/environments/environment.prod.ts` (make sure to have http:// and remove end slash)
+13. `docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`
+14. `docker push dwickizer1/mean:angular_prod`
+15. `kubectl apply -f ./angular-client/angular.yml`
+16. `kubectl get services/angular-service`
+17. copy EXTERNAL_IP
+18. Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Angular App
+19. `eksctl delete cluster --name mean`
 
 Update Docker Images To Be Deployed
 -----------------------------------
-1. Make sure you are in the `/angular-client` directory of the project
-2. Run `docker build . -t dwickizer1/mean:angular_prod -f Dockerfile.prod`
-3. This will build and tag a new version of the angular image to `DockerHub` which can then be deployed to `AWS EKS`
-4. Run `kubectl apply -f angular.yml` to update the image deployed on `AWS EKS`
-5. Make sure you are in the `/express-server` directory of the project
-6. Run `docker build . -t dwickizer1/mean:express_prod -f Dockerfile.prod`
-7. This will build and tag a new version of the express image to `DockerHub` which can then be deployed to `AWS EKS`
-8. Run `kubectl apply -f express.yml` to update the image deployed on `AWS EKS`
+1. `docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`
+2. `docker push dwickizer1/mean:express_prod`
+3. `docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`
+4. `docker push dwickizer1/mean:angular_prod`
+
