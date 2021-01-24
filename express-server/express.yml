@@ -17,8 +17,15 @@ spec:
       containers:
       - name: express
         image: dwickizer1/mean:express_prod
+        imagePullPolicy: Always
         ports:
         - containerPort: 3000
+        env:
+        - name: MONGO_DB_ENDPOINT
+          valueFrom:
+            configMapKeyRef:
+              name: mongodb-configmap
+              key: database_url
 ---
 apiVersion: v1
 kind: Service
