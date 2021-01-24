@@ -3,11 +3,17 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 
 // Import dependencies (module.exports)
-const db = require('../config/db');
+const config = require('../config/config');
 const Dog = require('../models/dog').Dog;
 
-// Connect to mongodb
-//mongoose.connect(db);
+// determine environment 
+const env = process.env.NODE_ENV || 'development';
+
+// temporary solution to allow builds for dev and prod
+if (env == 'development') {
+  // Connect to mongodb
+  mongoose.connect(config[env].db);
+}
 
 // This class is responsible for handling the database operations for Dogs and
 // its nested fields. Basic CRUD operations are supported as well as the CRUD
