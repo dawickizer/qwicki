@@ -1,22 +1,25 @@
 // Get dependencies
-const app = require('express')();
-const server = require('http').createServer(app);
-const cors = require('cors');
-const io = require('socket.io')(server);
-const bodyParser = require('body-parser');
-const path = require('path');
+import express from 'express';
+import http from 'http'
+import cors from 'cors';
+import SocketIO from 'socket.io';
+import { json, urlencoded } from 'body-parser';
 
 // Get our API routes
-const api = require('./routes/api');
-const users = require('./routes/users');
-const cars = require('./routes/cars');
-const addresses = require('./routes/addresses');
-const dogs = require('./routes/dogs');
-const contacts = require('./routes/contacts');
+import api from './routes/api';
+import users from './routes/users';
+import cars from './routes/cars';
+import addresses from './routes/addresses';
+import dogs from './routes/dogs';
+import contacts from './routes/contacts';
+
+const app = express();
+const server = http.createServer(app)
+const io = SocketIO(server)
 
 // Parsers for POST data
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(json());
+app.use(urlencoded({ extended: false }));
 
 // Cross Origin Middleware
 app.use(cors());
@@ -33,7 +36,7 @@ app.use('/contacts', contacts);
 const port = process.env.PORT || '3000';
 app.set('port', port);
 
-io.on('connection', (socket) => {
+io.on('connection', (socket: any) => {
 
   console.log(socket.handshake.query.token);
   console.log('a user connected');
@@ -42,7 +45,7 @@ io.on('connection', (socket) => {
     console.log('user disconnected');
   });
 
-  socket.on('my message', (msg) => {
+  socket.on('my message', (msg: any) => {
     console.log('message: ' + msg);
     msg = 'Hello from Express!';
     io.emit('my broadcast', `server: ${msg}`);
