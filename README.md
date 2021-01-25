@@ -88,55 +88,61 @@ PROVISION KLUSTER
 --------------------------
 
 `cd /mean`\
-`eksctl create cluster --name mean --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.medium --nodes 2 --managed`\
+`eksctl create cluster --name mean --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.medium --nodes 2 --managed`
 
 MONGO DB 
 -------------------------
 
 `kubectl apply -f ./mongo-db/mongo-secret.yml (HOLD OFF)`\
 `kubectl apply -f ./mongo-db/mongo.yml`\
-`kubectl apply -f ./mongo-db/mongo-configmap.yml`\
+`kubectl apply -f ./mongo-db/mongo-configmap.yml`
 
 MONGO EXPRESS
 ------------------------
 
 `kubectl apply -f ./mongo-express/mongo-express-secret.yml`\
 `kubectl apply -f ./mongo-express/mongo-express.yml`\
-`kubectl get services/mongo-express-service`\
+`kubectl get services/mongo-express-service`
+
 copy EXTERNAL_IP\
-Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Mongo Express Admin UI\
+Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Mongo Express Admin UI
 
 EXPRESS 
 -------------------------
 
 `docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`
-`docker push dwickizer1/mean:express_prod`\
+`docker push dwickizer1/mean:express_prod`
+
 `kubectl apply -f ./express-server/express.yml`\
 `kubectl get services/express-service`\
+
 copy EXTERNAL_IP\
-Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Express API\
+Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Express API
 
 ANGULAR
 -----------------------
 
-update EXPRESS_ENDPOINT with copied EXTERNAL_IP in ./angular-client/src/environments/environment.prod.ts (make sure to have http:// and remove end slash)\
+update EXPRESS_ENDPOINT with copied EXTERNAL_IP in ./angular-client/src/environments/environment.prod.ts (make sure to have http:// and remove end slash)
+
 `docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`\
-`docker push dwickizer1/mean:angular_prod`\
+`docker push dwickizer1/mean:angular_prod`
+
 `kubectl apply -f ./angular-client/angular.yml`\
-`kubectl get services/angular-service`\
+`kubectl get services/angular-service`
+
 copy EXTERNAL_IP\
-Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Angular App\
+Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Angular App
 
 DELETE RESOURCES 
 ----------------------
 
-`eksctl delete cluster --name mean`\
+`eksctl delete cluster --name mean`
 
 Update Docker Images To Be Deployed
 -----------------------------------
 `docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`\
-`docker push dwickizer1/mean:express_prod`\
+`docker push dwickizer1/mean:express_prod`
 
 `docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`\
-`docker push dwickizer1/mean:angular_prod`\
+`docker push dwickizer1/mean:angular_prod`
 
