@@ -21,9 +21,10 @@ Run Locally
 Endpoints
 ===============
 
-1. Angular Endpoint: `localhost:4200`
-2. Express API endpoint: `localhost:3000`
-3. MongoDB endpoint: `localhost:27017`
+1. Angular: `localhost:4200`
+2. Node/Express: `localhost:3000`
+3. MongoDB: `localhost:27017`
+4. Mongo Express: `localhost:8081`
 
 Note
 ===============
