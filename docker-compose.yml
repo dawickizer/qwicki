@@ -29,7 +29,18 @@ services:
     depends_on:
       - database
 
-  database: # name of the third service
+  mongo-express: # name of the third service
+    image: mongo-express # specify image to build container from
+    ports:
+      - "8081:8081" # specify port forewarding
+    environment: 
+      - ME_CONFIG_MONGODB_SERVER=database # name of service to connect to
+    networks:
+      - back-end
+    depends_on:
+      - database
+
+  database: # name of the fourth service
     image: mongo # specify image to build container from
     ports:
       - "27017:27017" # specify port forewarding
