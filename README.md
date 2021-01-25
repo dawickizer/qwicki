@@ -94,8 +94,8 @@ PROVISION KLUSTER
 MONGO DB 
 -------------------------
 
-`kubectl apply -f ./mongo-db/mongo-secret.yml (HOLD OFF)`
-`kubectl apply -f ./mongo-db/mongo.yml`
+`kubectl apply -f ./mongo-db/mongo-secret.yml (HOLD OFF)`\
+`kubectl apply -f ./mongo-db/mongo.yml`\
 `kubectl apply -f ./mongo-db/mongo-configmap.yml`
 
 MONGO EXPRESS
