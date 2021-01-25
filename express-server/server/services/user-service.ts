@@ -1,19 +1,19 @@
 // Import dependencies (node_modules)
-const mongoose = require('mongoose');
-const _ = require('lodash');
+import { connect, Document, MongooseUpdateQuery } from 'mongoose';
+import { set, get as _get } from 'lodash';
 
 // Import dependencies (module.exports)
-const config = require('../config/config');
-const User = require('../models/user').User;
-const CarService = require('../services/car-service');
-const ContactService = require('../services/contact-service');
-const DogService = require('../services/dog-service');
+import config from '../config/config';
+import { User } from '../models/user';
+import CarService from './car-service';
+import ContactService from './contact-service';
+import DogService from './dog-service';
 
 // determine environment 
 const env = process.env.NODE_ENV || 'development';
 
 // Connect to mongodb
-mongoose.connect(config[env].db);
+connect(config[env].db);
 
 // This class is responsible for handling the database operations for Users and
 // its nested fields. Basic CRUD operations are supported as well as the CRUD
@@ -68,7 +68,7 @@ class UserService {
   }
 
   // Get a specific user
-  async get(id) {
+  async get(id: any) {
     return await User.findById(id).
         populate('cars'). // reference
         populate([ // reference
@@ -110,14 +110,14 @@ class UserService {
 
   // Post one to many users. If an object is passed in it will be converted to
   // an array of size one. Returns an array of users or a single user
-  async post(users) {
+  async post(users: any[]) {
     return (!Array.isArray(users)) ? (await User.insertMany(await this.postNestedData([users])))[0]
                                    : await User.insertMany(await this.postNestedData(users));
   }
 
   // Helper function for posted nested reference objects/arrays
-  async postNestedData(users) {
-    let nest = async (users, path, service) => { for (let i = 0; i < users.length; i++) _.set(users[i], path, (_.get(users[i], path) ? await service.post(_.get(users[i], path)) : undefined)); }
+  async postNestedData(users: any[]) {
+    let nest = async (users: any[], path: any, service: any) => { for (let i = 0; i < users.length; i++) set(users[i], path, (_get(users[i], path) ? await service.post(_get(users[i], path)) : undefined)); }
     await nest(users, ['cars'], this.carService);
     await nest(users, ['contact'], this.contactService);
     await nest(users, ['address', 'cars'], this.carService);
@@ -128,7 +128,7 @@ class UserService {
   }
 
   // Update a user
-  async put(id, updatedUser) {
+  async put(id: any, updatedUser: any) {
 
     // For put requests lets agree that the front end will always do a get request first,
     // modify the "got" user, and then pass that user to the put as the updated user
@@ -176,18 +176,18 @@ class UserService {
   }
 
   // Helper function for putting nested reference objects/arrays
-  async putNestedData(oldUser, updatedUser) {
+  async putNestedData(oldUser: any, updatedUser: any) {
 
     console.log('PUT NESTED: oldUser');
     console.log(oldUser);
     console.log('PUT NESTED: updatedUser');
     console.log(updatedUser);
 
-    let nest = async (oldUser, updatedUser, path, service) => {
+    let nest = async (oldUser: any, updatedUser: any, path: any, service: any) => {
       //_.set(updatedUser, path, _.get(oldUser, path) ? await service.put(_.get(oldUser, path)._id, _.get(updatedUser, path)) : await service.post(_.get(updatedUser, path)));
 
-      let oldRef = _.get(oldUser, path); // get the old user's specified ref object
-      let newRef = _.get(updatedUser, path); // get the updated user's specified ref object
+      let oldRef = _get(oldUser, path); // get the old user's specified ref object
+      let newRef = _get(updatedUser, path); // get the updated user's specified ref object
 
       console.log('Old Ref');
       console.log(oldRef);
@@ -200,14 +200,14 @@ class UserService {
         let also = await service.put(oldRef._id, newRef);
         console.log('updated: ' + also);
 
-        console.log(_.set(updatedUser, path, also));
+        console.log(set(updatedUser, path, also));
 
       } else {  // else POST
         console.log('ref does not exist...doing a POST...');
         let me = (await service.post(newRef));
         console.log('created: ' + me);
 
-        console.log(_.set(updatedUser, path, me));
+        console.log(set(updatedUser, path, me));
       }
     }
 
@@ -222,14 +222,14 @@ class UserService {
   }
 
   // Delete one to many users
-  async delete(ids) {
+  async delete(ids: any[]) {
     await this.deleteNestedData(await User.find({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}}));
     return await User.deleteMany({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}});
   }
 
   // Helper function for posted nested reference objects/arrays
-  async deleteNestedData(users) {
-    let unnest = async (users, path, service) => { for (let i = 0; i < users.length; i++) await service.delete(_.get(users[i], path)); }
+  async deleteNestedData(users: any[]) {
+    let unnest = async (users: any[], path: any, service: any) => { for (let i = 0; i < users.length; i++) await service.delete(_get(users[i], path)); }
     await unnest(users, ['cars'], this.carService);
     await unnest(users, ['contact'], this.contactService);
     await unnest(users, ['address', 'cars'], this.carService);
@@ -240,4 +240,4 @@ class UserService {
   }
 }
 
-module.exports = UserService;
+export default UserService;

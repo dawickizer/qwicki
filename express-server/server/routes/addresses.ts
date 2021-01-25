@@ -1,9 +1,9 @@
 // Import dependencies
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
 // Middleware
-var requestTime = function (req, res, next) {
+let requestTime = (_req: any, _res: any, next: any) => {
   console.log('Time: ', Date.now())
   next()
 }
@@ -12,28 +12,28 @@ var requestTime = function (req, res, next) {
 router.use(requestTime);
 
 // GET all addresses
-router.get('/', (req, res) => {
+router.get('/', (_req, res) => {
     res.send('get addresses');
 });
 
 // Create a address.
-router.post('/', (req, res) => {
+router.post('/', (_req, res) => {
     res.send('post address');
 });
 
 // GET one addresses.
-router.get('/:id', (req, res) => {
+router.get('/:id', (_req, res) => {
     res.send('get address');
 });
 
 // PUT (update) one address.
-router.put('/:id', (req, res) => {
+router.put('/:id', (_req, res) => {
     res.send('put address');
 });
 
 // DELETE one address.
-router.delete('/:id', (req, res) => {
+router.delete('/:id', (_req, res) => {
     res.send('delete address');
 });
 
-module.exports = router;
+export default router;

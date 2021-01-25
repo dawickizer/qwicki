@@ -1,16 +1,16 @@
 // Import dependencies (node_modules)
-const mongoose = require('mongoose');
-const _ = require('lodash');
+import { connect } from 'mongoose';
+import { set, get as _get } from 'lodash';
 
 // Import dependencies (module.exports)
-const config = require('../config/config');
-const Car = require('../models/car').Car;
+import config from '../config/config';
+import { Car } from '../models/car';
 
 // determine environment 
-const env = process.env.NODE_ENV || 'development';
+let env = process.env.NODE_ENV || 'development';
 
 // Connect to mongodb
-mongoose.connect(config[env].db);
+connect(config[env].db);
 
 // This class is responsible for handling the database operations for Cars and
 // its nested fields. Basic CRUD operations are supported as well as the CRUD
@@ -23,25 +23,25 @@ class CarService {
   }
 
   // Get a specific car
-  async get(id) {
+  async get(id: any) {
     return await Car.findById(id);
   }
 
   // Post one to many cars. If an object is passed in it will be converted to
   // an array of size one. Returns an array of cars
-  async post(cars) {
+  async post(cars: any[]) {
     return (!Array.isArray(cars)) ? (await Car.insertMany(await this.postNestedData([cars])))[0]
                                   : await Car.insertMany(await this.postNestedData(cars));
   }
 
   // Helper function for posted nested reference objects/arrays
-  async postNestedData(cars) {
-    let nest = async (cars, path, service) => { for (let i = 0; i < cars.length; i++) _.set(cars[i], path, (_.get(cars[i], path) ? await service.post(_.get(cars[i], path)) : undefined)); }
+  async postNestedData(cars: any[]) {
+    let nest = async (cars: any[], path: any, service: any) => { for (let i = 0; i < cars.length; i++) set(cars[i], path, (_get(cars[i], path) ? await service.post(_get(cars[i], path)) : undefined)); }
     return cars;
   }
 
   // Update a car
-  async put(id, car) {
+  async put(id: any, car: any) {
     return await Car.findByIdAndUpdate(id, car, {new: true}, (err, updatedCar) => {
         if (err) return err;
         else return updatedCar;
@@ -49,16 +49,16 @@ class CarService {
   }
 
   // Delete one to many cars
-  async delete(ids) {
+  async delete(ids: any[]) {
     await this.deleteNestedData(await Car.find({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}}));
     return await Car.deleteMany({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}});
   }
 
   // Helper function for posted nested reference objects/arrays
-  async deleteNestedData(cars) {
-    let unnest = async (cars, path, service) => { for (let i = 0; i < cars.length; i++) await service.delete(_.get(cars[i], path)); }
+  async deleteNestedData(cars: any[]) {
+    let unnest = async (cars: any[], path: any, service: any) => { for (let i = 0; i < cars.length; i++) await service.delete(_get(cars[i], path)); }
     return cars;
   }
 }
 
-module.exports = CarService;
+export default CarService;

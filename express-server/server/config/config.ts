@@ -1,4 +1,4 @@
-const config = {
+const config: any = {
     development: {
         db: 'mongodb://database/mean' // MongoDB URL from the docker-compose file
     },
@@ -6,4 +6,4 @@ const config = {
         db: process.env.MONGO_DB_ENDPOINT
     }
 };
-module.exports = config;
+export default config;
