@@ -114,7 +114,7 @@ EXPRESS
 `docker push dwickizer1/mean:express_prod`
 
 `kubectl apply -f ./express-server/express.yml`\
-`kubectl get services/express-service`\
+`kubectl get services/express-service`
 
 copy EXTERNAL_IP\
 Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Express API
