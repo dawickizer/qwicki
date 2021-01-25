@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  EXPRESS_ENDPOINT: 'http://ab9898c50db0f43d0a00a1f83cba8cda-134936963.us-east-1.elb.amazonaws.com'
+  EXPRESS_ENDPOINT: 'http://a12ce71b8c52844deba0012257431dfb-2024471450.us-east-1.elb.amazonaws.com'
 };
