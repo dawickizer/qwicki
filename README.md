@@ -146,8 +146,9 @@ DELETE RESOURCES
 
 Update Docker Images To Be Deployed
 -----------------------------------
-1. `docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`
-2. `docker push dwickizer1/mean:express_prod`
-3. `docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`
-4. `docker push dwickizer1/mean:angular_prod`
+`docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`
+`docker push dwickizer1/mean:express_prod`
+
+`docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`
+`docker push dwickizer1/mean:angular_prod`
 
