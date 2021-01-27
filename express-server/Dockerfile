@@ -4,6 +4,10 @@ FROM node:latest
 # Create a directory where our app will be placed
 RUN mkdir -p /usr/src/app
 
+# Force Express/Node to wait for Mongo DB to initialize
+COPY ./wait-for-it/wait-for-it.sh /usr/wait-for-it.sh
+RUN chmod +x /usr/wait-for-it.sh
+
 # Change directory so that our commands run inside this new directory
 WORKDIR /usr/src/app
 

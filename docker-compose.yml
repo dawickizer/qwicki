@@ -28,6 +28,7 @@ services:
       - back-end
     depends_on:
       - database
+    command: bash -c "/usr/wait-for-it.sh --timeout=0 database:27017 && npm start" # wait for the database to finish initializing
 
   mongo-express: # name of the third service
     image: mongo-express # specify image to build container from
@@ -35,6 +36,10 @@ services:
       - "8081:8081" # specify port forewarding
     environment: 
       - ME_CONFIG_MONGODB_SERVER=database # name of service to connect to
+      - ME_CONFIG_BASICAUTH_USERNAME=username # username for logging into mongo-express UI 
+      - ME_CONFIG_BASICAUTH_PASSWORD=password # password for logging into mongo-express UI
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=username # username for mongodb 
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=password # password for mongodb
     networks:
       - back-end
     depends_on:
@@ -44,8 +49,18 @@ services:
     image: mongo # specify image to build container from
     ports:
       - "27017:27017" # specify port forewarding
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=username
+      - MONGO_INITDB_ROOT_PASSWORD=password
+      - MONGO_INITDB_DATABASE=mean
+    volumes:
+      - ./mongo-db/mongodb/home/mongodb:/home/mongodb # bind mount to prevent error that happens when setting the root credentials via ENV
+      - ./mongo-db/mongodb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d # bind mount for init scripts
+      - mongodata:/data/db # named docker volume for db data (bind mount doesnt work because Windows filesharing to Linux VM doesnt play nice with Mongo file perms)
     networks:
       - back-end
 networks:
   front-end:
   back-end:
+volumes:
+  mongodata:
