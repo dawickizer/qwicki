@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, ArcRotateCamera, FreeCamera, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { Engine, FreeCamera, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -14,7 +14,6 @@ export class TestBabylonComponent implements OnInit {
 
   @Output() engine: Engine;
   @Output() scene: Scene;
-  @Output() arcCamera: ArcRotateCamera;
   @Output() freeCamera: FreeCamera;
   @Output() light: HemisphericLight;
   @Output() skybox: Mesh;
@@ -35,21 +34,15 @@ export class TestBabylonComponent implements OnInit {
     this.ground = this.createGround(this.scene);
     this.sphere = this.createSphere(this.scene);
 
-
-
-
-
-  
-
     // temp solution to lock camera at fixed height
-    this.scene.registerBeforeRender(() => { 
+    // this.scene.registerBeforeRender(() => { 
 
-      if (this.freeCamera._position.y != 10) this.freeCamera._position.y = 13; 
+    //   if (this.freeCamera._position.y != 10) this.freeCamera._position.y = 13; 
 
-      this.sphere.rotation.y += Math.PI / 100;
+    //   this.sphere.rotation.y += Math.PI / 100;
       
   
-    });
+    // });
 
     // debug tools
     //this.scene.debugLayer.show();
@@ -62,27 +55,24 @@ export class TestBabylonComponent implements OnInit {
   createScene() {
     this.engine = new Engine(this.canvas.nativeElement, true);
     this.scene = new Scene(this.engine);
+    this.scene.gravity = new Vector3(0, -9, 0);
+    this.scene.collisionsEnabled = true;
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
-    //this.createArcCamera();
-    this.createFreeCamera();
-  }
 
-  createArcCamera() {
-    this.arcCamera = new ArcRotateCamera('arcCamera', -Math.PI / 2, Math.PI / 2.2, 30, new Vector3(0, 4, 0), this.scene);
-    this.arcCamera.attachControl(this.canvas.nativeElement, true);
-    this.arcCamera.upperBetaLimit = Math.PI / 2.2;
-    this.arcCamera.radius = 30;
-    this.scene.registerBeforeRender(() => { 
-      if (this.arcCamera.radius > 70) this.arcCamera.radius = 70;
-      if (this.arcCamera.radius < 30) this.arcCamera.radius = 30; 
-    });
+    this.createFreeCamera();
+
+
+    // this.freeCamera.checkCollisions = true;
+    // this.freeCamera.applyGravity = true;
+    // this.freeCamera.ellipsoid = new Vector3(5,5,5);
   }
 
   createFreeCamera() {
-    this.freeCamera = new FreeCamera('freeCamera', new Vector3(0, 13, 0), this.scene);
+    this.freeCamera = new FreeCamera('freeCamera', new Vector3(0, 10, 0), this.scene);
     this.freeCamera.attachControl(this.canvas.nativeElement, true);
     this.freeCamera.checkCollisions = true;
     this.freeCamera.applyGravity = true;
+    this.freeCamera.ellipsoid = new Vector3(5,5,5);
 
     this.freeCamera.keysUp = [];
     this.freeCamera.keysUp.push('w'.charCodeAt(0));
