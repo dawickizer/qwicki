@@ -27,16 +27,19 @@ export class TestBabylonComponent implements OnInit {
   ngOnInit() {
 
     this.createScene();
+    this.handleWindowResize(this.engine);
+    this.handlePointerLock(this.scene);
+    this.handleRunOnShift(this.freeCamera);
 
     this.skybox = this.createSkyBox(this.scene);
     this.ground = this.createGround(this.scene);
     this.sphere = this.createSphere(this.scene);
 
-    // handle window resize events
-    window.addEventListener('resize', () => this.engine.resize());
 
-    // handle cursor setup
-    this.handleCursor(this.scene);
+
+
+
+  
 
     // temp solution to lock camera at fixed height
     this.scene.registerBeforeRender(() => { 
@@ -45,7 +48,7 @@ export class TestBabylonComponent implements OnInit {
 
       this.sphere.rotation.y += Math.PI / 100;
       
-    
+  
     });
 
     // debug tools
@@ -138,16 +141,24 @@ export class TestBabylonComponent implements OnInit {
     return sphere;
   }
 
-  handleCursor(scene: Scene) {
+  handleWindowResize(engine: Engine) {
+    window.addEventListener('resize', () => engine.resize());   
+  }
+
+  handlePointerLock(scene: Scene) {
     // Hide and lock mouse cursor when scene is clicked
-    scene.onPointerDown = () => { if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock(); }
+    scene.onPointerDown = () => { if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock() }
 
     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively
     document.addEventListener('pointerlockchange', () => {
-      let element = document.pointerLockElement || null;
-      if (element) this.sceneIsLocked = true;
+      if (document.pointerLockElement) this.sceneIsLocked = true;
       else this.sceneIsLocked = false;
     });
+  }
+
+  handleRunOnShift(freeCamera: FreeCamera) {
+    document.addEventListener('keydown', event => { if (event.key == 'Shift' && event.code == 'ShiftLeft') freeCamera.speed = 4 });
+    document.addEventListener('keyup', event => { if (event.key == 'Shift' && event.code == 'ShiftLeft') freeCamera.speed = 2 });
   }
 
   render() {
