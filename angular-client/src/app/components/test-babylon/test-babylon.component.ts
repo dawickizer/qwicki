@@ -32,6 +32,7 @@ export class TestBabylonComponent implements OnInit {
     this.handlePointerLock(this.scene);
     this.handleRunOnShift(this.freeCamera);
     this.handleFlyOnSpace(this.freeCamera);
+    this.handleDebugLayer(this.scene);
 
     this.skybox = this.createSkyBox(this.scene);
     this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
@@ -40,8 +41,9 @@ export class TestBabylonComponent implements OnInit {
 
     this.music = this.createMusic(this.scene);
 
-    // debug tools
-    //this.scene.debugLayer.show();
+    this.scene.registerBeforeRender(() => { 
+      this.sphere.rotation.y += Math.PI / 100;
+    });
 
     // running babylonJS
     this.render();
@@ -134,10 +136,18 @@ export class TestBabylonComponent implements OnInit {
     // Hide and lock mouse cursor when scene is clicked
     scene.onPointerDown = () => { if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock() }
 
-    // Toggle state of pointer lock so that requestPointerLock does not get called repetitively
+    // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
     document.addEventListener('pointerlockchange', () => {
-      if (document.pointerLockElement) this.sceneIsLocked = true;
-      else this.sceneIsLocked = false;
+      if (document.pointerLockElement) {
+        this.sceneIsLocked = true;
+        this.unloadScrollBars();
+        this.scrollWindowToBottom();
+      }
+      else {
+        this.sceneIsLocked = false;
+        this.reloadScrollBars();
+        this.scrollWindowToTop();
+      }
     });
   }
 
@@ -150,19 +160,44 @@ export class TestBabylonComponent implements OnInit {
     document.addEventListener('keydown', event => { if (event.code == 'Space') freeCamera.applyGravity = !freeCamera.applyGravity });
   }
 
+  reloadScrollBars() {
+    document.documentElement.style.overflow = 'auto';  // firefox, chrome
+  }
+
+  unloadScrollBars() {
+    document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+  }
+
+  scrollWindowToBottom() {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  scrollWindowToTop() {
+    window.scrollTo(0, 0);
+  }
+
+  handleDebugLayer(scene: Scene) {
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'NumpadAdd') {
+        if (scene.debugLayer.isVisible()) scene.debugLayer.hide();
+        else scene.debugLayer.show();
+      }
+    });
+  }
+
   createMusic(scene: Scene): Sound {
     let music = new Sound('', 'assets/babylon/sounds/relaxing.mp3', scene, null, { loop: true, autoplay: true });
     music.setVolume(.1);
     return music;
   }
 
+  ngOnDestroy(): void {
+    this.music.dispose();
+  }
+
   render() {
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
-  }
-
-  ngOnDestroy() {
-
   }
 }
