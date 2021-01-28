@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, FreeCamera, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { Engine, FreeCamera, HemisphericLight, Sound, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -18,7 +18,9 @@ export class TestBabylonComponent implements OnInit {
   @Output() light: HemisphericLight;
   @Output() skybox: Mesh;
   @Output() ground: Mesh;
+  @Output() platform: Mesh;
   @Output() sphere: Mesh;
+  @Output() music: Sound;
   @Output() sceneIsLocked: boolean = false;
 
   constructor() { }
@@ -29,20 +31,14 @@ export class TestBabylonComponent implements OnInit {
     this.handleWindowResize(this.engine);
     this.handlePointerLock(this.scene);
     this.handleRunOnShift(this.freeCamera);
+    this.handleFlyOnSpace(this.freeCamera);
 
     this.skybox = this.createSkyBox(this.scene);
-    this.ground = this.createGround(this.scene);
+    this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
+    this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
 
-    // temp solution to lock camera at fixed height
-    // this.scene.registerBeforeRender(() => { 
-
-    //   if (this.freeCamera._position.y != 10) this.freeCamera._position.y = 13; 
-
-    //   this.sphere.rotation.y += Math.PI / 100;
-      
-  
-    // });
+    this.music = this.createMusic(this.scene);
 
     // debug tools
     //this.scene.debugLayer.show();
@@ -55,28 +51,25 @@ export class TestBabylonComponent implements OnInit {
   createScene() {
     this.engine = new Engine(this.canvas.nativeElement, true);
     this.scene = new Scene(this.engine);
-    this.scene.gravity = new Vector3(0, -9, 0);
+    this.scene.gravity = new Vector3(0, -5, 0);
     this.scene.collisionsEnabled = true;
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
-
     this.createFreeCamera();
-
-
-    // this.freeCamera.checkCollisions = true;
-    // this.freeCamera.applyGravity = true;
-    // this.freeCamera.ellipsoid = new Vector3(5,5,5);
   }
 
   createFreeCamera() {
-    this.freeCamera = new FreeCamera('freeCamera', new Vector3(0, 10, 0), this.scene);
+    this.freeCamera = new FreeCamera('freeCamera', new Vector3(0, 20, 0), this.scene);
     this.freeCamera.attachControl(this.canvas.nativeElement, true);
+
     this.freeCamera.checkCollisions = true;
     this.freeCamera.applyGravity = true;
-    this.freeCamera.ellipsoid = new Vector3(5,5,5);
+    this.freeCamera.ellipsoid = new Vector3(5,10,5);
 
     this.freeCamera.keysUp = [];
     this.freeCamera.keysUp.push('w'.charCodeAt(0));
     this.freeCamera.keysUp.push('W'.charCodeAt(0));
+
+    this.freeCamera.keysUpward.push(' '.charCodeAt(0));
 
     this.freeCamera.keysLeft = [];
     this.freeCamera.keysLeft.push('a'.charCodeAt(0));
@@ -107,10 +100,12 @@ export class TestBabylonComponent implements OnInit {
     return skybox;
   }
 
-  createGround(scene: Scene): Mesh {
-    let ground = MeshBuilder.CreateGround('ground', { width: 500, height: 500 }, scene);
+  createGround(scene: Scene, size: number, y_position: number, texture: string): Mesh {
+    let ground = MeshBuilder.CreateGround('ground', { width: size, height: size }, scene);
+    ground.position.y = y_position;
     let groundMat = new StandardMaterial('groundMat', scene);
-    groundMat.diffuseTexture = new Texture('assets/babylon/textures/grass.jpg', scene);
+    groundMat.backFaceCulling = false;
+    groundMat.diffuseTexture = new Texture('assets/babylon/textures/' + texture, scene);
     ground.material = groundMat;
     ground.checkCollisions = true;
     return ground;
@@ -147,8 +142,18 @@ export class TestBabylonComponent implements OnInit {
   }
 
   handleRunOnShift(freeCamera: FreeCamera) {
-    document.addEventListener('keydown', event => { if (event.key == 'Shift' && event.code == 'ShiftLeft') freeCamera.speed = 4 });
-    document.addEventListener('keyup', event => { if (event.key == 'Shift' && event.code == 'ShiftLeft') freeCamera.speed = 2 });
+    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') freeCamera.speed = 4 });
+    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') freeCamera.speed = 2 });
+  }
+
+  handleFlyOnSpace(freeCamera: FreeCamera) {
+    document.addEventListener('keydown', event => { if (event.code == 'Space') freeCamera.applyGravity = !freeCamera.applyGravity });
+  }
+
+  createMusic(scene: Scene): Sound {
+    let music = new Sound('', 'assets/babylon/sounds/relaxing.mp3', scene, null, { loop: true, autoplay: true });
+    music.setVolume(.1);
+    return music;
   }
 
   render() {
