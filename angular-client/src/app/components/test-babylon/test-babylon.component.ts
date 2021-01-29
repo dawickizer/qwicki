@@ -39,43 +39,31 @@ export class TestBabylonComponent implements OnInit {
     this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
-
-    this.gun = await this.importGun(this.scene);
-    this.gunSound = this.importGunSound(this.scene);
-    
-    this.gun.position = new Vector3(this.universalCamera.position.x + 4, this.universalCamera.position.y - 25 ,this.universalCamera.position.z + 20);
-    this.gun.parent = this.universalCamera;
-
-    this.fireGun()
-
+    this.gun = await this.createGun(this.scene);
+    this.gunSound = this.createGunSound(this.scene);
 
     // running babylonJS
     this.render();
 
   }
 
-  async importGun(scene: Scene): Promise<Mesh> {
+  async createGun(scene: Scene): Promise<Mesh> {
+
+    // import the asset and set some initial properties
     let gun: Mesh = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/m4/', 'scene.gltf')).meshes[0] as Mesh;
     gun.scaling = new Vector3(.25, .25, .25);
-    gun.position = new Vector3(this.universalCamera.position.x + 4, this.universalCamera.position.y - 5 ,this.universalCamera.position.z + 20);
+    gun.position = new Vector3(this.universalCamera.position.x + 4, this.universalCamera.position.y - 25 ,this.universalCamera.position.z + 20);
+    gun.parent = this.universalCamera;
     return gun;
   }
 
-  importGunSound(scene: Scene): Sound {
+  createGunSound(scene: Scene): Sound {
+
+    // import the sound and set some basic attributes
     let gunSound = new Sound('', 'assets/babylon/sounds/m4/gunshot.mp3', scene, null);
-    gunSound.setVolume(.5);
+    gunSound.setVolume(1);
     return gunSound;
   }
-
-  fireGun() {
-    document.addEventListener('mousedown', event => {
-      if (event.button == 0) {
-        this.gunSound.play();
-      }
-    });
-    //document.addEventListener('mouseup', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 2 });
-  }
-
 
   createScene() {
     this.engine = new Engine(this.canvas.nativeElement, true);
@@ -162,7 +150,10 @@ export class TestBabylonComponent implements OnInit {
 
   handlePointerLock(scene: Scene) {
     // Hide and lock mouse cursor when scene is clicked
-    scene.onPointerDown = () => { if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock() }
+    scene.onPointerDown = (event) => { 
+      if (!this.sceneIsLocked && event.button == 0) this.canvas.nativeElement.requestPointerLock()
+      else if (this.sceneIsLocked && event.button == 0) this.gunSound.play();
+    };
 
     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
     document.addEventListener('pointerlockchange', () => {
