@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, UniversalCamera, SceneLoader, HemisphericLight, Sound, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { Engine, UniversalCamera, SceneLoader, Sound, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -21,12 +21,12 @@ export class TestBabylonComponent implements OnInit {
   @Output() platform: Mesh;
   @Output() sphere: Mesh;
   @Output() gun: Mesh;
-  @Output() music: Sound;
+  @Output() gunSound: Sound;
   @Output() sceneIsLocked: boolean = false;
 
   constructor() { }
 
-  ngOnInit() {
+  async ngOnInit() {
 
     this.createScene();
     this.handleWindowResize(this.engine);
@@ -39,13 +39,43 @@ export class TestBabylonComponent implements OnInit {
     this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
-    this.gun = this.importGun(this.scene);
-    this.music = this.createMusic(this.scene);
+
+    this.gun = await this.importGun(this.scene);
+    this.gunSound = this.importGunSound(this.scene);
+    
+    this.gun.position = new Vector3(this.universalCamera.position.x + 4, this.universalCamera.position.y - 25 ,this.universalCamera.position.z + 20);
+    this.gun.parent = this.universalCamera;
+
+    this.fireGun()
+
 
     // running babylonJS
     this.render();
 
   }
+
+  async importGun(scene: Scene): Promise<Mesh> {
+    let gun: Mesh = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/m4/', 'scene.gltf')).meshes[0] as Mesh;
+    gun.scaling = new Vector3(.25, .25, .25);
+    gun.position = new Vector3(this.universalCamera.position.x + 4, this.universalCamera.position.y - 5 ,this.universalCamera.position.z + 20);
+    return gun;
+  }
+
+  importGunSound(scene: Scene): Sound {
+    let gunSound = new Sound('', 'assets/babylon/sounds/m4/gunshot.mp3', scene, null);
+    gunSound.setVolume(.5);
+    return gunSound;
+  }
+
+  fireGun() {
+    document.addEventListener('mousedown', event => {
+      if (event.button == 0) {
+        this.gunSound.play();
+      }
+    });
+    //document.addEventListener('mouseup', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 2 });
+  }
+
 
   createScene() {
     this.engine = new Engine(this.canvas.nativeElement, true);
@@ -126,16 +156,6 @@ export class TestBabylonComponent implements OnInit {
     return sphere;
   }
 
-  importGun(scene: Scene): Mesh {
-    let gun: Mesh;
-    SceneLoader.ImportMesh('', 'assets/babylon/models/m4/', 'scene.gltf', this.scene, (meshes) => {
-      gun = meshes[0] as Mesh;
-      gun.position = new Vector3(0, 15, 0);
-      gun.scaling = new Vector3(.25, .25, .25);
-    });
-    return gun;
-  }
-
   handleWindowResize(engine: Engine) {
     window.addEventListener('resize', () => engine.resize());   
   }
@@ -168,10 +188,6 @@ export class TestBabylonComponent implements OnInit {
     document.addEventListener('keydown', event => { if (event.code == 'Space') universalCamera.applyGravity = !universalCamera.applyGravity });
   }
 
-  handleJumpOnSpace(universalCamera: UniversalCamera) {
-    document.addEventListener('keydown', event => { if (event.code == 'Space') universalCamera.applyGravity = !universalCamera.applyGravity });
-  }
-
   reloadScrollBars() {
     document.documentElement.style.overflow = 'auto';  // firefox, chrome
   }
@@ -195,16 +211,6 @@ export class TestBabylonComponent implements OnInit {
         else scene.debugLayer.show();
       }
     });
-  }
-
-  createMusic(scene: Scene): Sound {
-    let music = new Sound('', 'assets/babylon/sounds/relaxing.mp3', scene, null, { loop: true, autoplay: true });
-    music.setVolume(.1);
-    return music;
-  }
-
-  ngOnDestroy(): void {
-    this.music.dispose();
   }
 
   render() {
