@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, FreeCamera, SceneLoader, HemisphericLight, Sound, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { Engine, UniversalCamera, SceneLoader, HemisphericLight, Sound, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -14,7 +14,7 @@ export class TestBabylonComponent implements OnInit {
 
   @Output() engine: Engine;
   @Output() scene: Scene;
-  @Output() freeCamera: FreeCamera;
+  @Output() universalCamera: UniversalCamera;
   @Output() light: HemisphericLight;
   @Output() skybox: Mesh;
   @Output() ground: Mesh;
@@ -31,8 +31,8 @@ export class TestBabylonComponent implements OnInit {
     this.createScene();
     this.handleWindowResize(this.engine);
     this.handlePointerLock(this.scene);
-    this.handleRunOnShift(this.freeCamera);
-    this.handleFlyOnSpace(this.freeCamera);
+    this.handleRunOnShift(this.universalCamera);
+    this.handleFlyOnSpace(this.universalCamera);
     this.handleDebugLayer(this.scene);
 
     this.skybox = this.createSkyBox(this.scene);
@@ -53,37 +53,37 @@ export class TestBabylonComponent implements OnInit {
     this.scene.gravity = new Vector3(0, -5, 0);
     this.scene.collisionsEnabled = true;
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
-    this.createFreeCamera();
+    this.createUniversalCamera();
   }
 
-  createFreeCamera() {
-    this.freeCamera = new FreeCamera('freeCamera', new Vector3(0, 20, 0), this.scene);
-    this.freeCamera.attachControl(this.canvas.nativeElement, true);
+  createUniversalCamera() {
+    this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 20, 0), this.scene);
+    this.universalCamera.attachControl(this.canvas.nativeElement, true);
 
-    this.freeCamera.checkCollisions = true;
-    this.freeCamera.applyGravity = true;
-    this.freeCamera.ellipsoid = new Vector3(5,10,5);
+    this.universalCamera.checkCollisions = true;
+    this.universalCamera.applyGravity = true;
+    this.universalCamera.ellipsoid = new Vector3(5,10,5);
 
-    this.freeCamera.keysUp = [];
-    this.freeCamera.keysUp.push('w'.charCodeAt(0));
-    this.freeCamera.keysUp.push('W'.charCodeAt(0));
+    this.universalCamera.keysUp = [];
+    this.universalCamera.keysUp.push('w'.charCodeAt(0));
+    this.universalCamera.keysUp.push('W'.charCodeAt(0));
 
-    this.freeCamera.keysUpward.push(' '.charCodeAt(0));
+    this.universalCamera.keysUpward.push(' '.charCodeAt(0)); // registers an input to apply gravity 
 
-    this.freeCamera.keysLeft = [];
-    this.freeCamera.keysLeft.push('a'.charCodeAt(0));
-    this.freeCamera.keysLeft.push('A'.charCodeAt(0));
+    this.universalCamera.keysLeft = [];
+    this.universalCamera.keysLeft.push('a'.charCodeAt(0));
+    this.universalCamera.keysLeft.push('A'.charCodeAt(0));
 
-    this.freeCamera.keysDown = [];
-    this.freeCamera.keysDown.push('s'.charCodeAt(0));
-    this.freeCamera.keysDown.push('S'.charCodeAt(0));
+    this.universalCamera.keysDown = [];
+    this.universalCamera.keysDown.push('s'.charCodeAt(0));
+    this.universalCamera.keysDown.push('S'.charCodeAt(0));
 
-    this.freeCamera.keysRight = [];
-    this.freeCamera.keysRight.push('d'.charCodeAt(0));
-    this.freeCamera.keysRight.push('D'.charCodeAt(0));
+    this.universalCamera.keysRight = [];
+    this.universalCamera.keysRight.push('d'.charCodeAt(0));
+    this.universalCamera.keysRight.push('D'.charCodeAt(0));
 
-    this.freeCamera.speed = 2; // controls WASD speed
-    this.freeCamera.angularSensibility = 7000; // controls mouse speed
+    this.universalCamera.speed = 2; // controls WASD speed
+    this.universalCamera.angularSensibility = 7000; // controls mouse speed
   }
 
   createSkyBox(scene: Scene): Mesh {
@@ -159,13 +159,17 @@ export class TestBabylonComponent implements OnInit {
     });
   }
 
-  handleRunOnShift(freeCamera: FreeCamera) {
-    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') freeCamera.speed = 4 });
-    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') freeCamera.speed = 2 });
+  handleRunOnShift(universalCamera: UniversalCamera) {
+    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 4 });
+    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 2 });
   }
 
-  handleFlyOnSpace(freeCamera: FreeCamera) {
-    document.addEventListener('keydown', event => { if (event.code == 'Space') freeCamera.applyGravity = !freeCamera.applyGravity });
+  handleFlyOnSpace(universalCamera: UniversalCamera) {
+    document.addEventListener('keydown', event => { if (event.code == 'Space') universalCamera.applyGravity = !universalCamera.applyGravity });
+  }
+
+  handleJumpOnSpace(universalCamera: UniversalCamera) {
+    document.addEventListener('keydown', event => { if (event.code == 'Space') universalCamera.applyGravity = !universalCamera.applyGravity });
   }
 
   reloadScrollBars() {
