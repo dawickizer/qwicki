@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, FreeCamera, HemisphericLight, Sound, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { Engine, FreeCamera, SceneLoader, HemisphericLight, Sound, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -20,6 +20,7 @@ export class TestBabylonComponent implements OnInit {
   @Output() ground: Mesh;
   @Output() platform: Mesh;
   @Output() sphere: Mesh;
+  @Output() gun: Mesh;
   @Output() music: Sound;
   @Output() sceneIsLocked: boolean = false;
 
@@ -38,12 +39,8 @@ export class TestBabylonComponent implements OnInit {
     this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
-
+    this.gun = this.importGun(this.scene);
     this.music = this.createMusic(this.scene);
-
-    this.scene.registerBeforeRender(() => { 
-      this.sphere.rotation.y += Math.PI / 100;
-    });
 
     // running babylonJS
     this.render();
@@ -85,7 +82,8 @@ export class TestBabylonComponent implements OnInit {
     this.freeCamera.keysRight.push('d'.charCodeAt(0));
     this.freeCamera.keysRight.push('D'.charCodeAt(0));
 
-    this.freeCamera.speed = 2; // controlls WASD
+    this.freeCamera.speed = 2; // controls WASD speed
+    this.freeCamera.angularSensibility = 7000; // controls mouse speed
   }
 
   createSkyBox(scene: Scene): Mesh {
@@ -126,6 +124,16 @@ export class TestBabylonComponent implements OnInit {
     sphereMat.diffuseTexture = new Texture('assets/babylon/textures/joe.jpg', scene);
     sphere.material = sphereMat;
     return sphere;
+  }
+
+  importGun(scene: Scene): Mesh {
+    let gun: Mesh;
+    SceneLoader.ImportMesh('', 'assets/babylon/models/m4/', 'scene.gltf', this.scene, (meshes) => {
+      gun = meshes[0] as Mesh;
+      gun.position = new Vector3(0, 15, 0);
+      gun.scaling = new Vector3(.25, .25, .25);
+    });
+    return gun;
   }
 
   handleWindowResize(engine: Engine) {
