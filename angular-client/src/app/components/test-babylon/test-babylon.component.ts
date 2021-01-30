@@ -21,7 +21,8 @@ export class TestBabylonComponent implements OnInit {
   @Output() platform: Mesh;
   @Output() sphere: Mesh;
   @Output() gun: Mesh;
-  @Output() gunSound: Sound;
+  @Output() gunshot: Sound;
+  @Output() reload: Sound;
   @Output() sceneIsLocked: boolean = false;
 
   constructor() { }
@@ -40,7 +41,9 @@ export class TestBabylonComponent implements OnInit {
     this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
     this.gun = await this.createGun(this.scene);
-    this.gunSound = this.createGunSound(this.scene);
+    this.gunshot = this.createGunshot(this.scene);
+    this.reload = this.createReload(this.scene);
+    this.handleReloadOnR();
 
     // running babylonJS
     this.render();
@@ -57,12 +60,20 @@ export class TestBabylonComponent implements OnInit {
     return gun;
   }
 
-  createGunSound(scene: Scene): Sound {
+  createGunshot(scene: Scene): Sound {
 
     // import the sound and set some basic attributes
-    let gunSound = new Sound('', 'assets/babylon/sounds/m4/gunshot.mp3', scene, null);
-    gunSound.setVolume(1);
-    return gunSound;
+    let gunshot = new Sound('', 'assets/babylon/sounds/m4/gunshot.mp3', scene, null);
+    gunshot.setVolume(.5);
+    return gunshot;
+  }
+
+  createReload(scene: Scene): Sound {
+
+    // import the sound and set some basic attributes
+    let reload = new Sound('', 'assets/babylon/sounds/m4/reload.mp3', scene, null);
+    reload.setVolume(.2);
+    return reload;
   }
 
   createScene() {
@@ -100,8 +111,8 @@ export class TestBabylonComponent implements OnInit {
     this.universalCamera.keysRight.push('d'.charCodeAt(0));
     this.universalCamera.keysRight.push('D'.charCodeAt(0));
 
-    this.universalCamera.speed = 2; // controls WASD speed
-    this.universalCamera.angularSensibility = 7000; // controls mouse speed
+    this.universalCamera.speed = 3; // controls WASD speed
+    this.universalCamera.angularSensibility = 8000; // controls mouse speed
   }
 
   createSkyBox(scene: Scene): Mesh {
@@ -148,59 +159,48 @@ export class TestBabylonComponent implements OnInit {
     window.addEventListener('resize', () => engine.resize());   
   }
 
+  ammo: number = 30;
   handlePointerLock(scene: Scene) {
 
     let shoot: boolean;
-
+    let magazine: number = 30;
+    let fireRate: number = 75;
+   
     // Hide and lock mouse cursor when scene is clicked
     scene.onPointerDown = (event) => { 
       if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
       else if (this.sceneIsLocked && event.button == 0) {
 
-        // shoot = true;
-        // for (let i = 0; i < 30; i++) {
-
-        //     setTimeout(() => {
-        //       if (shoot) {
-        //         this.gunSound.play()
-        //       }
-        //       else {
-        //         console.log(i)
-        //       }
-
-        //     }, 75*i)
-
-            
-        // }
         shoot = true;
         // Returns a Promise that resolves after "ms" Milliseconds
-        const timer = ms => new Promise(res => setTimeout(res, ms))
+        const timer = ms => new Promise(res => setTimeout(res, ms));
 
         let load = async () => { // We need to wrap the loop into an async function for this to work
-          for (var i = 0; i < 30; i++) {
-            if (shoot) this.gunSound.play()
-            else break;
-            console.log(i);
-            await timer(75); // then the created Promise can be awaited
+
+          // cant fire if reloading
+          if (!this.reload.isPlaying) {
+            for (var i = 0; i < magazine; i++) {
+              if (shoot && !this.reload.isPlaying) {
+                this.gunshot.play();
+                this.ammo--;
+                console.log(this.ammo)
+              }
+              else break;
+              await timer(fireRate); // then the created Promise can be awaited
+            }
+            if (this.ammo <= 0) { 
+              this.reload.play(); 
+              this.ammo = 30;
+              console.log(this.ammo)
+            }
           }
         }
 
         load();
       }
-
-
-
-
-
-
-
-      
     };
 
-    scene.onPointerUp = (event) => {
-      if (event.button == 0)
-        shoot = false;
-    }
+    scene.onPointerUp = (event) => { if (event.button == 0) shoot = false };
 
     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
     document.addEventListener('pointerlockchange', () => {
@@ -217,9 +217,19 @@ export class TestBabylonComponent implements OnInit {
     });
   }
 
+  handleReloadOnR() {
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'KeyR' && this.ammo < 30) {
+      this.reload.play();
+      this.ammo = 30;
+      console.log(this.ammo)
+      }
+    });
+  }
+
   handleRunOnShift(universalCamera: UniversalCamera) {
-    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 4 });
-    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 2 });
+    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 5 });
+    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') universalCamera.speed = 3 });
   }
 
   handleFlyOnSpace(universalCamera: UniversalCamera) {
