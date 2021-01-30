@@ -1,7 +1,12 @@
+// Core
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
 import { Engine, UniversalCamera, SceneLoader, Sound, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
+
+// Services/Models
+import { GunService } from 'src/app/services/gun/gun.service';
+import { Gun } from 'src/app/models/gun/gun';
 
 @Component({
   selector: 'app-test-babylon',
@@ -20,12 +25,10 @@ export class TestBabylonComponent implements OnInit {
   @Output() ground: Mesh;
   @Output() platform: Mesh;
   @Output() sphere: Mesh;
-  @Output() gun: Mesh;
-  @Output() gunshot: Sound;
-  @Output() reload: Sound;
   @Output() sceneIsLocked: boolean = false;
+  @Output() m4: Gun;
 
-  constructor() { }
+  constructor(private gunService: GunService) { }
 
   async ngOnInit() {
 
@@ -36,44 +39,20 @@ export class TestBabylonComponent implements OnInit {
     this.handleFlyOnSpace(this.universalCamera);
     this.handleDebugLayer(this.scene);
 
+    this.m4 = await this.gunService.get('m4', this.scene);
+    this.m4.gunMesh.position = new Vector3(this.universalCamera.position.x + 4, this.universalCamera.position.y - 25 ,this.universalCamera.position.z + 20);
+    this.m4.gunMesh.parent = this.universalCamera;
+
     this.skybox = this.createSkyBox(this.scene);
     this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
-    this.gun = await this.createGun(this.scene);
-    this.gunshot = this.createGunshot(this.scene);
-    this.reload = this.createReload(this.scene);
+
     this.handleReloadOnR();
 
     // running babylonJS
     this.render();
 
-  }
-
-  async createGun(scene: Scene): Promise<Mesh> {
-
-    // import the asset and set some initial properties
-    let gun: Mesh = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/m4/', 'scene.gltf')).meshes[0] as Mesh;
-    gun.scaling = new Vector3(.25, .25, .25);
-    gun.position = new Vector3(this.universalCamera.position.x + 4, this.universalCamera.position.y - 25 ,this.universalCamera.position.z + 20);
-    gun.parent = this.universalCamera;
-    return gun;
-  }
-
-  createGunshot(scene: Scene): Sound {
-
-    // import the sound and set some basic attributes
-    let gunshot = new Sound('', 'assets/babylon/sounds/m4/gunshot.mp3', scene, null);
-    gunshot.setVolume(.5);
-    return gunshot;
-  }
-
-  createReload(scene: Scene): Sound {
-
-    // import the sound and set some basic attributes
-    let reload = new Sound('', 'assets/babylon/sounds/m4/reload.mp3', scene, null);
-    reload.setVolume(.2);
-    return reload;
   }
 
   createScene() {
@@ -159,19 +138,16 @@ export class TestBabylonComponent implements OnInit {
     window.addEventListener('resize', () => engine.resize());   
   }
 
-  ammo: number = 30;
   handlePointerLock(scene: Scene) {
 
     let shoot: boolean;
-    let magazine: number;
-    let fireRate: number = 75;
    
     // Hide and lock mouse cursor when scene is clicked
     scene.onPointerDown = (event) => { 
       if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
       else if (this.sceneIsLocked && event.button == 0) {
 
-        magazine = this.ammo;
+        this.m4.magazine = this.m4.ammo;
         shoot = true;
         // Returns a Promise that resolves after "ms" Milliseconds
         const timer = ms => new Promise(res => setTimeout(res, ms));
@@ -179,20 +155,20 @@ export class TestBabylonComponent implements OnInit {
         let load = async () => { // We need to wrap the loop into an async function for this to work
 
           // cant fire if reloading
-          if (!this.reload.isPlaying) {
-            for (var i = 0; i < magazine; i++) {
-              if (shoot && !this.reload.isPlaying) {
-                this.gunshot.play();
-                this.ammo--;
-                console.log(this.ammo)
+          if (!this.m4.reloadSound.isPlaying) {
+            for (var i = 0; i < this.m4.magazine; i++) {
+              if (shoot && !this.m4.reloadSound.isPlaying) {
+                this.m4.gunshotSound.play();
+                this.m4.ammo--;
+                console.log(this.m4.ammo)
               }
               else break;
-              await timer(fireRate); // then the created Promise can be awaited
+              await timer(this.m4.fireRate); // then the created Promise can be awaited
             }
-            if (this.ammo <= 0) { 
-              this.reload.play(); 
-              this.ammo = 30;
-              console.log(this.ammo)
+            if (this.m4.ammo <= 0) { 
+              this.m4.reloadSound.play(); 
+              this.m4.ammo = 30;
+              console.log(this.m4.ammo)
             }
           }
         }
@@ -220,10 +196,10 @@ export class TestBabylonComponent implements OnInit {
 
   handleReloadOnR() {
     document.addEventListener('keydown', event => { 
-      if (event.code == 'KeyR' && this.ammo < 30) {
-      this.reload.play();
-      this.ammo = 30;
-      console.log(this.ammo)
+      if (event.code == 'KeyR' && this.m4.ammo < 30) {
+      this.m4.reloadSound.play();
+      this.m4.ammo = 30;
+      console.log(this.m4.ammo)
       }
     });
   }
