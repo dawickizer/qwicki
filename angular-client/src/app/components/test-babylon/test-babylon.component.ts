@@ -163,7 +163,7 @@ export class TestBabylonComponent implements OnInit {
   handlePointerLock(scene: Scene) {
 
     let shoot: boolean;
-    let magazine: number = 30;
+    let magazine: number;
     let fireRate: number = 75;
    
     // Hide and lock mouse cursor when scene is clicked
@@ -171,6 +171,7 @@ export class TestBabylonComponent implements OnInit {
       if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
       else if (this.sceneIsLocked && event.button == 0) {
 
+        magazine = this.ammo;
         shoot = true;
         // Returns a Promise that resolves after "ms" Milliseconds
         const timer = ms => new Promise(res => setTimeout(res, ms));
