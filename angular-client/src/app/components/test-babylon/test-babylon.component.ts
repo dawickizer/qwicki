@@ -149,11 +149,58 @@ export class TestBabylonComponent implements OnInit {
   }
 
   handlePointerLock(scene: Scene) {
+
+    let shoot: boolean;
+
     // Hide and lock mouse cursor when scene is clicked
     scene.onPointerDown = (event) => { 
-      if (!this.sceneIsLocked && event.button == 0) this.canvas.nativeElement.requestPointerLock()
-      else if (this.sceneIsLocked && event.button == 0) this.gunSound.play();
+      if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
+      else if (this.sceneIsLocked && event.button == 0) {
+
+        // shoot = true;
+        // for (let i = 0; i < 30; i++) {
+
+        //     setTimeout(() => {
+        //       if (shoot) {
+        //         this.gunSound.play()
+        //       }
+        //       else {
+        //         console.log(i)
+        //       }
+
+        //     }, 75*i)
+
+            
+        // }
+        shoot = true;
+        // Returns a Promise that resolves after "ms" Milliseconds
+        const timer = ms => new Promise(res => setTimeout(res, ms))
+
+        let load = async () => { // We need to wrap the loop into an async function for this to work
+          for (var i = 0; i < 30; i++) {
+            if (shoot) this.gunSound.play()
+            else break;
+            console.log(i);
+            await timer(75); // then the created Promise can be awaited
+          }
+        }
+
+        load();
+      }
+
+
+
+
+
+
+
+      
     };
+
+    scene.onPointerUp = (event) => {
+      if (event.button == 0)
+        shoot = false;
+    }
 
     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
     document.addEventListener('pointerlockchange', () => {
