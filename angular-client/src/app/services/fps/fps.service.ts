@@ -1,5 +1,8 @@
 import { Injectable, ElementRef } from '@angular/core';
 import { UniversalCamera, Vector3, Scene } from '@babylonjs/core';
+
+// Services/Models
+import { GunService } from 'src/app/services/gun/gun.service';
 import { Gun } from 'src/app/models/gun/gun';
 
 @Injectable({
@@ -12,9 +15,10 @@ export class FpsService {
   canvas: ElementRef<HTMLCanvasElement>;
   gun: Gun;
   shoot: boolean;
+  justFired: boolean = false;
   isSceneLocked: boolean = false;
 
-  constructor() { }
+  constructor(private gunService: GunService) { }
 
   addFpsMechanics(camera: UniversalCamera, scene: Scene, canvas: ElementRef<HTMLCanvasElement>, gun: Gun) {
     this.camera = camera;
@@ -26,7 +30,6 @@ export class FpsService {
     this.lockGunToCamera(4, -25, 20);
     this.createFpsKeyBinds();
     this.handlePointerEvents();
-
   }
 
   createFpsCamera() {
@@ -78,7 +81,7 @@ export class FpsService {
 
   handleReloadOnR() {
     document.addEventListener('keydown', event => { 
-      if (event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
+      if (this.isSceneLocked && event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
         this.gun.reloadSound.play();
         this.gun.ammo = this.gun.magazine;
         console.log('RELOADING...')
@@ -109,21 +112,26 @@ export class FpsService {
 
     let fire = async () => { // We need to wrap the loop into an async function for this to work
 
-      // cant fire if reloading
-      if (!this.gun.reloadSound.isPlaying) {
+      // cant fire if reloading or if you just fired
+      if (!this.gun.reloadSound.isPlaying && !this.justFired) {
         for (var i = 0; i < currentAmmo; i++) {
           if (this.shoot && !this.gun.reloadSound.isPlaying) {
             this.gun.gunshotSound.play();
             this.gun.ammo--;
+            this.justFired = true; // set just fired to true to prevent spam fire
+            setTimeout(() => this.justFired = false, this.gun.fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
             console.log(this.gun.ammo)
           }
-          else break;
+          else 
+            break;
+          
           await timer(this.gun.fireRate); // then the created Promise can be awaited
         }
         if (this.gun.ammo <= 0) { 
           this.gun.reloadSound.play(); 
           this.gun.ammo = this.gun.magazine;
-          console.log(this.gun.ammo)
+          console.log('RELOADING...')
+          console.log('ammo: ' + this.gun.ammo)
         }
       }
     }

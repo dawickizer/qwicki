@@ -20,14 +20,14 @@ export class GunService {
     this.m4.name = 'm4';
     this.m4.magazine = 30;
     this.m4.ammo = 30;
-    this.m4.fireRate = 75;
+    this.m4.fireRate = 300;
     this.m4.gunshotSound = null;
     this.m4.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
     this.m4.reloadSound = null;
     this.m4.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
     this.guns.push(this.m4);
 
-    // create m4
+    // create fake
     this.fake.gunMesh = null;
     this.fake.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
     this.fake.name = 'fake';
@@ -47,6 +47,16 @@ export class GunService {
     await gun.importGunshotSound(scene);
     await gun.importReloadSound(scene);
     return gun;
+  }
+
+  async getAll(scene: Scene): Promise<Gun[]> {
+    for (let i = 0; i < this.guns.length; i++) {
+      await this.guns[i].importGunMesh(scene);
+      await this.guns[i].importGunshotSound(scene);
+      await this.guns[i].importReloadSound(scene);
+    }
+
+    return this.guns;
   }
 
 

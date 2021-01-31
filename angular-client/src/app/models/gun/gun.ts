@@ -14,10 +14,23 @@ export class Gun {
   reloadSoundURL: string
 
   async importGunMesh(scene: Scene): Promise<Mesh> {
-    this.gunMesh = (await SceneLoader.ImportMeshAsync('', this.gunMeshURL), scene).meshes[0] as Mesh;
-    this.gunMesh.scaling = new Vector3(.25, .25, .25); // set some default scaling so the gun size/orientation is nice
+    let meshes = (await SceneLoader.ImportMeshAsync('', this.gunMeshURL), scene).meshes as Mesh[];
+
+    // clean up nodes
+    meshes[1].parent = meshes[0];
+    meshes[2].parent = meshes[0];
+    this.gunMesh = meshes[0];
+    this.gunMesh.getChildren()[0].dispose();
+
+    // set some default scaling/rotation so the gun size/orientation is nice
+    this.gunMesh.rotation = new Vector3(1.5, 0, 0);
+    this.gunMesh.scaling = new Vector3(.25, .25, -.25); 
+
+    // id the mesh
+    this.gunMesh.id = this.name + 'Mesh';
     this.gunMesh.name = this.name + 'Mesh';
     return this.gunMesh;
+
   }
 
   async importGunshotSound(scene: Scene): Promise<Sound> {
@@ -33,5 +46,21 @@ export class Gun {
     this.reloadSound.name = this.name + 'ReloadSound'
     return this.reloadSound;
   }
+
+  // dispose(scene: Scene) {
+
+  //   // remove mesh/child meshes from scene
+  //   scene.removeMesh(this.gunMesh, true); 
+
+  //   // dispose of child meshes under the active camera
+  //   for (let i = 0; i < scene.activeCamera.getChildMeshes().length; i++) scene.activeCamera.getChildMeshes()[i].dispose(true, true)
+
+  //   // dispose of gun mesh
+  //   this.gunMesh.dispose(true, true);
+
+  //   // dispose of sounds
+  //   this.gunshotSound.dispose();
+  //   this.reloadSound.dispose();   
+  // }
 
 }

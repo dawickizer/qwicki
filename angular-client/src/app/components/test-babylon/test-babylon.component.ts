@@ -1,6 +1,6 @@
 // Core
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, UniversalCamera, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { Engine, UniversalCamera, SceneLoader, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -29,6 +29,7 @@ export class TestBabylonComponent implements OnInit {
   @Output() isSceneLocked: boolean = false;
   @Output() shoot: boolean;
   @Output() gun: Gun;
+  @Output() guns: Gun[];
 
   constructor(private gunService: GunService, private fpsService: FpsService) { }
 
@@ -38,7 +39,24 @@ export class TestBabylonComponent implements OnInit {
     this.handleWindowResize(this.engine);
     this.handleDebugLayer(this.scene);
 
+
+
+      let meshes = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/m4/scene.gltf', '', this.scene)).meshes as Mesh[];
+  
+      // set some default scaling/rotation so the gun size/orientation is nice
+      meshes[0].position = new Vector3(30, 30, 50);
+      meshes[0].rotation = new Vector3(1.5, 0, 0);
+      meshes[0].scaling = new Vector3(.25, .25, -.25); 
+
+      let meshes2 = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/m4/scene.gltf', '', this.scene)).meshes as Mesh[];
+  
+      // set some default scaling/rotation so the gun size/orientation is nice
+      meshes2[0].position = new Vector3(0, 30, 50);
+      meshes2[0].rotation = new Vector3(1.5, 0, 0);
+      meshes2[0].scaling = new Vector3(.25, .25, -.25); 
+
     this.gun = await this.gunService.get('m4', this.scene);
+    //this.guns = await this.gunService.getAll(this.scene);
     this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas, this.gun);
 
     this.skybox = this.createSkyBox(this.scene);
@@ -59,6 +77,7 @@ export class TestBabylonComponent implements OnInit {
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
     this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 20, 0), this.scene);
     this.universalCamera.attachControl(this.canvas.nativeElement, true);
+    this.scene.activeCamera = this.universalCamera;
   }
 
   createSkyBox(scene: Scene): Mesh {
@@ -106,6 +125,7 @@ export class TestBabylonComponent implements OnInit {
   }
 
   handleDebugLayer(scene: Scene) {
+    this.scene.debugLayer.show();
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
         if (scene.debugLayer.isVisible()) scene.debugLayer.hide();
