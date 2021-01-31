@@ -25,7 +25,7 @@ export class FpsService {
     this.createFpsCamera();
     this.lockGunToCamera(4, -25, 20);
     this.createFpsKeyBinds();
-    this.handlePointerLock(this.scene);
+    this.handlePointerEvents();
 
   }
 
@@ -62,72 +62,78 @@ export class FpsService {
   }
 
   createFpsKeyBinds() {
-    this.runOnShiftEvent();
-    this.flyOnSpaceEvent();
-    this.reloadOnREvent();
+    this.handleRunOnShift();
+    this.handleFlyOnSpace();
+    this.handleReloadOnR();
   }
 
-  runOnShiftEvent() {
+  handleRunOnShift() {
     document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') this.camera.speed = 5 });
     document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') this.camera.speed = 3 });
   }
 
-  flyOnSpaceEvent() {
+  handleFlyOnSpace() {
     document.addEventListener('keydown', event => { if (event.code == 'Space') this.camera.applyGravity = !this.camera.applyGravity });
   }
 
-  reloadOnREvent() {
+  handleReloadOnR() {
     document.addEventListener('keydown', event => { 
-      if (event.code == 'KeyR' && this.gun.ammo < 30) {
+      if (event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
         this.gun.reloadSound.play();
-        this.gun.ammo = 30;
+        this.gun.ammo = this.gun.magazine;
         console.log('RELOADING...')
         console.log('ammo: ' + this.gun.ammo)
       }
     });
   }
 
-  handlePointerLock(scene: Scene) {
+  handlePointerEvents() {
    
     // Hide and lock mouse cursor when scene is clicked
-    scene.onPointerDown = (event) => { 
+    this.scene.onPointerDown = (event) => { 
       if (!this.isSceneLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
-      else if (this.isSceneLocked && event.button == 0) {
-
-        this.gun.magazine = this.gun.ammo;
-        this.shoot = true;
-        // Returns a Promise that resolves after "ms" Milliseconds
-        const timer = ms => new Promise(res => setTimeout(res, ms));
-
-        let load = async () => { // We need to wrap the loop into an async function for this to work
-
-          // cant fire if reloading
-          if (!this.gun.reloadSound.isPlaying) {
-            for (var i = 0; i < this.gun.magazine; i++) {
-              if (this.shoot && !this.gun.reloadSound.isPlaying) {
-                this.gun.gunshotSound.play();
-                this.gun.ammo--;
-                console.log(this.gun.ammo)
-              }
-              else break;
-              await timer(this.gun.fireRate); // then the created Promise can be awaited
-            }
-            if (this.gun.ammo <= 0) { 
-              this.gun.reloadSound.play(); 
-              this.gun.ammo = 30;
-              console.log(this.gun.ammo)
-            }
-          }
-        }
-
-        load();
-      }
+      else if (this.isSceneLocked && event.button == 0) this.fireWeapon(); // screen is locked...fire weapon
     };
 
-    scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
+    this.scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
 
     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
-    document.addEventListener('pointerlockchange', () => {
+    this.handlePointerLockChange();
+  }
+
+  fireWeapon() {
+    let currentAmmo = this.gun.ammo;
+    this.shoot = true;
+    // Returns a Promise that resolves after "ms" Milliseconds
+    const timer = ms => new Promise(res => setTimeout(res, ms));
+
+    let fire = async () => { // We need to wrap the loop into an async function for this to work
+
+      // cant fire if reloading
+      if (!this.gun.reloadSound.isPlaying) {
+        for (var i = 0; i < currentAmmo; i++) {
+          if (this.shoot && !this.gun.reloadSound.isPlaying) {
+            this.gun.gunshotSound.play();
+            this.gun.ammo--;
+            console.log(this.gun.ammo)
+          }
+          else break;
+          await timer(this.gun.fireRate); // then the created Promise can be awaited
+        }
+        if (this.gun.ammo <= 0) { 
+          this.gun.reloadSound.play(); 
+          this.gun.ammo = this.gun.magazine;
+          console.log(this.gun.ammo)
+        }
+      }
+    }
+
+    fire(); 
+  }
+
+  handlePointerLockChange() {
+     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
+     document.addEventListener('pointerlockchange', () => {
       if (document.pointerLockElement) {
         this.isSceneLocked = true;
         this.unloadScrollBars();
@@ -138,70 +144,8 @@ export class FpsService {
         this.reloadScrollBars();
         this.scrollWindowToTop();
       }
-    });
+    });  
   }
-
-  // scenePointerEvents() {
-
-  //   // Hide and lock mouse cursor when scene is clicked
-  //   this.scene.onPointerDown = (event) => { 
-  //     if (!this.isSceneLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
-  //     else if (this.isSceneLocked && event.button == 0) this.fireWeapon();
-  //   };
-
-  //   this.scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
-
-  //   this.pointerLockChangeEvent();
-  // }
-
-  // pointerLockChangeEvent() {
-  //    // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
-  //    document.addEventListener('pointerlockchange', () => {
-  //     if (document.pointerLockElement) {
-  //       this.isSceneLocked = true;
-  //       this.unloadScrollBars();
-  //       this.scrollWindowToBottom();
-  //     }
-  //     else {
-  //       this.isSceneLocked = false;
-  //       this.reloadScrollBars();
-  //       this.scrollWindowToTop();
-  //     }
-  //   });  
-  // }
-
-  // fireWeapon() {
-  //   this.gun.magazine = this.gun.ammo;
-  //   console.log('mag: ' +  this.gun.magazine)
-  //   this.shoot = true;
- 
-  //   // Returns a Promise that resolves after "ms" Milliseconds
-  //   const timer = ms => new Promise(res => setTimeout(res, ms));
-
-  //   let fire = async () => { // We need to wrap the loop into an async function for this to work
-
-  //     // cant fire if reloading
-  //     if (!this.gun.reloadSound.isPlaying) {
-  //       for (var i = 0; i < this.gun.magazine; i++) {
-  //         if (this.shoot && !this.gun.reloadSound.isPlaying) {
-  //           this.gun.gunshotSound.play();
-  //           this.gun.ammo--;
-  //           console.log('ammo: ' + this.gun.ammo)
-  //         }
-  //         else break;
-  //         await timer(this.gun.fireRate); // then the created Promise can be awaited
-  //       }
-  //       if (this.gun.ammo <= 0) { 
-  //         this.gun.reloadSound.play(); 
-  //         this.gun.ammo = 30;
-  //         console.log('RELOADING...')
-  //         console.log('ammo: ' + this.gun.ammo)
-  //       }
-  //     }
-  //   }
-
-  //   fire();   
-  // }
 
   reloadScrollBars() {
     document.documentElement.style.overflow = 'auto';  // firefox, chrome

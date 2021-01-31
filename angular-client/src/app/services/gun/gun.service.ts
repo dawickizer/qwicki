@@ -9,6 +9,8 @@ export class GunService {
 
   guns: Gun[] = [];
   m4: Gun = new Gun();
+  fake: Gun = new Gun();
+
 
   constructor() { 
     
@@ -24,6 +26,19 @@ export class GunService {
     this.m4.reloadSound = null;
     this.m4.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
     this.guns.push(this.m4);
+
+    // create m4
+    this.fake.gunMesh = null;
+    this.fake.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
+    this.fake.name = 'fake';
+    this.fake.magazine = 10;
+    this.fake.ammo = 10;
+    this.fake.fireRate = 500;
+    this.fake.gunshotSound = null;
+    this.fake.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
+    this.fake.reloadSound = null;
+    this.fake.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
+    this.guns.push(this.fake);
   }
 
   async get(name: String, scene: Scene): Promise<Gun> {
