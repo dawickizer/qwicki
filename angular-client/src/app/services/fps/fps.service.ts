@@ -77,7 +77,8 @@ export class FpsService {
       if (event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
         this.gun.reloadSound.play();
         this.gun.ammo = this.gun.magazine;
-        console.log(this.gun.ammo);
+        console.log('RELOADING...')
+        console.log('ammo: ' + this.gun.ammo)
       }
     });
   }
@@ -118,6 +119,7 @@ export class FpsService {
 
   fireWeapon() {
     this.gun.magazine = this.gun.ammo;
+    console.log('mag: ' +  this.gun.magazine)
     this.shoot = true;
  
     // Returns a Promise that resolves after "ms" Milliseconds
@@ -131,7 +133,7 @@ export class FpsService {
           if (this.shoot && !this.gun.reloadSound.isPlaying) {
             this.gun.gunshotSound.play();
             this.gun.ammo--;
-            console.log(this.gun.ammo)
+            console.log('ammo: ' + this.gun.ammo)
           }
           else break;
           await timer(this.gun.fireRate); // then the created Promise can be awaited
@@ -139,7 +141,8 @@ export class FpsService {
         if (this.gun.ammo <= 0) { 
           this.gun.reloadSound.play(); 
           this.gun.ammo = 30;
-          console.log(this.gun.ammo)
+          console.log('RELOADING...')
+          console.log('ammo: ' + this.gun.ammo)
         }
       }
     }
