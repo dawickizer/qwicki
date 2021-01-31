@@ -65,7 +65,7 @@ export class FpsService {
   createFpsKeyBinds() {
     this.runOnShiftEvent();
     this.flyOnSpaceEvent();
-    //this.reloadOnREvent();
+    this.reloadOnREvent();
   }
 
   runOnShiftEvent() {
@@ -77,17 +77,17 @@ export class FpsService {
     document.addEventListener('keydown', event => { if (event.code == 'Space') this.camera.applyGravity = !this.camera.applyGravity });
   }
 
-  // reloadOnREvent() {
-  //   document.addEventListener('keydown', event => { 
-  //     if (event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
-  //       this.gun.reloadSound.play();
-  //       this.gun.ammo = this.gun.magazine;
-  //       console.log('RELOADING...')
-  //       console.log('ammo: ' + this.gun.ammo)
-  //     }
-  //   });
-  // }
-  //
+  reloadOnREvent() {
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'KeyR' && this.gun.ammo < 30) {
+        this.gun.reloadSound.play();
+        this.gun.ammo = 30;
+        console.log('RELOADING...')
+        console.log('ammo: ' + this.gun.ammo)
+      }
+    });
+  }
+  
   // scenePointerEvents() {
 
   //   // Hide and lock mouse cursor when scene is clicked

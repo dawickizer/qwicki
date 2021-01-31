@@ -148,8 +148,9 @@ export class TestBabylonComponent implements OnInit {
   @Output() ground: Mesh;
   @Output() platform: Mesh;
   @Output() sphere: Mesh;
-  @Output() sceneIsLocked: boolean = false;
-  @Output() m4: Gun;
+  @Output() isSceneLocked: boolean = false;
+  @Output() shoot: boolean;
+  @Output() gun: Gun;
 
   constructor(private gunService: GunService, private fpsService: FpsService) { }
 
@@ -160,15 +161,13 @@ export class TestBabylonComponent implements OnInit {
     this.handlePointerLock(this.scene);
     this.handleDebugLayer(this.scene);
 
-    this.m4 = await this.gunService.get('m4', this.scene);
-    this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas, this.m4);
+    this.gun = await this.gunService.get('m4', this.scene);
+    this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas, this.gun);
 
     this.skybox = this.createSkyBox(this.scene);
     this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
-
-    this.handleReloadOnR();
 
     // running babylonJS
     this.render();
@@ -181,37 +180,8 @@ export class TestBabylonComponent implements OnInit {
     this.scene.gravity = new Vector3(0, -5, 0);
     this.scene.collisionsEnabled = true;
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
-    this.createUniversalCamera();
-  }
-
-  createUniversalCamera() {
     this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 20, 0), this.scene);
     this.universalCamera.attachControl(this.canvas.nativeElement, true);
-
-    this.universalCamera.checkCollisions = true;
-    this.universalCamera.applyGravity = true;
-    this.universalCamera.ellipsoid = new Vector3(5,10,5);
-
-    this.universalCamera.keysUp = [];
-    this.universalCamera.keysUp.push('w'.charCodeAt(0));
-    this.universalCamera.keysUp.push('W'.charCodeAt(0));
-
-    this.universalCamera.keysUpward.push(' '.charCodeAt(0)); // registers an input to apply gravity 
-
-    this.universalCamera.keysLeft = [];
-    this.universalCamera.keysLeft.push('a'.charCodeAt(0));
-    this.universalCamera.keysLeft.push('A'.charCodeAt(0));
-
-    this.universalCamera.keysDown = [];
-    this.universalCamera.keysDown.push('s'.charCodeAt(0));
-    this.universalCamera.keysDown.push('S'.charCodeAt(0));
-
-    this.universalCamera.keysRight = [];
-    this.universalCamera.keysRight.push('d'.charCodeAt(0));
-    this.universalCamera.keysRight.push('D'.charCodeAt(0));
-
-    this.universalCamera.speed = 3; // controls WASD speed
-    this.universalCamera.angularSensibility = 8000; // controls mouse speed
   }
 
   createSkyBox(scene: Scene): Mesh {
@@ -255,36 +225,34 @@ export class TestBabylonComponent implements OnInit {
   }
 
   handlePointerLock(scene: Scene) {
-
-    let shoot: boolean;
    
     // Hide and lock mouse cursor when scene is clicked
     scene.onPointerDown = (event) => { 
-      if (!this.sceneIsLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
-      else if (this.sceneIsLocked && event.button == 0) {
+      if (!this.isSceneLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
+      else if (this.isSceneLocked && event.button == 0) {
 
-        this.m4.magazine = this.m4.ammo;
-        shoot = true;
+        this.gun.magazine = this.gun.ammo;
+        this.shoot = true;
         // Returns a Promise that resolves after "ms" Milliseconds
         const timer = ms => new Promise(res => setTimeout(res, ms));
 
         let load = async () => { // We need to wrap the loop into an async function for this to work
 
           // cant fire if reloading
-          if (!this.m4.reloadSound.isPlaying) {
-            for (var i = 0; i < this.m4.magazine; i++) {
-              if (shoot && !this.m4.reloadSound.isPlaying) {
-                this.m4.gunshotSound.play();
-                this.m4.ammo--;
-                console.log(this.m4.ammo)
+          if (!this.gun.reloadSound.isPlaying) {
+            for (var i = 0; i < this.gun.magazine; i++) {
+              if (this.shoot && !this.gun.reloadSound.isPlaying) {
+                this.gun.gunshotSound.play();
+                this.gun.ammo--;
+                console.log(this.gun.ammo)
               }
               else break;
-              await timer(this.m4.fireRate); // then the created Promise can be awaited
+              await timer(this.gun.fireRate); // then the created Promise can be awaited
             }
-            if (this.m4.ammo <= 0) { 
-              this.m4.reloadSound.play(); 
-              this.m4.ammo = 30;
-              console.log(this.m4.ammo)
+            if (this.gun.ammo <= 0) { 
+              this.gun.reloadSound.play(); 
+              this.gun.ammo = 30;
+              console.log(this.gun.ammo)
             }
           }
         }
@@ -293,29 +261,19 @@ export class TestBabylonComponent implements OnInit {
       }
     };
 
-    scene.onPointerUp = (event) => { if (event.button == 0) shoot = false };
+    scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
 
     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
     document.addEventListener('pointerlockchange', () => {
       if (document.pointerLockElement) {
-        this.sceneIsLocked = true;
+        this.isSceneLocked = true;
         this.unloadScrollBars();
         this.scrollWindowToBottom();
       }
       else {
-        this.sceneIsLocked = false;
+        this.isSceneLocked = false;
         this.reloadScrollBars();
         this.scrollWindowToTop();
-      }
-    });
-  }
-
-  handleReloadOnR() {
-    document.addEventListener('keydown', event => { 
-      if (event.code == 'KeyR' && this.m4.ammo < 30) {
-      this.m4.reloadSound.play();
-      this.m4.ammo = 30;
-      console.log(this.m4.ammo)
       }
     });
   }
@@ -339,7 +297,7 @@ export class TestBabylonComponent implements OnInit {
   handleWindowResize(engine: Engine) {
     window.addEventListener('resize', () => engine.resize());   
   }
-  
+
   handleDebugLayer(scene: Scene) {
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
