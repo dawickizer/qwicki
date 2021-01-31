@@ -17,6 +17,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocketService } from './services/socket/socket.service';
 import { ApiService } from './services/api/api.service';
 import { GunService } from './services/gun/gun.service';
+import { FpsService } from './services/fps/fps.service';
 
 @NgModule({
   declarations: [
@@ -37,7 +38,8 @@ import { GunService } from './services/gun/gun.service';
   providers: [
               SocketService,
               ApiService,
-              GunService
+              GunService,
+              FpsService
             ],
   bootstrap: [AppComponent],
   schemas: [ NO_ERRORS_SCHEMA ]
