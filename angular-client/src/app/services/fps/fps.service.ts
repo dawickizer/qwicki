@@ -26,7 +26,7 @@ export class FpsService {
     this.createFpsCamera();
     this.lockGunToCamera(4, -25, 20);
     this.createFpsKeyBinds();
-    this.scenePointerEvents();
+    //this.scenePointerEvents();
 
   }
 
@@ -57,10 +57,15 @@ export class FpsService {
     this.camera.angularSensibility = 8000; // controls mouse speed
   }
 
+  lockGunToCamera(xOffset: number, yOffset: number, zOffset: number) {
+    this.gun.gunMesh.position = new Vector3(this.camera.position.x + xOffset, this.camera.position.y + yOffset, this.camera.position.z + zOffset);
+    this.gun.gunMesh.parent = this.camera;
+  }
+
   createFpsKeyBinds() {
     this.runOnShiftEvent();
     this.flyOnSpaceEvent();
-    this.reloadOnREvent();
+    //this.reloadOnREvent();
   }
 
   runOnShiftEvent() {
@@ -72,120 +77,93 @@ export class FpsService {
     document.addEventListener('keydown', event => { if (event.code == 'Space') this.camera.applyGravity = !this.camera.applyGravity });
   }
 
-  reloadOnREvent() {
-    document.addEventListener('keydown', event => { 
-      if (event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
-        this.gun.reloadSound.play();
-        this.gun.ammo = this.gun.magazine;
-        console.log('RELOADING...')
-        console.log('ammo: ' + this.gun.ammo)
-      }
-    });
-  }
+  // reloadOnREvent() {
+  //   document.addEventListener('keydown', event => { 
+  //     if (event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
+  //       this.gun.reloadSound.play();
+  //       this.gun.ammo = this.gun.magazine;
+  //       console.log('RELOADING...')
+  //       console.log('ammo: ' + this.gun.ammo)
+  //     }
+  //   });
+  // }
+  //
+  // scenePointerEvents() {
 
-  lockGunToCamera(xOffset: number, yOffset: number, zOffset: number) {
-    this.gun.gunMesh.position = new Vector3(this.camera.position.x + xOffset, this.camera.position.y + yOffset, this.camera.position.z + zOffset);
-    this.gun.gunMesh.parent = this.camera;
-  }
+  //   // Hide and lock mouse cursor when scene is clicked
+  //   this.scene.onPointerDown = (event) => { 
+  //     if (!this.isSceneLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
+  //     else if (this.isSceneLocked && event.button == 0) this.fireWeapon();
+  //   };
 
-  scenePointerEvents() {
+  //   this.scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
 
-    // Hide and lock mouse cursor when scene is clicked
-    this.scene.onPointerDown = (event) => { 
-      if (!this.isSceneLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
-      else if (this.isSceneLocked && event.button == 0) this.fireWeapon();
-    };
+  //   this.pointerLockChangeEvent();
+  // }
 
-    this.scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
+  // pointerLockChangeEvent() {
+  //    // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
+  //    document.addEventListener('pointerlockchange', () => {
+  //     if (document.pointerLockElement) {
+  //       this.isSceneLocked = true;
+  //       this.unloadScrollBars();
+  //       this.scrollWindowToBottom();
+  //     }
+  //     else {
+  //       this.isSceneLocked = false;
+  //       this.reloadScrollBars();
+  //       this.scrollWindowToTop();
+  //     }
+  //   });  
+  // }
 
-    this.pointerLockChangeEvent();
-  }
-
-  pointerLockChangeEvent() {
-     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
-     document.addEventListener('pointerlockchange', () => {
-      if (document.pointerLockElement) {
-        this.isSceneLocked = true;
-        this.unloadScrollBars();
-        this.scrollWindowToBottom();
-      }
-      else {
-        this.isSceneLocked = false;
-        this.reloadScrollBars();
-        this.scrollWindowToTop();
-      }
-    });  
-  }
-
-  fireWeapon() {
-    this.gun.magazine = this.gun.ammo;
-    console.log('mag: ' +  this.gun.magazine)
-    this.shoot = true;
+  // fireWeapon() {
+  //   this.gun.magazine = this.gun.ammo;
+  //   console.log('mag: ' +  this.gun.magazine)
+  //   this.shoot = true;
  
-    // Returns a Promise that resolves after "ms" Milliseconds
-    const timer = ms => new Promise(res => setTimeout(res, ms));
+  //   // Returns a Promise that resolves after "ms" Milliseconds
+  //   const timer = ms => new Promise(res => setTimeout(res, ms));
 
-    let fire = async () => { // We need to wrap the loop into an async function for this to work
+  //   let fire = async () => { // We need to wrap the loop into an async function for this to work
 
-      // cant fire if reloading
-      if (!this.gun.reloadSound.isPlaying) {
-        for (var i = 0; i < this.gun.magazine; i++) {
-          if (this.shoot && !this.gun.reloadSound.isPlaying) {
-            this.gun.gunshotSound.play();
-            this.gun.ammo--;
-            console.log('ammo: ' + this.gun.ammo)
-          }
-          else break;
-          await timer(this.gun.fireRate); // then the created Promise can be awaited
-        }
-        if (this.gun.ammo <= 0) { 
-          this.gun.reloadSound.play(); 
-          this.gun.ammo = 30;
-          console.log('RELOADING...')
-          console.log('ammo: ' + this.gun.ammo)
-        }
-      }
-    }
+  //     // cant fire if reloading
+  //     if (!this.gun.reloadSound.isPlaying) {
+  //       for (var i = 0; i < this.gun.magazine; i++) {
+  //         if (this.shoot && !this.gun.reloadSound.isPlaying) {
+  //           this.gun.gunshotSound.play();
+  //           this.gun.ammo--;
+  //           console.log('ammo: ' + this.gun.ammo)
+  //         }
+  //         else break;
+  //         await timer(this.gun.fireRate); // then the created Promise can be awaited
+  //       }
+  //       if (this.gun.ammo <= 0) { 
+  //         this.gun.reloadSound.play(); 
+  //         this.gun.ammo = 30;
+  //         console.log('RELOADING...')
+  //         console.log('ammo: ' + this.gun.ammo)
+  //       }
+  //     }
+  //   }
 
-    fire();   
-  }
+  //   fire();   
+  // }
 
-  reloadScrollBars() {
-    document.documentElement.style.overflow = 'auto';  // firefox, chrome
-  }
+  // reloadScrollBars() {
+  //   document.documentElement.style.overflow = 'auto';  // firefox, chrome
+  // }
 
-  unloadScrollBars() {
-    document.documentElement.style.overflow = 'hidden';  // firefox, chrome
-  }
+  // unloadScrollBars() {
+  //   document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+  // }
 
-  scrollWindowToBottom() {
-    window.scrollTo(0, document.body.scrollHeight);
-  }
+  // scrollWindowToBottom() {
+  //   window.scrollTo(0, document.body.scrollHeight);
+  // }
 
-  scrollWindowToTop() {
-    window.scrollTo(0, 0);
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // scrollWindowToTop() {
+  //   window.scrollTo(0, 0);
+  // }
 
 }
