@@ -20,7 +20,7 @@ export class GunService {
     this.m4.name = 'm4';
     this.m4.magazine = 30;
     this.m4.ammo = 30;
-    this.m4.fireRate = 300;
+    this.m4.fireRate = 65;
     this.m4.gunshotSound = null;
     this.m4.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
     this.m4.reloadSound = null;

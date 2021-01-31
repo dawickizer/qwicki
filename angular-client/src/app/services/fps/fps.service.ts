@@ -55,7 +55,7 @@ export class FpsService {
     this.camera.keysRight.push('d'.charCodeAt(0));
     this.camera.keysRight.push('D'.charCodeAt(0));
 
-    this.camera.speed = 3; // controls WASD speed
+    this.camera.speed = 5; // controls WASD speed
     this.camera.angularSensibility = 8000; // controls mouse speed
   }
 
@@ -71,8 +71,8 @@ export class FpsService {
   }
 
   handleRunOnShift() {
-    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') this.camera.speed = 5 });
-    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') this.camera.speed = 3 });
+    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') this.camera.speed = 8 });
+    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') this.camera.speed = 5 });
   }
 
   handleFlyOnSpace() {

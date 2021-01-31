@@ -14,17 +14,10 @@ export class Gun {
   reloadSoundURL: string
 
   async importGunMesh(scene: Scene): Promise<Mesh> {
-    let meshes = (await SceneLoader.ImportMeshAsync('', this.gunMeshURL), scene).meshes as Mesh[];
+    this.gunMesh = (await SceneLoader.ImportMeshAsync('', this.gunMeshURL, '', scene)).meshes[0] as Mesh;
 
-    // clean up nodes
-    meshes[1].parent = meshes[0];
-    meshes[2].parent = meshes[0];
-    this.gunMesh = meshes[0];
-    this.gunMesh.getChildren()[0].dispose();
-
-    // set some default scaling/rotation so the gun size/orientation is nice
-    this.gunMesh.rotation = new Vector3(1.5, 0, 0);
-    this.gunMesh.scaling = new Vector3(.25, .25, -.25); 
+    // set some default scaling so the gun size/orientation is nice
+    this.gunMesh.scaling = new Vector3(.25, .25, .25); 
 
     // id the mesh
     this.gunMesh.id = this.name + 'Mesh';

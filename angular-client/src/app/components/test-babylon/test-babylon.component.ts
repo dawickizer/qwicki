@@ -29,7 +29,6 @@ export class TestBabylonComponent implements OnInit {
   @Output() isSceneLocked: boolean = false;
   @Output() shoot: boolean;
   @Output() gun: Gun;
-  @Output() guns: Gun[];
 
   constructor(private gunService: GunService, private fpsService: FpsService) { }
 
@@ -48,20 +47,28 @@ export class TestBabylonComponent implements OnInit {
       meshes[0].rotation = new Vector3(1.5, 0, 0);
       meshes[0].scaling = new Vector3(.25, .25, -.25); 
 
-      let meshes2 = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/m4/scene.gltf', '', this.scene)).meshes as Mesh[];
+      // meshes[1].parent = meshes[0];
+      // meshes[2].parent = meshes[0];
+      // meshes[0].getChildren()[0].dispose();
+
+      // let meshes2 = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/m4/scene.gltf', '', this.scene)).meshes as Mesh[];
   
-      // set some default scaling/rotation so the gun size/orientation is nice
-      meshes2[0].position = new Vector3(0, 30, 50);
-      meshes2[0].rotation = new Vector3(1.5, 0, 0);
-      meshes2[0].scaling = new Vector3(.25, .25, -.25); 
+      // // set some default scaling/rotation so the gun size/orientation is nice
+      // meshes2[0].position = new Vector3(0, 30, 50);
+      // meshes2[0].rotation = new Vector3(1.5, 0, 0);
+      // meshes2[0].scaling = new Vector3(.25, .25, -.25); 
+
+      // meshes2[1].parent = meshes[0];
+      // meshes2[2].parent = meshes[0];
+      // meshes2[0].getChildren()[0].dispose();
 
     this.gun = await this.gunService.get('m4', this.scene);
     //this.guns = await this.gunService.getAll(this.scene);
     this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas, this.gun);
 
     this.skybox = this.createSkyBox(this.scene);
-    this.ground = this.createGround(this.scene, 250, 0, 'grass.jpg');
-    this.platform = this.createGround(this.scene, 500, -200, 'lava.jpg');
+    this.ground = this.createGround(this.scene, 700, 0, 'grass.jpg');
+    this.platform = this.createGround(this.scene, 1000, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
 
     // running babylonJS
@@ -82,7 +89,7 @@ export class TestBabylonComponent implements OnInit {
 
   createSkyBox(scene: Scene): Mesh {
     
-    let skybox = MeshBuilder.CreateBox('skybox', { size: 500 }, scene);
+    let skybox = MeshBuilder.CreateBox('skybox', { size: 1000 }, scene);
     let skyboxMaterial = new StandardMaterial('skybox', scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture('assets/babylon/textures/joe/joe', scene);
