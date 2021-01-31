@@ -12,7 +12,7 @@ export class FpsService {
   canvas: ElementRef<HTMLCanvasElement>;
   gun: Gun;
   shoot: boolean;
-  isSceneLocked: boolean;
+  isSceneLocked: boolean = false;
 
   constructor() { }
 
@@ -21,12 +21,11 @@ export class FpsService {
     this.scene = scene;
     this.canvas = canvas;
     this.gun = gun;
-    this.isSceneLocked = false;
 
     this.createFpsCamera();
     this.lockGunToCamera(4, -25, 20);
     this.createFpsKeyBinds();
-    //this.scenePointerEvents();
+    this.handlePointerLock(this.scene);
 
   }
 
@@ -87,7 +86,61 @@ export class FpsService {
       }
     });
   }
-  
+
+  handlePointerLock(scene: Scene) {
+   
+    // Hide and lock mouse cursor when scene is clicked
+    scene.onPointerDown = (event) => { 
+      if (!this.isSceneLocked) this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
+      else if (this.isSceneLocked && event.button == 0) {
+
+        this.gun.magazine = this.gun.ammo;
+        this.shoot = true;
+        // Returns a Promise that resolves after "ms" Milliseconds
+        const timer = ms => new Promise(res => setTimeout(res, ms));
+
+        let load = async () => { // We need to wrap the loop into an async function for this to work
+
+          // cant fire if reloading
+          if (!this.gun.reloadSound.isPlaying) {
+            for (var i = 0; i < this.gun.magazine; i++) {
+              if (this.shoot && !this.gun.reloadSound.isPlaying) {
+                this.gun.gunshotSound.play();
+                this.gun.ammo--;
+                console.log(this.gun.ammo)
+              }
+              else break;
+              await timer(this.gun.fireRate); // then the created Promise can be awaited
+            }
+            if (this.gun.ammo <= 0) { 
+              this.gun.reloadSound.play(); 
+              this.gun.ammo = 30;
+              console.log(this.gun.ammo)
+            }
+          }
+        }
+
+        load();
+      }
+    };
+
+    scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
+
+    // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
+    document.addEventListener('pointerlockchange', () => {
+      if (document.pointerLockElement) {
+        this.isSceneLocked = true;
+        this.unloadScrollBars();
+        this.scrollWindowToBottom();
+      }
+      else {
+        this.isSceneLocked = false;
+        this.reloadScrollBars();
+        this.scrollWindowToTop();
+      }
+    });
+  }
+
   // scenePointerEvents() {
 
   //   // Hide and lock mouse cursor when scene is clicked
@@ -150,20 +203,20 @@ export class FpsService {
   //   fire();   
   // }
 
-  // reloadScrollBars() {
-  //   document.documentElement.style.overflow = 'auto';  // firefox, chrome
-  // }
+  reloadScrollBars() {
+    document.documentElement.style.overflow = 'auto';  // firefox, chrome
+  }
 
-  // unloadScrollBars() {
-  //   document.documentElement.style.overflow = 'hidden';  // firefox, chrome
-  // }
+  unloadScrollBars() {
+    document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+  }
 
-  // scrollWindowToBottom() {
-  //   window.scrollTo(0, document.body.scrollHeight);
-  // }
+  scrollWindowToBottom() {
+    window.scrollTo(0, document.body.scrollHeight);
+  }
 
-  // scrollWindowToTop() {
-  //   window.scrollTo(0, 0);
-  // }
+  scrollWindowToTop() {
+    window.scrollTo(0, 0);
+  }
 
 }
