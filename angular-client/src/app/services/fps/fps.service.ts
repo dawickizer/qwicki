@@ -1,9 +1,10 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Vector3, Scene } from '@babylonjs/core';
+import { UniversalCamera, Vector3, Color3, Scene, Ray, RayHelper } from '@babylonjs/core';
 
 // Services/Models
 import { GunService } from 'src/app/services/gun/gun.service';
 import { Gun } from 'src/app/models/gun/gun';
+import { Vector } from 'matter';
 
 @Injectable({
   providedIn: 'root'
@@ -119,10 +120,11 @@ export class FpsService {
       if (!this.gun.reloadSound.isPlaying && !this.justFired) {
         for (var i = 0; i < currentAmmo; i++) {
           if (this.shoot && !this.gun.reloadSound.isPlaying) {
-            this.gun.gunshotSound.play();
-            this.gun.ammo--;
+            this.gun.gunshotSound.play(); 
+            this.gun.ammo--; 
             this.justFired = true; // set just fired to true to prevent spam fire
             setTimeout(() => this.justFired = false, this.gun.fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
+            this.castRay();
             console.log(this.gun.ammo)
           }
           else 
@@ -141,6 +143,38 @@ export class FpsService {
 
     fire(); 
   }
+
+  castRay() {
+    let origin = this.gun.gunMesh.absolutePosition; // set origin to center of gun mesh
+    let length = 1000;
+
+    // dont understand this lol
+    let wm = this.gun.gunMesh.getWorldMatrix()
+		let aimVector = Vector3.TransformCoordinates(Vector3.Forward(), wm)
+			.subtract(this.gun.gunMesh.absolutePosition)
+      .normalize();
+      
+    // Make the gun mesh and its children unpickable so the ray doesnt accidentally pick the gun meshes
+    this.gun.gunMesh.isPickable = false;
+    this.gun.gunMesh.getChildMeshes()[0].isPickable = false;
+    this.gun.gunMesh.getChildMeshes()[1].isPickable = false;
+
+    let ray = new Ray(origin, aimVector, length);
+    let rayHelper = new RayHelper(ray);
+
+    // display ray and then hide it
+    rayHelper.show(this.scene, Color3.Blue());
+    setTimeout(() => rayHelper.hide(), this.gun.fireRate);
+
+    console.log(this.scene)
+
+    // log picked
+    let pickInfo = this.scene.pickWithRay(ray);
+    if (pickInfo.pickedMesh != null) console.log(pickInfo.pickedMesh.name);
+
+  }
+
+
 
   handlePointerLockChange() {
      // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state

@@ -21,6 +21,8 @@ export class Gun {
     // set some default scaling so the gun size/orientation is nice
     this.gunMesh.scaling = new Vector3(.25, .25, .25); 
 
+    this.gunMesh.bakeCurrentTransformIntoVertices(); // bascially says "hey the current rotation/scaling of the mesh is now the new zeroed out position"
+
     // id the mesh
     this.gunMesh.id = this.name + 'Mesh';
     this.gunMesh.name = this.name + 'Mesh';

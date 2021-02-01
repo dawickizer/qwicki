@@ -41,6 +41,8 @@ export class TestBabylonComponent implements OnInit {
     this.guns = await this.gunService.getAll(this.scene);
     this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas, this.guns[0]);
 
+    this.guns[1].gunMesh.position = new Vector3(50, 50, 50)
+
     this.skybox = this.createSkyBox(this.scene);
     this.ground = this.createGround(this.scene, 700, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 1000, -200, 'lava.jpg');
@@ -108,7 +110,7 @@ export class TestBabylonComponent implements OnInit {
 
   handleDebugLayer(scene: Scene) {
     let config: IInspectorOptions = {initialTab: DebugLayerTab.Statistics, embedMode: true}
-    this.scene.debugLayer.show(config)
+    //this.scene.debugLayer.show(config)
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
         if (scene.debugLayer.isVisible()) scene.debugLayer.hide();
