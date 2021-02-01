@@ -1,6 +1,6 @@
 // Core
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { Engine, UniversalCamera, SceneLoader, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -107,11 +107,12 @@ export class TestBabylonComponent implements OnInit {
   }
 
   handleDebugLayer(scene: Scene) {
-    this.scene.debugLayer.show();
+    let config: IInspectorOptions = {initialTab: DebugLayerTab.Statistics, embedMode: true}
+    this.scene.debugLayer.show(config)
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
         if (scene.debugLayer.isVisible()) scene.debugLayer.hide();
-        else scene.debugLayer.show();
+        else scene.debugLayer.show(config);
       }
     });
   }

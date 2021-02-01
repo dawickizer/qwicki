@@ -18,6 +18,8 @@ export class FpsService {
   justFired: boolean = false;
   isSceneLocked: boolean = false;
 
+  shiftLeftPressed: boolean
+
   constructor(private gunService: GunService) { }
 
   addFpsMechanics(camera: UniversalCamera, scene: Scene, canvas: ElementRef<HTMLCanvasElement>, gun: Gun) {
@@ -30,6 +32,7 @@ export class FpsService {
     this.lockGunToCamera(4, -25, 20);
     this.createFpsKeyBinds();
     this.handlePointerEvents();
+
   }
 
   createFpsCamera() {
@@ -71,12 +74,12 @@ export class FpsService {
   }
 
   handleRunOnShift() {
-    document.addEventListener('keydown', event => { if (event.code == 'ShiftLeft') this.camera.speed = 8 });
-    document.addEventListener('keyup', event => { if (event.code == 'ShiftLeft') this.camera.speed = 5 });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 8 });
+    document.addEventListener('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 5 });
   }
 
   handleFlyOnSpace() {
-    document.addEventListener('keydown', event => { if (event.code == 'Space') this.camera.applyGravity = !this.camera.applyGravity });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'Space') this.camera.applyGravity = !this.camera.applyGravity });
   }
 
   handleReloadOnR() {

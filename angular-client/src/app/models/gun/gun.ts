@@ -1,4 +1,5 @@
 import { Mesh, Sound, Scene, SceneLoader, Vector3 } from '@babylonjs/core';
+
 export class Gun {
 
   _id?: string;
@@ -8,6 +9,7 @@ export class Gun {
   magazine: number;
   ammo: number;
   fireRate: number;
+  fireType: string;
   gunshotSound: Sound;
   gunshotSoundURL: string;
   reloadSound: Sound;
