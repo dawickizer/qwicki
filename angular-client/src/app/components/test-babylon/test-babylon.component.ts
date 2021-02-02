@@ -41,12 +41,15 @@ export class TestBabylonComponent implements OnInit {
     this.guns = await this.gunService.getAll(this.scene);
     this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas, this.guns[0]);
 
-    this.guns[1].gunMesh.position = new Vector3(50, 50, 50)
+    this.guns[1].gunMesh.position = new Vector3(50, 50, 50);
 
     this.skybox = this.createSkyBox(this.scene);
     this.ground = this.createGround(this.scene, 4000, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 5000, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
+    let me = this.sphere.clone('sphere');
+
+    me.position = new Vector3(-59, 70, 20);
 
     // running babylonJS
     this.render();

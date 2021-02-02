@@ -1,5 +1,6 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, RayHelper } from '@babylonjs/core';
+import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, TextureBlock } from '@babylonjs/core';
+import { TextBlock, StackPanel, AdvancedDynamicTexture, Image, Button, Rectangle, Control, Grid } from '@babylonjs/gui';
 
 // Services/Models
 import { GunService } from 'src/app/services/gun/gun.service';
@@ -22,7 +23,9 @@ export class FpsService {
   justFired: boolean = false;
   isSceneLocked: boolean = false;
 
-  shiftLeftPressed: boolean
+  // HUD STUFF
+  hud: AdvancedDynamicTexture;
+  ammo: TextBlock;
 
   constructor(private gunService: GunService) { }
 
@@ -39,6 +42,34 @@ export class FpsService {
     this.createFpsKeyBinds();
     this.handlePointerEvents();
 
+    // HUD STUFF
+    this.hud = AdvancedDynamicTexture.CreateFullscreenUI('HUD');
+    this.hud.idealHeight = 720;
+
+    this.ammo = new TextBlock();
+    this.ammo.name = 'ammo count';
+    this.ammo.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
+    this.ammo.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    this.ammo.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+    this.ammo.fontSize = '22px';
+    this.ammo.color = 'white';
+    this.ammo.text = this.gun.ammo + ' / ' + this.gun.magazine;
+    this.ammo.top = '650px';
+    this.ammo.left = '-64px';
+    this.ammo.width = '25%';
+    this.ammo.fontFamily = 'Courier New';
+    this.ammo.resizeToFit = true;
+    this.hud.addControl(this.ammo);
+
+    this.scene.onBeforeRenderObservable.add(() => this.updateAmmoCount());
+
+  }
+
+  updateAmmoCount(): void {
+    if (this.gun.ammo == 0) this.ammo.color = 'red';
+    if (this.gun.ammo <= 5 && this.gun.ammo > 0) this.ammo.color = 'yellow';
+    if (this.gun.ammo > 5) this.ammo.color = 'white';
+    this.ammo.text = this.gun.ammo + ' / ' + this.gun.magazine;
   }
 
   createFpsCamera() {
@@ -76,7 +107,7 @@ export class FpsService {
   addCrossHairs() {
 		if (this.scene.activeCameras.length === 0) this.scene.activeCameras.push(this.scene.activeCamera);        
 
-		let secondCamera = new UniversalCamera("GunSightCamera", new Vector3(0, 0, -50), this.scene);                
+		let secondCamera = new UniversalCamera('GunSightCamera', new Vector3(0, 0, -50), this.scene);                
 		secondCamera.mode = Camera.ORTHOGRAPHIC_CAMERA;
 		secondCamera.layerMask = 0x20000000;
 		this.scene.activeCameras.push(secondCamera);
@@ -85,42 +116,42 @@ export class FpsService {
 		let h = 250;
 		let w = 250;
 		
-		let y = Mesh.CreateBox("y", h * .2, this.scene);
+		let y = Mesh.CreateBox('y', h * .2, this.scene);
 		y.scaling = new Vector3(0.05, 1, 1);
 		y.position = new Vector3(0, 0, 0);
 		meshes.push(y);
 		
-		let x = Mesh.CreateBox("x", h * .2, this.scene);
+		let x = Mesh.CreateBox('x', h * .2, this.scene);
 		x.scaling = new Vector3(1, 0.05, 1);
 		x.position = new Vector3(0, 0, 0);
 		meshes.push(x);
 		    
-		let lineTop = Mesh.CreateBox("lineTop", w * .8, this.scene);
+		let lineTop = Mesh.CreateBox('lineTop', w * .8, this.scene);
 		lineTop.scaling = new Vector3(1, 0.005, 1);
 		lineTop.position = new Vector3(0, h * 0.5, 0);
 		meshes.push(lineTop);
 		
-		let lineBottom = Mesh.CreateBox("lineBottom", w * .8, this.scene);
+		let lineBottom = Mesh.CreateBox('lineBottom', w * .8, this.scene);
 		lineBottom.scaling = new Vector3(1, 0.005, 1);
 		lineBottom.position = new Vector3(0, h * -0.5, 0);
 		meshes.push(lineBottom);
 		
-		let lineLeft = Mesh.CreateBox("lineLeft", h, this.scene);
+		let lineLeft = Mesh.CreateBox('lineLeft', h, this.scene);
 		lineLeft.scaling = new Vector3(0.010, 1,  1);
 		lineLeft.position = new Vector3(w * -.4, 0, 0);
 		meshes.push(lineLeft);
 		
-		let lineRight = Mesh.CreateBox("lineRight", h, this.scene);
+		let lineRight = Mesh.CreateBox('lineRight', h, this.scene);
 		lineRight.scaling = new Vector3(0.010, 1,  1);
 		lineRight.position = new Vector3(w * .4, 0, 0);
 		meshes.push(lineRight);
 		
     this.gunSight = Mesh.MergeMeshes(meshes);
-		this.gunSight.name = "gunSight";
+		this.gunSight.name = 'gunSight';
 		this.gunSight.layerMask = 0x20000000;
 		this.gunSight.freezeWorldMatrix();
 		
-		let gunSightMat = new StandardMaterial("gunSightMat", this.scene);
+		let gunSightMat = new StandardMaterial('gunSightMat', this.scene);
 		gunSightMat.checkReadyOnlyOnce = true;
 		gunSightMat.emissiveColor = new Color3(0,1,0);
 		
@@ -128,7 +159,7 @@ export class FpsService {
     this.gunSight.isPickable = false;
 
     // create hitmarker off of gunsight
-		let hitMarkerMat = new StandardMaterial("hitMarkerMat", this.scene);
+		let hitMarkerMat = new StandardMaterial('hitMarkerMat', this.scene);
 		hitMarkerMat.checkReadyOnlyOnce = true;
     hitMarkerMat.emissiveColor = new Color3(1,0,0);
     
@@ -165,14 +196,7 @@ export class FpsService {
   }
 
   handleReloadOnR() {
-    document.addEventListener('keydown', event => { 
-      if (this.isSceneLocked && event.code == 'KeyR' && this.gun.ammo < this.gun.magazine) {
-        this.gun.reloadSound.play();
-        this.gun.ammo = this.gun.magazine;
-        console.log('RELOADING...')
-        console.log('ammo: ' + this.gun.ammo)
-      }
-    });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.gun.reloadSound.isPlaying && this.gun.ammo < this.gun.magazine) this.reloadWeapon() });
   }
 
   handlePointerEvents() {
@@ -192,7 +216,7 @@ export class FpsService {
   fireWeapon() {
     let currentAmmo = this.gun.ammo;
     this.shoot = true;
-    // Returns a Promise that resolves after "ms" Milliseconds
+    // Returns a Promise that resolves after 'ms' Milliseconds
     const timer = ms => new Promise(res => setTimeout(res, ms));
 
     let fire = async () => { // We need to wrap the loop into an async function for this to work
@@ -206,23 +230,22 @@ export class FpsService {
             this.justFired = true; // set just fired to true to prevent spam fire
             setTimeout(() => this.justFired = false, this.gun.fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
             this.castRay();
-            console.log(this.gun.ammo)
           }
           else 
             break;
           
           await timer(this.gun.fireRate); // then the created Promise can be awaited
         }
-        if (this.gun.ammo <= 0) { 
-          this.gun.reloadSound.play(); 
-          this.gun.ammo = this.gun.magazine;
-          console.log('RELOADING...')
-          console.log('ammo: ' + this.gun.ammo)
-        }
+        if (this.gun.ammo <= 0) this.reloadWeapon();
       }
     }
 
     fire(); 
+  }
+
+  reloadWeapon() {
+    this.gun.reloadSound.play();
+    this.gun.reloadSound.onEndedObservable.add(() => this.gun.ammo = this.gun.magazine);
   }
 
   castRay() {
