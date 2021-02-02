@@ -14,6 +14,7 @@ export class FpsService {
   scene: Scene;
   canvas: ElementRef<HTMLCanvasElement>;
   gunSight: Mesh;
+  hitMarkerSight: Mesh;
   hitMarkerSound: Sound;
   hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
   gun: Gun;
@@ -33,8 +34,8 @@ export class FpsService {
 
     this.createFpsCamera();
     this.lockGunToCamera(4, -25, 20);
-    this.addGunSight();
-    await this.addHitMarker();
+    this.addCrossHairs();
+    await this.addHitMarkerSound();
     this.createFpsKeyBinds();
     this.handlePointerEvents();
 
@@ -64,7 +65,7 @@ export class FpsService {
     this.camera.keysRight.push('D'.charCodeAt(0));
 
     this.camera.speed = 5; // controls WASD speed
-    this.camera.angularSensibility = 8000; // controls mouse speed
+    this.camera.angularSensibility = 7000; // controls mouse speed
   }
 
   lockGunToCamera(xOffset: number, yOffset: number, zOffset: number) {
@@ -72,10 +73,8 @@ export class FpsService {
     this.gun.gunMesh.parent = this.camera;
   }
 
-  addGunSight(){
-		if (this.scene.activeCameras.length === 0){
-		    this.scene.activeCameras.push(this.scene.activeCamera);
-		}              
+  addCrossHairs() {
+		if (this.scene.activeCameras.length === 0) this.scene.activeCameras.push(this.scene.activeCamera);        
 
 		let secondCamera = new UniversalCamera("GunSightCamera", new Vector3(0, 0, -50), this.scene);                
 		secondCamera.mode = Camera.ORTHOGRAPHIC_CAMERA;
@@ -121,18 +120,32 @@ export class FpsService {
 		this.gunSight.layerMask = 0x20000000;
 		this.gunSight.freezeWorldMatrix();
 		
-		let mat = new StandardMaterial("emissive mat", this.scene);
-		mat.checkReadyOnlyOnce = true;
-		mat.emissiveColor = new Color3(0,1,0);
+		let gunSightMat = new StandardMaterial("gunSightMat", this.scene);
+		gunSightMat.checkReadyOnlyOnce = true;
+		gunSightMat.emissiveColor = new Color3(0,1,0);
 		
-    this.gunSight.material = mat;
+    this.gunSight.material = gunSightMat;
     this.gunSight.isPickable = false;
+
+    // create hitmarker off of gunsight
+		let hitMarkerMat = new StandardMaterial("hitMarkerMat", this.scene);
+		hitMarkerMat.checkReadyOnlyOnce = true;
+    hitMarkerMat.emissiveColor = new Color3(1,0,0);
+    
+    this.hitMarkerSight = this.gunSight.clone('hitMarker');
+    this.hitMarkerSight.material = hitMarkerMat;
+    this.hitMarkerSight.rotation = new Vector3(0, 0, .8);
+    this.hitMarkerSight.scaling = new Vector3(.6, .6, 1);
+    this.hitMarkerSight.visibility = 0;
   }
   
-  async addHitMarker(): Promise<Sound> {
+  async addHitMarkerSound(): Promise<Sound> {
+    
+    // import the sound
     this.hitMarkerSound = new Sound('', this.hitMarkerSoundURL, this.scene, null);
     this.hitMarkerSound.setVolume(1);
     this.hitMarkerSound.name = 'hitMarkerSound';
+
     return this.hitMarkerSound;
   }
 
@@ -233,11 +246,13 @@ export class FpsService {
     // log picked
     let pickInfo = this.scene.pickWithRay(ray);
     if (pickInfo.pickedMesh != null) console.log(pickInfo.pickedMesh.name);
-    if (pickInfo.pickedMesh != null && pickInfo.pickedMesh.name == 'sphere') this.hitMarkerSound.play();
+    if (pickInfo.pickedMesh != null && pickInfo.pickedMesh.name == 'sphere') {
+      this.hitMarkerSound.play();
+      this.hitMarkerSight.visibility = 1;
+      setTimeout(() => this.hitMarkerSight.visibility = 0, 65);
+    }
 
   }
-
-
 
   handlePointerLockChange() {
      // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
