@@ -41,8 +41,11 @@ export class FpsService {
     await this.addHitMarkerSound();
     this.createFpsKeyBinds();
     this.handlePointerEvents();
+    this.createHUD();
 
-    // HUD STUFF
+  }
+
+  createHUD() {
     this.hud = AdvancedDynamicTexture.CreateFullscreenUI('HUD');
     this.hud.idealHeight = 720;
 
@@ -62,7 +65,6 @@ export class FpsService {
     this.hud.addControl(this.ammo);
 
     this.scene.onBeforeRenderObservable.add(() => this.updateAmmoCount());
-
   }
 
   updateAmmoCount(): void {
