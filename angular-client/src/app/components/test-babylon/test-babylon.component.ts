@@ -44,8 +44,8 @@ export class TestBabylonComponent implements OnInit {
     this.guns[1].gunMesh.position = new Vector3(50, 50, 50)
 
     this.skybox = this.createSkyBox(this.scene);
-    this.ground = this.createGround(this.scene, 700, 0, 'grass.jpg');
-    this.platform = this.createGround(this.scene, 1000, -200, 'lava.jpg');
+    this.ground = this.createGround(this.scene, 4000, 0, 'grass.jpg');
+    this.platform = this.createGround(this.scene, 5000, -200, 'lava.jpg');
     this.sphere = this.createSphere(this.scene);
 
     // running babylonJS
@@ -66,7 +66,7 @@ export class TestBabylonComponent implements OnInit {
 
   createSkyBox(scene: Scene): Mesh {
     
-    let skybox = MeshBuilder.CreateBox('skybox', { size: 1000 }, scene);
+    let skybox = MeshBuilder.CreateBox('skybox', { size: 5000 }, scene);
     let skyboxMaterial = new StandardMaterial('skybox', scene);
     skyboxMaterial.backFaceCulling = false;
     skyboxMaterial.reflectionTexture = new CubeTexture('assets/babylon/textures/joe/joe', scene);

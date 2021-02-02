@@ -1,10 +1,9 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Vector3, Color3, Scene, Ray, RayHelper } from '@babylonjs/core';
+import { UniversalCamera, Camera, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, RayHelper } from '@babylonjs/core';
 
 // Services/Models
 import { GunService } from 'src/app/services/gun/gun.service';
 import { Gun } from 'src/app/models/gun/gun';
-import { Vector } from 'matter';
 
 @Injectable({
   providedIn: 'root'
@@ -14,6 +13,7 @@ export class FpsService {
   camera: UniversalCamera;
   scene: Scene;
   canvas: ElementRef<HTMLCanvasElement>;
+  gunSight: Mesh;
   gun: Gun;
   shoot: boolean;
   justFired: boolean = false;
@@ -31,6 +31,7 @@ export class FpsService {
 
     this.createFpsCamera();
     this.lockGunToCamera(4, -25, 20);
+    this.addGunSight();
     this.createFpsKeyBinds();
     this.handlePointerEvents();
 
@@ -67,6 +68,63 @@ export class FpsService {
     this.gun.gunMesh.position = new Vector3(this.camera.position.x + xOffset, this.camera.position.y + yOffset, this.camera.position.z + zOffset);
     this.gun.gunMesh.parent = this.camera;
   }
+
+  addGunSight(){
+		if (this.scene.activeCameras.length === 0){
+		    this.scene.activeCameras.push(this.scene.activeCamera);
+		}              
+
+		let secondCamera = new UniversalCamera("GunSightCamera", new Vector3(0, 0, -50), this.scene);                
+		secondCamera.mode = Camera.ORTHOGRAPHIC_CAMERA;
+		secondCamera.layerMask = 0x20000000;
+		this.scene.activeCameras.push(secondCamera);
+		
+		let meshes = [];
+		let h = 250;
+		let w = 250;
+		
+		let y = Mesh.CreateBox("y", h * .2, this.scene);
+		y.scaling = new Vector3(0.05, 1, 1);
+		y.position = new Vector3(0, 0, 0);
+		meshes.push(y);
+		
+		let x = Mesh.CreateBox("x", h * .2, this.scene);
+		x.scaling = new Vector3(1, 0.05, 1);
+		x.position = new Vector3(0, 0, 0);
+		meshes.push(x);
+		    
+		let lineTop = Mesh.CreateBox("lineTop", w * .8, this.scene);
+		lineTop.scaling = new Vector3(1, 0.005, 1);
+		lineTop.position = new Vector3(0, h * 0.5, 0);
+		meshes.push(lineTop);
+		
+		let lineBottom = Mesh.CreateBox("lineBottom", w * .8, this.scene);
+		lineBottom.scaling = new Vector3(1, 0.005, 1);
+		lineBottom.position = new Vector3(0, h * -0.5, 0);
+		meshes.push(lineBottom);
+		
+		let lineLeft = Mesh.CreateBox("lineLeft", h, this.scene);
+		lineLeft.scaling = new Vector3(0.010, 1,  1);
+		lineLeft.position = new Vector3(w * -.4, 0, 0);
+		meshes.push(lineLeft);
+		
+		let lineRight = Mesh.CreateBox("lineRight", h, this.scene);
+		lineRight.scaling = new Vector3(0.010, 1,  1);
+		lineRight.position = new Vector3(w * .4, 0, 0);
+		meshes.push(lineRight);
+		
+    this.gunSight = Mesh.MergeMeshes(meshes);
+		this.gunSight.name = "gunSight";
+		this.gunSight.layerMask = 0x20000000;
+		this.gunSight.freezeWorldMatrix();
+		
+		let mat = new StandardMaterial("emissive mat", this.scene);
+		mat.checkReadyOnlyOnce = true;
+		mat.emissiveColor = new Color3(0,1,0);
+		
+    this.gunSight.material = mat;
+    this.gunSight.isPickable = false;
+	}
 
   createFpsKeyBinds() {
     this.handleRunOnShift();
@@ -118,7 +176,7 @@ export class FpsService {
 
       // cant fire if reloading or if you just fired
       if (!this.gun.reloadSound.isPlaying && !this.justFired) {
-        for (var i = 0; i < currentAmmo; i++) {
+        for (let i = 0; i < currentAmmo; i++) {
           if (this.shoot && !this.gun.reloadSound.isPlaying) {
             this.gun.gunshotSound.play(); 
             this.gun.ammo--; 
@@ -145,28 +203,22 @@ export class FpsService {
   }
 
   castRay() {
-    let origin = this.gun.gunMesh.absolutePosition; // set origin to center of gun mesh
-    let length = 1000;
+      
+    let origin = this.camera.position; // set origin to center of gun mesh
+    let length = 50000;
 
     // dont understand this lol
-    let wm = this.gun.gunMesh.getWorldMatrix()
-		let aimVector = Vector3.TransformCoordinates(Vector3.Forward(), wm)
-			.subtract(this.gun.gunMesh.absolutePosition)
+    let wm = this.camera.getWorldMatrix();
+    let aimVector = Vector3.TransformCoordinates(Vector3.Forward(), wm)
+      .subtract(this.camera.position)
       .normalize();
-      
+  
     // Make the gun mesh and its children unpickable so the ray doesnt accidentally pick the gun meshes
     this.gun.gunMesh.isPickable = false;
     this.gun.gunMesh.getChildMeshes()[0].isPickable = false;
     this.gun.gunMesh.getChildMeshes()[1].isPickable = false;
 
     let ray = new Ray(origin, aimVector, length);
-    let rayHelper = new RayHelper(ray);
-
-    // display ray and then hide it
-    rayHelper.show(this.scene, Color3.Blue());
-    setTimeout(() => rayHelper.hide(), this.gun.fireRate);
-
-    console.log(this.scene)
 
     // log picked
     let pickInfo = this.scene.pickWithRay(ray);
