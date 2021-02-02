@@ -1,5 +1,5 @@
-import { Component, ElementRef, OnInit, OnDestroy, Output, ViewChild } from '@angular/core';
-import { Engine, ArcRotateCamera, FreeCamera, HemisphericLight, Sprite, SpriteManager, Mesh, MeshBuilder, AbstractMesh, InstancedMesh, Scene, Vector3, SceneLoader, Sound, StandardMaterial, Texture, Color3, CubeTexture } from '@babylonjs/core';
+import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
+import { Engine, ArcRotateCamera, FreeCamera, HemisphericLight, Sprite, Mesh, MeshBuilder, InstancedMesh, Scene, Vector3, SceneLoader, Sound, StandardMaterial, Texture, Color3, CubeTexture } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 // import * as BABYLON from '@babylonjs/core';
@@ -37,7 +37,6 @@ export class PlaygroundComponent implements OnInit {
     // Create scene elements
     this.ground = this.createGround(this.scene);
     this.landscape = this.createLandScape(this.scene);
-    this.trees = this.createTrees(this.scene);
     this.skyBox = this.createSkyBox(this.scene);
     this.moon = this.createMoon(this.scene);
     this.house = await this.importHouse(this.scene);
@@ -97,20 +96,6 @@ export class PlaygroundComponent implements OnInit {
     landscape.position.y = -2;
 
     return this.landscape;
-  }
-
-  createTrees(scene: Scene): Sprite[] {
-    let treesManager = new SpriteManager('treesManager', 'assets/playground/textures/tree-sprite.png', 2000, {width: 394, height: 537}, scene);
-    let trees: Sprite[] = [];
-    for (let i = 0; i < 500; i++) {
-      trees[i] = new Sprite('tree', treesManager);
-      trees[i].position.x = Math.random() * (-30);
-      trees[i].position.z = Math.random() * 30 + 8;
-      trees[i].position.y = 0.5;
-    }
-
-    return trees;
-
   }
 
   createMoon(scene: Scene): Mesh {
