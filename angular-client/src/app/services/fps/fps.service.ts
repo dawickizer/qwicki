@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, RayHelper } from '@babylonjs/core';
+import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, RayHelper } from '@babylonjs/core';
 
 // Services/Models
 import { GunService } from 'src/app/services/gun/gun.service';
@@ -14,6 +14,8 @@ export class FpsService {
   scene: Scene;
   canvas: ElementRef<HTMLCanvasElement>;
   gunSight: Mesh;
+  hitMarkerSound: Sound;
+  hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
   gun: Gun;
   shoot: boolean;
   justFired: boolean = false;
@@ -23,7 +25,7 @@ export class FpsService {
 
   constructor(private gunService: GunService) { }
 
-  addFpsMechanics(camera: UniversalCamera, scene: Scene, canvas: ElementRef<HTMLCanvasElement>, gun: Gun) {
+  async addFpsMechanics(camera: UniversalCamera, scene: Scene, canvas: ElementRef<HTMLCanvasElement>, gun: Gun) {
     this.camera = camera;
     this.scene = scene;
     this.canvas = canvas;
@@ -32,6 +34,7 @@ export class FpsService {
     this.createFpsCamera();
     this.lockGunToCamera(4, -25, 20);
     this.addGunSight();
+    await this.addHitMarker();
     this.createFpsKeyBinds();
     this.handlePointerEvents();
 
@@ -124,7 +127,14 @@ export class FpsService {
 		
     this.gunSight.material = mat;
     this.gunSight.isPickable = false;
-	}
+  }
+  
+  async addHitMarker(): Promise<Sound> {
+    this.hitMarkerSound = new Sound('', this.hitMarkerSoundURL, this.scene, null);
+    this.hitMarkerSound.setVolume(1);
+    this.hitMarkerSound.name = 'hitMarkerSound';
+    return this.hitMarkerSound;
+  }
 
   createFpsKeyBinds() {
     this.handleRunOnShift();
@@ -223,6 +233,7 @@ export class FpsService {
     // log picked
     let pickInfo = this.scene.pickWithRay(ray);
     if (pickInfo.pickedMesh != null) console.log(pickInfo.pickedMesh.name);
+    if (pickInfo.pickedMesh != null && pickInfo.pickedMesh.name == 'sphere') this.hitMarkerSound.play();
 
   }
 
