@@ -110,8 +110,9 @@ export class FpsService {
     this.camera.keysRight.push('d'.charCodeAt(0));
     this.camera.keysRight.push('D'.charCodeAt(0));
 
-    this.camera.speed = 5; // controls WASD speed
-    this.camera.angularSensibility = 7000; // controls mouse speed
+    this.camera.speed = 50; // controls WASD speed
+    this.camera.angularSensibility = 5000; // controls mouse speed
+    this.camera.inertia = .2; // controls 'smoothness'
   }
 
   lockGunToCamera(xOffset: number, yOffset: number, zOffset: number) {
@@ -202,8 +203,8 @@ export class FpsService {
   }
 
   handleRunOnShift() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 8 });
-    document.addEventListener('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 5 });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 70 });
+    document.addEventListener('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 50 });
   }
 
   handleFlyOnSpace() {
