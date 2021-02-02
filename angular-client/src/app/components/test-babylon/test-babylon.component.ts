@@ -5,7 +5,6 @@ import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
 // Services/Models
-import { GunService } from 'src/app/services/gun/gun.service';
 import { Gun } from 'src/app/models/gun/gun';
 import { FpsService } from 'src/app/services/fps/fps.service';
 
@@ -26,23 +25,18 @@ export class TestBabylonComponent implements OnInit {
   @Output() ground: Mesh;
   @Output() platform: Mesh;
   @Output() sphere: Mesh;
-  @Output() isSceneLocked: boolean = false;
-  @Output() shoot: boolean;
-  @Output() guns: Gun[];
 
-  constructor(private gunService: GunService, private fpsService: FpsService) { }
+  constructor(private fpsService: FpsService) { }
 
   async ngOnInit() {
 
     this.createScene();
     this.handleWindowResize(this.engine);
     this.handleDebugLayer(this.scene);
+    this.handleBoundingBoxes(this.scene);
 
-    this.guns = await this.gunService.getAll(this.scene);
-    this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas, this.guns[0]);
-
-    this.guns[1].gunMesh.position = new Vector3(50, 50, 50);
-
+    this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas);
+    
     this.skybox = this.createSkyBox(this.scene);
     this.ground = this.createGround(this.scene, 4000, 0, 'grass.jpg');
     this.platform = this.createGround(this.scene, 5000, -200, 'lava.jpg');
@@ -62,7 +56,7 @@ export class TestBabylonComponent implements OnInit {
     this.scene.gravity = new Vector3(0, -5, 0);
     this.scene.collisionsEnabled = true;
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
-    this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 20, 0), this.scene);
+    this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 30, 0), this.scene);
     this.universalCamera.attachControl(this.canvas.nativeElement, true);
     this.scene.activeCamera = this.universalCamera;
   }
@@ -120,6 +114,10 @@ export class TestBabylonComponent implements OnInit {
         else scene.debugLayer.show(config);
       }
     });
+  }
+
+  handleBoundingBoxes(scene: Scene) {
+    document.addEventListener('keydown', event => { if (event.code == 'NumpadEnter') for (let i = 0; i < scene.meshes.length; i++) scene.meshes[i].showBoundingBox = !scene.meshes[i].showBoundingBox });
   }
 
   render() {

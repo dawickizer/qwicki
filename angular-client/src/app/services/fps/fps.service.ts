@@ -1,6 +1,6 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, TextureBlock } from '@babylonjs/core';
-import { TextBlock, StackPanel, AdvancedDynamicTexture, Image, Button, Rectangle, Control, Grid } from '@babylonjs/gui';
+import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, BoundingInfo, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
 import { GunService } from 'src/app/services/gun/gun.service';
@@ -19,6 +19,7 @@ export class FpsService {
   hitMarkerSound: Sound;
   hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
   gun: Gun;
+  guns: Gun[];
   shoot: boolean;
   justFired: boolean = false;
   isSceneLocked: boolean = false;
@@ -29,20 +30,32 @@ export class FpsService {
 
   constructor(private gunService: GunService) { }
 
-  async addFpsMechanics(camera: UniversalCamera, scene: Scene, canvas: ElementRef<HTMLCanvasElement>, gun: Gun) {
+  async addFpsMechanics(camera: UniversalCamera, scene: Scene, canvas: ElementRef<HTMLCanvasElement>) {
     this.camera = camera;
     this.scene = scene;
     this.canvas = canvas;
-    this.gun = gun;
+
+    this.guns = await this.gunService.getAll(this.scene);
+    this.gun = this.guns[0];
 
     this.createFpsCamera();
-    this.lockGunToCamera(4, -25, 20);
+    this.lockGunToCamera(4, -35, 20);
     this.addCrossHairs();
     await this.addHitMarkerSound();
     this.createFpsKeyBinds();
     this.handlePointerEvents();
     this.createHUD();
 
+
+
+    //play 
+    this.guns[1].gunMesh.position = new Vector3(50, 2, 50);
+    this.guns[1].gunMesh.rotation = new Vector3(0, 0, 1.5);
+
+    this.guns[0].gunMesh.setBoundingInfo(new BoundingInfo(new Vector3(-2, -20, -20.5), new Vector3(2, 5, 20.5)));
+    this.guns[1].gunMesh.setBoundingInfo(new BoundingInfo(new Vector3(-2, -10, -20.5), new Vector3(2, 5, 20.5)));
+
+    
   }
 
   createHUD() {
@@ -77,7 +90,7 @@ export class FpsService {
   createFpsCamera() {
     this.camera.checkCollisions = true;
     this.camera.applyGravity = true;
-    this.camera.ellipsoid = new Vector3(5,10,5);
+    this.camera.ellipsoid = new Vector3(5,15,5);
 
     this.camera.keysUp = [];
     this.camera.keysUp.push('w'.charCodeAt(0));
