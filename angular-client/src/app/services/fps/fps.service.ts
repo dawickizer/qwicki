@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, SceneLoader, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { UniversalCamera, Camera, SceneLoader, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, RayHelper } from '@babylonjs/core';
 import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
@@ -56,20 +56,19 @@ export class FpsService {
 
     for (let i = 0; i < meshes.length; i++) {
       meshes[i].layerMask = 0x10000000; // make dude and dude nodes invisible to main fps camera
-      meshes[i].isPickable = false;
+      //meshes[i].isPickable = false;
     }
     this.dude = meshes[0];
     this.dude.id = 'dudeMesh';
     this.dude.name = 'dudeMesh';
 
+    
     this.dude.setParent(this.camera);
+    this.dude.bakeCurrentTransformIntoVertices(); // make new default 0,0,0 position
+    this.dude.position = new Vector3(0, 0, -5); // offset dude back in the Z direction  so he doesnt interfere with ray cast
     this.gun.gunMesh.setParent(this.camera);
     this.gun.gunMesh.position = new Vector3(4, -6, 20);
-
-
-
-  
-
+    this.gun.gunMesh.bakeCurrentTransformIntoVertices(); // make new default 0,0,0 position
 
   }
 
@@ -296,6 +295,8 @@ export class FpsService {
     this.gun.gunMesh.getChildMeshes()[1].isPickable = false;
 
     let ray = new Ray(origin, aimVector, length);
+    let rayHelper = new RayHelper(ray);
+    rayHelper.show(this.scene, Color3.Blue());
 
     // log picked
     let pickInfo = this.scene.pickWithRay(ray);

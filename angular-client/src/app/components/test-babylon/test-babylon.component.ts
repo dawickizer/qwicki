@@ -63,7 +63,7 @@ export class TestBabylonComponent implements OnInit {
     this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 64, 0), this.scene);
     this.universalCamera.attachControl(this.canvas.nativeElement, true);
     this.scene.activeCamera = this.universalCamera;
-    this.debugCamera = new UniversalCamera('debugCamera', new Vector3(0, 30, 0), this.scene);
+    this.debugCamera = new UniversalCamera('debugCamera', new Vector3(0, 5, 0), this.scene);
   }
 
   createSkyBox(): Mesh {
