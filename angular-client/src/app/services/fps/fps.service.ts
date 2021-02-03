@@ -12,6 +12,7 @@ import { Gun } from 'src/app/models/gun/gun';
 export class FpsService {
 
   camera: UniversalCamera;
+  gunSightCamera: UniversalCamera;
   scene: Scene;
   canvas: ElementRef<HTMLCanvasElement>;
   gunSight: Mesh;
@@ -49,13 +50,17 @@ export class FpsService {
 
 
     //play 
-    this.guns[1].gunMesh.position = new Vector3(50, 2, 50);
-    this.guns[1].gunMesh.rotation = new Vector3(0, 0, 1.5);
+    this.guns[0].gunMesh.setBoundingInfo(new BoundingInfo(new Vector3(-2, -10, -20.5), new Vector3(2, 5, 20.5)));
 
-    this.guns[0].gunMesh.setBoundingInfo(new BoundingInfo(new Vector3(-2, -20, -20.5), new Vector3(2, 5, 20.5)));
+    this.guns[1].gunMesh.scaling = new Vector3(.07, .07, .07);
+    this.guns[1].gunMesh.position = new Vector3(50, 5, 50);
+    this.guns[1].gunMesh.rotation = new Vector3(0, 1, 2.3);
     this.guns[1].gunMesh.setBoundingInfo(new BoundingInfo(new Vector3(-2, -10, -20.5), new Vector3(2, 5, 20.5)));
 
-    
+    this.scene.onBeforeRenderObservable.add(() => { if (this.gun.gunMesh.intersectsMesh(this.guns[1].gunMesh)) console.log('Intersecting') });
+
+    this.handleActionOnE();
+
   }
 
   createHUD() {
@@ -67,7 +72,7 @@ export class FpsService {
     this.ammo.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
     this.ammo.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
     this.ammo.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-    this.ammo.fontSize = '22px';
+    this.ammo.fontSize = '30px';
     this.ammo.color = 'white';
     this.ammo.text = this.gun.ammo + ' / ' + this.gun.magazine;
     this.ammo.top = '650px';
@@ -123,10 +128,10 @@ export class FpsService {
   addCrossHairs() {
 		if (this.scene.activeCameras.length === 0) this.scene.activeCameras.push(this.scene.activeCamera);        
 
-		let secondCamera = new UniversalCamera('GunSightCamera', new Vector3(0, 0, -50), this.scene);                
-		secondCamera.mode = Camera.ORTHOGRAPHIC_CAMERA;
-		secondCamera.layerMask = 0x20000000;
-		this.scene.activeCameras.push(secondCamera);
+		this.gunSightCamera = new UniversalCamera('gunSightCamera', new Vector3(0, 0, -50), this.scene);                
+		this.gunSightCamera.mode = Camera.ORTHOGRAPHIC_CAMERA;
+		this.gunSightCamera.layerMask = 0x20000000;
+		this.scene.activeCameras.push(this.gunSightCamera);
 		
 		let meshes = [];
 		let h = 250;
@@ -213,6 +218,30 @@ export class FpsService {
 
   handleReloadOnR() {
     document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.gun.reloadSound.isPlaying && this.gun.ammo < this.gun.magazine) this.reloadWeapon() });
+  }
+
+  handleActionOnE() {
+    document.addEventListener('keydown', event => { 
+      if (this.isSceneLocked && event.code == 'KeyE' && this.gun.gunMesh.intersectsMesh(this.guns[1].gunMesh)) {
+        console.log('Picked Up Weapon')
+
+        // unparent the current gun
+        this.gun.gunMesh.parent = null;
+
+        // update position of current gun
+        this.gun.gunMesh.position = this.guns[1].gunMesh.position;
+
+        // update the gun properties
+        this.gun = this.guns[1];
+
+        this.gun.gunMesh.rotation = new Vector3(-.5, -.2, 1);
+
+        // lock new gun to camera
+        this.lockGunToCamera(-30, -35, 20);
+
+        
+      }
+    });
   }
 
   handlePointerEvents() {

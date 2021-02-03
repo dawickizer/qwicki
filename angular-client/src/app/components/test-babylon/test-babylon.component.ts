@@ -1,6 +1,6 @@
 // Core
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -20,30 +20,34 @@ export class TestBabylonComponent implements OnInit {
   @Output() engine: Engine;
   @Output() scene: Scene;
   @Output() universalCamera: UniversalCamera;
+  @Output() debugCamera: UniversalCamera;
+  @Output() debugCameraIsActive: boolean = false;
   @Output() light: HemisphericLight;
   @Output() skybox: Mesh;
   @Output() ground: Mesh;
   @Output() platform: Mesh;
   @Output() sphere: Mesh;
+  @Output() sphere2: Mesh;
 
   constructor(private fpsService: FpsService) { }
 
   async ngOnInit() {
 
     this.createScene();
-    this.handleWindowResize(this.engine);
-    this.handleDebugLayer(this.scene);
-    this.handleBoundingBoxes(this.scene);
+    this.handleWindowResize();
+    this.handleBoundingBoxes();
 
-    this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas);
+    await this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas);
     
-    this.skybox = this.createSkyBox(this.scene);
-    this.ground = this.createGround(this.scene, 4000, 0, 'grass.jpg');
-    this.platform = this.createGround(this.scene, 5000, -200, 'lava.jpg');
-    this.sphere = this.createSphere(this.scene);
-    let me = this.sphere.clone('sphere');
+    this.skybox = this.createSkyBox();
+    this.ground = this.createGround(4000, 0, 'grass.jpg');
+    this.platform = this.createGround(5000, -200, 'lava.jpg');
+    this.sphere = this.createSphere();
+    this.sphere2 = this.sphere.clone('sphere');
+    this.sphere2.position = new Vector3(-59, 70, 20);
 
-    me.position = new Vector3(-59, 70, 20);
+    this.handleDebugLayer();
+    this.handleDebugCamera();
 
     // running babylonJS
     this.render();
@@ -59,14 +63,15 @@ export class TestBabylonComponent implements OnInit {
     this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 30, 0), this.scene);
     this.universalCamera.attachControl(this.canvas.nativeElement, true);
     this.scene.activeCamera = this.universalCamera;
+    this.debugCamera = new UniversalCamera('debugCamera', new Vector3(0, 30, 0), this.scene);
   }
 
-  createSkyBox(scene: Scene): Mesh {
+  createSkyBox(): Mesh {
     
-    let skybox = MeshBuilder.CreateBox('skybox', { size: 5000 }, scene);
-    let skyboxMaterial = new StandardMaterial('skybox', scene);
+    let skybox = MeshBuilder.CreateBox('skybox', { size: 5000 }, this.scene);
+    let skyboxMaterial = new StandardMaterial('skybox', this.scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new CubeTexture('assets/babylon/textures/joe/joe', scene);
+    skyboxMaterial.reflectionTexture = new CubeTexture('assets/babylon/textures/joe/joe', this.scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
     skyboxMaterial.specularColor = new Color3(0, 0, 0);
@@ -75,19 +80,19 @@ export class TestBabylonComponent implements OnInit {
     return skybox;
   }
 
-  createGround(scene: Scene, size: number, y_position: number, texture: string): Mesh {
-    let ground = MeshBuilder.CreateGround('ground', { width: size, height: size }, scene);
+  createGround(size: number, y_position: number, texture: string): Mesh {
+    let ground = MeshBuilder.CreateGround('ground', { width: size, height: size }, this.scene);
     ground.position.y = y_position;
-    let groundMat = new StandardMaterial('groundMat', scene);
+    let groundMat = new StandardMaterial('groundMat', this.scene);
     groundMat.backFaceCulling = false;
-    groundMat.diffuseTexture = new Texture('assets/babylon/textures/' + texture, scene);
+    groundMat.diffuseTexture = new Texture('assets/babylon/textures/' + texture, this.scene);
     ground.material = groundMat;
     ground.checkCollisions = true;
     return ground;
   }
 
-  createSphere(scene: Scene): Mesh {
-    let sphere = MeshBuilder.CreateSphere('sphere', { diameter: 25 }, scene);
+  createSphere(): Mesh {
+    let sphere = MeshBuilder.CreateSphere('sphere', { diameter: 25 }, this.scene);
     sphere.position.y = 15;
     sphere.position.z = 100;
     sphere.rotation.x = 0;
@@ -95,29 +100,60 @@ export class TestBabylonComponent implements OnInit {
     sphere.rotation.z = 91;
     sphere.checkCollisions = true;
 
-    let sphereMat = new StandardMaterial('sphereMat', scene);
-    sphereMat.diffuseTexture = new Texture('assets/babylon/textures/joe.jpg', scene);
+    let sphereMat = new StandardMaterial('sphereMat', this.scene);
+    sphereMat.diffuseTexture = new Texture('assets/babylon/textures/joe.jpg', this.scene);
     sphere.material = sphereMat;
     return sphere;
   }
 
-  handleWindowResize(engine: Engine) {
-    window.addEventListener('resize', () => engine.resize());   
+  handleWindowResize() {
+    window.addEventListener('resize', () => this.engine.resize());   
   }
 
-  handleDebugLayer(scene: Scene) {
+  handleDebugLayer() {
     let config: IInspectorOptions = {initialTab: DebugLayerTab.Statistics, embedMode: true}
     //this.scene.debugLayer.show(config)
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
-        if (scene.debugLayer.isVisible()) scene.debugLayer.hide();
-        else scene.debugLayer.show(config);
+        if (this.scene.debugLayer.isVisible()) this.scene.debugLayer.hide();
+        else this.scene.debugLayer.show(config);
       }
     });
   }
 
-  handleBoundingBoxes(scene: Scene) {
-    document.addEventListener('keydown', event => { if (event.code == 'NumpadEnter') for (let i = 0; i < scene.meshes.length; i++) scene.meshes[i].showBoundingBox = !scene.meshes[i].showBoundingBox });
+  handleDebugCamera() {
+
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'NumpadSubtract' ) {
+        this.debugCameraIsActive = !this.debugCameraIsActive;
+        if (this.debugCameraIsActive) {
+
+          // Attach camera to canvas
+          this.debugCamera.attachControl(this.canvas.nativeElement, true);
+          
+          // Push the debug camera to the list of active cameras for the scene
+          this.scene.activeCameras.push(this.debugCamera);
+
+          // Adjust the viewports
+          this.scene.activeCameras[0].viewport = new Viewport(0.5, 0, 0.5, 1.0); // FPS Camera
+          this.scene.activeCameras[1].viewport = this.scene.activeCameras[0].viewport // Gunsight Camera
+          this.scene.activeCameras[2].viewport = this.debugCamera.viewport = new Viewport(0, 0, 0.5, 1.0); // Debug Camera
+        } else {
+
+          // Revert back to normal camera state
+          this.scene.activeCameras[0].viewport = new Viewport(0, 0, 1, 1); // FPS Camera
+          this.scene.activeCameras[1].viewport = this.scene.activeCameras[0].viewport // Gunsight Camera
+
+          // Revert back to normal active cameras
+          this.debugCamera.detachControl();
+          this.scene.activeCameras.pop();
+        }
+      }
+    });
+  }
+
+  handleBoundingBoxes() {
+    document.addEventListener('keydown', event => { if (event.code == 'NumpadEnter') for (let i = 0; i < this.scene.meshes.length; i++) this.scene.meshes[i].showBoundingBox = !this.scene.meshes[i].showBoundingBox });
   }
 
   render() {

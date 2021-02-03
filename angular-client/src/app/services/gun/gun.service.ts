@@ -30,7 +30,7 @@ export class GunService {
 
     // create fake
     this.fake.gunMesh = null;
-    this.fake.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
+    this.fake.gunMeshURL = 'assets/babylon/models/mac10/scene.gltf';
     this.fake.name = 'fake';
     this.fake.magazine = 30;
     this.fake.ammo = 30;
@@ -39,7 +39,7 @@ export class GunService {
     this.fake.gunshotSound = null;
     this.fake.gunshotSoundURL = 'assets/babylon/sounds/mac10/silencer.mp3';
     this.fake.reloadSound = null;
-    this.fake.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
+    this.fake.reloadSoundURL = 'assets/babylon/sounds/mac10/reload.mp3';
     this.guns.push(this.fake);
   }
 
