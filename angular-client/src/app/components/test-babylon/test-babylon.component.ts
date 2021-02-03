@@ -37,7 +37,7 @@ export class TestBabylonComponent implements OnInit {
     this.handleWindowResize();
     this.handleBoundingBoxes();
 
-    await this.fpsService.addFpsMechanics(this.universalCamera, this.scene, this.canvas);
+    await this.fpsService.addFpsMechanics(this.scene, this.canvas);
     
     this.skybox = this.createSkyBox();
     this.ground = this.createGround(4000, 0, 'grass.jpg');
@@ -60,7 +60,7 @@ export class TestBabylonComponent implements OnInit {
     this.scene.gravity = new Vector3(0, -5, 0);
     this.scene.collisionsEnabled = true;
     this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
-    this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 30, 0), this.scene);
+    this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 64, 0), this.scene);
     this.universalCamera.attachControl(this.canvas.nativeElement, true);
     this.scene.activeCamera = this.universalCamera;
     this.debugCamera = new UniversalCamera('debugCamera', new Vector3(0, 30, 0), this.scene);
@@ -127,6 +127,8 @@ export class TestBabylonComponent implements OnInit {
       if (event.code == 'NumpadSubtract' ) {
         this.debugCameraIsActive = !this.debugCameraIsActive;
         if (this.debugCameraIsActive) {
+
+          this.debugCamera.layerMask = 0x10000001; // makes dude visible to debug camera and everything else renders for debug assuming its 0x0FFFFFFF
 
           // Attach camera to canvas
           this.debugCamera.attachControl(this.canvas.nativeElement, true);

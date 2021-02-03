@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, BoundingInfo, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { UniversalCamera, Camera, SceneLoader, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
 import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
@@ -29,18 +29,20 @@ export class FpsService {
   hud: AdvancedDynamicTexture;
   ammo: TextBlock;
 
+  //play 
+  dude: Mesh;
+
   constructor(private gunService: GunService) { }
 
-  async addFpsMechanics(camera: UniversalCamera, scene: Scene, canvas: ElementRef<HTMLCanvasElement>) {
-    this.camera = camera;
+  async addFpsMechanics(scene: Scene, canvas: ElementRef<HTMLCanvasElement>) {
+    this.camera = scene.activeCamera as UniversalCamera;
     this.scene = scene;
     this.canvas = canvas;
 
-    this.guns = await this.gunService.getAll(this.scene);
-    this.gun = this.guns[0];
+    this.gun = await this.gunService.get('m4', this.scene);
 
     this.createFpsCamera();
-    this.lockGunToCamera(4, -35, 20);
+    //sthis.lockGunToCamera(4, -35, 20);
     this.addCrossHairs();
     await this.addHitMarkerSound();
     this.createFpsKeyBinds();
@@ -50,16 +52,24 @@ export class FpsService {
 
 
     //play 
-    this.guns[0].gunMesh.setBoundingInfo(new BoundingInfo(new Vector3(-2, -10, -20.5), new Vector3(2, 5, 20.5)));
+    let meshes = (await SceneLoader.ImportMeshAsync('', 'assets/babylon/models/dude/dude.babylon', '', this.scene)).meshes as Mesh[];
 
-    this.guns[1].gunMesh.scaling = new Vector3(.07, .07, .07);
-    this.guns[1].gunMesh.position = new Vector3(50, 5, 50);
-    this.guns[1].gunMesh.rotation = new Vector3(0, 1, 2.3);
-    this.guns[1].gunMesh.setBoundingInfo(new BoundingInfo(new Vector3(-2, -10, -20.5), new Vector3(2, 5, 20.5)));
+    for (let i = 0; i < meshes.length; i++) {
+      meshes[i].layerMask = 0x10000000; // make dude and dude nodes invisible to main fps camera
+      meshes[i].isPickable = false;
+    }
+    this.dude = meshes[0];
+    this.dude.id = 'dudeMesh';
+    this.dude.name = 'dudeMesh';
 
-    this.scene.onBeforeRenderObservable.add(() => { if (this.gun.gunMesh.intersectsMesh(this.guns[1].gunMesh)) console.log('Intersecting') });
+    this.dude.setParent(this.camera);
+    this.gun.gunMesh.setParent(this.camera);
+    this.gun.gunMesh.position = new Vector3(4, -6, 20);
 
-    this.handleActionOnE();
+
+
+  
+
 
   }
 
@@ -95,7 +105,7 @@ export class FpsService {
   createFpsCamera() {
     this.camera.checkCollisions = true;
     this.camera.applyGravity = true;
-    this.camera.ellipsoid = new Vector3(5,15,5);
+    this.camera.ellipsoid = new Vector3(5, 32, 5);
 
     this.camera.keysUp = [];
     this.camera.keysUp.push('w'.charCodeAt(0));
@@ -220,30 +230,6 @@ export class FpsService {
     document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.gun.reloadSound.isPlaying && this.gun.ammo < this.gun.magazine) this.reloadWeapon() });
   }
 
-  handleActionOnE() {
-    document.addEventListener('keydown', event => { 
-      if (this.isSceneLocked && event.code == 'KeyE' && this.gun.gunMesh.intersectsMesh(this.guns[1].gunMesh)) {
-        console.log('Picked Up Weapon')
-
-        // unparent the current gun
-        this.gun.gunMesh.parent = null;
-
-        // update position of current gun
-        this.gun.gunMesh.position = this.guns[1].gunMesh.position;
-
-        // update the gun properties
-        this.gun = this.guns[1];
-
-        this.gun.gunMesh.rotation = new Vector3(-.5, -.2, 1);
-
-        // lock new gun to camera
-        this.lockGunToCamera(-30, -35, 20);
-
-        
-      }
-    });
-  }
-
   handlePointerEvents() {
    
     // Hide and lock mouse cursor when scene is clicked
@@ -294,14 +280,14 @@ export class FpsService {
   }
 
   castRay() {
-      
-    let origin = this.camera.position; // set origin to center of gun mesh
+    
+    let origin = this.camera.position; 
     let length = 50000;
 
     // dont understand this lol
     let wm = this.camera.getWorldMatrix();
     let aimVector = Vector3.TransformCoordinates(Vector3.Forward(), wm)
-      .subtract(this.camera.position)
+      .subtract(origin)
       .normalize();
   
     // Make the gun mesh and its children unpickable so the ray doesnt accidentally pick the gun meshes
