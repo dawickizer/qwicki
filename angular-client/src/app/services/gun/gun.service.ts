@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Gun } from 'src/app/models/gun/gun';
-import { Mesh, Sound, Scene, SceneLoader, Vector3 } from '@babylonjs/core';
+import { Scene } from '@babylonjs/core';
 
 @Injectable({
   providedIn: 'root'

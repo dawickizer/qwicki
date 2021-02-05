@@ -1,6 +1,6 @@
 // Core
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, SceneLoader, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
 
@@ -44,7 +44,7 @@ export class TestBabylonComponent implements OnInit {
     this.platform = this.createGround(5000, -200, 'lava.jpg');
     this.sphere = this.createSphere();
     this.sphere2 = this.sphere.clone('sphere');
-    this.sphere2.position = new Vector3(-59, 70, 20);
+    this.sphere2.position = new Vector3(40, 69, 38);
 
     this.handleDebugLayer();
     this.handleDebugCamera();
