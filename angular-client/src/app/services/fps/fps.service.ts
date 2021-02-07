@@ -22,6 +22,7 @@ export class FpsService {
 
   gunSightCamera: UniversalCamera;
   gunSight: Mesh;
+  reloadingSight: Mesh;
   hitMarkerSight: Mesh;
   hitMarkerSound: Sound;
   hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
@@ -157,6 +158,7 @@ export class FpsService {
     this.self.primaryWeapon = await this.gunService.createFake(m4, this.scene, 'primary');
     this.self.activeWeaponName = this.self.primaryWeapon.name;
     this.self.secondaryWeapon = await this.gunService.createFake(mp5, this.scene, 'secondary');
+    this.self.secondaryWeapon.gunMesh.visibility = 0;
     this.self.secondaryWeapon.gunshotSound.setVolume(.25);
   
   }
@@ -327,7 +329,7 @@ export class FpsService {
 		
 		let gunSightMat = new StandardMaterial('gunSightMat', this.scene);
 		gunSightMat.checkReadyOnlyOnce = true;
-		gunSightMat.emissiveColor = new Color3(0,1,0);
+		gunSightMat.emissiveColor = new Color3(1,1,1);
 		
     this.gunSight.material = gunSightMat;
     this.gunSight.isPickable = false;
@@ -342,6 +344,17 @@ export class FpsService {
     this.hitMarkerSight.rotation = new Vector3(0, 0, .8);
     this.hitMarkerSight.scaling = new Vector3(.6, .6, 1);
     this.hitMarkerSight.visibility = 0;
+
+    // create reloading icon off of gunsight
+		let reloadingMat = new StandardMaterial('reloadingMarkerMat', this.scene);
+		reloadingMat.checkReadyOnlyOnce = true;
+    reloadingMat.emissiveColor = new Color3(1,1,0);
+    
+    this.reloadingSight = this.gunSight.clone('hitMarker');
+    this.reloadingSight.material = reloadingMat;
+    this.reloadingSight.rotation = new Vector3(0, 0, .8);
+    this.reloadingSight.scaling = new Vector3(.6, .6, 1);
+    this.reloadingSight.visibility = 0;
   }
   
   async addHitMarkerSound(): Promise<Sound> {
@@ -375,7 +388,7 @@ export class FpsService {
   }
 
   handleSwapWeaponOnF() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF') this.swapWeapon() });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF' && !this.self.swappingWeapons) this.swapWeapon() });
   }
 
   handlePointerEvents() {
@@ -394,8 +407,32 @@ export class FpsService {
 
   swapWeapon() {
     this.self.getActiveWeapon().reloadSound.stop();
-    if (this.self.activeWeaponName == this.self.primaryWeapon.name) this.self.activeWeaponName = this.self.secondaryWeapon.name;
-    else this.self.activeWeaponName = this.self.primaryWeapon.name;
+    if (this.self.activeWeaponName == this.self.primaryWeapon.name) { 
+      this.self.activeWeaponName = this.self.secondaryWeapon.name;
+      this.self.primaryWeapon.gunMesh.visibility = 0;
+      this.gunSight.visibility = 0;
+      this.reloadingSight.visibility = 0;
+      this.self.swappingWeapons = true;
+      setTimeout(() => {
+        this.self.swappingWeapons = false;
+        this.self.secondaryWeapon.gunMesh.visibility = 1;
+        this.gunSight.visibility = 1;
+      }, 500)
+
+    }
+    else { 
+      this.self.activeWeaponName = this.self.primaryWeapon.name;
+      this.self.secondaryWeapon.gunMesh.visibility = 0;
+      this.gunSight.visibility = 0;
+      this.reloadingSight.visibility = 0;
+      this.self.swappingWeapons = true;
+      setTimeout(() => {
+        this.self.swappingWeapons = false;
+        this.self.primaryWeapon.gunMesh.visibility = 1;
+        this.gunSight.visibility = 1;
+
+      }, 500)
+    }
     this.updateAmmoCount()
   }
 
@@ -408,9 +445,9 @@ export class FpsService {
     let fire = async () => { // We need to wrap the loop into an async function for this to work
 
       // cant fire if reloading or if you just fired
-      if (!this.self.getActiveWeapon().reloadSound.isPlaying && !this.justFired) {
+      if (!this.self.getActiveWeapon().reloadSound.isPlaying && !this.justFired && !this.self.swappingWeapons) {
         for (let i = 0; i < currentAmmo; i++) {
-          if (this.shoot && !this.self.getActiveWeapon().reloadSound.isPlaying) {
+          if (this.shoot && !this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.swappingWeapons) {
             this.self.getActiveWeapon().gunshotSound.play(); 
             this.self.getActiveWeapon().ammo--; 
             this.updateAmmoCount();
@@ -431,11 +468,17 @@ export class FpsService {
   }
 
   reloadWeapon() {
-    this.self.getActiveWeapon().reloadSound.play();
-    this.self.getActiveWeapon().reloadSound.onEndedObservable.add(() => { 
-      this.self.getActiveWeapon().ammo = this.self.getActiveWeapon().magazine;
-      this.updateAmmoCount();
-    });
+    if (!this.self.swappingWeapons) {
+      this.self.getActiveWeapon().reloadSound.play();
+      this.gunSight.visibility = 0;
+      this.reloadingSight.visibility = 1;
+      this.self.getActiveWeapon().reloadSound.onEndedObservable.add(() => { 
+        this.self.getActiveWeapon().ammo = this.self.getActiveWeapon().magazine;
+        this.updateAmmoCount();
+        this.gunSight.visibility = 1;
+        this.reloadingSight.visibility = 0;
+      });
+    }
   }
 
   castRay() {

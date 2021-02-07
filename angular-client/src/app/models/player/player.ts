@@ -16,6 +16,7 @@ export class Player {
   health: number = 100;
   wasHitRecently: boolean = false;
   lastDamagedBy: string;
+  swappingWeapons: boolean = false;
   moveSpeed: number; // WASD
   cameraAngularSensibility: number; // controls mouse speed
   cameraInertia: number; // controls mouse 'smoothness'
