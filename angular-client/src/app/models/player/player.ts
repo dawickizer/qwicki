@@ -17,6 +17,8 @@ export class Player {
   wasHitRecently: boolean = false;
   lastDamagedBy: string;
   swappingWeapons: boolean = false;
+  justFired: boolean = false;
+  canShoot: boolean = true;
   moveSpeed: number; // WASD
   cameraAngularSensibility: number; // controls mouse speed
   cameraInertia: number; // controls mouse 'smoothness'

@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, MeshBuilder } from '@babylonjs/core';
+import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
 import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
@@ -27,8 +27,6 @@ export class FpsService {
   hitMarkerSound: Sound;
   hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
 
-  shoot: boolean;
-  justFired: boolean = false;
   isSceneLocked: boolean = false;
 
   killLogs: string[] = [];
@@ -107,6 +105,7 @@ export class FpsService {
     m4.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
     m4.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
     m4.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
+    m4.cockingSoundURL = 'assets/babylon/sounds/m4/m4-cocking.mp3';
     m4.name = 'm4';
     m4.magazine = 30;
     m4.ammo = 30;
@@ -119,6 +118,7 @@ export class FpsService {
     mp5.gunMeshURL = 'assets/babylon/models/mp5/scene.gltf';
     mp5.gunshotSoundURL = 'assets/babylon/sounds/mp5/silencer.mp3';
     mp5.reloadSoundURL = 'assets/babylon/sounds/mp5/reload.mp3';
+    mp5.cockingSoundURL = 'assets/babylon/sounds/mp5/mp5-cocking.mp3';
     mp5.name = 'mp5';
     mp5.magazine = 25;
     mp5.ammo = 25;
@@ -399,7 +399,7 @@ export class FpsService {
       else if (this.isSceneLocked && event.button == 0) this.fireWeapon(); // screen is locked...fire weapon
     };
 
-    this.scene.onPointerUp = (event) => { if (event.button == 0) this.shoot = false };
+    this.scene.onPointerUp = (event) => { if (event.button == 0) this.self.canShoot = false };
 
     // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
     this.handlePointerLockChange();
@@ -413,11 +413,12 @@ export class FpsService {
       this.gunSight.visibility = 0;
       this.reloadingSight.visibility = 0;
       this.self.swappingWeapons = true;
+      setTimeout(() => this.self.secondaryWeapon.cockingSound.play(), 250);
       setTimeout(() => {
         this.self.swappingWeapons = false;
         this.self.secondaryWeapon.gunMesh.visibility = 1;
         this.gunSight.visibility = 1;
-      }, 500)
+      }, 500);
 
     }
     else { 
@@ -426,33 +427,33 @@ export class FpsService {
       this.gunSight.visibility = 0;
       this.reloadingSight.visibility = 0;
       this.self.swappingWeapons = true;
+      setTimeout(() => this.self.primaryWeapon.cockingSound.play(), 250);
       setTimeout(() => {
         this.self.swappingWeapons = false;
         this.self.primaryWeapon.gunMesh.visibility = 1;
         this.gunSight.visibility = 1;
-
-      }, 500)
+      }, 500);
     }
     this.updateAmmoCount()
   }
 
   fireWeapon() {
     let currentAmmo = this.self.getActiveWeapon().ammo;
-    this.shoot = true;
+    this.self.canShoot = true;
     // Returns a Promise that resolves after 'ms' Milliseconds
     const timer = ms => new Promise(res => setTimeout(res, ms));
 
     let fire = async () => { // We need to wrap the loop into an async function for this to work
 
       // cant fire if reloading or if you just fired
-      if (!this.self.getActiveWeapon().reloadSound.isPlaying && !this.justFired && !this.self.swappingWeapons) {
+      if (!this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.justFired && !this.self.swappingWeapons) {
         for (let i = 0; i < currentAmmo; i++) {
-          if (this.shoot && !this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.swappingWeapons) {
+          if (this.self.canShoot && !this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.swappingWeapons) {
             this.self.getActiveWeapon().gunshotSound.play(); 
             this.self.getActiveWeapon().ammo--; 
             this.updateAmmoCount();
-            this.justFired = true; // set just fired to true to prevent spam fire
-            setTimeout(() => this.justFired = false, this.self.getActiveWeapon().fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
+            this.self.justFired = true; // set just fired to true to prevent spam fire
+            setTimeout(() => this.self.justFired = false, this.self.getActiveWeapon().fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
             this.castRay();
           }
           else 

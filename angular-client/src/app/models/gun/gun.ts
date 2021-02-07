@@ -15,6 +15,8 @@ export class Gun {
   gunshotSoundURL: string;
   reloadSound: Sound = null;
   reloadSoundURL: string;
+  cockingSound: Sound = null;
+  cockingSoundURL: string;
 
   async importGunMesh(scene: Scene): Promise<Mesh> {
     this.gunMesh = (await SceneLoader.ImportMeshAsync('', this.gunMeshURL, '', scene)).meshes[0] as Mesh;
@@ -46,6 +48,13 @@ export class Gun {
     this.reloadSound.setVolume(.2);
     this.reloadSound.name = this.name + '-ReloadSound'
     return this.reloadSound;
+  }
+
+  async importCockingSound(scene: Scene): Promise<Sound> {
+    this.cockingSound = new Sound('', this.cockingSoundURL, scene, null);
+    this.cockingSound.setVolume(.2);
+    this.cockingSound.name = this.name + '-CockingSound'
+    return this.cockingSound;
   }
 
   async createGunMesh(type: string, scene: Scene): Promise<Mesh> {

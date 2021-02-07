@@ -31,6 +31,7 @@ export class GunService {
     await gun.createGunMesh(type, scene);
     await gun.importGunshotSound(scene);
     await gun.importReloadSound(scene);
+    await gun.importCockingSound(scene);
     this.guns.push(gun);
     return gun;
   }
