@@ -27,5 +27,13 @@ export class GunService {
     return gun;
   }
 
+  async createFake(gun: Gun, scene: Scene, type: string): Promise<Gun> {
+    await gun.createGunMesh(type, scene);
+    await gun.importGunshotSound(scene);
+    await gun.importReloadSound(scene);
+    this.guns.push(gun);
+    return gun;
+  }
+
 
 }

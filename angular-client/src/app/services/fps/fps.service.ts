@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, MeshBuilder } from '@babylonjs/core';
 import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
@@ -125,33 +125,40 @@ export class FpsService {
     mp5.fireType = 'auto';
     mp5.damage = 10;
 
-    this.self.primaryWeapon = await this.gunService.create(m4, this.scene);
+    // this.self.primaryWeapon = await this.gunService.create(m4, this.scene);
+    // this.self.activeWeaponName = this.self.primaryWeapon.name;
+    // this.self.secondaryWeapon = await this.gunService.create(mp5, this.scene);
+
+    // // get the gun in a world position that is good for baking the verticies
+    // this.self.primaryWeapon.gunMesh.position = new Vector3(4, -6, 20);
+    // this.self.primaryWeapon.gunMesh.scaling = new Vector3(.25, .25, -.25);
+    // this.self.primaryWeapon.gunMesh.rotationQuaternion = null;
+    // this.self.primaryWeapon.gunMesh.rotation = new Vector3(0, 0, 0);
+    // this.self.primaryWeapon.gunMesh.isPickable = false;
+    // for (let i = 0; i < this.self.primaryWeapon.gunMesh.getChildMeshes().length; i++) this.self.primaryWeapon.gunMesh.getChildMeshes()[i].isPickable = false;
+
+    // // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera
+    // this.self.primaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
+
+    // // get the gun in a world position that is good for baking the verticies
+    // this.self.secondaryWeapon.gunMesh.position = new Vector3(4, -8, 18);
+    // this.self.secondaryWeapon.gunMesh.scaling = new Vector3(.03, .03, .03); 
+    // this.self.secondaryWeapon.gunMesh.rotationQuaternion = null;
+    // this.self.secondaryWeapon.gunMesh.rotation = new Vector3(0, -1.55, 0);
+    // this.self.secondaryWeapon.gunMesh.isPickable = false;
+    // this.self.secondaryWeapon.gunshotSound.setVolume(.25);
+    // for (let i = 0; i < this.self.secondaryWeapon.gunMesh.getChildMeshes().length; i++) this.self.secondaryWeapon.gunMesh.getChildMeshes()[i].isPickable = false;
+
+    // // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera 
+    // // CAUSES ROTATION BUG ON PRIMARY
+    // //this.self.secondaryWeapon.gunMesh.bakeCurrentTransformIntoVertices();  
+
+    // FOR NOW JUST USE BASIC MESHES WITH THE FAKE GUN CREATER
+    this.self.primaryWeapon = await this.gunService.createFake(m4, this.scene, 'primary');
     this.self.activeWeaponName = this.self.primaryWeapon.name;
-    this.self.secondaryWeapon = await this.gunService.create(mp5, this.scene);
-
-    // get the gun in a world position that is good for baking the verticies
-    this.self.primaryWeapon.gunMesh.position = new Vector3(4, -6, 20);
-    this.self.primaryWeapon.gunMesh.scaling = new Vector3(.25, .25, -.25);
-    this.self.primaryWeapon.gunMesh.rotationQuaternion = null;
-    this.self.primaryWeapon.gunMesh.rotation = new Vector3(0, 0, 0);
-    this.self.primaryWeapon.gunMesh.isPickable = false;
-    for (let i = 0; i < this.self.primaryWeapon.gunMesh.getChildMeshes().length; i++) this.self.primaryWeapon.gunMesh.getChildMeshes()[i].isPickable = false;
-
-    // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera
-    this.self.primaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
-
-    // get the gun in a world position that is good for baking the verticies
-    this.self.secondaryWeapon.gunMesh.position = new Vector3(4, -8, 18);
-    this.self.secondaryWeapon.gunMesh.scaling = new Vector3(.03, .03, .03); 
-    this.self.secondaryWeapon.gunMesh.rotationQuaternion = null;
-    this.self.secondaryWeapon.gunMesh.rotation = new Vector3(0, -1.55, 0);
-    this.self.secondaryWeapon.gunMesh.isPickable = false;
+    this.self.secondaryWeapon = await this.gunService.createFake(mp5, this.scene, 'secondary');
     this.self.secondaryWeapon.gunshotSound.setVolume(.25);
-    for (let i = 0; i < this.self.secondaryWeapon.gunMesh.getChildMeshes().length; i++) this.self.secondaryWeapon.gunMesh.getChildMeshes()[i].isPickable = false;
-
-    // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera 
-    // CAUSES ROTATION BUG ON PRIMARY
-    this.self.secondaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
+  
   }
 
   handlePlayerAndWeaponPosition() {
