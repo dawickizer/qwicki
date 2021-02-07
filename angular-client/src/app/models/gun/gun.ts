@@ -3,16 +3,17 @@ import { Mesh, Sound, Scene, SceneLoader, Vector3 } from '@babylonjs/core';
 export class Gun {
 
   _id?: string;
-  gunMesh: Mesh;
+  gunMesh: Mesh = null;
   gunMeshURL: string;
   name: string;
   magazine: number;
   ammo: number;
   fireRate: number;
   fireType: string;
-  gunshotSound: Sound;
+  damage: number;
+  gunshotSound: Sound = null;
   gunshotSoundURL: string;
-  reloadSound: Sound;
+  reloadSound: Sound = null;
   reloadSoundURL: string
 
   async importGunMesh(scene: Scene): Promise<Mesh> {

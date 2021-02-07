@@ -18,7 +18,7 @@ export class FpsService {
   canvas: ElementRef<HTMLCanvasElement>;
 
   self: Player;
-  enemy: Player;
+  enemies: Player[] = [];
 
   gunSightCamera: UniversalCamera;
   gunSight: Mesh;
@@ -30,8 +30,11 @@ export class FpsService {
   justFired: boolean = false;
   isSceneLocked: boolean = false;
 
+  killLogs: string[] = [];
+
   // HUD STUFF
   hud: AdvancedDynamicTexture;
+  killLogsDisplay: TextBlock[] = [];
   ammo: TextBlock;
   health: TextBlock;
   rectangle: Rectangle;
@@ -49,25 +52,20 @@ export class FpsService {
     this.addHitMarkerSound();
     this.handlePointerEvents();
     await this.createPlayer();
-    await this.getWeapons();
-    await this.createEnemy();
+    await this.createWeapons();
+    let names = ['Arshmazing', 'Senjoku', 'krookYa', 'cpt_crispy', 'hodoo', 'juri'];
+    for (let i = 0; i < 6; i++) this.enemies.push(await this.createEnemy(names[i]));
+    this.setEnemyPositions();
     this.handlePlayerAndWeaponPosition();
     this.createHUD();
     this.handleHealth();
   }
 
   async createPlayer() {
-    this.self = new Player();
-    this.self.playerMesh = null;
+    this.self = new Player('McWickyyyy', 'self');
     this.self.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
-    this.self.playerSound = null;
     this.self.playerSoundURL = '';
-    this.self.name = 'self';
-    this.self.type = 'self';
-    this.self.primaryWeapon = null;
-    this.self.secondaryWeapon = null;
-    this.self.health = 100;
-    this.self.moveSpeed = 0;
+    this.self.moveSpeed = this.camera.speed;
     this.self.cameraAngularSensibility = this.camera.angularSensibility; 
     this.self.cameraInertia = this.camera.inertia; 
 
@@ -79,38 +77,63 @@ export class FpsService {
 
   }
 
-  async createEnemy() {
-    this.enemy = new Player();
-    this.enemy.playerMesh = null;
-    this.enemy.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
-    this.enemy.playerSound = null;
-    this.enemy.playerSoundURL = '';
-    this.enemy.name = 'enemy';
-    this.enemy.type = 'enemy';
-    this.enemy.primaryWeapon = null;
-    this.enemy.secondaryWeapon = null;
-    this.enemy.health = 100;
-    this.enemy.moveSpeed = 0;
-    this.enemy.cameraAngularSensibility = this.camera.angularSensibility; 
-    this.enemy.cameraInertia = this.camera.inertia; 
+  async createEnemy(userId: string): Promise<Player> {
+    let enemy = new Player(userId, 'enemy');
+    enemy.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
+    enemy.playerSoundURL = '';
+    enemy.moveSpeed = this.camera.speed;
+    enemy.cameraAngularSensibility = this.camera.angularSensibility; 
+    enemy.cameraInertia = this.camera.inertia; 
 
-    await this.playerService.create(this.enemy, this.scene);
+    await this.playerService.create(enemy, this.scene);
 
-    this.enemy.playerMesh.getChildMeshes()[0].name = 'enemyHead';
-    this.enemy.playerMesh.getChildMeshes()[1].name = 'enemyTorso';
-    this.enemy.playerMesh.getChildMeshes()[2].name = 'enemyLegs';
-    this.enemy.playerMesh.getChildMeshes()[3].name = 'enemyArmsOrGroin';
-    this.enemy.playerMesh.getChildMeshes()[4].name = 'enemyEyes';
+    enemy.playerMesh.getChildMeshes()[0].name = 'enemy-head';
+    enemy.playerMesh.getChildMeshes()[1].name = 'enemy-torso';
+    enemy.playerMesh.getChildMeshes()[2].name = 'enemy-legs';
+    enemy.playerMesh.getChildMeshes()[3].name = 'enemy-armsOrGroin';
+    enemy.playerMesh.getChildMeshes()[4].name = 'enemy-eyes';
 
+    return enemy;
   }
 
-  async getWeapons() {
-    this.self.primaryWeapon = await this.gunService.get('m4', this.scene);
-    this.self.secondaryWeapon = await this.gunService.get('fake', this.scene);
+  setEnemyPositions() {
+    for (let i = 1; i < this.enemies.length; i++) this.enemies[i].playerMesh.position = this.enemies[i - 1].playerMesh.position.add(new Vector3(100, 0, 0))
+  }
+
+  async createWeapons() {
+
+    // create m4
+    let m4 = new Gun();
+    m4.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
+    m4.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
+    m4.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
+    m4.name = 'm4';
+    m4.magazine = 30;
+    m4.ammo = 30;
+    m4.fireRate = 65;
+    m4.fireType = 'auto';
+    m4.damage = 20;
+
+    // create mac10
+    let mac10 = new Gun();
+    mac10.gunMeshURL = 'assets/babylon/models/mac10/scene.gltf';
+    mac10.gunshotSoundURL = 'assets/babylon/sounds/mac10/silencer.mp3';
+    mac10.reloadSoundURL = 'assets/babylon/sounds/mac10/reload.mp3';
+    mac10.name = 'mac10';
+    mac10.magazine = 30;
+    mac10.ammo = 30;
+    mac10.fireRate = 65;
+    mac10.fireType = 'auto';
+    mac10.damage = 10;
+
+    this.self.primaryWeapon = await this.gunService.create(m4, this.scene);
+    this.self.secondaryWeapon = await this.gunService.create(mac10, this.scene);
 
     // get the gun in a world position that is good for baking the verticies
     this.self.primaryWeapon.gunMesh.position = new Vector3(4, -6, 20);
-    this.self.primaryWeapon.gunMesh.scaling = new Vector3(.25, .25, .25);
+    this.self.primaryWeapon.gunMesh.scaling = new Vector3(.25, .25, -.25);
+    this.self.primaryWeapon.gunMesh.rotationQuaternion = null;
+    this.self.primaryWeapon.gunMesh.rotation = new Vector3(0, 0, 0);
 
     // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera
     this.self.primaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
@@ -120,8 +143,8 @@ export class FpsService {
     this.self.secondaryWeapon.gunMesh.scaling = new Vector3(.02, .02, .02); 
     this.self.secondaryWeapon.gunMesh.rotation = new Vector3(1, 3, -1);
 
-    // // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera 
-    //CAUSES ROTATION BUG ON PRIMARY
+    // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera 
+    // CAUSES ROTATION BUG ON PRIMARY
     // this.self.secondaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
 
 
@@ -150,19 +173,19 @@ export class FpsService {
     this.hud = AdvancedDynamicTexture.CreateFullscreenUI('HUD');
     this.hud.idealHeight = 720;
 
-    this.rectangle = new Rectangle();
-    this.rectangle.name = 'rectangle';
-    this.rectangle.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    this.rectangle.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-    this.rectangle.width = "160px";
-    this.rectangle.height = "90px";
-    this.rectangle.cornerRadius = 20;
-    this.rectangle.color = "blue";
-    this.rectangle.thickness = 2;
-    this.rectangle.background = "grey";
-    this.rectangle.top = '600px';
-    this.rectangle.left = '-57px';
-    this.hud.addControl(this.rectangle);  
+    // this.rectangle = new Rectangle();
+    // this.rectangle.name = 'rectangle';
+    // this.rectangle.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
+    // this.rectangle.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+    // this.rectangle.width = '160px';
+    // this.rectangle.height = '90px';
+    // this.rectangle.cornerRadius = 20;
+    // this.rectangle.color = 'blue';
+    // this.rectangle.thickness = 2;
+    // this.rectangle.background = 'grey';
+    // this.rectangle.top = '600px';
+    // this.rectangle.left = '-57px';
+    // this.hud.addControl(this.rectangle);  
 
     this.ammo = new TextBlock();
     this.ammo.name = 'ammo count';
@@ -178,7 +201,6 @@ export class FpsService {
     this.ammo.fontFamily = 'Courier New';
     this.ammo.resizeToFit = true;
     this.hud.addControl(this.ammo);
-    this.scene.onBeforeRenderObservable.add(() => this.updateAmmoCount());
 
     this.health = new TextBlock();
     this.health.name = 'health';
@@ -186,7 +208,7 @@ export class FpsService {
     this.health.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
     this.health.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
     this.health.fontSize = '30px';
-    this.health.color = 'green';
+    this.health.color = 'white';
     this.health.text = 'HP: ' + this.self.health + '%';
     this.health.top = '600px';
     this.health.left = '-64px';
@@ -194,7 +216,25 @@ export class FpsService {
     this.health.fontFamily = 'Courier New';
     this.health.resizeToFit = true;
     this.hud.addControl(this.health);
-    this.scene.onBeforeRenderObservable.add(() => this.updateHealth());
+    this.scene.onBeforeRenderObservable.add(() => this.updateHealth()); // potentially update logic
+
+    for (let i = 0; i < 4; i++) {
+      let killLogDisplay = new TextBlock();
+      killLogDisplay.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
+      killLogDisplay.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+      killLogDisplay.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+      killLogDisplay.fontSize = '15px';
+      killLogDisplay.color = 'white';
+      killLogDisplay.fontFamily = 'Courier New';
+      killLogDisplay.text = '';
+      killLogDisplay.topInPixels = 560 - (i*20);
+      killLogDisplay.left = '1100px';
+      killLogDisplay.width = '25%';;
+      killLogDisplay.resizeToFit = true; 
+      
+      this.killLogsDisplay.push(killLogDisplay)
+      this.hud.addControl(killLogDisplay);
+    }
 
   }
 
@@ -208,8 +248,18 @@ export class FpsService {
   updateHealth(): void {
     if (this.self.health <= 10) this.health.color = 'red';
     if (this.self.health <= 25) this.health.color = 'yellow';
-    if (this.self.health > 25) this.health.color = 'green';
+    if (this.self.health > 25) this.health.color = 'white';
     this.health.text = 'HP: ' +  this.self.health + '%';
+  }
+
+  updateKillLogs(killLog: string): void {
+    if (this.killLogs.length > 3) this.killLogs.pop();
+    this.killLogs.unshift(killLog);
+    setTimeout(() => {
+    this.killLogs.pop()
+    this.killLogsDisplay[this.killLogs.length].text = '';
+    }, 4000)
+    for (let i = 0; i < this.killLogs.length; i++) this.killLogsDisplay[i].text = this.killLogs[i];
   }
 
   createFpsCamera() {
@@ -363,6 +413,7 @@ export class FpsService {
           if (this.shoot && !this.self.primaryWeapon.reloadSound.isPlaying) {
             this.self.primaryWeapon.gunshotSound.play(); 
             this.self.primaryWeapon.ammo--; 
+            this.updateAmmoCount();
             this.justFired = true; // set just fired to true to prevent spam fire
             setTimeout(() => this.justFired = false, this.self.primaryWeapon.fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
             this.castRay();
@@ -381,7 +432,10 @@ export class FpsService {
 
   reloadWeapon() {
     this.self.primaryWeapon.reloadSound.play();
-    this.self.primaryWeapon.reloadSound.onEndedObservable.add(() => this.self.primaryWeapon.ammo = this.self.primaryWeapon.magazine);
+    this.self.primaryWeapon.reloadSound.onEndedObservable.add(() => { 
+      this.self.primaryWeapon.ammo = this.self.primaryWeapon.magazine;
+      this.updateAmmoCount();
+    });
   }
 
   castRay() {
@@ -397,35 +451,61 @@ export class FpsService {
     this.self.primaryWeapon.gunMesh.getChildMeshes()[1].isPickable = false;
 
     let ray = new Ray(origin, aimVector, length);
-    let rayHelper = new RayHelper(ray);
-    rayHelper.show(this.scene, Color3.Blue());
 
     // log picked
     let pickingInfo = this.scene.pickWithRay(ray);
-    if (pickingInfo.pickedMesh != null && (pickingInfo.pickedMesh.name == 'sphere' || pickingInfo.pickedMesh.name.indexOf('enemy') >=  0)) {
+    if (pickingInfo.pickedMesh != null && (pickingInfo.pickedMesh.name.indexOf('enemy') >=  0)) {
       this.hitMarkerSound.play();
       this.hitMarkerSight.visibility = 1;
       setTimeout(() => this.hitMarkerSight.visibility = 0, 65);
-      this.targetHit(pickingInfo);
+      this.targetHit(pickingInfo.pickedMesh.parent.id);
     }
 
   }
 
-  targetHit(pickingInfo: PickingInfo) {
-    if (pickingInfo.pickedMesh.parent.name == 'enemy') {
-      let enemy = this.playerService.get(pickingInfo.pickedMesh.parent.name);
-      enemy.health-= 10;
-      console.log(this.enemy.health);
-    }
+  targetHit(id: string) {
+    let enemy = this.playerService.get(id);
+    enemy.health-= this.self.primaryWeapon.damage; // maybe base this off current weapon damage instead of flat 10
+    enemy.wasHitRecently = true;
+    enemy.lastDamagedBy = this.self.userId;
 
+    console.log(enemy.health)
+  
+    if (enemy.health <= 0) {
+      this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.userId);
+      setTimeout(() => enemy.health = 100, 2000);
+
+      for (let k = 0; k < enemy.playerMesh.getChildMeshes().length; k++) {
+        enemy.playerMesh.getChildMeshes()[k].visibility = 0;
+        enemy.playerMesh.getChildMeshes()[k].isPickable = false;
+
+        setTimeout(() => {
+          enemy.playerMesh.getChildMeshes()[k].visibility = 1;
+          enemy.playerMesh.getChildMeshes()[k].isPickable = true;
+        }, 2000);
+      }
+    }
   }
 
   handleHealth() {
-    this.scene.onAfterRenderObservable.add(() => {
-      if (this.enemy.health <= 0) {
-        this.enemy.playerMesh.dispose()
-      }
-    });
+
+    // this.scene.onAfterRenderObservable.add(() => { 
+    //   for (let i = 0; i < this.enemies.length; i++) 
+    //     if (this.enemies[i].health <= 0) {
+    //       setTimeout(() => this.enemies[i].health = 100, 2000);
+
+    //       for (let k = 0; k < this.enemies[i].playerMesh.getChildMeshes().length; k++) {
+    //         this.enemies[i].playerMesh.getChildMeshes()[k].visibility = 0;
+    //         this.enemies[i].playerMesh.getChildMeshes()[k].isPickable = false;
+
+    //         setTimeout(() => {
+    //           this.enemies[i].playerMesh.getChildMeshes()[k].visibility = 1;
+    //           this.enemies[i].playerMesh.getChildMeshes()[k].isPickable = true;
+    //         }, 2000);
+    //       }
+    //     }
+            
+    // });
   }
 
 

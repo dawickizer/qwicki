@@ -9,13 +9,11 @@ import { Scene } from '@babylonjs/core';
 export class PlayerService {
 
   players: Player[] = [];
-  enemy: Player = new Player();
-  self: Player = new Player();
 
   constructor() {}
 
-  get(name: String): Player {
-    return this.players.find(player => player.name == name);
+  get(_id: String): Player {
+    return this.players.find(player => player._id == _id);
   }
 
   getAll(): Player[] {

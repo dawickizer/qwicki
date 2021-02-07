@@ -26,8 +26,6 @@ export class TestBabylonComponent implements OnInit {
   @Output() skybox: Mesh;
   @Output() ground: Mesh;
   @Output() platform: Mesh;
-  @Output() sphere: Mesh;
-  @Output() sphere2: Mesh;
 
   constructor(private fpsService: FpsService) { }
 
@@ -42,9 +40,6 @@ export class TestBabylonComponent implements OnInit {
     this.skybox = this.createSkyBox();
     this.ground = this.createGround(4000, 0, 'grass.jpg');
     this.platform = this.createGround(5000, -200, 'lava.jpg');
-    this.sphere = this.createSphere();
-    this.sphere2 = this.sphere.clone('sphere');
-    this.sphere2.position = new Vector3(40, 69, 38);
 
     this.handleDebugLayer();
     this.handleDebugCamera();
@@ -89,21 +84,6 @@ export class TestBabylonComponent implements OnInit {
     ground.material = groundMat;
     ground.checkCollisions = true;
     return ground;
-  }
-
-  createSphere(): Mesh {
-    let sphere = MeshBuilder.CreateSphere('sphere', { diameter: 25 }, this.scene);
-    sphere.position.y = 15;
-    sphere.position.z = 100;
-    sphere.rotation.x = 0;
-    sphere.rotation.y = 38.5;
-    sphere.rotation.z = 91;
-    sphere.checkCollisions = true;
-
-    let sphereMat = new StandardMaterial('sphereMat', this.scene);
-    sphereMat.diffuseTexture = new Texture('assets/babylon/textures/joe.jpg', this.scene);
-    sphere.material = sphereMat;
-    return sphere;
   }
 
   handleWindowResize() {
