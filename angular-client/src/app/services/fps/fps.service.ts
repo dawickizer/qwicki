@@ -37,7 +37,6 @@ export class FpsService {
   killLogsDisplay: TextBlock[] = [];
   ammo: TextBlock;
   health: TextBlock;
-  rectangle: Rectangle;
 
   constructor(private gunService: GunService, private playerService: PlayerService) { }
 
@@ -173,20 +172,6 @@ export class FpsService {
     this.hud = AdvancedDynamicTexture.CreateFullscreenUI('HUD');
     this.hud.idealHeight = 720;
 
-    // this.rectangle = new Rectangle();
-    // this.rectangle.name = 'rectangle';
-    // this.rectangle.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
-    // this.rectangle.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
-    // this.rectangle.width = '160px';
-    // this.rectangle.height = '90px';
-    // this.rectangle.cornerRadius = 20;
-    // this.rectangle.color = 'blue';
-    // this.rectangle.thickness = 2;
-    // this.rectangle.background = 'grey';
-    // this.rectangle.top = '600px';
-    // this.rectangle.left = '-57px';
-    // this.hud.addControl(this.rectangle);  
-
     this.ammo = new TextBlock();
     this.ammo.name = 'ammo count';
     this.ammo.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
@@ -221,14 +206,14 @@ export class FpsService {
     for (let i = 0; i < 4; i++) {
       let killLogDisplay = new TextBlock();
       killLogDisplay.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
-      killLogDisplay.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+      killLogDisplay.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_RIGHT;
       killLogDisplay.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
       killLogDisplay.fontSize = '15px';
       killLogDisplay.color = 'white';
       killLogDisplay.fontFamily = 'Courier New';
       killLogDisplay.text = '';
       killLogDisplay.topInPixels = 560 - (i*20);
-      killLogDisplay.left = '1100px';
+      killLogDisplay.left = '-64px'; //1100 if HORIZONTAL_ALIGNMENT_LEFT
       killLogDisplay.width = '25%';;
       killLogDisplay.resizeToFit = true; 
       
@@ -256,7 +241,7 @@ export class FpsService {
     if (this.killLogs.length > 3) this.killLogs.pop();
     this.killLogs.unshift(killLog);
     setTimeout(() => {
-    this.killLogs.pop()
+    this.killLogs.pop();
     this.killLogsDisplay[this.killLogs.length].text = '';
     }, 4000)
     for (let i = 0; i < this.killLogs.length; i++) this.killLogsDisplay[i].text = this.killLogs[i];
