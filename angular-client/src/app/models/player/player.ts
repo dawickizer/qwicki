@@ -12,6 +12,7 @@ export class Player {
   playerSoundURL: string;
   primaryWeapon: Gun = null;
   secondaryWeapon: Gun = null;
+  activeWeaponName: string;
   health: number = 100;
   wasHitRecently: boolean = false;
   lastDamagedBy: string;
@@ -37,6 +38,11 @@ export class Player {
     this.playerSound = new Sound('', this.playerSoundURL, scene, null);
     this.playerSound.name = this.name + '-PlayerSound';
     return this.playerSound;
+  }
+
+  getActiveWeapon(): Gun {
+    if (this.activeWeaponName == this.primaryWeapon.name) return this.primaryWeapon;
+    else if (this.activeWeaponName == this.secondaryWeapon.name) return this.secondaryWeapon
   }
 
 }

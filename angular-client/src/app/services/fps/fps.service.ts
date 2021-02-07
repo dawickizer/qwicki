@@ -1,6 +1,6 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, SceneLoader, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray, RayHelper, PickingInfo } from '@babylonjs/core';
-import { TextBlock, AdvancedDynamicTexture, Control, Rectangle } from '@babylonjs/gui';
+import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
 import { GunService } from 'src/app/services/gun/gun.service';
@@ -113,59 +113,55 @@ export class FpsService {
     m4.fireType = 'auto';
     m4.damage = 20;
 
-    // create mac10
-    let mac10 = new Gun();
-    mac10.gunMeshURL = 'assets/babylon/models/mac10/scene.gltf';
-    mac10.gunshotSoundURL = 'assets/babylon/sounds/mac10/silencer.mp3';
-    mac10.reloadSoundURL = 'assets/babylon/sounds/mac10/reload.mp3';
-    mac10.name = 'mac10';
-    mac10.magazine = 30;
-    mac10.ammo = 30;
-    mac10.fireRate = 65;
-    mac10.fireType = 'auto';
-    mac10.damage = 10;
+    // create mp5
+    let mp5 = new Gun();
+    mp5.gunMeshURL = 'assets/babylon/models/mp5/scene.gltf';
+    mp5.gunshotSoundURL = 'assets/babylon/sounds/mp5/silencer.mp3';
+    mp5.reloadSoundURL = 'assets/babylon/sounds/mp5/reload.mp3';
+    mp5.name = 'mp5';
+    mp5.magazine = 25;
+    mp5.ammo = 25;
+    mp5.fireRate = 65;
+    mp5.fireType = 'auto';
+    mp5.damage = 10;
 
     this.self.primaryWeapon = await this.gunService.create(m4, this.scene);
-    this.self.secondaryWeapon = await this.gunService.create(mac10, this.scene);
+    this.self.activeWeaponName = this.self.primaryWeapon.name;
+    this.self.secondaryWeapon = await this.gunService.create(mp5, this.scene);
 
     // get the gun in a world position that is good for baking the verticies
     this.self.primaryWeapon.gunMesh.position = new Vector3(4, -6, 20);
     this.self.primaryWeapon.gunMesh.scaling = new Vector3(.25, .25, -.25);
     this.self.primaryWeapon.gunMesh.rotationQuaternion = null;
     this.self.primaryWeapon.gunMesh.rotation = new Vector3(0, 0, 0);
+    this.self.primaryWeapon.gunMesh.isPickable = false;
+    for (let i = 0; i < this.self.primaryWeapon.gunMesh.getChildMeshes().length; i++) this.self.primaryWeapon.gunMesh.getChildMeshes()[i].isPickable = false;
 
     // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera
     this.self.primaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
 
     // get the gun in a world position that is good for baking the verticies
-    this.self.secondaryWeapon.gunMesh.position = new Vector3(0, 0, 0);
-    this.self.secondaryWeapon.gunMesh.scaling = new Vector3(.02, .02, .02); 
-    this.self.secondaryWeapon.gunMesh.rotation = new Vector3(1, 3, -1);
+    this.self.secondaryWeapon.gunMesh.position = new Vector3(4, -8, 18);
+    this.self.secondaryWeapon.gunMesh.scaling = new Vector3(.03, .03, .03); 
+    this.self.secondaryWeapon.gunMesh.rotationQuaternion = null;
+    this.self.secondaryWeapon.gunMesh.rotation = new Vector3(0, -1.55, 0);
+    this.self.secondaryWeapon.gunMesh.isPickable = false;
+    this.self.secondaryWeapon.gunshotSound.setVolume(.25);
+    for (let i = 0; i < this.self.secondaryWeapon.gunMesh.getChildMeshes().length; i++) this.self.secondaryWeapon.gunMesh.getChildMeshes()[i].isPickable = false;
 
     // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera 
     // CAUSES ROTATION BUG ON PRIMARY
-    // this.self.secondaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
-
-
+    this.self.secondaryWeapon.gunMesh.bakeCurrentTransformIntoVertices(); 
   }
 
   handlePlayerAndWeaponPosition() {
     this.scene.afterCameraRender = () => {
       this.self.playerMesh.position = this.camera.position;
       this.self.playerMesh.rotation = this.camera.rotation;
-      this.self.primaryWeapon.gunMesh.position = this.camera.position;
-      this.self.primaryWeapon.gunMesh.rotation = this.camera.rotation;
+
+      this.self.getActiveWeapon().gunMesh.position = this.camera.position;
+      this.self.getActiveWeapon().gunMesh.rotation = this.camera.rotation;
     };
-
-    // this.scene.onAfterRenderObservable.add(() => {
-    //   this.self.primaryWeapon.gunMesh.position = this.camera.position;
-    //   this.self.primaryWeapon.gunMesh.rotation = this.camera.rotation;
-    // });
-
-    // this.scene.afterRender = () => {
-    //   this.self.primaryWeapon.gunMesh.position = this.camera.position;
-    //   this.self.primaryWeapon.gunMesh.rotation = this.camera.rotation;
-    // };
   }
 
   createHUD() {
@@ -179,7 +175,7 @@ export class FpsService {
     this.ammo.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
     this.ammo.fontSize = '30px';
     this.ammo.color = 'white';
-    this.ammo.text = this.self.primaryWeapon.ammo + ' / ' + this.self.primaryWeapon.magazine;
+    this.ammo.text = this.self.getActiveWeapon().ammo + ' / ' + this.self.getActiveWeapon().magazine;
     this.ammo.top = '650px';
     this.ammo.left = '-64px';
     this.ammo.width = '25%';
@@ -224,10 +220,10 @@ export class FpsService {
   }
 
   updateAmmoCount(): void {
-    if (this.self.primaryWeapon.ammo == 0) this.ammo.color = 'red';
-    if (this.self.primaryWeapon.ammo <= 5 && this.self.primaryWeapon.ammo > 0) this.ammo.color = 'yellow';
-    if (this.self.primaryWeapon.ammo > 5) this.ammo.color = 'white';
-    this.ammo.text = this.self.primaryWeapon.ammo + ' / ' + this.self.primaryWeapon.magazine;
+    if (this.self.getActiveWeapon().ammo == 0) this.ammo.color = 'red';
+    if (this.self.getActiveWeapon().ammo <= 5 && this.self.getActiveWeapon().ammo > 0) this.ammo.color = 'yellow';
+    if (this.self.getActiveWeapon().ammo > 5) this.ammo.color = 'white';
+    this.ammo.text = this.self.getActiveWeapon().ammo + ' / ' + this.self.getActiveWeapon().magazine;
   }
 
   updateHealth(): void {
@@ -355,6 +351,7 @@ export class FpsService {
     this.handleRunOnShift();
     this.handleFlyOnSpace();
     this.handleReloadOnR();
+    this.handleSwapWeaponOnF()
   }
 
   handleRunOnShift() {
@@ -367,7 +364,11 @@ export class FpsService {
   }
 
   handleReloadOnR() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.self.primaryWeapon.reloadSound.isPlaying && this.self.primaryWeapon.ammo < this.self.primaryWeapon.magazine) this.reloadWeapon() });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.self.getActiveWeapon().reloadSound.isPlaying && this.self.getActiveWeapon().ammo < this.self.getActiveWeapon().magazine) this.reloadWeapon() });
+  }
+
+  handleSwapWeaponOnF() {
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF') this.swapWeapon() });
   }
 
   handlePointerEvents() {
@@ -384,8 +385,15 @@ export class FpsService {
     this.handlePointerLockChange();
   }
 
+  swapWeapon() {
+    this.self.getActiveWeapon().reloadSound.stop();
+    if (this.self.activeWeaponName == this.self.primaryWeapon.name) this.self.activeWeaponName = this.self.secondaryWeapon.name;
+    else this.self.activeWeaponName = this.self.primaryWeapon.name;
+    this.updateAmmoCount()
+  }
+
   fireWeapon() {
-    let currentAmmo = this.self.primaryWeapon.ammo;
+    let currentAmmo = this.self.getActiveWeapon().ammo;
     this.shoot = true;
     // Returns a Promise that resolves after 'ms' Milliseconds
     const timer = ms => new Promise(res => setTimeout(res, ms));
@@ -393,22 +401,22 @@ export class FpsService {
     let fire = async () => { // We need to wrap the loop into an async function for this to work
 
       // cant fire if reloading or if you just fired
-      if (!this.self.primaryWeapon.reloadSound.isPlaying && !this.justFired) {
+      if (!this.self.getActiveWeapon().reloadSound.isPlaying && !this.justFired) {
         for (let i = 0; i < currentAmmo; i++) {
-          if (this.shoot && !this.self.primaryWeapon.reloadSound.isPlaying) {
-            this.self.primaryWeapon.gunshotSound.play(); 
-            this.self.primaryWeapon.ammo--; 
+          if (this.shoot && !this.self.getActiveWeapon().reloadSound.isPlaying) {
+            this.self.getActiveWeapon().gunshotSound.play(); 
+            this.self.getActiveWeapon().ammo--; 
             this.updateAmmoCount();
             this.justFired = true; // set just fired to true to prevent spam fire
-            setTimeout(() => this.justFired = false, this.self.primaryWeapon.fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
+            setTimeout(() => this.justFired = false, this.self.getActiveWeapon().fireRate) // set just fired back to false on a delayed timer that equals the weapons firerate
             this.castRay();
           }
           else 
             break;
           
-          await timer(this.self.primaryWeapon.fireRate); // then the created Promise can be awaited
+          await timer(this.self.getActiveWeapon().fireRate); // then the created Promise can be awaited
         }
-        if (this.self.primaryWeapon.ammo <= 0) this.reloadWeapon();
+        if (this.self.getActiveWeapon().ammo <= 0) this.reloadWeapon();
       }
     }
 
@@ -416,9 +424,9 @@ export class FpsService {
   }
 
   reloadWeapon() {
-    this.self.primaryWeapon.reloadSound.play();
-    this.self.primaryWeapon.reloadSound.onEndedObservable.add(() => { 
-      this.self.primaryWeapon.ammo = this.self.primaryWeapon.magazine;
+    this.self.getActiveWeapon().reloadSound.play();
+    this.self.getActiveWeapon().reloadSound.onEndedObservable.add(() => { 
+      this.self.getActiveWeapon().ammo = this.self.getActiveWeapon().magazine;
       this.updateAmmoCount();
     });
   }
@@ -429,12 +437,6 @@ export class FpsService {
     let length = 50000;
     let wm = this.camera.getWorldMatrix();
     let aimVector = Vector3.TransformNormal(Vector3.Forward(), wm).normalize();
-
-    // Make the gun mesh and its children unpickable so the ray doesnt accidentally pick the gun meshes
-    this.self.primaryWeapon.gunMesh.isPickable = false;
-    this.self.primaryWeapon.gunMesh.getChildMeshes()[0].isPickable = false;
-    this.self.primaryWeapon.gunMesh.getChildMeshes()[1].isPickable = false;
-
     let ray = new Ray(origin, aimVector, length);
 
     // log picked
@@ -450,7 +452,7 @@ export class FpsService {
 
   targetHit(id: string) {
     let enemy = this.playerService.get(id);
-    enemy.health-= this.self.primaryWeapon.damage; // maybe base this off current weapon damage instead of flat 10
+    enemy.health-= this.self.getActiveWeapon().damage; // maybe base this off current weapon damage instead of flat 10
     enemy.wasHitRecently = true;
     enemy.lastDamagedBy = this.self.userId;
 

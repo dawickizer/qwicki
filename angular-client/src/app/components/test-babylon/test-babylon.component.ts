@@ -66,7 +66,7 @@ export class TestBabylonComponent implements OnInit {
     let skybox = MeshBuilder.CreateBox('skybox', { size: 5000 }, this.scene);
     let skyboxMaterial = new StandardMaterial('skybox', this.scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new CubeTexture('assets/babylon/textures/joe/joe', this.scene);
+    skyboxMaterial.reflectionTexture = new CubeTexture('assets/babylon/textures/night-sky/night-sky', this.scene);
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
     skyboxMaterial.specularColor = new Color3(0, 0, 0);
