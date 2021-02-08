@@ -4,7 +4,8 @@
         <mat-divider></mat-divider>
         <br>
         <br>
-        Sensitivity<mat-slider thumbLabel="true"></mat-slider>        
+        Sensitivity
+        <mat-slider min="500" max="20000" [(value)]="cameraSensitivity" (change)="setCameraSensitivity(cameraSensitivity)" thumbLabel="true"></mat-slider>       
         <span class="material-icons">mouse</span>
     </mat-drawer>
     <canvas #canvas></canvas>

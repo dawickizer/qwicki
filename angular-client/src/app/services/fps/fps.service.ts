@@ -305,6 +305,14 @@ export class FpsService {
     this.camera.inertia = .2; // controls 'smoothness'
   }
 
+  getCameraSensitivity(): number {
+    return this.camera.angularSensibility;
+  }
+
+  setCameraSensitivity(cameraSensitivity: number) {
+    this.camera.angularSensibility = cameraSensitivity;
+  }
+
   addCrossHairs() {
 		if (this.scene.activeCameras.length === 0) this.scene.activeCameras.push(this.scene.activeCamera);        
 
@@ -579,7 +587,6 @@ export class FpsService {
             
     // });
   }
-
 
   handlePointerLockChange() {
      // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state

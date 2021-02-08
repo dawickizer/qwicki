@@ -29,12 +29,15 @@ export class TestBabylonComponent implements OnInit {
   @Output() ground: Mesh;
   @Output() platform: Mesh;
 
+  cameraSensitivity: number = 0;
+
   constructor(private fpsService: FpsService) { }
 
   async ngOnInit() {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
+
     this.createScene();
     this.handleWindowResize();
     this.handleBoundingBoxes();
@@ -48,7 +51,8 @@ export class TestBabylonComponent implements OnInit {
     this.handleDebugLayer();
     this.handleDebugCamera();
     this.handleSideNavKeyBind();
-    
+    this.getCameraSensitivity();
+
     // running babylonJS
     this.render();
   }
@@ -66,7 +70,6 @@ export class TestBabylonComponent implements OnInit {
   }
 
   createSkyBox(): Mesh {
-    
     let skybox = MeshBuilder.CreateBox('skybox', { size: 5000 }, this.scene);
     let skyboxMaterial = new StandardMaterial('skybox', this.scene);
     skyboxMaterial.backFaceCulling = false;
@@ -90,6 +93,14 @@ export class TestBabylonComponent implements OnInit {
     return ground;
   }
 
+  getCameraSensitivity() {
+    this.cameraSensitivity = this.fpsService.getCameraSensitivity();
+  }
+
+  setCameraSensitivity(cameraSensitivity: number) {
+    this.fpsService.setCameraSensitivity(cameraSensitivity);
+  }
+
   handleWindowResize() {
     window.addEventListener('resize', () => this.engine.resize());   
   }
@@ -107,7 +118,6 @@ export class TestBabylonComponent implements OnInit {
 
   handleDebugLayer() {
     let config: IInspectorOptions = {initialTab: DebugLayerTab.Statistics, embedMode: true}
-    //this.scene.debugLayer.show(config)
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
         if (this.scene.debugLayer.isVisible()) this.scene.debugLayer.hide();
