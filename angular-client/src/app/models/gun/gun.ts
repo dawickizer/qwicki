@@ -78,7 +78,7 @@ export class Gun {
 
       this.gunMesh = cube;
 
-    } else {
+    } else if (type == 'secondary') {
       let cube = MeshBuilder.CreateBox('cube', {size: 10}, scene);
       let mat = new StandardMaterial('primary', scene);
       mat.diffuseColor = Color3.Purple();
@@ -95,6 +95,25 @@ export class Gun {
       // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera
       cube.bakeCurrentTransformIntoVertices(); 
       
+      this.gunMesh = cube;
+
+    } else if (type == 'spare') {
+      let cube = MeshBuilder.CreateBox('cube', {size: 10}, scene);
+      let mat = new StandardMaterial('spare', scene);
+      mat.diffuseColor = Color3.Yellow();
+
+      // get the gun in a world position that is good for baking the verticies
+      cube.position = new Vector3(4, -6, 20);
+      cube.scaling = new Vector3(.6, .25, 3);
+      cube.rotationQuaternion = null;
+      cube.rotation = new Vector3(0, 0, 0);
+      cube.material = mat;
+      cube.isPickable = false;
+      for (let i = 0; i < cube.getChildMeshes().length; i++) cube.getChildMeshes()[i].isPickable = false;
+
+      // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera
+      cube.bakeCurrentTransformIntoVertices(); 
+
       this.gunMesh = cube;
 
     }

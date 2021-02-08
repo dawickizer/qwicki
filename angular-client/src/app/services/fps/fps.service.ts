@@ -20,14 +20,16 @@ export class FpsService {
   self: Player;
   enemies: Player[] = [];
 
+  spareWeapon: Gun;
+
   gunSightCamera: UniversalCamera;
   gunSight: Mesh;
   reloadingSight: Mesh;
   hitMarkerSight: Mesh;
   hitMarkerSound: Sound;
   hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
-
   isSceneLocked: boolean = false;
+  swapWeaponCooldown: number = 500;
 
   killLogs: string[] = [];
 
@@ -49,6 +51,7 @@ export class FpsService {
     this.addCrossHairs();
     this.addHitMarkerSound();
     this.handlePointerEvents();
+    this.handleSideNavKeyBind();
     await this.createPlayer();
     await this.createWeapons();
     let names = ['Arshmazing', 'Senjoku', 'krookYa', 'cpt_crispy', 'hodoo', 'juri'];
@@ -68,6 +71,8 @@ export class FpsService {
     this.self.cameraInertia = this.camera.inertia; 
 
     await this.playerService.create(this.self, this.scene);
+
+    this.self.createSelectingMesh(this.scene, this.camera);
 
     for (let i = 0; i < this.self.playerMesh.getChildMeshes().length; i++) this.self.playerMesh.getChildMeshes()[i].layerMask = 0x10000000; // make dude and dude nodes invisible to main fps camera
     this.self.playerMesh.position = new Vector3(0, -64, -5); // offset dude back in the Z direction and down in the Y direction by the height of the camera elipsoid
@@ -126,6 +131,19 @@ export class FpsService {
     mp5.fireType = 'auto';
     mp5.damage = 10;
 
+    // create g3
+    let g3 = new Gun();
+    g3.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
+    g3.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
+    g3.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
+    g3.cockingSoundURL = 'assets/babylon/sounds/m4/m4-cocking.mp3';
+    g3.name = 'g3';
+    g3.magazine = 15;
+    g3.ammo = 15;
+    g3.fireRate = 300;
+    g3.fireType = 'auto';
+    g3.damage = 30;
+
     // this.self.primaryWeapon = await this.gunService.create(m4, this.scene);
     // this.self.activeWeaponName = this.self.primaryWeapon.name;
     // this.self.secondaryWeapon = await this.gunService.create(mp5, this.scene);
@@ -160,7 +178,10 @@ export class FpsService {
     this.self.secondaryWeapon = await this.gunService.createFake(mp5, this.scene, 'secondary');
     this.self.secondaryWeapon.gunMesh.visibility = 0;
     this.self.secondaryWeapon.gunshotSound.setVolume(.25);
-  
+
+    // create spare gun
+    this.spareWeapon = await this.gunService.createFake(g3, this.scene, 'spare');
+    this.spareWeapon.gunMesh.position = new Vector3(0, 10, 50);
   }
 
   handlePlayerAndWeaponPosition() {
@@ -170,6 +191,10 @@ export class FpsService {
 
       this.self.getActiveWeapon().gunMesh.position = this.camera.position;
       this.self.getActiveWeapon().gunMesh.rotation = this.camera.rotation;
+
+      if (this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh)) {
+        console.log('pickup ' +  this.spareWeapon.name + '?')
+      }
     };
   }
 
@@ -371,7 +396,8 @@ export class FpsService {
     this.handleRunOnShift();
     this.handleFlyOnSpace();
     this.handleReloadOnR();
-    this.handleSwapWeaponOnF()
+    this.handleSwapWeaponOnF();
+    this.handlePickupWeaponOnE();
   }
 
   handleRunOnShift() {
@@ -391,6 +417,10 @@ export class FpsService {
     document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF' && !this.self.swappingWeapons) this.swapWeapon() });
   }
 
+  handlePickupWeaponOnE() {
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyE' && this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh)) this.pickupWeapon() });
+  }
+
   handlePointerEvents() {
    
     // Hide and lock mouse cursor when scene is clicked
@@ -405,6 +435,10 @@ export class FpsService {
     this.handlePointerLockChange();
   }
 
+  pickupWeapon() { 
+    console.log('trying to pick up weapon')
+  }
+
   swapWeapon() {
     this.self.getActiveWeapon().reloadSound.stop();
     if (this.self.activeWeaponName == this.self.primaryWeapon.name) { 
@@ -413,12 +447,12 @@ export class FpsService {
       this.gunSight.visibility = 0;
       this.reloadingSight.visibility = 0;
       this.self.swappingWeapons = true;
-      setTimeout(() => this.self.secondaryWeapon.cockingSound.play(), 250);
+      setTimeout(() => this.self.secondaryWeapon.cockingSound.play(), this.swapWeaponCooldown / 2);
       setTimeout(() => {
         this.self.swappingWeapons = false;
         this.self.secondaryWeapon.gunMesh.visibility = 1;
         this.gunSight.visibility = 1;
-      }, 500);
+      }, this.swapWeaponCooldown);
 
     }
     else { 
@@ -427,12 +461,12 @@ export class FpsService {
       this.gunSight.visibility = 0;
       this.reloadingSight.visibility = 0;
       this.self.swappingWeapons = true;
-      setTimeout(() => this.self.primaryWeapon.cockingSound.play(), 250);
+      setTimeout(() => this.self.primaryWeapon.cockingSound.play(), this.swapWeaponCooldown / 2);
       setTimeout(() => {
         this.self.swappingWeapons = false;
         this.self.primaryWeapon.gunMesh.visibility = 1;
         this.gunSight.visibility = 1;
-      }, 500);
+      }, this.swapWeaponCooldown);
     }
     this.updateAmmoCount()
   }
@@ -562,6 +596,15 @@ export class FpsService {
       }
     });  
   }
+
+  handleSideNavKeyBind() {
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'Tab') {
+        // document.exitPointerLock();
+        // //event.preventDefault();
+      }
+    });  
+  } 
 
   reloadScrollBars() {
     document.documentElement.style.overflow = 'auto';  // firefox, chrome

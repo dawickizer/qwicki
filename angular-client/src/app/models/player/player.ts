@@ -1,4 +1,4 @@
-import { Mesh, Sound, Scene, SceneLoader } from '@babylonjs/core';
+import { Mesh, Sound, Scene, SceneLoader, UniversalCamera, MeshBuilder, Vector3 } from '@babylonjs/core';
 import { Gun } from 'src/app/models/gun/gun'
 
 export class Player {
@@ -22,11 +22,12 @@ export class Player {
   moveSpeed: number; // WASD
   cameraAngularSensibility: number; // controls mouse speed
   cameraInertia: number; // controls mouse 'smoothness'
+  selectingMesh: Mesh = null;
 
   constructor(userId?: string, name?: string) {
     this.userId = userId;
     this.name = name;
-    this._id = name + '-' + userId
+    this._id = name + '-' + userId;
   }
 
   async importPlayerMesh(scene: Scene): Promise<Mesh> {
@@ -46,6 +47,24 @@ export class Player {
   getActiveWeapon(): Gun {
     if (this.activeWeaponName == this.primaryWeapon.name) return this.primaryWeapon;
     else if (this.activeWeaponName == this.secondaryWeapon.name) return this.secondaryWeapon
+  }
+
+  setActiveWeapon(gun: Gun) {
+    let temp = this.getActiveWeapon();
+    temp = gun;
+  }
+
+  createSelectingMesh(scene: Scene, camera: UniversalCamera): Mesh {
+    let cube = MeshBuilder.CreateBox('cube', {size: 10}, scene);
+
+    // get the gun in a world position that is good for baking the verticies
+    cube.position = new Vector3(0, -35, 10);
+    cube.scaling = new Vector3(1, 6, 8);
+    cube.isPickable = false;
+    cube.visibility = 0;
+    cube.parent = camera;
+    this.selectingMesh = cube;
+    return this.selectingMesh;
   }
 
 }

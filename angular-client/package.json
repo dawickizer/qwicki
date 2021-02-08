@@ -30,6 +30,7 @@
     "@babylonjs/procedural-textures": "^4.2.0",
     "@babylonjs/serializers": "^4.2.0",
     "@babylonjs/viewer": "^4.2.0",
+    "material-design-icons": "^3.0.1",
     "phaser": "^3.52.0",
     "rxjs": "~6.6.3",
     "socket.io-client": "^2.4.0",

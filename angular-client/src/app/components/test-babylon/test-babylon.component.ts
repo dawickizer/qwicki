@@ -3,6 +3,7 @@ import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core'
 import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, SceneLoader, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
+import { MatSidenav } from '@angular/material/sidenav';
 
 // Services/Models
 import { Gun } from 'src/app/models/gun/gun';
@@ -16,6 +17,7 @@ import { FpsService } from 'src/app/services/fps/fps.service';
 export class TestBabylonComponent implements OnInit {
 
   @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
+  @ViewChild('drawer') drawer: MatSidenav;
 
   @Output() engine: Engine;
   @Output() scene: Scene;
@@ -29,8 +31,10 @@ export class TestBabylonComponent implements OnInit {
 
   constructor(private fpsService: FpsService) { }
 
-  async ngOnInit() {
+  async ngOnInit() {}
 
+  // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
+  async ngAfterViewInit() {
     this.createScene();
     this.handleWindowResize();
     this.handleBoundingBoxes();
@@ -43,10 +47,10 @@ export class TestBabylonComponent implements OnInit {
 
     this.handleDebugLayer();
     this.handleDebugCamera();
-
+    this.handleSideNavKeyBind();
+    
     // running babylonJS
     this.render();
-
   }
 
   createScene() {
@@ -90,6 +94,16 @@ export class TestBabylonComponent implements OnInit {
     window.addEventListener('resize', () => this.engine.resize());   
   }
 
+  handleSideNavKeyBind() {
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'Tab') {
+        event.preventDefault();
+        document.exitPointerLock();
+        this.drawer.toggle();
+      }
+    });  
+  }
+
   handleDebugLayer() {
     let config: IInspectorOptions = {initialTab: DebugLayerTab.Statistics, embedMode: true}
     //this.scene.debugLayer.show(config)
@@ -102,7 +116,6 @@ export class TestBabylonComponent implements OnInit {
   }
 
   handleDebugCamera() {
-
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadSubtract' ) {
         this.debugCameraIsActive = !this.debugCameraIsActive;
@@ -142,5 +155,10 @@ export class TestBabylonComponent implements OnInit {
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
+  }
+
+  ngOnDestroy() {
+    console.log('Disposing scene')
+    this.scene.dispose();
   }
 }
