@@ -6,3 +6,7 @@ canvas {
 .example-sidenav {
   padding: 20px;
 }
+
+.material-icons {
+  vertical-align: middle;
+}

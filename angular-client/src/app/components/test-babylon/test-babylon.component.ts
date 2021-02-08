@@ -98,7 +98,8 @@ export class TestBabylonComponent implements OnInit {
     document.addEventListener('keydown', event => { 
       if (event.code == 'Tab') {
         event.preventDefault();
-        document.exitPointerLock();
+        if (this.drawer.opened) this.canvas.nativeElement.requestPointerLock();
+        else document.exitPointerLock();
         this.drawer.toggle();
       }
     });  
