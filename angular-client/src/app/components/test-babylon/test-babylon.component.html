@@ -7,12 +7,61 @@
         Sensitivity
         <mat-slider min="200" max="20000" [(value)]="cameraSensitivity" (change)="setCameraSensitivity(cameraSensitivity)" thumbLabel="true"></mat-slider>       
         <span class="material-icons">mouse</span>   
-        <form class="example-form">
+        <form class="example-form" (keydown.enter)="$event.preventDefault()">
             <mat-form-field class="example-full-width">
               <mat-label>User Name</mat-label>
               <input matInput [value]="username" (input)="setUsername($event.target.value)" placeholder="Ex. xx-legit-snipes">
             </mat-form-field>
-        </form>    
+            <span id="face" class="material-icons">face</span> 
+        </form>  
+        <br>
+        <br>
+        <h1>Controls</h1>
+        <mat-divider></mat-divider>
+        <br>
+        <br>
+        <span id="nav" class="material-icons">vertical_split</span>
+        Side Panel: <strong>Tab</strong>
+        <br>   
+        <mat-divider></mat-divider>
+        <span id="move" class="material-icons">directions_walk</span>
+        Move: <strong>W, A, S, D</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="run" class="material-icons">directions_run</span>
+        Run: <strong>Hold Shift</strong>
+        <br>
+        <mat-divider></mat-divider> 
+        <span id="crouch" class="material-icons">airline_seat_legroom_reduced</span>
+        Crouch: <strong>Hold Ctrl</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="jump" class="material-icons">self_improvement</span>
+        Toggle Gravity: <strong>Space</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="shoot" class="material-icons">bolt</span>
+        Shoot: <strong>Left Click</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="aim" class="material-icons">gps_fixed</span>
+        Aim Down Sight: <strong>Right Click</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="swap" class="material-icons">swap_horiz</span>
+        Swap Weapons: <strong>F</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="reload" class="material-icons">rotate_left</span>
+        Reload Weapon: <strong>R</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="grenade" class="material-icons">fire_extinguisher</span>
+        Grenade: <strong>G</strong>
+        <br> 
+        <mat-divider></mat-divider>
+        <span id="melee" class="material-icons">dry</span>
+        Melee: <strong>4</strong>
     </mat-drawer>
     <canvas #canvas></canvas>
 </mat-drawer-container>

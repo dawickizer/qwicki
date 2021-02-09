@@ -9,4 +9,9 @@ canvas {
 
 .material-icons {
   vertical-align: middle;
+  color:blueviolet
+}
+
+#face {
+  padding-left: 14px;
 }
