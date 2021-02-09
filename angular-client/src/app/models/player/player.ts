@@ -4,7 +4,7 @@ import { Gun } from 'src/app/models/gun/gun'
 export class Player {
 
   _id?: string;
-  userId: string;
+  username: string;
   name: string;
   playerMesh: Mesh = null;
   playerMeshURL: string;
@@ -24,10 +24,10 @@ export class Player {
   cameraInertia: number; // controls mouse 'smoothness'
   selectingMesh: Mesh = null;
 
-  constructor(userId?: string, name?: string) {
-    this.userId = userId;
+  constructor(username?: string, name?: string) {
+    this.username = username;
     this.name = name;
-    this._id = name + '-' + userId;
+    this._id = name + '-' + username;
   }
 
   async importPlayerMesh(scene: Scene): Promise<Mesh> {

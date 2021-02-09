@@ -1,9 +1,11 @@
 // Core
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, SceneLoader, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
+import { ActivatedRoute } from '@angular/router';
+import { MatSidenav } from '@angular/material/sidenav';
+import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
-import { MatSidenav } from '@angular/material/sidenav';
+import { exists } from 'src/app/utilities/username.utility';
 
 // Services/Models
 import { Gun } from 'src/app/models/gun/gun';
@@ -19,21 +21,23 @@ export class TestBabylonComponent implements OnInit {
   @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('drawer') drawer: MatSidenav;
 
-  @Output() engine: Engine;
-  @Output() scene: Scene;
-  @Output() universalCamera: UniversalCamera;
-  @Output() debugCamera: UniversalCamera;
-  @Output() debugCameraIsActive: boolean = false;
-  @Output() light: HemisphericLight;
-  @Output() skybox: Mesh;
-  @Output() ground: Mesh;
-  @Output() platform: Mesh;
-
+  engine: Engine;
+  scene: Scene;
+  universalCamera: UniversalCamera;
+  debugCamera: UniversalCamera;
+  debugCameraIsActive: boolean = false;
+  light: HemisphericLight;
+  skybox: Mesh;
+  ground: Mesh;
+  platform: Mesh;
   cameraSensitivity: number = 0;
+  username: string = '';
 
-  constructor(private fpsService: FpsService) { }
+  constructor(private fpsService: FpsService, private route: ActivatedRoute) { }
 
-  async ngOnInit() {}
+  async ngOnInit() {
+    this.route.queryParams.subscribe(params => this.username = exists(params['username']));
+  }
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
@@ -42,7 +46,7 @@ export class TestBabylonComponent implements OnInit {
     this.handleWindowResize();
     this.handleBoundingBoxes();
 
-    await this.fpsService.addFpsMechanics(this.scene, this.canvas);
+    await this.fpsService.addFpsMechanics(this.scene, this.canvas, this.username);
     
     this.skybox = this.createSkyBox();
     this.ground = this.createGround(4000, 0, 'grass.jpg');
@@ -99,6 +103,15 @@ export class TestBabylonComponent implements OnInit {
 
   setCameraSensitivity(cameraSensitivity: number) {
     this.fpsService.setCameraSensitivity(cameraSensitivity);
+  }
+
+  getUsername() {
+    this.username = this.fpsService.getUsername();
+  }
+
+  setUsername(username: string) {
+    this.username = exists(username);
+    this.fpsService.setUsername(this.username);
   }
 
   handleWindowResize() {

@@ -5,8 +5,14 @@
         <br>
         <br>
         Sensitivity
-        <mat-slider min="500" max="20000" [(value)]="cameraSensitivity" (change)="setCameraSensitivity(cameraSensitivity)" thumbLabel="true"></mat-slider>       
-        <span class="material-icons">mouse</span>
+        <mat-slider min="200" max="20000" [(value)]="cameraSensitivity" (change)="setCameraSensitivity(cameraSensitivity)" thumbLabel="true"></mat-slider>       
+        <span class="material-icons">mouse</span>   
+        <form class="example-form">
+            <mat-form-field class="example-full-width">
+              <mat-label>User Name</mat-label>
+              <input matInput [value]="username" (input)="setUsername($event.target.value)" placeholder="Ex. xx-legit-snipes">
+            </mat-form-field>
+        </form>    
     </mat-drawer>
     <canvas #canvas></canvas>
 </mat-drawer-container>

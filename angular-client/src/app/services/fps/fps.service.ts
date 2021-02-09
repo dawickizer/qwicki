@@ -18,6 +18,7 @@ export class FpsService {
   canvas: ElementRef<HTMLCanvasElement>;
 
   self: Player;
+  username: string;
   enemies: Player[] = [];
 
   spareWeapon: Gun;
@@ -41,17 +42,17 @@ export class FpsService {
 
   constructor(private gunService: GunService, private playerService: PlayerService) { }
 
-  async addFpsMechanics(scene: Scene, canvas: ElementRef<HTMLCanvasElement>) {
+  async addFpsMechanics(scene: Scene, canvas: ElementRef<HTMLCanvasElement>, username: string) {
     this.camera = scene.activeCamera as UniversalCamera;
     this.scene = scene;
     this.canvas = canvas;
+    this.username = username;
 
     this.createFpsCamera();
     this.createFpsKeyBinds();
     this.addCrossHairs();
     this.addHitMarkerSound();
     this.handlePointerEvents();
-    this.handleSideNavKeyBind();
     await this.createPlayer();
     await this.createWeapons();
     let names = ['Arshmazing', 'Senjoku', 'krookYa', 'cpt_crispy', 'hodoo', 'juri'];
@@ -63,7 +64,7 @@ export class FpsService {
   }
 
   async createPlayer() {
-    this.self = new Player('McWickyyyy', 'self');
+    this.self = new Player(this.username, 'self');
     this.self.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
     this.self.playerSoundURL = '';
     this.self.moveSpeed = this.camera.speed;
@@ -80,8 +81,17 @@ export class FpsService {
 
   }
 
-  async createEnemy(userId: string): Promise<Player> {
-    let enemy = new Player(userId, 'enemy');
+  getUsername(): string {
+    return this.self.username;
+  }
+
+  setUsername(username: string) {
+    this.self.username = username;
+    this.username = username;
+  }
+
+  async createEnemy(username: string): Promise<Player> {
+    let enemy = new Player(username, 'enemy');
     enemy.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
     enemy.playerSoundURL = '';
     enemy.moveSpeed = this.camera.speed;
@@ -547,12 +557,12 @@ export class FpsService {
     let enemy = this.playerService.get(id);
     enemy.health-= this.self.getActiveWeapon().damage; // maybe base this off current weapon damage instead of flat 10
     enemy.wasHitRecently = true;
-    enemy.lastDamagedBy = this.self.userId;
+    enemy.lastDamagedBy = this.self.username;
 
     console.log(enemy.health)
   
     if (enemy.health <= 0) {
-      this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.userId);
+      this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.username);
       setTimeout(() => enemy.health = 100, 2000);
 
       for (let k = 0; k < enemy.playerMesh.getChildMeshes().length; k++) {
@@ -603,15 +613,6 @@ export class FpsService {
       }
     });  
   }
-
-  handleSideNavKeyBind() {
-    document.addEventListener('keydown', event => { 
-      if (event.code == 'Tab') {
-        // document.exitPointerLock();
-        // //event.preventDefault();
-      }
-    });  
-  } 
 
   reloadScrollBars() {
     document.documentElement.style.overflow = 'auto';  // firefox, chrome
