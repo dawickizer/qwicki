@@ -31,6 +31,7 @@ export class FpsService {
   hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
   isSceneLocked: boolean = false;
   swapWeaponCooldown: number = 500;
+  meleeCooldown: number = 800;
   sprintSpeed: number = 80;
   walkSpeed: number = 50;
   crouchSpeed: number = 20;
@@ -69,7 +70,7 @@ export class FpsService {
   async createPlayer() {
     this.self = new Player(this.username, 'self');
     this.self.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
-    this.self.playerSoundURL = '';
+    this.self.meleeSoundURL = 'assets/babylon/sounds/melee/stab.mp3';
     this.self.moveSpeed = this.camera.speed;
     this.self.cameraAngularSensibility = this.camera.angularSensibility; 
     this.self.cameraInertia = this.camera.inertia; 
@@ -77,6 +78,7 @@ export class FpsService {
     await this.playerService.create(this.self, this.scene);
 
     this.self.createSelectingMesh(this.scene, this.camera);
+    this.self.createMeleeWeapon(this.scene);
 
     for (let i = 0; i < this.self.playerMesh.getChildMeshes().length; i++) this.self.playerMesh.getChildMeshes()[i].layerMask = 0x10000000; // make dude and dude nodes invisible to main fps camera
     this.self.playerMesh.position = new Vector3(0, -64, -5); // offset dude back in the Z direction and down in the Y direction by the height of the camera elipsoid
@@ -96,7 +98,7 @@ export class FpsService {
   async createEnemy(username: string): Promise<Player> {
     let enemy = new Player(username, 'enemy');
     enemy.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
-    enemy.playerSoundURL = '';
+    enemy.meleeSoundURL = 'assets/babylon/sounds/melee/stab.mp3';
     enemy.moveSpeed = this.camera.speed;
     enemy.cameraAngularSensibility = this.camera.angularSensibility; 
     enemy.cameraInertia = this.camera.inertia; 
@@ -204,6 +206,9 @@ export class FpsService {
 
       this.self.getActiveWeapon().gunMesh.position = this.camera.position;
       this.self.getActiveWeapon().gunMesh.rotation = this.camera.rotation;
+
+      this.self.meleeWeapon.position = this.camera.position;
+      this.self.meleeWeapon.rotation = this.camera.rotation;
 
       if (this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh)) {
         console.log('pickup ' +  this.spareWeapon.name + '?')
@@ -423,6 +428,7 @@ export class FpsService {
     this.handleReloadOnR();
     this.handleSwapWeaponOnF();
     this.handlePickupWeaponOnE();
+    this.handleMeleeOn4();
   }
 
   handleRunOnShift() {
@@ -477,15 +483,19 @@ export class FpsService {
   }
 
   handleReloadOnR() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.self.getActiveWeapon().reloadSound.isPlaying && this.self.getActiveWeapon().ammo < this.self.getActiveWeapon().magazine) this.reloadWeapon() });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.self.getActiveWeapon().reloadSound.isPlaying && this.self.getActiveWeapon().ammo < this.self.getActiveWeapon().magazine && !this.self.justMeleed) this.reloadWeapon() });
   }
 
   handleSwapWeaponOnF() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF' && !this.self.swappingWeapons) this.swapWeapon() });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF' && !this.self.swappingWeapons && !this.self.justMeleed) this.swapWeapon() });
   }
 
   handlePickupWeaponOnE() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyE' && this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh)) this.pickupWeapon() });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyE' && this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh) && !this.self.justMeleed) this.pickupWeapon() });
+  }
+
+  handleMeleeOn4() {
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'Digit4' && !this.self.justMeleed) this.melee() });
   }
 
   handlePointerEvents() {
@@ -514,11 +524,11 @@ export class FpsService {
       this.gunSight.visibility = 0;
       this.reloadingSight.visibility = 0;
       this.self.swappingWeapons = true;
-      setTimeout(() => this.self.secondaryWeapon.cockingSound.play(), this.swapWeaponCooldown / 2);
+      setTimeout(() => { if (!this.self.justMeleed) this.self.secondaryWeapon.cockingSound.play() }, this.swapWeaponCooldown / 2);
       setTimeout(() => {
         this.self.swappingWeapons = false;
-        this.self.secondaryWeapon.gunMesh.visibility = 1;
-        this.gunSight.visibility = 1;
+        if (!this.self.justMeleed) this.self.secondaryWeapon.gunMesh.visibility = 1;
+        if (!this.self.justMeleed) this.gunSight.visibility = 1;
       }, this.swapWeaponCooldown);
 
     }
@@ -528,11 +538,11 @@ export class FpsService {
       this.gunSight.visibility = 0;
       this.reloadingSight.visibility = 0;
       this.self.swappingWeapons = true;
-      setTimeout(() => this.self.primaryWeapon.cockingSound.play(), this.swapWeaponCooldown / 2);
+      setTimeout(() => { if (!this.self.justMeleed) this.self.primaryWeapon.cockingSound.play() }, this.swapWeaponCooldown / 2);
       setTimeout(() => {
         this.self.swappingWeapons = false;
-        this.self.primaryWeapon.gunMesh.visibility = 1;
-        this.gunSight.visibility = 1;
+        if (!this.self.justMeleed) this.self.primaryWeapon.gunMesh.visibility = 1;
+        if (!this.self.justMeleed) this.gunSight.visibility = 1;
       }, this.swapWeaponCooldown);
     }
     this.updateAmmoCount()
@@ -547,9 +557,9 @@ export class FpsService {
     let fire = async () => { // We need to wrap the loop into an async function for this to work
 
       // cant fire if reloading or if you just fired
-      if (!this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.justFired && !this.self.swappingWeapons) {
+      if (!this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.justFired && !this.self.swappingWeapons && !this.self.justMeleed) {
         for (let i = 0; i < currentAmmo; i++) {
-          if (this.self.canShoot && !this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.swappingWeapons) {
+          if (this.self.canShoot && !this.self.getActiveWeapon().reloadSound.isPlaying && !this.self.swappingWeapons && !this.self.justMeleed) {
             this.self.getActiveWeapon().gunshotSound.play(); 
             this.self.getActiveWeapon().ammo--; 
             this.updateAmmoCount();
@@ -583,10 +593,32 @@ export class FpsService {
     }
   }
 
-  castRay() {
+  melee() {
+    this.self.getActiveWeapon().reloadSound.stop();
+    this.self.meleeSound.play();
+    this.reloadingSight.visibility = 0;
+    this.gunSight.visibility = 1;
+
+    this.self.meleeWeapon.visibility = 1;
+    this.self.getActiveWeapon().gunMesh.visibility = 0;
+    this.gunSight.visibility = 0;
+    this.reloadingSight.visibility = 0;
+    this.self.justMeleed = true;
+    setTimeout(() => {
+      this.self.justMeleed = false;
+      this.gunSight.visibility = 1;
+      this.self.getActiveWeapon().gunMesh.visibility = 1;  
+    }, this.meleeCooldown);
+    setTimeout(() => {
+      this.self.meleeWeapon.visibility = 0;
+      
+    }, this.meleeCooldown / 2);
+    this.castRay(50, true);
+  }
+
+  castRay(length: number = 50000, melee: boolean = false) {
     
     let origin = this.camera.position; 
-    let length = 50000;
     let wm = this.camera.getWorldMatrix();
     let aimVector = Vector3.TransformNormal(Vector3.Forward(), wm).normalize();
     let ray = new Ray(origin, aimVector, length);
@@ -597,14 +629,14 @@ export class FpsService {
       this.hitMarkerSound.play();
       this.hitMarkerSight.visibility = 1;
       setTimeout(() => this.hitMarkerSight.visibility = 0, 65);
-      this.targetHit(pickingInfo.pickedMesh.parent.id);
+      this.targetHit(pickingInfo.pickedMesh.parent.id, melee);
     }
 
   }
 
-  targetHit(id: string) {
+  targetHit(id: string, melee: boolean) {
     let enemy = this.playerService.get(id);
-    enemy.health-= this.self.getActiveWeapon().damage; // maybe base this off current weapon damage instead of flat 10
+    enemy.health-= melee ? 100 : this.self.getActiveWeapon().damage; // maybe base this off current weapon damage instead of flat 10
     enemy.wasHitRecently = true;
     enemy.lastDamagedBy = this.self.username;
 

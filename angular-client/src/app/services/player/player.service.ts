@@ -22,6 +22,7 @@ export class PlayerService {
 
   async create(player: Player, scene: Scene): Promise<Player> {
     await player.importPlayerMesh(scene);
+    await player.importMeleeSound(scene)
     this.players.push(player);
     return player;
   }
