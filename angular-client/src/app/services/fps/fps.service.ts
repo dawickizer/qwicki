@@ -31,6 +31,9 @@ export class FpsService {
   hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
   isSceneLocked: boolean = false;
   swapWeaponCooldown: number = 500;
+  sprintSpeed: number = 80;
+  walkSpeed: number = 50;
+  crouchSpeed: number = 20;
 
   killLogs: string[] = [];
 
@@ -195,7 +198,7 @@ export class FpsService {
   }
 
   handlePlayerAndWeaponPosition() {
-    this.scene.afterCameraRender = () => {
+    this.scene.beforeCameraRender = () => {
       this.self.playerMesh.position = this.camera.position;
       this.self.playerMesh.rotation = this.camera.rotation;
 
@@ -297,6 +300,8 @@ export class FpsService {
     this.camera.keysUp.push('W'.charCodeAt(0));
 
     this.camera.keysUpward.push(' '.charCodeAt(0)); // registers an input to apply gravity 
+    this.camera.keysDownward.push('c'.charCodeAt(0)); // registers an input to applay crouch
+    this.camera.keysDownward.push('C'.charCodeAt(0)); // registers an input to applay crouch
 
     this.camera.keysLeft = [];
     this.camera.keysLeft.push('a'.charCodeAt(0));
@@ -313,6 +318,7 @@ export class FpsService {
     this.camera.speed = 50; // controls WASD speed
     this.camera.angularSensibility = 5000; // controls mouse speed
     this.camera.inertia = .2; // controls 'smoothness'
+
   }
 
   getCameraSensitivity(): number {
@@ -412,6 +418,7 @@ export class FpsService {
 
   createFpsKeyBinds() {
     this.handleRunOnShift();
+    this.handleCrouchOnC();
     this.handleFlyOnSpace();
     this.handleReloadOnR();
     this.handleSwapWeaponOnF();
@@ -419,12 +426,54 @@ export class FpsService {
   }
 
   handleRunOnShift() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 70 });
-    document.addEventListener('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.camera.speed = 50 });
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.sprint() });
+    document.addEventListener('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.walk() });
+  }
+
+  // due to system settings and how they control shortcut keys...ctrl+ shortcuts cannot fully be disabled. Putting crouch on C
+  handleCrouchOnC() {
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyC') this.crouched() });
+  }
+  
+  sprint() {
+    this.camera.speed = this.sprintSpeed;
+    if (this.self.crouched) this.stand();
+    this.self.sprinting = true;
+  }
+
+  stand() {
+    this.camera.speed = this.walkSpeed;
+    this.camera.position = this.camera.position.add(new Vector3(0, 24, 0));
+    this.camera.ellipsoid = new Vector3(5, 32, 5);
+    this.self.crouched = false;
+  }
+
+  crouch() {
+    this.camera.speed = this.crouchSpeed;
+    this.camera.position = this.camera.position.add(new Vector3(0, -10, 0));
+    this.camera.ellipsoid = new Vector3(5, 20, 5);
+    this.self.crouched = true;
+  }
+
+  crouched() {
+    if (this.self.crouched) this.stand();
+    else this.crouch();
+    this.self.sprinting = false;
+  }
+
+  walk() {
+    if (this.self.crouched) this.camera.speed = this.crouchSpeed;
+    else this.camera.speed = this.walkSpeed
+    this.self.sprinting = false;
   }
 
   handleFlyOnSpace() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'Space') this.camera.applyGravity = !this.camera.applyGravity });
+    document.addEventListener('keydown', event => { 
+      if (this.isSceneLocked && event.code == 'Space') {
+        if (this.self.crouched) this.stand();
+        else this.camera.applyGravity = !this.camera.applyGravity;
+      }
+  });
   }
 
   handleReloadOnR() {
