@@ -13,17 +13,17 @@ import { MatDividerModule } from '@angular/material/divider';
 // Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { HomeComponent } from './components/home/home.component';
-import { TestPhaserComponent } from './components/test-phaser/test-phaser.component';
-import { TestBabylonComponent } from './components/test-babylon/test-babylon.component';
-import { TestApiComponent } from './components/test-api/test-api.component';
-import { TestSocketComponent } from './components/test-socket/test-socket.component';
-import { PlaygroundComponent } from './components/playground/playground.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
+import { HomeComponent } from './components/home/home.component';
+import { PhaserioComponent } from './components/phaserio/phaserio.component';
+import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
+import { ThreejsComponent } from './components/threejs/threejs.component';
+import { SocketioComponent } from './components/socketio/socketio.component';
+import { ApiComponent } from './components/api/api.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Services
-import { SocketService } from './services/socket/socket.service';
+import { SocketioService } from './services/socketio/socketio.service';
 import { ApiService } from './services/api/api.service';
 import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
@@ -32,13 +32,13 @@ import { FpsService } from './services/fps/fps.service';
 @NgModule({
   declarations: [
     AppComponent,
-    HomeComponent,
-    TestPhaserComponent,
-    TestBabylonComponent,
-    TestApiComponent,
-    TestSocketComponent,
     NavbarComponent,
-    PlaygroundComponent
+    HomeComponent,
+    PhaserioComponent,
+    BabylonjsComponent,
+    ThreejsComponent,
+    SocketioComponent,
+    ApiComponent
   ],
   imports: [
     BrowserModule,
@@ -53,7 +53,7 @@ import { FpsService } from './services/fps/fps.service';
     BrowserAnimationsModule, // import http client module
   ],
   providers: [
-              SocketService,
+              SocketioService,
               ApiService,
               PlayerService,
               GunService,
