@@ -11,7 +11,7 @@ WORKDIR /app
 COPY package*.json /app/
 
 # Handle proxy error
-RUN npm config set registry http://registry.npmjs.org/
+# RUN npm config set registry http://registry.npmjs.org/
 
 # Install dependecies
 RUN npm install

@@ -9,7 +9,7 @@ services:
     ports:
       - "4200:4200" # specify port forewarding
     environment:
-      NODE_OPTIONS: "--max-old-space-size=1536" # SOLVED: FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
+      NODE_OPTIONS: "--max-old-space-size=4000" # SOLVED: FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
     volumes:
       - ./angular-client/src:/app/src # this will enable changes made to the angular app reflect in the container
     networks:
