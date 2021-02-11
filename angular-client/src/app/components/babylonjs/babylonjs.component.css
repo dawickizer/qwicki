@@ -5,11 +5,13 @@ canvas {
 
 .example-sidenav {
   padding: 20px;
+  color: aliceblue;
+  background-color: #212529;
 }
 
 .material-icons {
   vertical-align: middle;
-  color:blueviolet
+  color:#673ab7
 }
 
 #face {

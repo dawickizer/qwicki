@@ -1,7 +1,13 @@
 .example-card {
     max-width: 400px;
+    color: aliceblue;
+    background-color: #212529;
 }
-  
+
+.mat-card-subtitle {
+    color:rgba(255,255,255,.5);
+}
+
 .example-header-image {
     background-image: url('/assets/wick.png');
     background-size: cover;
@@ -24,4 +30,20 @@
     align-items: center;
     background-image: url('/assets/home.png');
 }
+
+/* ::ng-deep input.mat-input-element {
+    color: #484a4c;
+  }
+  
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+    color: white !important;
+}
+
+::ng-deep .mat-form-field-placeholder {
+    color: rgba(255,255,255,.5) !important;
+}
+
+::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple{
+    background-color: #50d0fb !important;
+} */
 
