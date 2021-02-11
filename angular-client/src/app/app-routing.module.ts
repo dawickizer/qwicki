@@ -1,19 +1,19 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { TestPhaserComponent } from './components/test-phaser/test-phaser.component';
-import { TestBabylonComponent } from './components/test-babylon/test-babylon.component';
-import { TestApiComponent } from './components/test-api/test-api.component';
-import { TestSocketComponent } from './components/test-socket/test-socket.component';
-import { PlaygroundComponent } from './components/playground/playground.component';
+import { PhaserioComponent } from './components/phaserio/phaserio.component';
+import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
+import { ThreejsComponent } from './components/threejs/threejs.component';
+import { SocketioComponent } from './components/socketio/socketio.component';
+import { ApiComponent } from './components/api/api.component';
 
 const routes: Routes = [
-  { path: 'test-phaser', component: TestPhaserComponent },
   { path: '', component: HomeComponent },
-  { path: 'test-babylon', component: TestBabylonComponent },
-  { path: 'test-api', component: TestApiComponent },
-  { path: 'test-socket', component: TestSocketComponent },
-  { path: 'playground', component: PlaygroundComponent }
+  { path: 'phaserio', component: PhaserioComponent },
+  { path: 'babylonjs', component: BabylonjsComponent },
+  { path: 'threejs', component: ThreejsComponent },
+  { path: 'socketio', component: SocketioComponent },
+  { path: 'api', component: ApiComponent },
 ];
 
 @NgModule({

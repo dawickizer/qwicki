@@ -28,7 +28,7 @@ export class FpsService {
   reloadingSight: Mesh;
   hitMarkerSight: Mesh;
   hitMarkerSound: Sound;
-  hitMarkerSoundURL: string = 'assets/babylon/sounds/m4/hit-marker.mp3';
+  hitMarkerSoundURL: string = 'assets/babylonjs/sounds/m4/hit-marker.mp3';
   isSceneLocked: boolean = false;
   swapWeaponCooldown: number = 500;
   meleeCooldown: number = 800;
@@ -69,8 +69,8 @@ export class FpsService {
 
   async createPlayer() {
     this.self = new Player(this.username, 'self');
-    this.self.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
-    this.self.meleeSoundURL = 'assets/babylon/sounds/melee/stab.mp3';
+    this.self.playerMeshURL = 'assets/babylonjs/models/dude/dude.babylon';
+    this.self.meleeSoundURL = 'assets/babylonjs/sounds/melee/stab.mp3';
     this.self.moveSpeed = this.camera.speed;
     this.self.cameraAngularSensibility = this.camera.angularSensibility; 
     this.self.cameraInertia = this.camera.inertia; 
@@ -97,8 +97,8 @@ export class FpsService {
 
   async createEnemy(username: string): Promise<Player> {
     let enemy = new Player(username, 'enemy');
-    enemy.playerMeshURL = 'assets/babylon/models/dude/dude.babylon';
-    enemy.meleeSoundURL = 'assets/babylon/sounds/melee/stab.mp3';
+    enemy.playerMeshURL = 'assets/babylonjs/models/dude/dude.babylon';
+    enemy.meleeSoundURL = 'assets/babylonjs/sounds/melee/stab.mp3';
     enemy.moveSpeed = this.camera.speed;
     enemy.cameraAngularSensibility = this.camera.angularSensibility; 
     enemy.cameraInertia = this.camera.inertia; 
@@ -122,10 +122,10 @@ export class FpsService {
 
     // create m4
     let m4 = new Gun();
-    m4.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
-    m4.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
-    m4.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
-    m4.cockingSoundURL = 'assets/babylon/sounds/m4/m4-cocking.mp3';
+    m4.gunMeshURL = 'assets/babylonjs/models/m4/scene.gltf';
+    m4.gunshotSoundURL = 'assets/babylonjs/sounds/m4/gunshot.mp3';
+    m4.reloadSoundURL = 'assets/babylonjs/sounds/m4/reload.mp3';
+    m4.cockingSoundURL = 'assets/babylonjs/sounds/m4/m4-cocking.mp3';
     m4.name = 'm4';
     m4.magazine = 30;
     m4.ammo = 30;
@@ -135,10 +135,10 @@ export class FpsService {
 
     // create mp5
     let mp5 = new Gun();
-    mp5.gunMeshURL = 'assets/babylon/models/mp5/scene.gltf';
-    mp5.gunshotSoundURL = 'assets/babylon/sounds/mp5/silencer.mp3';
-    mp5.reloadSoundURL = 'assets/babylon/sounds/mp5/reload.mp3';
-    mp5.cockingSoundURL = 'assets/babylon/sounds/mp5/mp5-cocking.mp3';
+    mp5.gunMeshURL = 'assets/babylonjs/models/mp5/scene.gltf';
+    mp5.gunshotSoundURL = 'assets/babylonjs/sounds/mp5/silencer.mp3';
+    mp5.reloadSoundURL = 'assets/babylonjs/sounds/mp5/reload.mp3';
+    mp5.cockingSoundURL = 'assets/babylonjs/sounds/mp5/mp5-cocking.mp3';
     mp5.name = 'mp5';
     mp5.magazine = 25;
     mp5.ammo = 25;
@@ -148,10 +148,10 @@ export class FpsService {
 
     // create g3
     let g3 = new Gun();
-    g3.gunMeshURL = 'assets/babylon/models/m4/scene.gltf';
-    g3.gunshotSoundURL = 'assets/babylon/sounds/m4/gunshot.mp3';
-    g3.reloadSoundURL = 'assets/babylon/sounds/m4/reload.mp3';
-    g3.cockingSoundURL = 'assets/babylon/sounds/m4/m4-cocking.mp3';
+    g3.gunMeshURL = 'assets/babylonjs/models/m4/scene.gltf';
+    g3.gunshotSoundURL = 'assets/babylonjs/sounds/m4/gunshot.mp3';
+    g3.reloadSoundURL = 'assets/babylonjs/sounds/m4/reload.mp3';
+    g3.cockingSoundURL = 'assets/babylonjs/sounds/m4/m4-cocking.mp3';
     g3.name = 'g3';
     g3.magazine = 15;
     g3.ammo = 15;
