@@ -2,3 +2,20 @@ canvas {
   height: 100vh;
   width: 100%;
 }
+
+.example-sidenav {
+  padding: 20px;
+}
+
+.material-icons {
+  vertical-align: middle;
+  color:blueviolet
+}
+
+#face {
+  padding-left: 14px;
+}
+
+#strong {
+  float: right;
+}
