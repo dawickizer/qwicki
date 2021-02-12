@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { UniversalCamera, Camera, Sound, Mesh, Texture, StandardMaterial, MeshBuilder, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
 import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
@@ -7,6 +7,10 @@ import { GunService } from 'src/app/services/gun/gun.service';
 import { Gun } from 'src/app/models/gun/gun';
 import { PlayerService } from 'src/app/services/player/player.service';
 import { Player } from 'src/app/models/player/player';
+
+// Physics
+import * as CANNON from 'cannon';
+import { CannonJSPlugin, PhysicsImpostor } from '@babylonjs/core';
 
 @Injectable({
   providedIn: 'root'
@@ -65,7 +69,63 @@ export class FpsService {
     this.handlePlayerAndWeaponPosition();
     this.createHUD();
     this.handleHealth();
+
+    this.physics();
+
+
+
   }
+
+
+
+
+  physics() {
+    let gravityVector: Vector3 = new Vector3(0, -500, 0);
+    let physicsPlugin: CannonJSPlugin = new CannonJSPlugin(undefined, undefined, CANNON);
+    this.scene.enablePhysics(gravityVector, physicsPlugin);
+
+    let sphereMaterial = new StandardMaterial('groundMat', this.scene);
+    sphereMaterial.diffuseTexture = new Texture('assets/babylonjs/textures/yoshi-egg.png', this.scene);
+
+    let groundMaterial = new StandardMaterial('groundMat', this.scene);
+    groundMaterial.backFaceCulling = false;
+    groundMaterial.diffuseTexture = new Texture('assets/babylonjs/textures/grass.jpg', this.scene);
+
+    let ground = MeshBuilder.CreateGround('ground', { width: 5000, height: 5000 }, this.scene);
+    ground.position = new Vector3(0, 0, 0);
+    ground.material = groundMaterial; 
+    ground.checkCollisions = true;
+    ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+
+    // let terrainMaterial = new StandardMaterial("terrain", this.scene);
+    // terrainMaterial.diffuseTexture = new Texture("assets/babylon/textures/grass.jpg", this.scene);
+
+    // let terrain = Mesh.CreateGroundFromHeightMap("terrain", "assets/babylon/heightmap.jpg", 5000, 5000, 50, 0, 200, this.scene, false);
+    // terrain.position = new Vector3(0, -100, 0);
+    // terrain.material = terrainMaterial; 
+    // terrain.physicsImpostor = new PhysicsImpostor(terrain, PhysicsImpostor.HeightmapImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+
+    document.addEventListener('keydown', event => { 
+      if (this.isSceneLocked && event.code == 'KeyG' && !this.self.justMeleed) {
+        let wm = this.camera.getWorldMatrix();
+        let aimVector = Vector3.TransformNormal(Vector3.Forward(), wm).normalize();
+
+        let sphere = Mesh.CreateSphere("sphere1", 16, 10, this.scene);
+        sphere.isPickable = false;
+        sphere.physicsImpostor = new PhysicsImpostor(sphere, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, this.scene);
+        sphere.physicsImpostor.physicsBody.linearDamping = .5; //friction
+        sphere.physicsImpostor.physicsBody.angularDamping = .5; // prevent infinite spinning
+        sphere.material = sphereMaterial;
+        sphere.position = this.camera.position.add(aimVector);
+
+        //sphere.physicsImpostor.applyImpulse(this.camera.position.add(aimVector), this.camera.position);
+      } 
+    });
+
+  }
+
+
+
 
   async createPlayer() {
     this.self = new Player(this.username, 'self');

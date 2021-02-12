@@ -49,8 +49,8 @@ export class BabylonjsComponent implements OnInit {
     await this.fpsService.addFpsMechanics(this.scene, this.canvas, this.username);
     
     this.skybox = this.createSkyBox();
-    this.ground = this.createGround(4000, 0, 'grass.jpg');
-    this.platform = this.createGround(5000, -200, 'lava.jpg');
+    //this.ground = this.createGround(4000, 0, 'grass.jpg');
+    //this.platform = this.createGround(5000, -200, 'lava.jpg');
 
     this.handleDebugLayer();
     this.handleDebugCamera();
