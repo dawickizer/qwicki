@@ -82,7 +82,6 @@ export class BabylonjsComponent implements OnInit {
     skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
     skyboxMaterial.specularColor = new Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
-    skybox.checkCollisions = true;
     return skybox;
   }
 
@@ -94,6 +93,19 @@ export class BabylonjsComponent implements OnInit {
     groundMat.diffuseTexture = new Texture('assets/babylonjs/textures/' + texture, this.scene);
     ground.material = groundMat;
     ground.checkCollisions = true;
+
+        // let terrainMaterial = new StandardMaterial("terrain", this.scene);
+    // terrainMaterial.diffuseTexture = new Texture("assets/babylonjs/textures/grass.jpg", this.scene);
+
+    // let terrain: GroundMesh;
+    // Mesh.CreateGroundFromHeightMap("terrain", "assets/babylonjs/textures/heightmap.jpg", 5000, 5000, 50, 0, 200, this.scene, false, (mesh) => {
+    //   terrain = mesh;
+    //   terrain.position = new Vector3(0, 0, 0);
+    //   terrain.material = terrainMaterial; 
+    //   terrain.checkCollisions = true;
+    //   terrain.physicsImpostor = new PhysicsImpostor(terrain, PhysicsImpostor.HeightmapImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+    // });
+    
     return ground;
   }
 
