@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, Texture, StandardMaterial, MeshBuilder, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { UniversalCamera, Camera, Sound, Mesh, Texture, StandardMaterial, MeshBuilder, Vector3, Color3, Scene, Ray, GroundMesh } from '@babylonjs/core';
 import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
@@ -80,7 +80,7 @@ export class FpsService {
 
 
   physics() {
-    let gravityVector: Vector3 = new Vector3(0, -500, 0);
+    let gravityVector: Vector3 = new Vector3(0, -700, 0);
     let physicsPlugin: CannonJSPlugin = new CannonJSPlugin(undefined, undefined, CANNON);
     this.scene.enablePhysics(gravityVector, physicsPlugin);
 
@@ -98,27 +98,32 @@ export class FpsService {
     ground.physicsImpostor = new PhysicsImpostor(ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, this.scene);
 
     // let terrainMaterial = new StandardMaterial("terrain", this.scene);
-    // terrainMaterial.diffuseTexture = new Texture("assets/babylon/textures/grass.jpg", this.scene);
+    // terrainMaterial.diffuseTexture = new Texture("assets/babylonjs/textures/grass.jpg", this.scene);
 
-    // let terrain = Mesh.CreateGroundFromHeightMap("terrain", "assets/babylon/heightmap.jpg", 5000, 5000, 50, 0, 200, this.scene, false);
-    // terrain.position = new Vector3(0, -100, 0);
-    // terrain.material = terrainMaterial; 
-    // terrain.physicsImpostor = new PhysicsImpostor(terrain, PhysicsImpostor.HeightmapImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+    // let terrain: GroundMesh;
+    // Mesh.CreateGroundFromHeightMap("terrain", "assets/babylonjs/textures/heightmap.jpg", 5000, 5000, 50, 0, 200, this.scene, false, (mesh) => {
+    //   terrain = mesh;
+    //   terrain.position = new Vector3(0, 0, 0);
+    //   terrain.material = terrainMaterial; 
+    //   terrain.checkCollisions = true;
+    //   terrain.physicsImpostor = new PhysicsImpostor(terrain, PhysicsImpostor.HeightmapImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+    // });
+
 
     document.addEventListener('keydown', event => { 
       if (this.isSceneLocked && event.code == 'KeyG' && !this.self.justMeleed) {
         let wm = this.camera.getWorldMatrix();
         let aimVector = Vector3.TransformNormal(Vector3.Forward(), wm).normalize();
 
-        let sphere = Mesh.CreateSphere("sphere1", 16, 10, this.scene);
+        let sphere = Mesh.CreateSphere("sphere", 16, 10, this.scene);
         sphere.isPickable = false;
         sphere.physicsImpostor = new PhysicsImpostor(sphere, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, this.scene);
         sphere.physicsImpostor.physicsBody.linearDamping = .5; //friction
-        sphere.physicsImpostor.physicsBody.angularDamping = .5; // prevent infinite spinning
+        sphere.physicsImpostor.physicsBody.angularDamping = .1; // prevent infinite spinning
         sphere.material = sphereMaterial;
         sphere.position = this.camera.position.add(aimVector);
 
-        //sphere.physicsImpostor.applyImpulse(this.camera.position.add(aimVector), this.camera.position);
+        sphere.physicsImpostor.applyImpulse(aimVector.scale(1800), new Vector3(0, .5, 0)); // for some reason...making a groundmesh with -y position messes up this vector
       } 
     });
 
