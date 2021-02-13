@@ -19,24 +19,27 @@ export class ThreejsComponent implements OnInit {
   @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('drawer') drawer: MatSidenav;
 
+  username: string = 'Wick';
+  cameraSensitivity: number = 50;
+
   renderer: THREE.WebGLRenderer;
   camera: THREE.PerspectiveCamera;
   scene: THREE.Scene;
   light: THREE.DirectionalLight;
   cube: THREE.Mesh;
+  axesHelper: THREE.AxesHelper;
 
   constructor(private fpsService: FpsService, private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.route.queryParams.subscribe(params => this.username = exists(params['username']));
     this.createScene();
     this.handleWindowResize();
+    this.handleSideNavKeyBind();
   }
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
-  ngAfterViewInit() {
- 
-
-  }
+  ngAfterViewInit() {}
 
   createScene() {
     this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas.nativeElement });
@@ -63,21 +66,27 @@ export class ThreejsComponent implements OnInit {
     this.light = new THREE.DirectionalLight(color, intensity);
     this.light.position.set(-1, 2, 4);
 
+    //this.axesHelper = new THREE.AxesHelper(2)
+    //this.scene.add(this.axesHelper)
     this.scene.add(this.cube);
     this.scene.add(this.light);
 
-    const render = (time) => {
-      time *= 0.001;  // convert time to seconds
+    this.render();
+  }
 
-      this.cube.rotation.x = time;
-      this.cube.rotation.y = time;
+  render() {
+    const clock = new THREE.Clock();
+    const tick = () => {
+      const elapsedTime = clock.getElapsedTime();
+
+      this.cube.rotation.x = elapsedTime;
+      this.cube.rotation.y = elapsedTime;
   
       this.renderer.render(this.scene, this.camera);
   
-      requestAnimationFrame(render);
+      requestAnimationFrame(tick);
     }
-    requestAnimationFrame(render);
-
+    requestAnimationFrame(tick);
   }
   
   handleWindowResize() {
@@ -88,7 +97,18 @@ export class ThreejsComponent implements OnInit {
       this.renderer.setPixelRatio(window.devicePixelRatio);
     });   
   }
-  
+
+  handleSideNavKeyBind() {
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'Tab') {
+        event.preventDefault();
+        if (this.drawer.opened) this.canvas.nativeElement.requestPointerLock();
+        else document.exitPointerLock();
+        this.drawer.toggle();
+      }
+    });  
+  }
+
   ngOnDestroy() {}
 
 }
