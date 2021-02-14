@@ -27,3 +27,10 @@ canvas {
 #strong {
   float: right;
 }
+
+#debug{ 
+  position: absolute;
+  top: 0em;
+  right: -1em;
+  z-index: 1;
+}
