@@ -55,6 +55,7 @@ export class BabylonjsComponent implements OnInit {
     this.handleDebugLayer();
     this.handleDebugCamera();
     this.handleSideNavKeyBind();
+    this.handleFullScreen();
     this.getCameraSensitivity();
 
     // running babylonJS
@@ -136,9 +137,22 @@ export class BabylonjsComponent implements OnInit {
         event.preventDefault();
         if (this.drawer.opened) this.canvas.nativeElement.requestPointerLock();
         else document.exitPointerLock();
+        if (document.fullscreenElement) document.exitFullscreen();
         this.drawer.toggle();
       }
     });  
+  }
+
+  handleFullScreen() {
+    document.addEventListener('keydown', event => {
+      if (event.code == 'Backquote')
+        if (!document.fullscreenElement) {
+          this.canvas.nativeElement.requestFullscreen();
+          this.canvas.nativeElement.requestPointerLock();
+          this.drawer.close();
+        }
+        else document.exitFullscreen();
+    });
   }
 
   handleDebugLayer() {
