@@ -126,8 +126,9 @@ export class ThreejsComponent implements OnInit {
   render() {
     const clock = new THREE.Clock();
     const tick = () => {
-      const elapsedTime = clock.getElapsedTime();
+      let delta = clock.getDelta();
       this.orbitControls.update();
+      //this.fpsControls.update(delta);
       if (this.fpsCameraIsActive) this.renderer.render(this.scene, this.fpsCamera);
       else this.renderer.render(this.scene, this.debugCamera);
       requestAnimationFrame(tick);
