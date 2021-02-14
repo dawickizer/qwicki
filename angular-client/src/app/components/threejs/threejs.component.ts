@@ -5,13 +5,14 @@ import { exists } from 'src/app/utilities/username.utility';
 
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
+import * as CANNON from 'cannon-es';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 
 // Services/Models
 import { Gun } from 'src/app/models/gun/gun';
 import { FpsService } from 'src/app/services/fps/fps.service';
-import { AxesHelper } from 'three';
 
 @Component({
   selector: 'app-threejs',
@@ -25,29 +26,33 @@ export class ThreejsComponent implements OnInit {
 
   username: string = 'Wick';
   cameraSensitivity: number = 50;
+  fpsCameraIsActive: boolean = true;
+  fpsCamera: THREE.PerspectiveCamera;
+  fpsControls: FirstPersonControls;
   pointerLockControls: PointerLockControls;
-
+  debugCamera: THREE.PerspectiveCamera;
+  orbitControls: OrbitControls;
   renderer: THREE.WebGLRenderer;
-  camera: THREE.PerspectiveCamera;
-  controls: OrbitControls;
   scene: THREE.Scene;
   light: THREE.AmbientLight;
   cube: THREE.Mesh;
-  cube2: THREE.Mesh;
 
   // debug layer
   axesHelper: THREE.AxesHelper;
   debug: dat.GUI;
   debugVisible: boolean = false;
   debugItems: dat.GUI[] = [];
+  ground: THREE.Mesh;
 
   constructor(private fpsService: FpsService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     this.getRouteParams();
     this.createScene();
-    this.handleUserInteractions();
+    this.createGround();
+    this.handleDebugCamera();
     this.handleDebugLayer();
+    this.handleUserInteractions();
   }
 
   ngAfterViewInit() {}
@@ -64,19 +69,18 @@ export class ThreejsComponent implements OnInit {
     this.scene = new THREE.Scene();
     this.scene.name = 'Scene';
 
-    // camera
+    // fps camera
     const fov = 75;
     const aspect = 2;  // the canvas default
     const near = 0.1;
-    const far = 5;
-    this.camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this.camera.position.set(0, 0, 2);
-    this.camera.name = 'Camera';
+    const far = 2000;
+    this.fpsCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    this.fpsCamera.position.set(0, 1, 3);
+    this.fpsCamera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.fpsCamera.name = 'FPS Camera';
 
-    // camera controls
-    this.controls = new OrbitControls(this.camera, this.canvas.nativeElement);
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = .05;
+    // fps camera controls
+    this.fpsControls = new FirstPersonControls(this.fpsCamera, this.canvas.nativeElement);
 
     // light
     const color = 0xFFFFFF;
@@ -90,28 +94,39 @@ export class ThreejsComponent implements OnInit {
     const boxHeight = 1;
     const boxDepth = 1;
     const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-    const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish const 
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load('/assets/threejs/textures/lava.jpg');
+    const material = new THREE.MeshBasicMaterial({ map: texture });
     this.cube = new THREE.Mesh(geometry, material);
     this.cube.name = 'Cube1';
-
-    this.cube2 = new THREE.Mesh(geometry, material);
-    this.cube2.name = 'Cube2';
-    this.cube.add(this.cube2)
 
     // Add to scene
     this.scene.add(this.cube);
     this.scene.add(this.light);
+    this.scene.add(this.fpsCamera);
 
     // render scene
     this.render();
+  }
+
+  createGround() {
+    const geometry = new THREE.PlaneGeometry(50, 50, 50);
+    const textureLoader = new THREE.TextureLoader();
+    const texture = textureLoader.load('/assets/threejs/textures/grass.jpg');
+    const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+    this.ground = new THREE.Mesh(geometry, material);
+    this.ground.rotation.x = Math.PI / 2;
+    this.ground.name = 'Ground';
+    this.scene.add(this.ground);
   }
 
   render() {
     const clock = new THREE.Clock();
     const tick = () => {
       const elapsedTime = clock.getElapsedTime();
-      this.controls.update();
-      this.renderer.render(this.scene, this.camera);
+      this.orbitControls.update();
+      if (this.fpsCameraIsActive) this.renderer.render(this.scene, this.fpsCamera);
+      else this.renderer.render(this.scene, this.debugCamera);
       requestAnimationFrame(tick);
     }
     requestAnimationFrame(tick);
@@ -123,7 +138,7 @@ export class ThreejsComponent implements OnInit {
 
   handleUserInteractions() {
     document.documentElement.style.overflow = 'hidden';
-    this.pointerLockControls = new PointerLockControls(this.camera, this.canvas.nativeElement);
+    this.pointerLockControls = new PointerLockControls(this.fpsCamera, this.canvas.nativeElement);
     this.handleWindowResize();
     this.handlePointerEvents();
     this.handleFullScreen();
@@ -132,8 +147,8 @@ export class ThreejsComponent implements OnInit {
   
   handleWindowResize() {
     window.addEventListener('resize', () => {
-      this.camera.aspect = window.innerWidth / window.innerHeight;
-      this.camera.updateProjectionMatrix();
+      this.debugCamera.aspect = window.innerWidth / window.innerHeight;
+      this.debugCamera.updateProjectionMatrix();
       this.renderer.setSize(window.innerWidth, window.innerHeight);
       this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     });   
@@ -141,7 +156,7 @@ export class ThreejsComponent implements OnInit {
 
   handleFullScreen() {
     document.addEventListener('keydown', event => {
-      if (event.code == 'Backquote')
+      if (event.code == 'Backquote' && this.fpsCameraIsActive)
         if (!document.fullscreenElement) {
           this.canvas.nativeElement.requestFullscreen();
           this.pointerLockControls.lock();
@@ -153,7 +168,7 @@ export class ThreejsComponent implements OnInit {
 
   handleSideNav() {
     document.addEventListener('keydown', event => { 
-      if (event.code == 'Tab') {
+      if (event.code == 'Tab' && this.fpsCameraIsActive) {
         event.preventDefault();
         if (this.drawer.opened) this.pointerLockControls.lock();
         else this.pointerLockControls.unlock();
@@ -165,7 +180,7 @@ export class ThreejsComponent implements OnInit {
 
   handlePointerEvents() {
     this.canvas.nativeElement.addEventListener('pointerdown',  event => {
-      if (!this.pointerLockControls.isLocked) this.pointerLockControls.lock();
+      if (!this.pointerLockControls.isLocked && event.button == 0 && this.fpsCameraIsActive) this.pointerLockControls.lock();
       else if (this.pointerLockControls.isLocked && event.button == 0) console.log('Fire Weapon');
     });
     this.canvas.nativeElement.addEventListener('pointerup',  event => { if (this.pointerLockControls.isLocked && event.button == 0) console.log('Setting self.canShoot to false') });
@@ -187,12 +202,13 @@ export class ThreejsComponent implements OnInit {
     this.debug.hide();
     document.getElementById('debug').append(this.debug.domElement); // append to empty div to prevent debugger from appearing behind sidenav
 
-    this.createDebugGUI(this.scene);
-    console.log(this.scene);
-
-    this.axesHelper = new AxesHelper();
+    this.axesHelper = new THREE.AxesHelper();
+    this.axesHelper.name = "AxesHelper";
     this.axesHelper.visible = false;
+    this.axesHelper.scale.multiply(new THREE.Vector3(5, 5, 5));
     this.scene.add(this.axesHelper);
+
+    this.createDebugGUI(this.scene);
 
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
@@ -208,8 +224,6 @@ export class ThreejsComponent implements OnInit {
       }
     });
   }
-
-  params = {color: 0xff0000}
 
   createDebugGUI(parent: THREE.Object3D) {
     parent.children.forEach(child => this.createDebugGUI(child));
@@ -239,14 +253,39 @@ export class ThreejsComponent implements OnInit {
 
     // check if mesh
     if (parent instanceof THREE.Mesh) {
-      if (Array.isArray(parent.material)) parent.material.forEach(material => folder.addColor(parent.material, 'color'))
-      else folder.addColor(parent.material, 'color');
+      if (Array.isArray(parent.material)) parent.material.forEach(material => folder.add(parent.material, 'wireframe'))
+      else folder.add(parent.material, 'wireframe');
     }
 
     //check if...
 
     this.debugItems.push(folder);
     return folder;
+  }
+
+  handleDebugCamera() {
+    const fov = 75;
+    const aspect = 2;  // the canvas default
+    const near = 0.1;
+    const far = 2000;
+    this.debugCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+    this.debugCamera.position.set(0, 5, 10);
+    this.debugCamera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.debugCamera.name = 'Debug Camera';
+
+    this.orbitControls = new OrbitControls(this.debugCamera, this.canvas.nativeElement);
+    this.orbitControls.enableDamping = true;
+    this.orbitControls.dampingFactor = .05;
+
+    this.scene.add(this.debugCamera);
+
+    document.addEventListener('keydown', event => { 
+      if (event.code == 'NumpadSubtract') {
+        if (this.fpsCameraIsActive) this.pointerLockControls.unlock();
+        else this.pointerLockControls.lock();
+        this.fpsCameraIsActive = !this.fpsCameraIsActive;
+      }
+    });
   }
 
 }

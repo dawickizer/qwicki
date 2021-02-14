@@ -30,6 +30,7 @@
     "@babylonjs/procedural-textures": "^4.2.0",
     "@babylonjs/serializers": "^4.2.0",
     "@babylonjs/viewer": "^4.2.0",
+    "cannon-es": "^0.16.0",
     "dat.gui": "^0.7.7",
     "material-design-icons": "^3.0.1",
     "phaser": "^3.52.0",
