@@ -39,6 +39,8 @@ export class ThreejsComponent implements OnInit {
 
   // debug layer
   axesHelper: THREE.AxesHelper;
+  gridHelperX: THREE.GridHelper;
+  gridHelperY: THREE.GridHelper;
   debug: dat.GUI;
   debugVisible: boolean = false;
   debugItems: dat.GUI[] = [];
@@ -99,6 +101,7 @@ export class ThreejsComponent implements OnInit {
     const material = new THREE.MeshBasicMaterial({ map: texture });
     this.cube = new THREE.Mesh(geometry, material);
     this.cube.name = 'Cube1';
+    this.cube.position.set(0, 2, 0);
 
     // Add to scene
     this.scene.add(this.cube);
@@ -202,11 +205,21 @@ export class ThreejsComponent implements OnInit {
     this.debug.hide();
     document.getElementById('debug').append(this.debug.domElement); // append to empty div to prevent debugger from appearing behind sidenav
 
-    this.axesHelper = new THREE.AxesHelper();
+    this.axesHelper = new THREE.AxesHelper(5);
     this.axesHelper.name = "AxesHelper";
     this.axesHelper.visible = false;
-    this.axesHelper.scale.multiply(new THREE.Vector3(5, 5, 5));
     this.scene.add(this.axesHelper);
+
+    this.gridHelperX = new THREE.GridHelper(50, 50);
+    this.gridHelperX.name = "GridHelperX";
+    this.gridHelperX.visible = false;
+    this.scene.add(this.gridHelperX);
+
+    this.gridHelperY = new THREE.GridHelper(50, 50);
+    this.gridHelperY.name = "GridHelperY";
+    this.gridHelperY.visible = false;
+    this.gridHelperY.rotation.x = Math.PI / 2;
+    this.scene.add(this.gridHelperY);
 
     this.createDebugGUI(this.scene);
 
@@ -215,9 +228,13 @@ export class ThreejsComponent implements OnInit {
         if (this.debugVisible) {
           this.debug.hide();
           this.axesHelper.visible = false;
+          this.gridHelperX.visible = false;
+          this.gridHelperY.visible = false;
         } else {
           this.debug.show();
           this.axesHelper.visible = true;
+          this.gridHelperX.visible = true;
+          this.gridHelperY.visible = true;
         }
         this.debugVisible = !this.debugVisible;
         this.pointerLockControls.unlock();
