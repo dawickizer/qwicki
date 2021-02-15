@@ -7,7 +7,6 @@ import * as THREE from 'three';
 import * as dat from 'dat.gui';
 import * as CANNON from 'cannon-es';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
-import { FirstPersonControls } from 'three/examples/jsm/controls/FirstPersonControls.js';
 import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls.js';
 
 // Services/Models
@@ -28,14 +27,12 @@ export class ThreejsComponent implements OnInit {
   cameraSensitivity: number = 50;
   fpsCameraIsActive: boolean = true;
   fpsCamera: THREE.PerspectiveCamera;
-  fpsControls: FirstPersonControls;
   pointerLockControls: PointerLockControls;
   debugCamera: THREE.PerspectiveCamera;
   orbitControls: OrbitControls;
   renderer: THREE.WebGLRenderer;
   scene: THREE.Scene;
-  light: THREE.AmbientLight;
-  cube: THREE.Mesh;
+  light: THREE.HemisphereLight;
 
   // debug layer
   axesHelper: THREE.AxesHelper;
@@ -44,7 +41,23 @@ export class ThreejsComponent implements OnInit {
   debug: dat.GUI;
   debugVisible: boolean = false;
   debugItems: dat.GUI[] = [];
+
   ground: THREE.Mesh;
+  cubes: THREE.Mesh[] = [];
+
+  raycaster: THREE.Raycaster;
+  moveForward: boolean = false;
+  moveBackward: boolean = false;
+  moveLeft: boolean = false;
+  moveRight: boolean = false;
+  canJump: boolean = false;
+  sprint: boolean = false;
+
+  prevTime: number;
+  velocity = new THREE.Vector3();
+  direction = new THREE.Vector3();
+  vertex = new THREE.Vector3();
+  color = new THREE.Color();
 
   constructor(private fpsService: FpsService, private route: ActivatedRoute) { }
 
@@ -52,9 +65,14 @@ export class ThreejsComponent implements OnInit {
     this.getRouteParams();
     this.createScene();
     this.createGround();
+    this.createBoxes();
     this.handleDebugCamera();
     this.handleDebugLayer();
     this.handleUserInteractions();
+    this.handleMovementKeys();
+
+    // render scene
+    this.render();
   }
 
   ngAfterViewInit() {}
@@ -64,11 +82,15 @@ export class ThreejsComponent implements OnInit {
   createScene() {
 
     // renderer
-    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas.nativeElement });
+    this.renderer = new THREE.WebGLRenderer({ canvas: this.canvas.nativeElement, antialias: true });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     this.renderer.setSize(window.innerWidth, window.innerHeight);
+
 
     // scene
     this.scene = new THREE.Scene();
+    this.scene.background = new THREE.Color(0xffffff);
+    this.scene.fog = new THREE.Fog(0xffffff, 0, 750);
     this.scene.name = 'Scene';
 
     // fps camera
@@ -77,63 +99,148 @@ export class ThreejsComponent implements OnInit {
     const near = 0.1;
     const far = 2000;
     this.fpsCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this.fpsCamera.position.set(0, 1, 3);
-    this.fpsCamera.lookAt(new THREE.Vector3(0, 0, 0));
+    this.fpsCamera.position.set(0, 10, 0);
     this.fpsCamera.name = 'FPS Camera';
+    this.pointerLockControls = new PointerLockControls(this.fpsCamera, this.canvas.nativeElement);
 
-    // fps camera controls
-    this.fpsControls = new FirstPersonControls(this.fpsCamera, this.canvas.nativeElement);
+    this.light = new THREE.HemisphereLight(0xeeeeff, 0x777788, 0.75);
+    this.light.position.set(0.5, 1, 0.75);
+    this.light.name = "Light";
 
-    // light
-    const color = 0xFFFFFF;
-    const intensity = 1;
-    this.light = new THREE.AmbientLight(color, intensity);
-    this.light.position.set(-1, 2, 4);
-    this.light.name = 'Light';
-
-    // cube
-    const boxWidth = 1;
-    const boxHeight = 1;
-    const boxDepth = 1;
-    const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
-    const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('/assets/threejs/textures/lava.jpg');
-    const material = new THREE.MeshBasicMaterial({ map: texture });
-    this.cube = new THREE.Mesh(geometry, material);
-    this.cube.name = 'Cube1';
-    this.cube.position.set(0, 2, 0);
-
-    // Add to scene
-    this.scene.add(this.cube);
+    // Add to scene;
+    this.scene.add(this.pointerLockControls.getObject());
     this.scene.add(this.light);
-    this.scene.add(this.fpsCamera);
 
-    // render scene
-    this.render();
   }
 
   createGround() {
-    const geometry = new THREE.PlaneGeometry(50, 50, 50);
-    const textureLoader = new THREE.TextureLoader();
-    const texture = textureLoader.load('/assets/threejs/textures/grass.jpg');
-    const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
-    this.ground = new THREE.Mesh(geometry, material);
-    this.ground.rotation.x = Math.PI / 2;
-    this.ground.name = 'Ground';
+    let floorGeometry = new THREE.PlaneGeometry(2000, 2000, 100, 100);
+    floorGeometry.rotateX(- Math.PI / 2);
+
+    // vertex displacement
+    let position = floorGeometry.attributes.position;
+
+    for (let i = 0; i < position.count; i++) {
+      this.vertex.fromBufferAttribute(position, i);
+
+      this.vertex.x += Math.random() * 20 - 10;
+      this.vertex.y += Math.random() * 2;
+      this.vertex.z += Math.random() * 20 - 10;
+
+      position.setXYZ(i, this.vertex.x, this.vertex.y, this.vertex.z);
+    }
+
+    floorGeometry = floorGeometry.toNonIndexed() as THREE.PlaneGeometry; // ensure each face has unique vertices
+
+    position = floorGeometry.attributes.position;
+    const colorsFloor = [];
+
+    for (let i = 0; i < position.count; i ++) {
+      this.color.setHSL(Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75);
+      colorsFloor.push(this.color.r, this.color.g, this.color.b);
+    }
+
+    floorGeometry.setAttribute('color', new THREE.Float32BufferAttribute( colorsFloor, 3 ));
+
+    const floorMaterial = new THREE.MeshBasicMaterial({ vertexColors: true });
+
+    this.ground = new THREE.Mesh(floorGeometry, floorMaterial);
+    this.ground.name = "Ground";
     this.scene.add(this.ground);
   }
 
+  createBoxes() {
+    const boxGeometry = new THREE.BoxGeometry(20, 20, 20).toNonIndexed();
+
+    let position = boxGeometry.attributes.position;
+    const colorsBox = [];
+
+    for (let i = 0; i < position.count; i ++) {
+      this.color.setHSL( Math.random() * 0.3 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
+      colorsBox.push( this.color.r, this.color.g, this.color.b );
+    }
+
+    boxGeometry.setAttribute('color', new THREE.Float32BufferAttribute( colorsBox, 3 ));
+
+    for (let i = 0; i < 500; i ++) {
+      const boxMaterial = new THREE.MeshPhongMaterial({ specular: 0xffffff, flatShading: true, vertexColors: true });
+      boxMaterial.color.setHSL(Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75);
+
+      const box = new THREE.Mesh(boxGeometry, boxMaterial);
+      box.position.x = Math.floor(Math.random() * 20 - 10) * 20;
+      box.position.y = Math.floor(Math.random() * 20) * 20 + 10;
+      box.position.z = Math.floor(Math.random() * 20 - 10) * 20;
+      box.name = `Cube${i}`;
+      this.scene.add(box);
+      this.cubes.push(box);
+    }
+
+  }
+
+  handleMovement(time: number) {
+
+    if (this.pointerLockControls.isLocked) {
+      this.raycaster.ray.origin.copy(this.pointerLockControls.getObject().position);
+      this.raycaster.ray.origin.y -= 10;
+
+      const intersections = this.raycaster.intersectObjects(this.cubes);
+
+      const onObject = intersections.length > 0;
+
+      const delta = (time - this.prevTime) / 1000;
+
+      this.velocity.x -= this.velocity.x * 8.0 * delta;
+      this.velocity.z -= this.velocity.z * 8.0 * delta;
+
+      this.velocity.y -= 9.8 * 130 * delta; // 100.0 = mass
+
+      this.direction.z = Number(this.moveForward) - Number(this.moveBackward);
+      this.direction.x = Number(this.moveRight) - Number(this.moveLeft);
+      this.direction.normalize(); // this ensures consistent movements in all directions
+
+      // movement speed
+      if ((this.moveLeft || this.moveRight || this.moveForward || this.moveBackward) && this.sprint) {
+        this.velocity.x -= this.direction.x * 600.0 * delta;
+        this.velocity.z -= this.direction.z * 600.0 * delta;
+      }
+      if (this.moveForward || this.moveBackward) this.velocity.z -= this.direction.z * 400.0 * delta;
+      if (this.moveLeft || this.moveRight) this.velocity.x -= this.direction.x * 400.0 * delta;
+
+      if (onObject) {
+        this.velocity.y = Math.max(0, this.velocity.y);
+        this.canJump = true;
+      }
+
+      this.pointerLockControls.moveRight(- this.velocity.x * delta);
+      this.pointerLockControls.moveForward(- this.velocity.z * delta);
+
+      this.pointerLockControls.getObject().position.y += (this.velocity.y * delta); // new behavior
+
+      if (this.pointerLockControls.getObject().position.y < 10) {
+        this.velocity.y = 0;
+        this.pointerLockControls.getObject().position.y = 10;
+        this.canJump = true;
+      }
+    }
+  }
+
   render() {
-    const clock = new THREE.Clock();
-    const tick = () => {
-      let delta = clock.getDelta();
+    this.raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, - 1, 0), 0, 10);
+    this.prevTime = performance.now();
+    let animate = () => {
+      requestAnimationFrame(animate);
+      const time = performance.now();
+
+      this.handleMovement(time);
+  
+      this.prevTime = time;
+  
       this.orbitControls.update();
-      //this.fpsControls.update(delta);
       if (this.fpsCameraIsActive) this.renderer.render(this.scene, this.fpsCamera);
       else this.renderer.render(this.scene, this.debugCamera);
-      requestAnimationFrame(tick);
+
     }
-    requestAnimationFrame(tick);
+    requestAnimationFrame(animate);
   }
 
   getRouteParams() {
@@ -142,7 +249,6 @@ export class ThreejsComponent implements OnInit {
 
   handleUserInteractions() {
     document.documentElement.style.overflow = 'hidden';
-    this.pointerLockControls = new PointerLockControls(this.fpsCamera, this.canvas.nativeElement);
     this.handleWindowResize();
     this.handlePointerEvents();
     this.handleFullScreen();
@@ -193,6 +299,56 @@ export class ThreejsComponent implements OnInit {
     this.pointerLockControls.addEventListener('unlock', () =>  this.scrollWindowToTop());
   }
 
+  handleMovementKeys() {
+
+    let onKeyDown = (event: KeyboardEvent) => {
+      switch (event.code) {
+        case 'KeyW':
+          this.moveForward = true;
+          break;
+        case 'KeyA':
+          this.moveLeft = true;
+          break;
+        case 'KeyS':
+          this.moveBackward = true;
+          break;
+        case 'KeyD':
+          this.moveRight = true;
+          break;
+        case 'Space':
+          if ( this.canJump === true ) this.velocity.y += 350;
+          this.canJump = false;
+          break;
+        case 'ShiftLeft':
+          this.sprint = true;
+          break;
+      }
+    };
+
+    let onKeyUp = (event: KeyboardEvent) => {
+					switch (event.code) {
+						case 'KeyW':
+							this.moveForward = false;
+							break;
+						case 'KeyA':
+							this.moveLeft = false;
+							break;
+						case 'KeyS':
+							this.moveBackward = false;
+							break;
+						case 'KeyD':
+							this.moveRight = false;
+							break;
+            case 'ShiftLeft':
+              this.sprint = false;
+              break;
+					}
+    };
+
+    document.addEventListener('keydown', onKeyDown);
+    document.addEventListener('keyup', onKeyUp);  
+  }
+
   scrollWindowToBottom() {
    window.scrollTo(0, document.body.scrollHeight);
   }
@@ -206,23 +362,23 @@ export class ThreejsComponent implements OnInit {
     this.debug.hide();
     document.getElementById('debug').append(this.debug.domElement); // append to empty div to prevent debugger from appearing behind sidenav
 
-    this.axesHelper = new THREE.AxesHelper(5);
+    this.axesHelper = new THREE.AxesHelper(100);
     this.axesHelper.name = "AxesHelper";
     this.axesHelper.visible = false;
     this.scene.add(this.axesHelper);
 
-    this.gridHelperX = new THREE.GridHelper(50, 50);
+    this.gridHelperX = new THREE.GridHelper(500, 500);
     this.gridHelperX.name = "GridHelperX";
     this.gridHelperX.visible = false;
     this.scene.add(this.gridHelperX);
 
-    this.gridHelperY = new THREE.GridHelper(50, 50);
+    this.gridHelperY = new THREE.GridHelper(500, 500);
     this.gridHelperY.name = "GridHelperY";
     this.gridHelperY.visible = false;
     this.gridHelperY.rotation.x = Math.PI / 2;
     this.scene.add(this.gridHelperY);
 
-    this.createDebugGUI(this.scene);
+    //this.createDebugGUI(this.scene);
 
     document.addEventListener('keydown', event => { 
       if (event.code == 'NumpadAdd') {
@@ -287,7 +443,7 @@ export class ThreejsComponent implements OnInit {
     const near = 0.1;
     const far = 2000;
     this.debugCamera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-    this.debugCamera.position.set(0, 5, 10);
+    this.debugCamera.position.set(0, 100, 300);
     this.debugCamera.lookAt(new THREE.Vector3(0, 0, 0));
     this.debugCamera.name = 'Debug Camera';
 
