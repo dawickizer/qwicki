@@ -58,10 +58,6 @@ export class ThreejsComponent implements OnInit {
   direction = new THREE.Vector3();
   vertex = new THREE.Vector3();
   color = new THREE.Color();
-  lat: number;
-  lon: number;
-  mouseX: number = 0;
-  mouseY: number = 0;
 
   constructor(private fpsService: FpsService, private route: ActivatedRoute) { }
 
