@@ -49,12 +49,13 @@ export class BabylonjsComponent implements OnInit {
     await this.fpsService.addFpsMechanics(this.scene, this.canvas, this.username);
     
     this.skybox = this.createSkyBox();
-    this.ground = this.createGround(4000, 0, 'grass.jpg');
-    this.platform = this.createGround(5000, -200, 'lava.jpg');
+    //this.ground = this.createGround(4000, 0, 'grass.jpg');
+    //this.platform = this.createGround(5000, -200, 'lava.jpg');
 
     this.handleDebugLayer();
     this.handleDebugCamera();
     this.handleSideNavKeyBind();
+    this.handleFullScreen();
     this.getCameraSensitivity();
 
     // running babylonJS
@@ -82,7 +83,6 @@ export class BabylonjsComponent implements OnInit {
     skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
     skyboxMaterial.specularColor = new Color3(0, 0, 0);
     skybox.material = skyboxMaterial;
-    skybox.checkCollisions = true;
     return skybox;
   }
 
@@ -94,6 +94,19 @@ export class BabylonjsComponent implements OnInit {
     groundMat.diffuseTexture = new Texture('assets/babylonjs/textures/' + texture, this.scene);
     ground.material = groundMat;
     ground.checkCollisions = true;
+
+        // let terrainMaterial = new StandardMaterial("terrain", this.scene);
+    // terrainMaterial.diffuseTexture = new Texture("assets/babylonjs/textures/grass.jpg", this.scene);
+
+    // let terrain: GroundMesh;
+    // Mesh.CreateGroundFromHeightMap("terrain", "assets/babylonjs/textures/heightmap.jpg", 5000, 5000, 50, 0, 200, this.scene, false, (mesh) => {
+    //   terrain = mesh;
+    //   terrain.position = new Vector3(0, 0, 0);
+    //   terrain.material = terrainMaterial; 
+    //   terrain.checkCollisions = true;
+    //   terrain.physicsImpostor = new PhysicsImpostor(terrain, PhysicsImpostor.HeightmapImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+    // });
+    
     return ground;
   }
 
@@ -124,9 +137,22 @@ export class BabylonjsComponent implements OnInit {
         event.preventDefault();
         if (this.drawer.opened) this.canvas.nativeElement.requestPointerLock();
         else document.exitPointerLock();
+        if (document.fullscreenElement) document.exitFullscreen();
         this.drawer.toggle();
       }
     });  
+  }
+
+  handleFullScreen() {
+    document.addEventListener('keydown', event => {
+      if (event.code == 'Backquote')
+        if (!document.fullscreenElement) {
+          this.canvas.nativeElement.requestFullscreen();
+          this.canvas.nativeElement.requestPointerLock();
+          this.drawer.close();
+        }
+        else document.exitFullscreen();
+    });
   }
 
   handleDebugLayer() {

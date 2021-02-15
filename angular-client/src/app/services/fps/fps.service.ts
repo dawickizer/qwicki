@@ -1,5 +1,5 @@
 import { Injectable, ElementRef } from '@angular/core';
-import { UniversalCamera, Camera, Sound, Mesh, StandardMaterial, Vector3, Color3, Scene, Ray } from '@babylonjs/core';
+import { UniversalCamera, Camera, Sound, Mesh, Texture, StandardMaterial, MeshBuilder, Vector3, Color3, Scene, Ray, GroundMesh } from '@babylonjs/core';
 import { TextBlock, AdvancedDynamicTexture, Control } from '@babylonjs/gui';
 
 // Services/Models
@@ -7,6 +7,10 @@ import { GunService } from 'src/app/services/gun/gun.service';
 import { Gun } from 'src/app/models/gun/gun';
 import { PlayerService } from 'src/app/services/player/player.service';
 import { Player } from 'src/app/models/player/player';
+
+// Physics
+import * as CANNON from 'cannon';
+import { CannonJSPlugin, PhysicsImpostor, PhysicsHelper, PhysicsRadialImpulseFalloff } from '@babylonjs/core';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +20,8 @@ export class FpsService {
   camera: UniversalCamera;
   scene: Scene;
   canvas: ElementRef<HTMLCanvasElement>;
+
+  ground: Mesh;
 
   self: Player;
   username: string;
@@ -65,6 +71,55 @@ export class FpsService {
     this.handlePlayerAndWeaponPosition();
     this.createHUD();
     this.handleHealth();
+
+    this.addPhysics();
+    this.createGround();
+  }
+
+  addPhysics() {
+    let gravityVector: Vector3 = new Vector3(0, -700, 0);
+    let physicsPlugin: CannonJSPlugin = new CannonJSPlugin(undefined, undefined, CANNON);
+    this.scene.enablePhysics(gravityVector, physicsPlugin);
+  }
+
+  createGround() {
+    let groundMaterial = new StandardMaterial('groundMat', this.scene);
+    groundMaterial.backFaceCulling = false;
+    groundMaterial.diffuseTexture = new Texture('assets/babylonjs/textures/grass.jpg', this.scene);
+
+    this.ground = MeshBuilder.CreateGround('ground', { width: 5000, height: 5000 }, this.scene);
+    this.ground.position = new Vector3(0, 0, 0);
+    this.ground.material = groundMaterial; 
+    this.ground.checkCollisions = true;
+    this.ground.physicsImpostor = new PhysicsImpostor(this.ground, PhysicsImpostor.BoxImpostor, { mass: 0, restitution: 0.9 }, this.scene);
+  }
+
+  grenade() {
+
+    let wm = this.camera.getWorldMatrix();
+    let aimVector = Vector3.TransformNormal(Vector3.Forward(), wm).normalize();
+
+    let sphereMaterial = new StandardMaterial('groundMat', this.scene);
+    sphereMaterial.diffuseTexture = new Texture('assets/babylonjs/textures/yoshi-egg.png', this.scene);
+
+    let sphere = Mesh.CreateSphere("sphere", 16, 10, this.scene);
+    sphere.isPickable = false;
+    sphere.physicsImpostor = new PhysicsImpostor(sphere, PhysicsImpostor.SphereImpostor, { mass: 1, restitution: 0.9 }, this.scene);
+    sphere.physicsImpostor.physicsBody.linearDamping = .5; //friction
+    sphere.physicsImpostor.physicsBody.angularDamping = .8; // prevent infinite spinning
+    sphere.material = sphereMaterial;
+    sphere.position = this.camera.position.add(aimVector);
+    sphere.physicsImpostor.applyImpulse(aimVector.scale(1800), new Vector3(0, .5, 0)); // for some reason...making a groundmesh with -y position messes up this vector 
+    sphere.physicsImpostor.registerOnPhysicsCollide(this.ground.physicsImpostor, function(main, collided) {
+      sphere.physicsImpostor.physicsBody.linearDamping = .95;
+	  });
+
+    setTimeout(() => {
+      console.log('boom')
+      sphere.dispose();
+      sphereMaterial.dispose();
+    }, 3500, origin);  
+
   }
 
   async createPlayer() {
@@ -428,6 +483,7 @@ export class FpsService {
     this.handleReloadOnR();
     this.handleSwapWeaponOnF();
     this.handlePickupWeaponOnE();
+    this.handleGrenadeOnG();
     this.handleMeleeOn4();
   }
 
@@ -492,6 +548,10 @@ export class FpsService {
 
   handlePickupWeaponOnE() {
     document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyE' && this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh) && !this.self.justMeleed) this.pickupWeapon() });
+  }
+
+  handleGrenadeOnG() {
+    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyG' && !this.self.justMeleed) this.grenade() });
   }
 
   handleMeleeOn4() {
