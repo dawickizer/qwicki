@@ -100,6 +100,7 @@ export class FpsService {
     });
     this.socket.on('user-connected-broadcast', (data: string) => this.updateUserLogs(data));
     this.socket.on('user-disconnected-broadcast', (data: string) => this.updateUserLogs(data));
+    this.socket.on('kill-logs-broadcast', (data: string) => this.updateKillLogs(data));
   }
 
   addPhysics() {
@@ -757,7 +758,8 @@ export class FpsService {
     console.log(enemy.health)
   
     if (enemy.health <= 0) {
-      this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.username);
+      this.socket.emit('kill-logs-broadcast', `${enemy.lastDamagedBy} killed ${enemy.username}`);
+      //this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.username);
       setTimeout(() => enemy.health = 100, 2000);
 
       for (let k = 0; k < enemy.playerMesh.getChildMeshes().length; k++) {
