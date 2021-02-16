@@ -7,19 +7,15 @@ import { environment } from '../../../environments/environment';
 })
 export class SocketioService {
 
-  socket;
+  socket: SocketIOClient.Socket;
 
   constructor() { }
 
-  setupSocketConnection() {
-    this.socket = io(environment.EXPRESS_ENDPOINT, {
+  setupSocketConnection(): SocketIOClient.Socket {
+    return this.socket = io(environment.EXPRESS_ENDPOINT, {
       query: {
         token: 'cde'
       }
-    });
-    this.socket.emit('my message', 'Hello there from Angular.');
-    this.socket.on('my broadcast', (data: string) => {
-      console.log(data);
     });
   }
 }
