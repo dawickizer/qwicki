@@ -37,19 +37,16 @@ const port = process.env.PORT || '3000';
 app.set('port', port);
 
 io.on('connection', (socket: any) => {
-
-  console.log(socket.handshake.query.token);
-  console.log('a user connected');
-
-  socket.on('disconnect', () => {
-    console.log('user disconnected');
+  console.log(`${socket.handshake.query.username} joined the lobby`);
+  console.log(`session token: ${socket.handshake.query.token}`);
+  io.emit('user-connected-broadcast', `${socket.handshake.query.username} joined the lobby`);
+  
+  socket.on('disconnect', () => { 
+    console.log(`${socket.handshake.query.username} left the lobby`);
+    io.emit('user-disconnected-broadcast', `${socket.handshake.query.username} left the lobby`);
   });
 
-  socket.on('my message', (msg: any) => {
-    console.log('message: ' + msg);
-    msg = 'Hello from Express!';
-    io.emit('my broadcast', `server: ${msg}`);
-  });
+  socket.on('kill-logs-broadcast', (log: string) => io.emit('kill-logs-broadcast', log))
 });
 
  // Listen on provided port, on all network interfaces.

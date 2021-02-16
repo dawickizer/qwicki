@@ -12,6 +12,13 @@ import { Player } from 'src/app/models/player/player';
 import * as CANNON from 'cannon';
 import { CannonJSPlugin, PhysicsImpostor, PhysicsHelper, PhysicsRadialImpulseFalloff } from '@babylonjs/core';
 
+// Socket 
+import * as io from 'socket.io-client';
+import { environment } from 'src/environments/environment';
+
+// Utilities
+import { generateToken } from 'src/app/utilities/username.utility';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -20,6 +27,8 @@ export class FpsService {
   camera: UniversalCamera;
   scene: Scene;
   canvas: ElementRef<HTMLCanvasElement>;
+
+  socket: SocketIOClient.Socket
 
   ground: Mesh;
 
@@ -38,19 +47,23 @@ export class FpsService {
   isSceneLocked: boolean = false;
   swapWeaponCooldown: number = 500;
   meleeCooldown: number = 800;
-  sprintSpeed: number = 80;
-  walkSpeed: number = 50;
-  crouchSpeed: number = 20;
+  sprintSpeed: number = 130;
+  walkSpeed: number = 80;
+  crouchSpeed: number = 40;
 
   killLogs: string[] = [];
+  userLogs: string[] = []
 
   // HUD STUFF
   hud: AdvancedDynamicTexture;
   killLogsDisplay: TextBlock[] = [];
+  userLogsDisplay: TextBlock[] = [];
   ammo: TextBlock;
   health: TextBlock;
 
-  constructor(private gunService: GunService, private playerService: PlayerService) { }
+
+  constructor(private gunService: GunService, 
+              private playerService: PlayerService) { }
 
   async addFpsMechanics(scene: Scene, canvas: ElementRef<HTMLCanvasElement>, username: string) {
     this.camera = scene.activeCamera as UniversalCamera;
@@ -74,6 +87,20 @@ export class FpsService {
 
     this.addPhysics();
     this.createGround();
+
+    this.addSocket();
+  }
+
+  addSocket() {
+    this.socket = this.socket = io(environment.EXPRESS_ENDPOINT, {
+      query: {
+        token: generateToken(this.username),
+        username: this.username
+      }
+    });
+    this.socket.on('user-connected-broadcast', (data: string) => this.updateUserLogs(data));
+    this.socket.on('user-disconnected-broadcast', (data: string) => this.updateUserLogs(data));
+    this.socket.on('kill-logs-broadcast', (data: string) => this.updateKillLogs(data));
   }
 
   addPhysics() {
@@ -324,6 +351,24 @@ export class FpsService {
       this.hud.addControl(killLogDisplay);
     }
 
+    for (let i = 0; i < 4; i++) {
+      let userLogDisplay = new TextBlock();
+      userLogDisplay.textVerticalAlignment = TextBlock.VERTICAL_ALIGNMENT_CENTER;
+      userLogDisplay.horizontalAlignment = Control.HORIZONTAL_ALIGNMENT_LEFT;
+      userLogDisplay.verticalAlignment = Control.VERTICAL_ALIGNMENT_TOP;
+      userLogDisplay.fontSize = '15px';
+      userLogDisplay.color = 'white';
+      userLogDisplay.fontFamily = 'Courier New';
+      userLogDisplay.text = '';
+      userLogDisplay.topInPixels = 670 - (i*20);
+      userLogDisplay.left = '64px'; //1100 if HORIZONTAL_ALIGNMENT_LEFT
+      userLogDisplay.width = '25%';;
+      userLogDisplay.resizeToFit = true; 
+      
+      this.userLogsDisplay.push(userLogDisplay)
+      this.hud.addControl(userLogDisplay);
+    }
+
   }
 
   updateAmmoCount(): void {
@@ -348,6 +393,16 @@ export class FpsService {
     this.killLogsDisplay[this.killLogs.length].text = '';
     }, 4000)
     for (let i = 0; i < this.killLogs.length; i++) this.killLogsDisplay[i].text = this.killLogs[i];
+  }
+
+  updateUserLogs(log: string): void {
+    if (this.userLogs.length > 3) this.userLogs.pop();
+    this.userLogs.unshift(log);
+    setTimeout(() => {
+    this.userLogs.pop();
+    this.userLogsDisplay[this.userLogs.length].text = '';
+    }, 4000)
+    for (let i = 0; i < this.userLogs.length; i++) this.userLogsDisplay[i].text = this.userLogs[i];
   }
 
   createFpsCamera() {
@@ -375,7 +430,7 @@ export class FpsService {
     this.camera.keysRight.push('d'.charCodeAt(0));
     this.camera.keysRight.push('D'.charCodeAt(0));
 
-    this.camera.speed = 50; // controls WASD speed
+    this.camera.speed = this.walkSpeed; // controls WASD speed
     this.camera.angularSensibility = 5000; // controls mouse speed
     this.camera.inertia = .2; // controls 'smoothness'
 
@@ -703,7 +758,8 @@ export class FpsService {
     console.log(enemy.health)
   
     if (enemy.health <= 0) {
-      this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.username);
+      this.socket.emit('kill-logs-broadcast', `${enemy.lastDamagedBy} killed ${enemy.username}`);
+      //this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.username);
       setTimeout(() => enemy.health = 100, 2000);
 
       for (let k = 0; k < enemy.playerMesh.getChildMeshes().length; k++) {
