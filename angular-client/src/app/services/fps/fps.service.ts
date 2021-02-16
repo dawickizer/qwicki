@@ -38,9 +38,9 @@ export class FpsService {
   isSceneLocked: boolean = false;
   swapWeaponCooldown: number = 500;
   meleeCooldown: number = 800;
-  sprintSpeed: number = 80;
-  walkSpeed: number = 50;
-  crouchSpeed: number = 20;
+  sprintSpeed: number = 130;
+  walkSpeed: number = 80;
+  crouchSpeed: number = 40;
 
   killLogs: string[] = [];
 
@@ -375,7 +375,7 @@ export class FpsService {
     this.camera.keysRight.push('d'.charCodeAt(0));
     this.camera.keysRight.push('D'.charCodeAt(0));
 
-    this.camera.speed = 50; // controls WASD speed
+    this.camera.speed = this.walkSpeed; // controls WASD speed
     this.camera.angularSensibility = 5000; // controls mouse speed
     this.camera.inertia = .2; // controls 'smoothness'
 
