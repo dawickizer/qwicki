@@ -52,7 +52,7 @@ services:
     environment:
       - MONGO_INITDB_ROOT_USERNAME=username
       - MONGO_INITDB_ROOT_PASSWORD=password
-      - MONGO_INITDB_DATABASE=mean
+      - MONGO_INITDB_DATABASE=qwicki
     volumes:
       - ./mongo-db/mongodb/home/mongodb:/home/mongodb # bind mount to prevent error that happens when setting the root credentials via ENV
       - ./mongo-db/mongodb/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d # bind mount for init scripts

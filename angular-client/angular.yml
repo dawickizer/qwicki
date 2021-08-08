@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: angular
-        image: dwickizer1/mean:angular_prod
+        image: dwickizer1/qwicki:angular_prod
         imagePullPolicy: Always
         ports:
         - containerPort: 80

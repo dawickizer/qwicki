@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: express
-        image: dwickizer1/mean:express_prod
+        image: dwickizer1/qwicki:express_prod
         imagePullPolicy: Always
         ports:
         - containerPort: 3000

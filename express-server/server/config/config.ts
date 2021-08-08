@@ -1,6 +1,6 @@
 const config: any = {
     development: {
-        db: 'mongodb://username:password@database/mean' // MongoDB URL from the docker-compose file
+        db: 'mongodb://username:password@database/qwicki' // MongoDB URL from the docker-compose file
     },
     production: {
         db: process.env.MONGO_DB_ENDPOINT

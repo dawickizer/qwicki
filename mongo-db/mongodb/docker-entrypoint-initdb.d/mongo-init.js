@@ -1,14 +1,14 @@
 // This script will run on 'test' db by default or the db specified by the ENV var MONGO_INITDB_DATABASE 
-// We have specified MONGO_INITDB_DATABASE=mean
+// We have specified MONGO_INITDB_DATABASE=qwicki
 
-// Create a new user with readWrite privilege that will be attached to 'mean' db
+// Create a new user with readWrite privilege that will be attached to 'qwicki' db
 db.createUser({
   user: 'username',
   pwd: 'password',
   roles: [
     {
       role: 'readWrite',
-      db: 'mean',
+      db: 'qwicki',
     }
   ],
 });

@@ -1,7 +1,7 @@
 Summary
 ===============
 
-This code base contains the starter code for a Phaser and BabylonJS game. It is integrated with a MEAN stack and it is Dockerized. The Phaser game and BabylonJS game is running client side with Angular and being served up on localhost:4200. Socket.io is also integrated at a base level as well as some starter code for builing a service that interacts with Express API (localhost:3000). This is a good starting point for anyone who wants to create client side Phaser game or BabylonJS game while also being able to build a website around the game using the MEAN stack.
+This code base contains the starter code for a Phaser and BabylonJS game. It is integrated with a qwicki stack and it is Dockerized. The Phaser game and BabylonJS game is running client side with Angular and being served up on localhost:4200. Socket.io is also integrated at a base level as well as some starter code for builing a service that interacts with Express API (localhost:3000). This is a good starting point for anyone who wants to create client side Phaser game or BabylonJS game while also being able to build a website around the game using the qwicki stack.
 
 Run Locally
 ===============
@@ -9,9 +9,9 @@ Run Locally
 1. Make sure Docker is installed on your system (https://docs.docker.com/get-docker/)
 2. Make sure docker-compose is installed on your system (https://docs.docker.com/compose/install/)
 3. Make sure npm is installed on your system (https://www.npmjs.com/get-npm)
-4. Open your terminal/cmd prompt and `cd wherever/you/downloaded/mean/angular-client`
+4. Open your terminal/cmd prompt and `cd wherever/you/downloaded/qwicki/angular-client`
 5. Run `npm install`
-6. Open your terminal/cmd prompt and `cd wherever/you/downloaded/mean/express-server`
+6. Open your terminal/cmd prompt and `cd wherever/you/downloaded/qwicki/express-server`
 7. Run `npm install`
 8. Navigate back to the root directory of this project (`cd ..`)
 9. Run `docker-compose up --build`
@@ -31,8 +31,8 @@ Note
 
 1. If you are using Docker Desktop for Windows you might have to set a file sharing path to work with one of the bind mounts in the `docker-compose.yml` file.
 2. Go to Docker Desktop (from toolbar) > Settings > Resources > File Sharing
-3. Add the path `wherever/you/downloaded/mean/angular-client`
-4. Add the path `wherever/you/downloaded/mean/express-server`
+3. Add the path `wherever/you/downloaded/qwicki/angular-client`
+4. Add the path `wherever/you/downloaded/qwicki/express-server`
 5. Restart Docker Desktop
 
 -------------------
@@ -70,9 +70,9 @@ Kubernetes Setup
 
 Provision AWS Resources
 -----------------
-1. Provision a `Kubernetes Cluster` by running `eksctl create cluster --name mean --region us-east-1 --node-type t2.micro --nodes 2 --managed` (you can tweak these settings to your liking). This will take about 10-15 minutes to provision the AWS Resources
-2. While the resources are provisioning log in to `AWS Console` and check `CloudFormation` to verify a stack is being provisioned. You should see a `eksctl-mean-cluster` stack with a status of `CREATE_IN_PROGRESS` (https://console.aws.amazon.com/cloudformation)
-3. Sometimes when you run the `eksctl create cluster...` command you will get an error message in the terminal like: `Cannot create cluster 'mean' because us-east-1e, the targeted availability zone, does not currently have sufficient capacity to support the cluster. Retry and choose from these availability zones: us-east-1a, us-east-1b, us-east-1c, us-east-1d, us-east-1f` and you will notice your `CloudFormation` stack has a status of `ROLLBACK_IN_PROGRESS`. If this happens then DELETE the `CloudFormation` stack via the `AWS Console` and rerun the `eksctl create cluster --name mean --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.micro --nodes 2 --managed` command with the `--zones` flag specified with two of the recommended availability zones from the error message.
+1. Provision a `Kubernetes Cluster` by running `eksctl create cluster --name qwicki --region us-east-1 --node-type t2.micro --nodes 2 --managed` (you can tweak these settings to your liking). This will take about 10-15 minutes to provision the AWS Resources
+2. While the resources are provisioning log in to `AWS Console` and check `CloudFormation` to verify a stack is being provisioned. You should see a `eksctl-qwicki-cluster` stack with a status of `CREATE_IN_PROGRESS` (https://console.aws.amazon.com/cloudformation)
+3. Sometimes when you run the `eksctl create cluster...` command you will get an error message in the terminal like: `Cannot create cluster 'qwicki' because us-east-1e, the targeted availability zone, does not currently have sufficient capacity to support the cluster. Retry and choose from these availability zones: us-east-1a, us-east-1b, us-east-1c, us-east-1d, us-east-1f` and you will notice your `CloudFormation` stack has a status of `ROLLBACK_IN_PROGRESS`. If this happens then DELETE the `CloudFormation` stack via the `AWS Console` and rerun the `eksctl create cluster --name qwicki --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.micro --nodes 2 --managed` command with the `--zones` flag specified with two of the recommended availability zones from the error message.
 4. Upon successful launch of a `Kubernetes Cluster` you can look over your provioned resources in the `AWS Console` by navigating to `Elastic Kubernetes Service` (https://console.aws.amazon.com/eks) which will display your cluster info. You can also check the `EC2` instances that are being used for your `Kubernetes Cluster` by navigating to `EC2` (https://console.aws.amazon.com/ec2)
 5. Now that the `Kubernetes Cluster` is provioned on `AWS EKS` you can iteract with it via `kubectl` on the command line. `eksctl` automatically makes updates to your `~/.kube` directory upon successsful provioning of `AWS` resources for the `Kubernetes Cluster` on your local machine so that you dont have to worry about configuration 
 6. Some key commands to run to interact with your `Kubernetes Cluster` after you follow the deployment steps below:
@@ -87,8 +87,8 @@ Provision AWS Resources
 PROVISION KLUSTER
 --------------------------
 
-`cd /mean`\
-`eksctl create cluster --name mean --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.medium --nodes 2 --managed`
+`cd /qwicki`\
+`eksctl create cluster --name qwicki --region us-east-1 --zones us-east-1a,us-east-1b --node-type t2.medium --nodes 2 --managed`
 
 MONGO DB 
 -------------------------
@@ -110,8 +110,8 @@ Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Mongo 
 EXPRESS 
 -------------------------
 
-`docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`
-`docker push dwickizer1/mean:express_prod`
+`docker build -t dwickizer1/qwicki:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/qwicki ./express-server`
+`docker push dwickizer1/qwicki:express_prod`
 
 `kubectl apply -f ./express-server/express.yml`\
 `kubectl get services/express-service`
@@ -124,8 +124,8 @@ ANGULAR
 
 update EXPRESS_ENDPOINT with copied EXTERNAL_IP in ./angular-client/src/environments/environment.prod.ts (make sure to have http:// and remove end slash)
 
-`docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`\
-`docker push dwickizer1/mean:angular_prod`
+`docker build -t dwickizer1/qwicki:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`\
+`docker push dwickizer1/qwicki:angular_prod`
 
 `kubectl apply -f ./angular-client/angular.yml`\
 `kubectl get services/angular-service`
@@ -136,13 +136,13 @@ Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Angula
 DELETE RESOURCES 
 ----------------------
 
-`eksctl delete cluster --name mean`
+`eksctl delete cluster --name qwicki`
 
 Update Docker Images To Be Deployed
 -----------------------------------
-`docker build -t dwickizer1/mean:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/mean ./express-server`\
-`docker push dwickizer1/mean:express_prod`
+`docker build -t dwickizer1/qwicki:express_prod -f ./express-server/Dockerfile.prod --build-arg MONGO_DB_ENDPOINT=mongodb://mongodb-service/qwicki ./express-server`\
+`docker push dwickizer1/qwicki:express_prod`
 
-`docker build -t dwickizer1/mean:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`\
-`docker push dwickizer1/mean:angular_prod`
+`docker build -t dwickizer1/qwicki:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`\
+`docker push dwickizer1/qwicki:angular_prod`
 

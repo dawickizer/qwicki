@@ -3,6 +3,6 @@ kind: ConfigMap
 metadata:
   name: mongodb-configmap
 data: 
-  database_url: mongodb://mongodb-service/mean
-  databse_name: mean
+  database_url: mongodb://mongodb-service/qwicki
+  databse_name: qwicki
   service: mongodb-service
