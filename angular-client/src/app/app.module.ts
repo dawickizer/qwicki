@@ -15,6 +15,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HomeComponent } from './components/home/home.component';
+import { LoginComponent } from './components/login/login.component';
 import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { ThreejsComponent } from './components/threejs/threejs.component';
@@ -38,7 +39,8 @@ import { FpsService } from './services/fps/fps.service';
     BabylonjsComponent,
     ThreejsComponent,
     SocketioComponent,
-    ApiComponent
+    ApiComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
