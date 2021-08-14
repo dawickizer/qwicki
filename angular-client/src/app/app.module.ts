@@ -1,4 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http'; // add http client module
 
@@ -26,6 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Services
 import { SocketioService } from './services/socketio/socketio.service';
 import { ApiService } from './services/api/api.service';
+import { LoginService } from './services/login/login.service';
 import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
@@ -44,6 +46,8 @@ import { FpsService } from './services/fps/fps.service';
   ],
   imports: [
     BrowserModule,
+    FormsModule,
+    ReactiveFormsModule,
     MatInputModule,
     MatCardModule,
     MatDividerModule,
@@ -57,6 +61,7 @@ import { FpsService } from './services/fps/fps.service';
   providers: [
               SocketioService,
               ApiService,
+              LoginService,
               PlayerService,
               GunService,
               FpsService

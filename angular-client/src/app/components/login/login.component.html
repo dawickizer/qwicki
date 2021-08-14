@@ -1,17 +1,21 @@
 <div class='main-div'>
-    <mat-card class="example-card">
+    <mat-card class="login-card">
         <mat-card-header>
-          <div mat-card-avatar class="example-header-image"></div>
+          <div mat-card-avatar class="login-header-image"></div>
           <mat-card-title>Welcome</mat-card-title>
           <mat-card-subtitle>Wanna play a qwicki?</mat-card-subtitle>
         </mat-card-header>
         <img mat-card-image src="/assets/wick.png" alt="Wick logo">
         <mat-card-content>
-          <form class="example-form">
-            <mat-form-field class="example-full-width">
+          <form class="login-form">
+            <mat-form-field class="login-full-width">
               <mat-label>User Name</mat-label>
-              <input matInput [value]="username" (input)="username = $event.target.value" placeholder="Ex. xx-legit-snipes">
+              <input matInput [(ngModel)]="loginCredentials.username" name="username">
             </mat-form-field>
+            <mat-form-field class="login-full-width">
+                <mat-label>Password</mat-label>
+                <input matInput [(ngModel)]="loginCredentials.password" name="password">
+              </mat-form-field>
           </form>
         </mat-card-content>
         <mat-card-actions>
@@ -19,4 +23,3 @@
         </mat-card-actions>
       </mat-card>
     </div>
-    

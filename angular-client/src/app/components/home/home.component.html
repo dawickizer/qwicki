@@ -14,9 +14,9 @@
       <form class="example-form">
         <mat-form-field class="example-full-width">
           <mat-label>User Name</mat-label>
-          <input matInput [value]="username" (input)="username = $event.target.value" placeholder="Ex. xx-legit-snipes">
+          <input matInput [(ngModel)]="username" name="username">
         </mat-form-field>
-    </form>
+      </form>
     </mat-card-content>
     <mat-card-actions>
         <button mat-raised-button color="primary" (click)="play()">Play</button>
