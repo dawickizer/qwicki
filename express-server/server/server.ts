@@ -4,6 +4,7 @@ import http from 'http'
 import cors from 'cors';
 import SocketIO from 'socket.io';
 import { json, urlencoded } from 'body-parser';
+import jwt from 'jsonwebtoken';
 
 // Get our API routes
 import api from './routes/api';
@@ -15,8 +16,8 @@ import dogs from './routes/dogs';
 import contacts from './routes/contacts';
 
 const app = express();
-const server = http.createServer(app)
-const io = SocketIO(server)
+const server = http.createServer(app);
+const io = SocketIO(server);
 
 // Parsers for POST data
 app.use(json());

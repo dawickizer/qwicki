@@ -1,6 +1,5 @@
 // Import dependencies
 import { Router } from 'express';
-import { template } from 'lodash';
 const router = Router();
 
 // GET api listing.
