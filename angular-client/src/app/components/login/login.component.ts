@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Login } from 'src/app/models/login/login';
-import { LoginService } from 'src/app/services/login/login.service';
+import { AuthCredentials } from 'src/app/models/auth-credentials/auth-credentials';
+import { AuthService } from 'src/app/services/auth/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -8,16 +8,16 @@ import { LoginService } from 'src/app/services/login/login.service';
 })
 export class LoginComponent implements OnInit {
 
-  loginCredentials: Login = new Login();
-  constructor(private loginService: LoginService) { }
+  authCredentials: AuthCredentials = new AuthCredentials();
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {}
 
   login() {
-    console.log(this.loginCredentials.username);
-    console.log(this.loginCredentials.password);
-    this.loginService.login(this.loginCredentials).subscribe((loginCredentials: Login) => {
-      console.log(loginCredentials);
+    console.log(this.authCredentials.username);
+    console.log(this.authCredentials.password);
+    this.authService.login(this.authCredentials).subscribe((authCredentials: AuthCredentials) => {
+      console.log(authCredentials);
     });
   }
 
