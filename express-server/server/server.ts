@@ -4,7 +4,6 @@ import http from 'http'
 import cors from 'cors';
 import SocketIO from 'socket.io';
 import { json, urlencoded } from 'body-parser';
-import jwt from 'jsonwebtoken';
 
 // Get our API routes
 import api from './routes/api';
