@@ -4,14 +4,16 @@ import jwt from 'jsonwebtoken';
 import { User } from '../models/user';
 import UserService from '../services/user-service';
 
-
 const router = Router();
 
 // create UserService
-let userService = new UserService();
+let userService: UserService = new UserService();
 
 const accessTokenSecret = 'secret';
 
+// prob need to salt/hash passwords in db
+// prob need to make my secret more advanced
+// maybe need to see if i need to encrypt/decrypt password and username as it hits the server
 const authenticateJWT = (req: any, res: any, next: any) => {
     const authHeader = req.headers.authorization;
 
@@ -40,10 +42,3 @@ router.get('/test', authenticateJWT, (req, res) => {
 });
 
 export default router;
-
-
-    // login flow
-// User hits the login endpoint with username and password
-// Check the db if the username and password exists (username/password prob need to be hash/salted in db)
-// If not found...return error message saying username or password incorrect
-// If valid user...sign a JWT with payload and secret (secret should probably be advanced with crypto etc)

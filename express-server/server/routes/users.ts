@@ -6,7 +6,7 @@ import UserService from '../services/user-service';
 const router = Router();
 
 // create UserService
-let userService = new UserService();
+let userService: UserService = new UserService();
 
 // Middleware
 let requestTime = (_req: any, _res: any, next: any) => {
