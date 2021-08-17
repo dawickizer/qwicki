@@ -1,19 +1,27 @@
-import { Schema, model } from 'mongoose';
-import { AddressSchema } from './address';
-import { DogSchema } from './dog';
+import { Schema, model, Document } from 'mongoose';
+interface User extends Document {
+  username: String;
+  password: String;
+  role: String,
+  email: String;
+  firstName: String;
+  middleName: String;
+  lastName: String;
+}
 
 // create mongoose schema
-const UserSchema = new Schema({
-  name: { type: String, default: null },
-  age: { type: Number, default: null },
-  cars: [{ type: Schema.Types.ObjectId, default: [], ref: 'Car' }],
-  dogs: [DogSchema],
-  contact: { type: Schema.Types.ObjectId, default: null, ref: 'Contact' },
-  address: { type: AddressSchema, default: null }
+const UserSchema = new Schema<User>({
+  username: { type: String, default: null },
+  password: { type: String, default: null },
+  role: { type: String, default: 'user' },
+  email: { type: String, default: null },
+  firstName: { type: String, default: null },
+  middleName: { type: String, default: null },
+  lastName: { type: String, default: null }
 });
 
 // create mongoose model
-const User = model('User', UserSchema);
+const User = model<User>('User', UserSchema);
 
 export {
   User,

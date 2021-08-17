@@ -7,7 +7,7 @@ import { json, urlencoded } from 'body-parser';
 
 // Get our API routes
 import api from './routes/api';
-import login from './routes/login';
+import auth from './routes/auth';
 import users from './routes/users';
 import cars from './routes/cars';
 import addresses from './routes/addresses';
@@ -27,7 +27,7 @@ app.use(cors());
 
 // Set our api routes
 app.use('/', api);
-app.use('/login', login);
+app.use('/auth', auth);
 app.use('/users', users);
 app.use('/cars', cars);
 app.use('/addresses', addresses);
