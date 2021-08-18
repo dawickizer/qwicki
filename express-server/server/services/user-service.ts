@@ -14,32 +14,47 @@ connect(config[env].db);
 // This class is responsible for handling the CRUD database operations for Users 
 class UserService {
 
-  // Returns all the users
+  // GET all the users
   async getAll(): Promise<User[] | null> {
     return await User.find({});
   }
 
-  // Get a specific user
+  // GET a user by id
   async get(id: string): Promise<User | null> {
     return await User.findById(id);
   }
 
+  // GET a user by username (case insensitve) AND password (case sensitive) - CHECK USER SCHEMA to see why
   async getByLoginCredentials(loginCredentials: any): Promise<User | null> {
     return await User.findOne({username: loginCredentials.username, password: loginCredentials.password});
   }
 
-  // Post one to many users. If an object is passed in it will be converted to
-  // an array of size one. Returns an array of users or a single user
-  async post(users: User[]): Promise<User | User[]> {
-    return (!Array.isArray(users)) ? (await User.insertMany([users]))[0] : await User.insertMany(users);
+  // GET a user by username (case insensitve) - CHECK USER SCHEMA to see why
+  async getByUsername(username: string): Promise<User | null> {
+    return await User.findOne({username: username,});
   }
 
-  // Update a user
+  // GET a users by usernames (case insensitve) - CHECK USER SCHEMA to see why
+  async getByUsernames(usernames: string[]): Promise<User[]> {
+    return await User.find({username: {$in: usernames}});
+  }
+
+  // POST one user
+  async post(user: User): Promise<User> {
+    return await User.create(user);
+  }
+
+  // POST many users.
+  async postMany(users: User[]): Promise<User[]> {
+    return await User.insertMany(users);
+  }
+
+  // PUT a user
   async put(id: string, updatedUser: User): Promise<User | null> {
     return null;
   }
 
-  // Delete one to many users
+  // DELETE one to many users
   async delete(ids: string[]): Promise<any> {
     return await User.deleteMany({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}});
   }

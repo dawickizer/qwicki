@@ -24,11 +24,30 @@ router.get('/', async (_req: any, res: any) => {
     else res.status(500).send('Problem getting users');
 });
 
-// Create one to many users
+// POST one to many users
 router.post('/', async (req: any, res: any) => {
-    let users: User[] | User = await userService.post(req.body);
-    if (users) res.status(201).json({ message: 'User created successfully', users: users });
-    else res.status(500).send('Problem creating user');
+
+    let users: User[];
+    let user: User | null;
+
+    if (Array.isArray(req.body)) {
+        users = await userService.getByUsernames(req.body.map((user: any) => user.username));
+        if (users.length == 0) {
+            users = await userService.postMany(req.body);
+            if (users) res.status(201).json({ message: 'Users created successfully', users: users });
+            else res.status(500).send('Problem creating users');
+        }
+        else res.status(409).send({message: 'Usernames already exist (case insensitive)', usersnames: users.map((user: any) => user.username)});
+    } 
+    else {
+        user = await userService.getByUsername(req.body.username);
+        if (!user) {
+            user = await userService.post(req.body);
+            if (user) res.status(201).json({ message: 'User created successfully', user: user });
+            else res.status(500).send('Problem creating user');
+        }
+        else res.status(409).send('Username already exists (case insensitive)');
+    }
 });
 
 // GET one user.

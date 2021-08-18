@@ -37,6 +37,17 @@ router.post('/login', async (req, res) => {
     else res.status(401).send('Unauthorized. Your username or password is incorrect.');
 });
 
+// POST to register a new user with username and password
+router.post('/register', async (req, res) => {
+    let user: User | null = await userService.getByUsername(req.body.username);
+    if (!user) {
+        user = await userService.post(req.body);
+        if (user) res.status(201).json({token: jwt.sign({ username: user.username, _id: user._id}, accessTokenSecret)});
+        else res.status(500).send('Problem creating user');
+    }
+    else res.status(409).send('Username already exists');
+});
+
 router.get('/test', authenticateJWT, (req, res) => {
     res.send(req.body);
 });

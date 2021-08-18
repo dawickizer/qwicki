@@ -11,7 +11,7 @@ interface User extends Document {
 
 // create mongoose schema
 const UserSchema = new Schema<User>({
-  username: { type: String, default: null },
+  username: { type: String, lowercase: true, default: null },
   password: { type: String, default: null },
   role: { type: String, default: 'user' },
   email: { type: String, default: null },
