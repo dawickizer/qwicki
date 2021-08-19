@@ -32,7 +32,7 @@ const authenticateJWT = (req: any, res: any, next: any) => {
 
 // POST to login with username and password
 router.post('/login', async (req, res) => {
-    let user: User | null = await userService.getByLoginCredentials(req.body);
+    let user: User | null = await userService.getByCredentials(req.body);
     if (user) res.status(200).json({token: jwt.sign({ username: user.username, _id: user._id}, accessTokenSecret)});
     else res.status(401).send('Unauthorized. Your username or password is incorrect.');
 });

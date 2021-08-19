@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { map, catchError, retry } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
-import { AuthCredentials } from 'src/app/models/auth-credentials/auth-credentials';
+import { Credentials } from 'src/app/models/credentials/credentials';
 
 @Injectable({
   providedIn: 'root'
@@ -14,8 +14,8 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
-  login(authCredentials: AuthCredentials): Observable<AuthCredentials> {
-    return this.http.post<AuthCredentials>(`${this.API}/login`, authCredentials)
+  login(credentials: Credentials): Observable<Credentials> {
+    return this.http.post<Credentials>(`${this.API}/auth/login`, credentials)
     .pipe(catchError(this.handleError));
   }
 

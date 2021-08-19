@@ -25,8 +25,8 @@ class UserService {
   }
 
   // GET a user by username (case insensitve) AND password (case sensitive) - CHECK USER SCHEMA to see why
-  async getByLoginCredentials(loginCredentials: any): Promise<User | null> {
-    return await User.findOne({username: loginCredentials.username, password: loginCredentials.password});
+  async getByCredentials(credentials: any): Promise<User | null> {
+    return await User.findOne({username: credentials.username, password: credentials.password});
   }
 
   // GET a user by username (case insensitve) - CHECK USER SCHEMA to see why
