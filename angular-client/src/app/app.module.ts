@@ -10,6 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 // Components
 import { AppRoutingModule } from './app-routing.module';
@@ -51,6 +52,7 @@ import { FpsService } from './services/fps/fps.service';
     MatInputModule,
     MatCardModule,
     MatDividerModule,
+    MatSnackBarModule,
     MatButtonModule,
     MatSidenavModule,
     MatSliderModule,
