@@ -4,6 +4,7 @@ import { environment } from '../../../environments/environment';
 import { map, catchError, retry } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
+import { User } from 'src/app/models/user/user';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,11 @@ export class AuthService {
 
   login(credentials: Credentials): Observable<Credentials> {
     return this.http.post<Credentials>(`${this.API}/auth/login`, credentials)
+    .pipe(catchError(this.handleError));
+  }
+
+  signup(user: User): Observable<Credentials> {
+    return this.http.post<Credentials>(`${this.API}/auth/signup`, user)
     .pipe(catchError(this.handleError));
   }
 

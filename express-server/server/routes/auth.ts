@@ -37,8 +37,8 @@ router.post('/login', async (req, res) => {
     else res.status(401).send('Unauthorized. Your username or password is incorrect.');
 });
 
-// POST to register a new user with username and password
-router.post('/register', async (req, res) => {
+// POST to signup a new user with username and password
+router.post('/signup', async (req, res) => {
     let user: User | null = await userService.getByUsername(req.body.username);
     if (!user) {
         user = await userService.post(req.body);

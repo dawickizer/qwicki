@@ -18,11 +18,11 @@ import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
+import { SignupComponent } from './components/signup/signup.component';
 import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { ThreejsComponent } from './components/threejs/threejs.component';
 import { SocketioComponent } from './components/socketio/socketio.component';
-import { ApiComponent } from './components/api/api.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Services
@@ -42,8 +42,8 @@ import { FpsService } from './services/fps/fps.service';
     BabylonjsComponent,
     ThreejsComponent,
     SocketioComponent,
-    ApiComponent,
-    LoginComponent
+    LoginComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,
