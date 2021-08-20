@@ -8,7 +8,7 @@ import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { ThreejsComponent } from './components/threejs/threejs.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent },
+  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
   { 
     path: 'auth',
     children: [
