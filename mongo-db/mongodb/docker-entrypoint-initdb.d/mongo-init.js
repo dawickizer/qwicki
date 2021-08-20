@@ -14,4 +14,4 @@ db.createUser({
 });
 
 // Insert a document into the users collection
-db.users.insert({username: 'Wick', password: 'gibbshodoo'});
+db.users.insert({username: 'admin', password: 'password'});

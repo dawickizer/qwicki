@@ -7,8 +7,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "postinstall": "ngcc"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
@@ -34,6 +33,7 @@
     "cannon": "^0.6.2",
     "cannon-es": "^0.16.0",
     "dat.gui": "^0.7.7",
+    "jwt-decode": "^3.1.2",
     "material-design-icons": "^3.0.1",
     "phaser": "^3.52.0",
     "rxjs": "~6.6.3",
