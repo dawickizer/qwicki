@@ -1,7 +1,7 @@
 Summary
 ===============
 
-This code base contains the starter code for a Phaser and BabylonJS game. It is integrated with a qwicki stack and it is Dockerized. The Phaser game and BabylonJS game is running client side with Angular and being served up on localhost:4200. Socket.io is also integrated at a base level as well as some starter code for builing a service that interacts with Express API (localhost:3000). This is a good starting point for anyone who wants to create client side Phaser game or BabylonJS game while also being able to build a website around the game using the qwicki stack.
+This repository contains the starter code for a Dockerized MEAN (MongoDB, Express, Angular, Node) App which has Phaser.io, BabylonJS, and ThreeJS integrated.
 
 Run Locally
 ===============
@@ -15,7 +15,8 @@ Run Locally
 7. Run `npm install`
 8. Navigate back to the root directory of this project (`cd ..`)
 9. Run `docker-compose up --build`
-10. Navigate to `localhost:4200` in your browser (Chrome for example). Navigate through the tabs and see the Phaser, Babylon, Express API, and Socket.io integrations
+10. Navigate to `localhost:4200` in your browser and login or signup. 
+11. You can navigate through the tabs and see the Phaser.io, BabylonJS, and ThreeJSs
 11. Run `docker-compose down` to stop the app from being served
 
 Endpoints

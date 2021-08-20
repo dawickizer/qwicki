@@ -6,7 +6,6 @@ import { SignupComponent } from './components/signup/signup.component';
 import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { ThreejsComponent } from './components/threejs/threejs.component';
-import { SocketioComponent } from './components/socketio/socketio.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent },
@@ -19,8 +18,7 @@ const routes: Routes = [
   },
   { path: 'phaserio', component: PhaserioComponent },
   { path: 'babylonjs', component: BabylonjsComponent },
-  { path: 'threejs', component: ThreejsComponent },
-  { path: 'socketio', component: SocketioComponent },
+  { path: 'threejs', component: ThreejsComponent }
 ];
 
 @NgModule({
