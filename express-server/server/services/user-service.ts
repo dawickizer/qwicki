@@ -41,12 +41,14 @@ class UserService {
 
   // POST one user
   async post(user: User): Promise<User> {
+    user.usernameRaw = user.username; // preserve original username before it gets converted to lowercase in DB
     return await User.create(user);
   }
 
   // POST many users.
   async postMany(users: User[]): Promise<User[]> {
-    return await User.insertMany(users);
+    // preserve original username before it gets converted to lowercase in DB
+    return await User.insertMany(users.map(user => ({...user, usernameRaw: user.username})));
   }
 
   // PUT a user
