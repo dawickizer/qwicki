@@ -6,9 +6,11 @@ import { SignupComponent } from './components/signup/signup.component';
 import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { ThreejsComponent } from './components/threejs/threejs.component';
+import { AuthGuardService } from './services/auth/auth.service';
 
 const routes: Routes = [
   { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
+  { path: 'home', component: HomeComponent, canActivate: [AuthGuardService] },
   { 
     path: 'auth',
     children: [

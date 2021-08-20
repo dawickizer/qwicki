@@ -27,7 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Services
 import { SocketioService } from './services/socketio/socketio.service';
 import { ApiService } from './services/api/api.service';
-import { AuthService } from './services/auth/auth.service';
+import { AuthGuardService, AuthService } from './services/auth/auth.service';
 import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
@@ -62,6 +62,7 @@ import { FpsService } from './services/fps/fps.service';
               SocketioService,
               ApiService,
               AuthService,
+              AuthGuardService,
               PlayerService,
               GunService,
               FpsService

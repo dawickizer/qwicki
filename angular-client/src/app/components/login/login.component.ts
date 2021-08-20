@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Credentials } from 'src/app/models/credentials/credentials';
@@ -14,14 +14,17 @@ import jwt_decode from "jwt-decode";
 export class LoginComponent implements OnInit {
 
   credentials: Credentials = new Credentials();
-  constructor(private router: Router, private authService: AuthService, private snackBar: MatSnackBar) { }
+  return: string = '';
+  constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService, private snackBar: MatSnackBar) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.route.queryParams.subscribe(params => this.return = params['return'] || '/babylonjs');
+  }
 
   login() {
     this.authService.login(this.credentials).subscribe((credentials: Credentials) => {
       let decoded: any = jwt_decode(credentials.token as string);
-      this.router.navigate(['/babylonjs'], { queryParams: { username: decoded.usernameRaw } });
+      this.router.navigate([this.return], { queryParams: { username: decoded.usernameRaw } });
     }, error => this.openSnackBar(error, 'Dismiss'));
   }
 
