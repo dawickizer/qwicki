@@ -1,7 +1,7 @@
 import { Injectable, OnInit } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { map, catchError, retry } from 'rxjs/operators';
+import { map, catchError, retry, tap } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
@@ -17,13 +17,44 @@ export class AuthService {
 
   login(credentials: Credentials): Observable<Credentials> {
     return this.http.post<Credentials>(`${this.API}/auth/login`, credentials)
+    .pipe(tap(credentials => this.setSession(credentials.token)))
     .pipe(catchError(this.handleError));
   }
 
   signup(user: User): Observable<Credentials> {
     return this.http.post<Credentials>(`${this.API}/auth/signup`, user)
+    .pipe(tap(credentials => this.setSession(credentials.token)))
     .pipe(catchError(this.handleError));
   }
+ 
+  private setSession(token: String) {
+    console.log('Subscribed inside of pipe in auth')
+    console.log(token)
+    // const expiresAt = moment().add(authResult.expiresIn,'second');
+
+    localStorage.setItem('id_token', token as string);
+    // localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
+  }          
+
+  logout() {
+    localStorage.removeItem("id_token");
+    //localStorage.removeItem("expires_at");
+  }
+
+  isLoggedIn() {
+    return localStorage.getItem('id_token'); // keep in mind user can set a fake id_token to simulate login
+    //return moment().isBefore(this.getExpiration());
+  }
+
+  isLoggedOut() {
+    return !this.isLoggedIn();
+  }
+
+  // getExpiration() {
+  //   const expiration = localStorage.getItem("expires_at");
+  //   const expiresAt = JSON.parse(expiration);
+  //   return moment(expiresAt);
+  // } 
 
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
@@ -44,10 +75,10 @@ export class AuthService {
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 @Injectable()
 export class AuthGuardService implements CanActivate {
-  constructor(private router: Router) {}
+  constructor(private router: Router, private authService: AuthService) {}
   
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (false) {
+    if (this.authService.isLoggedIn()) {
       return true;
     } else {
       this.router.navigate(['/auth/login'], {

@@ -18,9 +18,9 @@ const routes: Routes = [
       { path: 'signup', component: SignupComponent }
     ]
   },
-  { path: 'phaserio', component: PhaserioComponent },
-  { path: 'babylonjs', component: BabylonjsComponent },
-  { path: 'threejs', component: ThreejsComponent }
+  { path: 'phaserio', component: PhaserioComponent, canActivate: [AuthGuardService] },
+  { path: 'babylonjs', component: BabylonjsComponent, canActivate: [AuthGuardService] },
+  { path: 'threejs', component: ThreejsComponent, canActivate: [AuthGuardService] }
 ];
 
 @NgModule({
