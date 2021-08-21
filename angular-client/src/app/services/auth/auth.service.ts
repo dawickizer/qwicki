@@ -32,10 +32,7 @@ export class AuthService {
   }
  
   private setSession(token: String) {
-    console.log('Subscribed inside of pipe in auth')
-    console.log(token)
     // const expiresAt = moment().add(authResult.expiresIn,'second');
-
     localStorage.setItem('id_token', token as string);
     // localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
   }          
