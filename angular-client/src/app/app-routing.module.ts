@@ -9,8 +9,7 @@ import { ThreejsComponent } from './components/threejs/threejs.component';
 import { AuthGuardService } from './services/auth/auth.service';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'auth/login', pathMatch: 'full' },
-  { path: 'home', component: HomeComponent, canActivate: [AuthGuardService] },
+  { path: '', component: HomeComponent, canActivate: [AuthGuardService] },
   { 
     path: 'auth',
     children: [
