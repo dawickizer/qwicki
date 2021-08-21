@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http'; // add http client module
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 // Angular Material
 import { MatInputModule } from '@angular/material/input';
@@ -27,7 +27,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 // Services
 import { SocketioService } from './services/socketio/socketio.service';
 import { ApiService } from './services/api/api.service';
-import { AuthGuardService, AuthService } from './services/auth/auth.service';
+import { AuthGuardService, AuthInterceptor, AuthService } from './services/auth/auth.service';
 import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
@@ -56,7 +56,7 @@ import { FpsService } from './services/fps/fps.service';
     MatSliderModule,
     AppRoutingModule,
     HttpClientModule,
-    BrowserAnimationsModule, // import http client module
+    BrowserAnimationsModule
   ],
   providers: [
               SocketioService,
@@ -65,7 +65,8 @@ import { FpsService } from './services/fps/fps.service';
               AuthGuardService,
               PlayerService,
               GunService,
-              FpsService
+              FpsService,
+              { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
             ],
   bootstrap: [AppComponent],
   schemas: [ NO_ERRORS_SCHEMA ]

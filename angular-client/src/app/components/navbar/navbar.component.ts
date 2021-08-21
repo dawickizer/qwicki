@@ -22,4 +22,8 @@ export class NavbarComponent implements OnInit {
     return this.authService.isLoggedIn()
   }
 
+  authenticateJWT() {
+    this.authService.authenticateJWT().subscribe(res => console.log(res));
+  }
+
 }

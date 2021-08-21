@@ -5,7 +5,6 @@ import { map, catchError, retry, tap } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -24,6 +23,11 @@ export class AuthService {
   signup(user: User): Observable<Credentials> {
     return this.http.post<Credentials>(`${this.API}/auth/signup`, user)
     .pipe(tap(credentials => this.setSession(credentials.token)))
+    .pipe(catchError(this.handleError));
+  }
+
+  authenticateJWT(): Observable<any> {
+    return this.http.get<any>(`${this.API}/auth/authenticate-jwt`)
     .pipe(catchError(this.handleError));
   }
  
@@ -88,5 +92,21 @@ export class AuthGuardService implements CanActivate {
       });
       return false;
     }
+  }
+}
+
+import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
+@Injectable()
+export class AuthInterceptor implements HttpInterceptor {
+
+  constructor() {}
+
+  intercept(req: HttpRequest<any>, next: HttpHandler) {
+    let token: string = localStorage.getItem('id_token');
+    if (token) {
+      token = `Bearer ${token}`;
+      const authReq = req.clone({ setHeaders: { Authorization: token } });
+      return next.handle(authReq);
+    } else return next.handle(req);
   }
 }

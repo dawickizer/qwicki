@@ -16,7 +16,6 @@ const accessTokenSecret = 'secret';
 // maybe need to see if i need to encrypt/decrypt password and username as it hits the server
 const authenticateJWT = (req: any, res: any, next: any) => {
     const authHeader = req.headers.authorization;
-
     if (authHeader) {
         const token = authHeader.split(' ')[1];
         jwt.verify(token, accessTokenSecret, (err: any, user: any) => {
@@ -48,7 +47,7 @@ router.post('/signup', async (req, res) => {
     else res.status(409).send('Username already exists');
 });
 
-router.get('/test', authenticateJWT, (req, res) => {
+router.get('/authenticate-jwt', authenticateJWT, (req, res) => {
     res.send(req.body);
 });
 
