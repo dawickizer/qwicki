@@ -7,6 +7,7 @@ import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { ThreejsComponent } from './components/threejs/threejs.component';
 import { AuthGuardService } from './services/auth/auth.service';
+import { NotFoundComponent } from './components/not-found/not-found.component';
 
 const routes: Routes = [
   { path: '', component: HomeComponent, canActivate: [AuthGuardService] },
@@ -19,7 +20,8 @@ const routes: Routes = [
   },
   { path: 'phaserio', component: PhaserioComponent, canActivate: [AuthGuardService] },
   { path: 'babylonjs', component: BabylonjsComponent, canActivate: [AuthGuardService] },
-  { path: 'threejs', component: ThreejsComponent, canActivate: [AuthGuardService] }
+  { path: 'threejs', component: ThreejsComponent, canActivate: [AuthGuardService] },
+  { path: '**', component: NotFoundComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
