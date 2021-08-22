@@ -15,10 +15,17 @@
       <li class="nav-item">
         <a class="nav-link" routerLink="/threejs">Three.js</a>
       </li>
-      <li class="nav-item">
-        <button mat-raised-button color="primary" (click)="logout()">Logout</button>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Dropdown
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" routerLink="/user-profile">User Profile</a>
+          <a class="dropdown-item" routerLink="/settings">Settings</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" role="button" (click)="logout()">Logout</a>
+        </div>
       </li>
     </ul>
-    <button mat-raised-button color="primary" (click)="authenticateJWT()">Test</button>
   </div>
 </nav>
