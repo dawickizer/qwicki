@@ -28,8 +28,8 @@ export class AuthService {
     .pipe(catchError(this.handleError));
   }
 
-  authenticateJWT(): Observable<any> {
-    return this.http.get<any>(`${this.API}/auth/authenticate-jwt`)
+  currentUser(): Observable<any> {
+    return this.http.get<any>(`${this.API}/auth/current-user`)
     .pipe(catchError(this.handleError));
   }
   

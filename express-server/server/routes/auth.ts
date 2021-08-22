@@ -32,7 +32,7 @@ router.post('/signup', async (req, res) => {
     else res.status(409).send('Username already exists');
 });
 
-router.get('/authenticate-jwt', authenticateJWT, (req, res) => res.send(req.body));
+router.get('/current-user', authenticateJWT, (req, res) => res.send(req.body));
 router.get('/is-logged-in', authenticateJWTBoolean, (req, res) => res.send(req.body));
 
 export default router;

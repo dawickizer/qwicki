@@ -39,9 +39,9 @@ export class BabylonjsComponent implements OnInit {
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
 
-    this.authService.authenticateJWT().subscribe(
-      async decoded => {
-        this.username = decoded.usernameRaw
+    this.authService.currentUser().subscribe(
+      async user => {
+        this.username = user.usernameRaw;
 
         this.createScene();
         this.handleWindowResize();
