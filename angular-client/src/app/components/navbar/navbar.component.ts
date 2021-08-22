@@ -17,7 +17,7 @@ export class NavbarComponent implements OnInit {
   }
 
   isLoggedIn() {
-    return this.authService.isLoggedIn()
+    return this.authService.isLoggedInFrontendCheck();
   }
 
   authenticateJWT() {

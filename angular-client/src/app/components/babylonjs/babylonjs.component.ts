@@ -205,6 +205,6 @@ export class BabylonjsComponent implements OnInit {
 
   ngOnDestroy() {
     console.log('Disposing scene')
-    this.scene.dispose();
+    this.scene?.dispose();
   }
 }
