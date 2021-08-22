@@ -47,7 +47,6 @@ export class BabylonjsComponent implements OnInit {
         this.handleWindowResize();
         this.handleBoundingBoxes();
 
-        console.log(this.username)
         await this.fpsService.addFpsMechanics(this.scene, this.canvas, this.username);
         
         this.skybox = this.createSkyBox();
