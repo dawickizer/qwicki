@@ -12,7 +12,7 @@ export class AuthService {
 
   readonly API = environment.EXPRESS_ENDPOINT;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private router: Router) { }
 
   login(credentials: Credentials): Observable<Credentials> {
     return this.http.post<Credentials>(`${this.API}/auth/login`, credentials)
@@ -39,6 +39,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem("id_token");
+    this.router.navigate(['auth/login']);
     //localStorage.removeItem("expires_at");
   }
 

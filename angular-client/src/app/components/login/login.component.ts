@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import jwt_decode from "jwt-decode";
 
 @Component({
   selector: 'app-login',
@@ -22,10 +21,10 @@ export class LoginComponent implements OnInit {
   }
 
   login() {
-    this.authService.login(this.credentials).subscribe((credentials: Credentials) => {
-      let decoded: any = jwt_decode(credentials.token as string);
-      this.router.navigate([this.return], { queryParams: { username: decoded.usernameRaw } });
-    }, error => this.openSnackBar(error, 'Dismiss'));
+    this.authService.login(this.credentials).subscribe(
+      credentials => this.router.navigate([this.return]), 
+      error => this.openSnackBar(error, 'Dismiss')
+    );
   }
 
   openSnackBar(message: string, action: string) {

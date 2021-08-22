@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import jwt_decode from "jwt-decode";
 
 @Component({
   selector: 'app-signup',
@@ -21,10 +20,10 @@ export class SignupComponent implements OnInit {
   ngOnInit(): void {}
 
   signup() {
-    this.authService.signup(this.user).subscribe((credentials: Credentials) => {
-      let decoded: any = jwt_decode(credentials.token as string);
-      this.router.navigate(['/babylonjs'], { queryParams: { username: decoded.usernameRaw } });
-    }, error => this.openSnackBar(error, 'Dismiss'));
+    this.authService.signup(this.user).subscribe(
+      credentials => this.router.navigate(['/babylonjs']), 
+      error => this.openSnackBar(error, 'Dismiss')
+    );
   }
 
   openSnackBar(message: string, action: string) {

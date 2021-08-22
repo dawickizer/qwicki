@@ -145,15 +145,6 @@ export class FpsService {
 
   }
 
-  getUsername(): string {
-    return this.self.username;
-  }
-
-  setUsername(username: string) {
-    this.self.username = username;
-    this.username = username;
-  }
-
   async createEnemy(username: string): Promise<Player> {
     let enemy = new Player(username, 'enemy');
     enemy.playerMeshURL = 'assets/babylonjs/models/dude/dude.babylon';
