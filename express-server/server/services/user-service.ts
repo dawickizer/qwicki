@@ -29,16 +29,6 @@ class UserService {
     return await User.findOne({username: credentials.username, password: credentials.password});
   }
 
-  // GET a user by username (case insensitve) - CHECK USER SCHEMA to see why
-  async getByUsername(username: string): Promise<User | null> {
-    return await User.findOne({username: username,});
-  }
-
-  // GET a users by usernames (case insensitve) - CHECK USER SCHEMA to see why
-  async getByUsernames(usernames: string[]): Promise<User[]> {
-    return await User.find({username: {$in: usernames}});
-  }
-
   // POST one user
   async post(user: User): Promise<User> {
     user.usernameRaw = user.username; // preserve original username before it gets converted to lowercase in DB
