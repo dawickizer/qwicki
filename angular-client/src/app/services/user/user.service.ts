@@ -28,7 +28,8 @@ export class UserService {
 
   update(user: User): Observable<User> {
     return this.http.put<User>(`${this.API}/users/${user._id}`, user)
-    .pipe(catchError(this.handleError));
+    .pipe(catchError(this.handleError))
+    .pipe(map(user => ({...user, username: user.usernameRaw})));
   }
 
   delete(user?: User, _id?: string): Observable<any> {
@@ -54,7 +55,6 @@ export class UserService {
         `body was: ${error.error}`);
     }
     // Return an observable with a user-facing error message.
-    return throwError(
-      'Something bad happened; please try again later.');
+    return throwError(error.error);
   }
 }

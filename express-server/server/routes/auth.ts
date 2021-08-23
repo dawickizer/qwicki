@@ -23,13 +23,13 @@ router.post('/login', async (req, res) => {
 
 // POST to signup a new user with username and password
 router.post('/signup', async (req, res) => {
-    let user: User | null = await userService.getByUsername(req.body.username);
-    if (!user) {
-        user = await userService.post(req.body);
+    try {
+        let user: User | null = await userService.post(req.body);
         if (user) res.status(201).json({token: jwt.sign({ username: user.username, usernameRaw: user.usernameRaw, _id: user._id}, config[env].secret)});
         else res.status(500).send('Problem creating user');
+    } catch (error: any) {
+        res.status(409).send(error.message);
     }
-    else res.status(409).send('Username already exists');
 });
 
 router.get('/current-user', authenticateJWT, (req, res) => res.send(req.body));

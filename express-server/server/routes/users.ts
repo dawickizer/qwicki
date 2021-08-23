@@ -26,27 +26,12 @@ router.get('/', async (_req: any, res: any) => {
 
 // POST one to many users
 router.post('/', async (req: any, res: any) => {
-
-    let users: User[];
-    let user: User | null;
-
-    if (Array.isArray(req.body)) {
-        users = await userService.getByUsernames(req.body.map((user: any) => user.username));
-        if (users.length == 0) {
-            users = await userService.postMany(req.body);
-            if (users) res.status(201).json({ message: 'Users created successfully', users: users });
-            else res.status(500).send('Problem creating users');
-        }
-        else res.status(409).send({message: 'Usernames already exist (case insensitive)', usersnames: users.map((user: any) => user.username)});
-    } 
-    else {
-        user = await userService.getByUsername(req.body.username);
-        if (!user) {
-            user = await userService.post(req.body);
-            if (user) res.status(201).json({ message: 'User created successfully', user: user });
-            else res.status(500).send('Problem creating user');
-        }
-        else res.status(409).send('Username already exists (case insensitive)');
+    try {
+        let user: User | null = await userService.post(req.body);
+        if (user) res.status(201).json({ user });
+        else res.status(500).send('Problem creating user');
+    } catch (error: any) {
+        res.status(409).send(error.message);
     }
 });
 
@@ -59,9 +44,13 @@ router.get('/:id', async (req: any, res: any) => {
 
 // PUT (update) one user.
 router.put('/:id', async (req: any, res: any) => {
-    // let result = await userService.put(req.params.id, req.body);
-    // if (result) res.status(200).json({ message: 'Users updated successfully', users: result });
-    // else res.status(500).send('Problem updating user');
+    try {
+        let user: User | null = await userService.put(req.params.id, req.body);
+        if (user) res.status(200).json(user);
+        else res.status(500).send('Problem updating user'); 
+    } catch (error: any) {
+        res.status(409).send(error.message)
+    }
 });
 
 // DELETE one to many users

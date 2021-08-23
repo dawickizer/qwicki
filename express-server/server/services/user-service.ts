@@ -52,8 +52,9 @@ class UserService {
   }
 
   // PUT a user
-  async put(id: string, updatedUser: User): Promise<User | null> {
-    return null;
+  async put(id: string, user: User): Promise<User | null> {
+    user.usernameRaw = user.username; // preserve original username before it gets converted to lowercase in DB
+    return await User.findOneAndUpdate({_id: id}, user, {new: true});
   }
 
   // DELETE one to many users
