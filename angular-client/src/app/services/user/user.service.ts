@@ -1,5 +1,5 @@
 import { Injectable, OnInit } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { map, catchError, retry } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
@@ -32,8 +32,9 @@ export class UserService {
     .pipe(map(user => ({...user, username: user.usernameRaw})));
   }
 
-  delete(user?: User, _id?: string): Observable<any> {
-    return this.http.delete(`${this.API}/users/${user ? user._id : _id}`)
+  delete(user: User): Observable<any> {
+    const params = new HttpParams().set('ids', user._id);
+    return this.http.delete(`${this.API}/users/`, {params})
     .pipe(catchError(this.handleError));
   }
 

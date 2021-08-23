@@ -36,6 +36,7 @@
             <input matInput [(ngModel)]="user.password" type="password" name="password">
           </mat-form-field>
           <button mat-raised-button color="primary" type="submit">Update</button>
+          <button mat-raised-button color="warn" type="button" (click)="delete()">Delete</button>
         </form>
       </mat-card-content>
     </mat-card>
