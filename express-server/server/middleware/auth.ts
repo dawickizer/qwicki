@@ -1,5 +1,4 @@
 // Import dependencies
-import { request } from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
 
