@@ -1,0 +1,19 @@
+/* input color class */
+::ng-deep input.mat-input-element {
+    color: aliceblue;
+  }
+  
+/* Change label color on no focus */
+::ng-deep .mat-form-field .mat-form-field-label {
+    color: rgba(255,255,255,.5) !important;
+}
+
+/* Change label color on focused */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+color: #673ab7 !important;
+}
+  
+/* underline border color on focused */
+::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple{
+background-color: #673ab7 !important;
+}

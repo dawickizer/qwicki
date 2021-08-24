@@ -31,19 +31,4 @@
     background-image: url('/assets/home.png');
 }
 
-/* ::ng-deep input.mat-input-element {
-    color: #484a4c;
-  }
-  
-::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
-    color: white !important;
-}
-
-::ng-deep .mat-form-field-placeholder {
-    color: rgba(255,255,255,.5) !important;
-}
-
-::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple{
-    background-color: #50d0fb !important;
-} */
 
