@@ -33,7 +33,12 @@ export class UserService {
   }
 
   delete(user: User): Observable<any> {
-    const params = new HttpParams().set('ids', user._id);
+    return this.http.delete(`${this.API}/users/${user._id}`)
+    .pipe(catchError(this.handleError));
+  }
+
+  deleteMany(users: User[]): Observable<any> {
+    const params = new HttpParams().set('ids', users.join(','));
     return this.http.delete(`${this.API}/users/`, {params})
     .pipe(catchError(this.handleError));
   }

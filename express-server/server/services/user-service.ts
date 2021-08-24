@@ -47,9 +47,14 @@ class UserService {
     return await User.findOneAndUpdate({_id: id}, user, {new: true});
   }
 
-  // DELETE one to many users
-  async delete(ids: string[]): Promise<any> {
-    return await User.deleteMany({_id: {$in: (!Array.isArray(ids)) ? [ids] : ids}});
+  // DELETE many users
+  async deleteMany(ids: string[]): Promise<any> {
+    return await User.deleteMany({_id: {$in: ids}});
+  }
+
+  // DELETE one user
+  async delete(id: string[]): Promise<any> {
+    return await User.deleteOne({_id: id});
   }
 }
 

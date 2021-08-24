@@ -30,11 +30,10 @@ export class UserProfileComponent implements OnInit {
   }
 
   delete() {
-    this.openSnackBar('DELETE', 'Dismiss')
     this.userService.delete(this.user).subscribe(
       res => {
         this.authService.logout();
-        this.openSnackBar('Your account has been successfully deleted!', 'Dismiss')
+        this.openSnackBar('Your account has been successfully deleted!', 'Dismiss');
       }, 
       error => this.openSnackBar(error, 'Dismiss')
     );

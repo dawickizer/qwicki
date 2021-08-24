@@ -2,7 +2,7 @@
 import Router from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
-import { authenticateJWT, authenticateJWTBoolean } from '../middleware/auth';
+import { isAuthenticatedJWT, isLoggedIn } from '../middleware/auth';
 import { User } from '../models/user';
 import UserService from '../services/user-service';
 
@@ -32,7 +32,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-router.get('/current-user', authenticateJWT, (req, res) => res.send(req.body));
-router.get('/is-logged-in', authenticateJWTBoolean, (req, res) => res.send(req.body));
+router.get('/current-user', isAuthenticatedJWT, (req, res) => res.send(req.body.decodedJWT));
+router.get('/is-logged-in', isLoggedIn, (req, res) => res.send(req.body.isLoggedIn));
 
 export default router;
