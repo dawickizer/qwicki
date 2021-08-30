@@ -3,6 +3,7 @@ import Router from 'express';
 import jwt from 'jsonwebtoken';
 import config from '../config/config';
 import { isAuthenticatedJWT, isLoggedIn } from '../middleware/auth';
+import { requestBody } from '../middleware/log';
 import { User } from '../models/user';
 import UserService from '../services/user-service';
 
@@ -15,14 +16,14 @@ const router = Router();
 let userService: UserService = new UserService();
 
 // POST to login with username and password
-router.post('/login', async (req, res) => {
+router.post('/login', requestBody, async (req, res) => {
     let user: User | null = await userService.getByCredentials(req.body);
     if (user) res.status(200).json({token: jwt.sign({ username: user.username, usernameRaw: user.usernameRaw, _id: user._id}, config[env].secret)});
     else res.status(401).send('Unauthorized. Your username or password is incorrect.');
 });
 
 // POST to signup a new user with username and password
-router.post('/signup', async (req, res) => {
+router.post('/signup', requestBody, async (req, res) => {
     try {
         let user: User | null = await userService.post(req.body);
         if (user) res.status(201).json({token: jwt.sign({ username: user.username, usernameRaw: user.usernameRaw, _id: user._id}, config[env].secret)});
@@ -32,7 +33,7 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-router.get('/current-user', isAuthenticatedJWT, (req, res) => res.send(req.body.decodedJWT));
-router.get('/is-logged-in', isLoggedIn, (req, res) => res.send(req.body.isLoggedIn));
+router.get('/current-user', [isAuthenticatedJWT, requestBody], (req: any, res: any) => res.send(req.body.decodedJWT));
+router.get('/is-logged-in', [isLoggedIn, requestBody], (req: any, res: any) => res.send(req.body.isLoggedIn));
 
 export default router;

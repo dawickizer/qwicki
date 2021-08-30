@@ -1,6 +1,7 @@
 // Import dependencies
 import { Router } from 'express';
 import { isAuthenticatedJWT, isAdmin, isAuthorized } from '../middleware/auth';
+import { requestBody } from '../middleware/log';
 import { User } from '../models/user';
 import UserService from '../services/user-service';
 
@@ -9,17 +10,8 @@ const router = Router();
 // create UserService
 let userService: UserService = new UserService();
 
-// Middleware
-let requestTime = (_req: any, _res: any, next: any) => {
-  console.log('Time: ', Date.now());
-  next();
-}
-
-// Use middleware (Gets called before any endpoint)
-router.use(requestTime);
-
 // GET all users
-router.get('/', [isAuthenticatedJWT, isAdmin], async (req: any, res: any) => {
+router.get('/', [isAuthenticatedJWT, isAdmin, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin) return res.sendStatus(401);
     let users: User[] | null = await userService.getAll();
     if (users) res.status(200).json(users);
@@ -27,7 +19,7 @@ router.get('/', [isAuthenticatedJWT, isAdmin], async (req: any, res: any) => {
 });
 
 // POST one to many users
-router.post('/', [isAuthenticatedJWT, isAdmin], async (req: any, res: any) => {
+router.post('/', [isAuthenticatedJWT, isAdmin, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin) return res.sendStatus(401);
     try {
         let user: User | null = await userService.post(req.body);
@@ -39,7 +31,7 @@ router.post('/', [isAuthenticatedJWT, isAdmin], async (req: any, res: any) => {
 });
 
 // GET one user.
-router.get('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized], async (req: any, res: any) => {
+router.get('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin && !req.body.isAuthorized) return res.sendStatus(401);
     let user: User | null = await userService.get(req.params.id);
     if (user) res.status(200).json(user);
@@ -47,7 +39,7 @@ router.get('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized], async (req: any,
 });
 
 // PUT (update) one user.
-router.put('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized], async (req: any, res: any) => {
+router.put('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin && !req.body.isAuthorized) return res.sendStatus(401);
     try {
         let user: User | null = await userService.put(req.params.id, req.body);
@@ -59,7 +51,7 @@ router.put('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized], async (req: any,
 });
 
 // DELETE one to many users
-router.delete('/', [isAuthenticatedJWT, isAdmin], async (req: any, res: any) => {
+router.delete('/', [isAuthenticatedJWT, isAdmin, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin) return res.sendStatus(401);
     console.log(req.query.ids);
     let result: any = await userService.deleteMany(req.query.ids.split(','));
@@ -67,7 +59,8 @@ router.delete('/', [isAuthenticatedJWT, isAdmin], async (req: any, res: any) => 
     else res.status(500).send('Problem deleting users');
 });
 
-router.delete('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized], async (req: any, res: any) => {
+// DELETE one user
+router.delete('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin && !req.body.isAuthorized) return res.sendStatus(401);
     console.log(req.params.id)
     let result: any = await userService.delete(req.params.id);

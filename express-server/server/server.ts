@@ -13,6 +13,7 @@ import cars from './routes/cars';
 import addresses from './routes/addresses';
 import dogs from './routes/dogs';
 import contacts from './routes/contacts';
+import { requestTime } from './middleware/log';
 
 const app = express();
 const server = http.createServer(app);
@@ -22,8 +23,11 @@ const io = SocketIO(server);
 app.use(json());
 app.use(urlencoded({ extended: false }));
 
-// Cross Origin Middleware
+// Cross Origin middleware
 app.use(cors());
+
+// logging middleware
+app.use(requestTime);
 
 // Set our api routes
 app.use('/', api);
