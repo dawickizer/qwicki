@@ -41,6 +41,7 @@ router.get('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], asy
 // PUT (update) one user.
 router.put('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin && !req.body.isAuthorized) return res.sendStatus(401);
+    if (!req.body.isAdmin) req.body.role = "user"; // dont allow non admin users to update role
     try {
         let user: User | null = await userService.put(req.params.id, req.body);
         if (user) res.status(200).json(user);

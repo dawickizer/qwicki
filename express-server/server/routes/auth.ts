@@ -25,7 +25,7 @@ router.post('/login', requestBody, async (req, res) => {
 // POST to signup a new user with username and password
 router.post('/signup', requestBody, async (req, res) => {
     try {
-        let user: User | null = await userService.post(req.body);
+        let user: User | null = await userService.post({...req.body, role: 'user'}); // prevent user from changing role
         if (user) res.status(201).json({token: jwt.sign({ username: user.username, usernameRaw: user.usernameRaw, _id: user._id}, config[env].secret)});
         else res.status(500).send('Problem creating user');
     } catch (error: any) {
