@@ -23,7 +23,6 @@ import { SignupComponent } from './components/signup/signup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
-import { ThreejsComponent } from './components/threejs/threejs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Services
@@ -42,7 +41,6 @@ import { FpsService } from './services/fps/fps.service';
     HomeComponent,
     PhaserioComponent,
     BabylonjsComponent,
-    ThreejsComponent,
     LoginComponent,
     SignupComponent,
     NotFoundComponent,

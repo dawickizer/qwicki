@@ -38,7 +38,6 @@
     "phaser": "^3.52.0",
     "rxjs": "~6.6.3",
     "socket.io-client": "^2.4.0",
-    "three": "^0.125.2",
     "tslib": "^2.0.0",
     "zone.js": "~0.10.2"
   },
@@ -48,7 +47,6 @@
     "@angular/compiler-cli": "~11.0.9",
     "@angular/language-service": "~11.0.9",
     "@types/cannon": "^0.1.5",
-    "@types/dat.gui": "^0.7.6",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/jest": "^26.0.20",
