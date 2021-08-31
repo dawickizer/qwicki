@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['name', 'delete', 'send'];
   dataSource = new MatTableDataSource<Friend>([] as Friend[]);
-  user: User;
+  user: User = new User();
   @ViewChild('drawer') drawer: MatSidenav;
 
   searchValue: string = '';
@@ -50,6 +50,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   search() {
     console.log('Search');
+  }
+
+  send() {
+    console.log('send')
   }
 
   filter(filterValue: any) {
