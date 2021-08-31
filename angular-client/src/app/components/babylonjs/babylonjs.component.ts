@@ -1,15 +1,14 @@
 // Core
 import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
 import { MatSidenav } from '@angular/material/sidenav';
 import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
-import { exists } from 'src/app/utilities/username.utility';
 
 // Services/Models
 import { Gun } from 'src/app/models/gun/gun';
 import { FpsService } from 'src/app/services/fps/fps.service';
+import { AuthService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-babylonjs',
@@ -33,33 +32,39 @@ export class BabylonjsComponent implements OnInit {
   cameraSensitivity: number = 0;
   username: string = '';
 
-  constructor(private fpsService: FpsService, private route: ActivatedRoute) { }
+  constructor(private fpsService: FpsService, private authService: AuthService) { }
 
-  async ngOnInit() {
-    this.route.queryParams.subscribe(params => this.username = exists(params['username']));
-  }
+  async ngOnInit() {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
 
-    this.createScene();
-    this.handleWindowResize();
-    this.handleBoundingBoxes();
+    this.authService.currentUser().subscribe(
+      async user => {
+        this.username = user.usernameRaw;
 
-    await this.fpsService.addFpsMechanics(this.scene, this.canvas, this.username);
-    
-    this.skybox = this.createSkyBox();
-    //this.ground = this.createGround(4000, 0, 'grass.jpg');
-    //this.platform = this.createGround(5000, -200, 'lava.jpg');
+        this.createScene();
+        this.handleWindowResize();
+        this.handleBoundingBoxes();
 
-    this.handleDebugLayer();
-    this.handleDebugCamera();
-    this.handleSideNavKeyBind();
-    this.handleFullScreen();
-    this.getCameraSensitivity();
+        await this.fpsService.addFpsMechanics(this.scene, this.canvas, this.username);
+        
+        this.skybox = this.createSkyBox();
+        //this.ground = this.createGround(4000, 0, 'grass.jpg');
+        //this.platform = this.createGround(5000, -200, 'lava.jpg');
 
-    // running babylonJS
-    this.render();
+        this.handleDebugLayer();
+        this.handleDebugCamera();
+        this.handleSideNavKeyBind();
+        this.handleFullScreen();
+        this.getCameraSensitivity();
+
+        // running babylonJS
+        this.render();
+      }, 
+      error => this.authService.logout()
+    );
+
   }
 
   createScene() {
@@ -116,15 +121,6 @@ export class BabylonjsComponent implements OnInit {
 
   setCameraSensitivity(cameraSensitivity: number) {
     this.fpsService.setCameraSensitivity(cameraSensitivity);
-  }
-
-  getUsername() {
-    this.username = this.fpsService.getUsername();
-  }
-
-  setUsername(username: string) {
-    this.username = exists(username);
-    this.fpsService.setUsername(this.username);
   }
 
   handleWindowResize() {
@@ -209,6 +205,6 @@ export class BabylonjsComponent implements OnInit {
 
   ngOnDestroy() {
     console.log('Disposing scene')
-    this.scene.dispose();
+    this.scene?.dispose();
   }
 }

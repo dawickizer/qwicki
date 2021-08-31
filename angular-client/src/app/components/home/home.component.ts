@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { exists } from 'src/app/utilities/username.utility';
 
 @Component({
   selector: 'app-home',
@@ -9,12 +8,8 @@ import { exists } from 'src/app/utilities/username.utility';
 })
 export class HomeComponent implements OnInit {
 
-  username: string = '';
   constructor(private router: Router) { }
 
   ngOnInit(): void {}
 
-  play() {
-    this.router.navigate(['/babylonjs'], { queryParams: { username: exists(this.username) } });
-  }
 }

@@ -14,4 +14,13 @@ db.createUser({
 });
 
 // Insert a document into the users collection
-db.users.insert({name: 'David', age: 45});
+db.users.insert({
+  username: 'admin',
+  usernameRaw: 'admin',
+  password: 'password', 
+  role: 'admin', 
+  email: 'admin@gmail.com', 
+  firstName: 'Hodoo', 
+  middleName: 'W', 
+  lastName: 'Kang'
+});

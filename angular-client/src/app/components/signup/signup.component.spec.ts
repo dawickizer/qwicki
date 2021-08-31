@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ThreejsComponent } from './threejs.component';
+import { SignupComponent } from './signup.component';
 
-describe('ThreejsComponent', () => {
-  let component: ThreejsComponent;
-  let fixture: ComponentFixture<ThreejsComponent>;
+describe('SignupComponent', () => {
+  let component: SignupComponent;
+  let fixture: ComponentFixture<SignupComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ThreejsComponent ]
+      declarations: [ SignupComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ThreejsComponent);
+    fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

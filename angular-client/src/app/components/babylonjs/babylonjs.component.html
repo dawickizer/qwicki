@@ -7,13 +7,6 @@
         Sensitivity
         <mat-slider min="200" max="20000" [(value)]="cameraSensitivity" (change)="setCameraSensitivity(cameraSensitivity)" thumbLabel="true"></mat-slider>       
         <span class="material-icons">mouse</span>   
-        <form class="example-form" (keydown.enter)="$event.preventDefault()">
-            <mat-form-field class="example-full-width">
-              <mat-label>User Name</mat-label>
-              <input matInput [value]="username" (input)="setUsername($event.target.value)" placeholder="Ex. xx-legit-snipes">
-            </mat-form-field>
-            <span id="face" class="material-icons">face</span> 
-        </form>  
         <br>
         <br>
         <h1>Controls</h1>

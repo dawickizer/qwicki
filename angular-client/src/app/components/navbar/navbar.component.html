@@ -1,25 +1,24 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-  <a class="navbar-brand" href="#">Home</a>
+  <a class="navbar-brand" routerLink="/">Qwicki</a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
-
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav mr-auto">
+    <ul *ngIf="isLoggedIn()" class="navbar-nav mr-auto">
       <li class="nav-item">
         <a class="nav-link" routerLink="/phaserio">Phaser.io</a>
       </li>
       <li class="nav-item">
         <a class="nav-link" routerLink="/babylonjs">Babylon.js</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/threejs">Three.js</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/socketio">Socket.io</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" routerLink="/api">API</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" routerLink="/user-profile">User Profile</a>
+          <a class="dropdown-item" routerLink="/settings">Settings</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" role="button" (click)="logout()">Logout</a>
+        </div>
       </li>
     </ul>
   </div>

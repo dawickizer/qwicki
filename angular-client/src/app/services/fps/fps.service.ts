@@ -12,13 +12,6 @@ import { Player } from 'src/app/models/player/player';
 import * as CANNON from 'cannon';
 import { CannonJSPlugin, PhysicsImpostor, PhysicsHelper, PhysicsRadialImpulseFalloff } from '@babylonjs/core';
 
-// Socket 
-import * as io from 'socket.io-client';
-import { environment } from 'src/environments/environment';
-
-// Utilities
-import { generateToken } from 'src/app/utilities/username.utility';
-
 @Injectable({
   providedIn: 'root'
 })
@@ -27,8 +20,6 @@ export class FpsService {
   camera: UniversalCamera;
   scene: Scene;
   canvas: ElementRef<HTMLCanvasElement>;
-
-  socket: SocketIOClient.Socket
 
   ground: Mesh;
 
@@ -87,20 +78,6 @@ export class FpsService {
 
     this.addPhysics();
     this.createGround();
-
-    this.addSocket();
-  }
-
-  addSocket() {
-    this.socket = this.socket = io(environment.EXPRESS_ENDPOINT, {
-      query: {
-        token: generateToken(this.username),
-        username: this.username
-      }
-    });
-    this.socket.on('user-connected-broadcast', (data: string) => this.updateUserLogs(data));
-    this.socket.on('user-disconnected-broadcast', (data: string) => this.updateUserLogs(data));
-    this.socket.on('kill-logs-broadcast', (data: string) => this.updateKillLogs(data));
   }
 
   addPhysics() {
@@ -166,15 +143,6 @@ export class FpsService {
     this.self.playerMesh.position = new Vector3(0, -64, -5); // offset dude back in the Z direction and down in the Y direction by the height of the camera elipsoid
     this.self.playerMesh.bakeCurrentTransformIntoVertices(); // make new default 0,0,0 position
 
-  }
-
-  getUsername(): string {
-    return this.self.username;
-  }
-
-  setUsername(username: string) {
-    this.self.username = username;
-    this.username = username;
   }
 
   async createEnemy(username: string): Promise<Player> {
@@ -758,8 +726,7 @@ export class FpsService {
     console.log(enemy.health)
   
     if (enemy.health <= 0) {
-      this.socket.emit('kill-logs-broadcast', `${enemy.lastDamagedBy} killed ${enemy.username}`);
-      //this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.username);
+      this.updateKillLogs(enemy.lastDamagedBy + ' killed ' + enemy.username);
       setTimeout(() => enemy.health = 100, 2000);
 
       for (let k = 0; k < enemy.playerMesh.getChildMeshes().length; k++) {
