@@ -11,6 +11,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table'
 
 // Components
 import { AppRoutingModule } from './app-routing.module';
@@ -32,7 +33,7 @@ import { AuthGuardService, AuthInterceptor, AuthService } from './services/auth/
 import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
-
+import { KeyBindService } from './services/key-bind/key-bind.service';
 
 @NgModule({
   declarations: [
@@ -54,6 +55,7 @@ import { FpsService } from './services/fps/fps.service';
     MatCardModule,
     MatDividerModule,
     MatSnackBarModule,
+    MatTableModule,
     MatButtonModule,
     MatSidenavModule,
     MatSliderModule,
@@ -69,6 +71,7 @@ import { FpsService } from './services/fps/fps.service';
               PlayerService,
               GunService,
               FpsService,
+              KeyBindService,
               { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
             ],
   bootstrap: [AppComponent],

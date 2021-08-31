@@ -11,6 +11,7 @@ import { Player } from 'src/app/models/player/player';
 // Physics
 import * as CANNON from 'cannon';
 import { CannonJSPlugin, PhysicsImpostor, PhysicsHelper, PhysicsRadialImpulseFalloff } from '@babylonjs/core';
+import { KeyBindService } from '../key-bind/key-bind.service';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +55,8 @@ export class FpsService {
 
 
   constructor(private gunService: GunService, 
-              private playerService: PlayerService) { }
+              private playerService: PlayerService, 
+              private keyBindService: KeyBindService) { }
 
   async addFpsMechanics(scene: Scene, canvas: ElementRef<HTMLCanvasElement>, username: string) {
     this.camera = scene.activeCamera as UniversalCamera;
@@ -511,13 +513,13 @@ export class FpsService {
   }
 
   handleRunOnShift() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.sprint() });
-    document.addEventListener('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.walk() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.sprint() });
+    this.keyBindService.setKeyBind('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.walk() });
   }
 
   // due to system settings and how they control shortcut keys...ctrl+ shortcuts cannot fully be disabled. Putting crouch on C
   handleCrouchOnC() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyC') this.crouched() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyC') this.crouched() });
   }
   
   sprint() {
@@ -553,7 +555,7 @@ export class FpsService {
   }
 
   handleFlyOnSpace() {
-    document.addEventListener('keydown', event => { 
+    this.keyBindService.setKeyBind('keydown', event => { 
       if (this.isSceneLocked && event.code == 'Space') {
         if (this.self.crouched) this.stand();
         else this.camera.applyGravity = !this.camera.applyGravity;
@@ -562,23 +564,23 @@ export class FpsService {
   }
 
   handleReloadOnR() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.self.getActiveWeapon().reloadSound.isPlaying && this.self.getActiveWeapon().ammo < this.self.getActiveWeapon().magazine && !this.self.justMeleed) this.reloadWeapon() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyR' && !this.self.getActiveWeapon().reloadSound.isPlaying && this.self.getActiveWeapon().ammo < this.self.getActiveWeapon().magazine && !this.self.justMeleed) this.reloadWeapon() });
   }
 
   handleSwapWeaponOnF() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF' && !this.self.swappingWeapons && !this.self.justMeleed) this.swapWeapon() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF' && !this.self.swappingWeapons && !this.self.justMeleed) this.swapWeapon() });
   }
 
   handlePickupWeaponOnE() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyE' && this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh) && !this.self.justMeleed) this.pickupWeapon() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyE' && this.self.selectingMesh.intersectsMesh(this.spareWeapon.gunMesh) && !this.self.justMeleed) this.pickupWeapon() });
   }
 
   handleGrenadeOnG() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'KeyG' && !this.self.justMeleed) this.grenade() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyG' && !this.self.justMeleed) this.grenade() });
   }
 
   handleMeleeOn4() {
-    document.addEventListener('keydown', event => { if (this.isSceneLocked && event.code == 'Digit4' && !this.self.justMeleed) this.melee() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'Digit4' && !this.self.justMeleed) this.melee() });
   }
 
   handlePointerEvents() {
@@ -764,7 +766,7 @@ export class FpsService {
 
   handlePointerLockChange() {
      // Toggle state of pointer lock so that requestPointerLock does not get called repetitively and handle window state
-     document.addEventListener('pointerlockchange', () => {
+     this.keyBindService.setKeyBind('pointerlockchange', () => {
       if (document.pointerLockElement) {
         this.isSceneLocked = true;
         this.unloadScrollBars();
