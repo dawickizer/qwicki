@@ -34,6 +34,7 @@ import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
 import { KeyBindService } from './services/key-bind/key-bind.service';
+import { SocialService } from './services/social/social.service';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { KeyBindService } from './services/key-bind/key-bind.service';
               GunService,
               FpsService,
               KeyBindService,
+              SocialService,
               { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
             ],
   bootstrap: [AppComponent],

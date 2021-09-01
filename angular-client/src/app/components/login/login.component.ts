@@ -14,7 +14,11 @@ export class LoginComponent implements OnInit {
 
   credentials: Credentials = new Credentials();
   return: string = '';
-  constructor(private router: Router, private route: ActivatedRoute, private authService: AuthService, private snackBar: MatSnackBar) { }
+  constructor(
+    private router: Router, 
+    private route: ActivatedRoute, 
+    private authService: AuthService, 
+    private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
     this.route.queryParams.subscribe(params => this.return = params['return'] || '/babylonjs');

@@ -1,11 +1,14 @@
+import { Friend } from "../friend/friend";
+
 export class User {
   _id?: string;
-  username: String;
-  usernameRaw?: String;
-  password: String;
-  role?: String;
-  email: String;
-  firstName: String;
-  middleName?: String;
-  lastName: String;
+  username: string;
+  usernameRaw?: string;
+  password: string;
+  role?: string;
+  email: string;
+  firstName: string;
+  middleName?: string;
+  lastName: string;
+  friends: Friend[] = [];
 }
