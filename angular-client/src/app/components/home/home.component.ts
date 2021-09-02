@@ -39,8 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     .subscribe(user => this.userService.get(user._id)
     .subscribe(user => {
       this.user = user;
-      this.user.friends = user.friends ?? [];
-      this.dataSource.data = user.friends;
+      this.dataSource.data = this.user.friends;
     }));
     this.handleSideNavKeyBind();
   }
@@ -59,29 +58,19 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.dataSource._updateChangeSubscription();
     this.userService.update(this.user).subscribe(user => {
       this.user = user;
-      this.user.friends = user.friends ?? [];
-      this.dataSource.data = user.friends;
-      console.log(this.user)
+      this.dataSource.data = this.user.friends;
     }, error => console.log(error));
   }
 
   sendFriendRequest() {
-
     let friendRequest = new FriendRequest(new Friend(this.user.username, this.user._id), new Friend(this.potentialFriend));
-    this.socialService.sendFriendRequest(friendRequest).subscribe(success => {console.log(success)}, error => {});
-
-    // find user by username that was provided
-    this.userService.getFriendByUsername(this.potentialFriend).subscribe(friend => {
-      this.user.friends.push(friend);
-      this.dataSource._updateChangeSubscription();
-      this.userService.update(this.user).subscribe(user => {
-        this.user = user;
-        this.user.friends = user.friends ?? [];
-        this.dataSource.data = user.friends;
-        console.log(this.user)
-      }, error => console.log(error));
-
-      this.openSnackBar('Friend request sent to ' + friend.username, 'Dismiss');
+    this.socialService.sendFriendRequest(friendRequest).subscribe(success => {
+      this.user = success.fromUser;
+      this.user.friends.push(success.toUser);
+      this.dataSource.data.push(success.toUser);
+      this.dataSource._updateChangeSubscription();  
+      this.openSnackBar('Friend request sent to ' + success.toUser.username, 'Dismiss');   
+      console.log(this.user);
     }, error => this.openSnackBar(error, 'Dismiss'));
   }
 

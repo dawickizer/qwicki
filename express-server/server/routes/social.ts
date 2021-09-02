@@ -25,11 +25,8 @@ router.post('/friend-request', [isAuthenticatedJWT, requestBody], async (req: an
     let fromUser: User | null = await userService.get(friendRequest.from._id);
     fromUser?.outboundFriendRequests.push(friendRequest);
     fromUser = await userService.put(friendRequest.from._id, fromUser as User);
-
-    console.log('jfdsjfdklfdasjfdklfjafkadl;f')
-    console.log(toUser)
-    console.log(friendRequest)
-    res.send({friendRequest, fromUser});
+    toUser = await userService.put(friendRequest.to._id, toUser as User);
+    res.send({friendRequest, fromUser, toUser});
 });
 
 export default router;
