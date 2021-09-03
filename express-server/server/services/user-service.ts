@@ -24,31 +24,30 @@ class UserService {
     return await User.findById(id);
   }
 
-  // GET a user by username (case insensitve) AND password (case sensitive) - CHECK USER SCHEMA to see why
+  // GET a user by username (case insensitve) AND password (case sensitive)
   async getByCredentials(credentials: any): Promise<User | null> {
-    return await User.findOne({username: credentials.username, password: credentials.password});
+    return await User.findOne({usernameLower: credentials.username, password: credentials.password});
   }
 
   // GET a user by username (case insensitve)
   async getByUsername(username: string): Promise<User | null> {
-    return await User.findOne({username: username});
+    return await User.findOne({usernameLower: username});
   }
 
   // POST one user
   async post(user: User): Promise<User> {
-    user.usernameRaw = user.username; // preserve original username before it gets converted to lowercase in DB
+    user.usernameLower = user.username;
     return await User.create(user);
   }
 
   // POST many users.
   async postMany(users: User[]): Promise<User[]> {
-    // preserve original username before it gets converted to lowercase in DB
-    return await User.insertMany(users.map(user => ({...user, usernameRaw: user.username})));
+    return await User.insertMany(users.map(user => ({...user, usernameLower: user.username})));
   }
 
   // PUT a user
   async put(id: string, user: User): Promise<User | null> {
-    user.usernameRaw = user.username; // preserve original username before it gets converted to lowercase in DB
+    user.usernameLower = user.username;
     return await User.findOneAndUpdate({_id: id}, user, {new: true});
   }
 

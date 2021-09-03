@@ -63,13 +63,16 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   sendFriendRequest() {
+
+    // create a friend request with the to and from user data
     let friendRequest = new FriendRequest(new Friend(this.user.username, this.user._id), new Friend(this.potentialFriend));
-    this.socialService.sendFriendRequest(friendRequest).subscribe(success => {
-      this.user = success.fromUser;
-      this.user.friends.push(success.toUser);
-      this.dataSource.data.push(success.toUser);
+
+    // use social service to send friend request
+    this.socialService.sendFriendRequest(friendRequest).subscribe(user => {
+      this.user = user;
+      this.dataSource.data = this.user.friends;
       this.dataSource._updateChangeSubscription();  
-      this.openSnackBar('Friend request sent to ' + success.toUser.username, 'Dismiss');   
+      this.openSnackBar('Friend request sent to ' + friendRequest.to.username, 'Dismiss');   
       console.log(this.user);
     }, error => this.openSnackBar(error, 'Dismiss'));
   }

@@ -42,7 +42,7 @@ export class BabylonjsComponent implements OnInit {
 
     this.authService.currentUser().subscribe(
       async user => {
-        this.username = user.usernameRaw;
+        this.username = user.username;
 
         this.createScene();
         this.handleWindowResize();

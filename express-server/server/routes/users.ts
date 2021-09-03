@@ -38,13 +38,6 @@ router.get('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], asy
     else res.status(500).send('Problem getting user');
 });
 
-// GET one user as a friend.
-router.get('/friends/:username', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
-    let user: User | null = await userService.getByUsername(req.params.username);
-    if (user) res.status(200).json({_id: user._id, username: user.username, usernameRaw: user.usernameRaw}); // return only friend fields
-    else res.status(404).send('User does not exist');
-});
-
 // PUT (update) one user.
 router.put('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin && !req.body.isAuthorized) return res.sendStatus(401);

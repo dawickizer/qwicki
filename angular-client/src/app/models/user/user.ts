@@ -3,7 +3,6 @@ import { Friend } from "../friend/friend";
 export class User {
   _id?: string;
   username: string;
-  usernameRaw?: string;
   password: string;
   role?: string;
   email: string;

@@ -1,25 +1,25 @@
 import { Schema, model, Document } from 'mongoose';
 import { handleE11000, handleRequiredField } from '../middleware/error';
-import { FriendSchema } from './friend';
+import { Friend, FriendSchema } from './friend';
 import { FriendRequest, FriendRequestSchema } from './friend-request';
 interface User extends Document {
   username: String;
-  usernameRaw: String;
+  usernameLower: String;
   password: String;
   role: String,
   email: String;
   firstName: String;
   middleName: String;
   lastName: String;
-  friends: User[];
+  friends: Friend[];
   inboundFriendRequests: FriendRequest[];
   outboundFriendRequests: FriendRequest[];
 }
 
 // create mongoose schema
 const UserSchema = new Schema<User>({
-  username: { type: String, lowercase: true, unique: true, required: true },
-  usernameRaw: { type: String, unique: true },
+  username: { type: String, unique: true, required: true },
+  usernameLower: { type: String, unique: true, lowercase: true },
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
   email: { type: String, unique: true, default: null },
