@@ -8,7 +8,7 @@ class SocialService {
     // create UserService
     userService: UserService = new UserService();
 
-    async friendRequest(req: any): Promise<User | null> {
+    async handleFriendRequest(req: any): Promise<User | null> {
 
         let toUser: User | null = new User();
         let fromUser: User | null = new User(); 
@@ -19,10 +19,13 @@ class SocialService {
         fromUser = await this.userService.get(req.body.decodedJWT._id);
     
         if (toUser && fromUser) {
- 
-            //if (this.alreadySentFriendRequest(toUser, req.body.decodedJWT)) throw Error('You already sent a friend request to this user');
-            //if (this.isFriends(toUser, req.body.decodedJWT)) throw Error('You already are friends with this user');
-    
+
+            // Check friend request eligibility
+            if (toUser.friends.includes(fromUser._id)) throw Error('You already are friends with this user');
+            for (let fromUserOutboundFriendRequest of fromUser.outboundFriendRequests) 
+                 if (toUser.inboundFriendRequests.includes(fromUserOutboundFriendRequest))
+                    throw Error('You already sent a friend request to this user');
+
             // update friend request with 'to' and 'from' friends ids
             friendRequest.to = toUser._id;
             friendRequest.from = fromUser._id;
@@ -54,33 +57,6 @@ class SocialService {
 
     async createFriendRequest(friendRequest: FriendRequest): Promise<FriendRequest> {
         return await FriendRequest.create(friendRequest);
-    }
-
-    // private alreadySentFriendRequest(toUser: User, fromUser: any): boolean {
-    //     let flag = false;
-    //     for (let request of toUser.inboundFriendRequests) {
-    //         if (request.from._id == fromUser._id) {
-    //             flag = true;
-    //             return flag;
-    //         } 
-    //     }
-    //     return flag;
-    // }
-
-    // private isFriends(toUser: User, fromUser: any): boolean {
-    //     let flag = false;
-    //     for (let friend of toUser.friends) {
-    //         if (friend._id == fromUser._id) {
-    //             flag = true;
-    //             return flag;
-    //         } 
-    //     }
-    //     return flag;
-    // }
-
-    private isBlocked(toUser: User, fromUser: any): boolean {
-        let flag = false;
-        return flag;
     }
 }
 

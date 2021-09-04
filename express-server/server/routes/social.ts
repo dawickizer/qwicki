@@ -12,8 +12,8 @@ let socialService: SocialService = new SocialService();
 // handle friend request
 router.post('/friend-request', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
     try {
-        res.send(await socialService.friendRequest(req));
-    } catch (error) {
+        res.send(await socialService.handleFriendRequest(req));
+    } catch (error: any) {
         res.status(500).send(error.message);
     }
 });
