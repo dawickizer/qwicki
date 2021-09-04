@@ -1,4 +1,3 @@
-import { Friend } from '../models/friend';
 import { FriendRequest } from '../models/friend-request';
 import { User } from '../models/user';
 import UserService from './user-service';
@@ -11,9 +10,7 @@ class SocialService {
 
     async friendRequest(req: any): Promise<User | null> {
 
-        let toFriend: Friend = new Friend();
         let toUser: User | null = new User();
-        let fromFriend: Friend = new Friend();
         let fromUser: User | null = new User(); 
         let friendRequest: FriendRequest = new FriendRequest();
     
@@ -23,64 +20,63 @@ class SocialService {
     
         if (toUser && fromUser) {
  
-            if (this.alreadySentFriendRequest(toUser, req.body.decodedJWT)) throw Error('You already sent a friend request to this user');
-            if (this.isFriends(toUser, req.body.decodedJWT)) throw Error('You already are friends with this user');
-
-            // update 'to user' id and username (case sensitive)
-            toFriend._id = toUser._id;
-            toFriend.username = toUser.username as string;
+            //if (this.alreadySentFriendRequest(toUser, req.body.decodedJWT)) throw Error('You already sent a friend request to this user');
+            //if (this.isFriends(toUser, req.body.decodedJWT)) throw Error('You already are friends with this user');
     
-            // update 'from user' id and username (case sensitive)
-            fromFriend._id = req.body.decodedJWT._id;
-            fromFriend.username = req.body.decodedJWT.username;
-    
-            // update friend request with 'to' and 'from' friends
-            friendRequest.to = toFriend;
-            friendRequest.from = fromFriend;
+            // update friend request with 'to' and 'from' friends ids
+            friendRequest.to = toUser._id;
+            friendRequest.from = fromUser._id;
     
             // handle friend request metadata
             friendRequest.createdAt = new Date();
             friendRequest.accepted = false;
     
-            // update the 'to user' inbound friend requests
-            toUser.inboundFriendRequests.push(friendRequest);
+            // update the 'to user' inbound friend request ids
+            toUser.inboundFriendRequests.push(friendRequest._id);
             toUser.friends.push(friendRequest.from);
     
-            // update the 'from user' outbound friend requests
-            fromUser.outboundFriendRequests.push(friendRequest);
+            // update the 'from user' outbound friend request ids
+            fromUser.outboundFriendRequests.push(friendRequest._id);
             fromUser.friends.push(friendRequest.to);
     
+            // persist the friend request
+            friendRequest = await this.createFriendRequest(friendRequest);
+
             // persist the updated to user
-            toUser = await this.userService.put(friendRequest.to._id, toUser as User);
+            toUser = await this.userService.put(friendRequest.to, toUser);
     
             // persist the updated from user
-            fromUser = await this.userService.put(friendRequest.from._id, fromUser as User);
+            fromUser = await this.userService.putAndPopulateFriends(friendRequest.from, fromUser);
 
             return fromUser;
         } else throw Error('User does not exist');
     }
 
-    private alreadySentFriendRequest(toUser: User, fromUser: any): boolean {
-        let flag = false;
-        for (let request of toUser.inboundFriendRequests) {
-            if (request.from._id == fromUser._id) {
-                flag = true;
-                return flag;
-            } 
-        }
-        return flag;
+    async createFriendRequest(friendRequest: FriendRequest): Promise<FriendRequest> {
+        return await FriendRequest.create(friendRequest);
     }
 
-    private isFriends(toUser: User, fromUser: any): boolean {
-        let flag = false;
-        for (let friend of toUser.friends) {
-            if (friend._id == fromUser._id) {
-                flag = true;
-                return flag;
-            } 
-        }
-        return flag;
-    }
+    // private alreadySentFriendRequest(toUser: User, fromUser: any): boolean {
+    //     let flag = false;
+    //     for (let request of toUser.inboundFriendRequests) {
+    //         if (request.from._id == fromUser._id) {
+    //             flag = true;
+    //             return flag;
+    //         } 
+    //     }
+    //     return flag;
+    // }
+
+    // private isFriends(toUser: User, fromUser: any): boolean {
+    //     let flag = false;
+    //     for (let friend of toUser.friends) {
+    //         if (friend._id == fromUser._id) {
+    //             flag = true;
+    //             return flag;
+    //         } 
+    //     }
+    //     return flag;
+    // }
 
     private isBlocked(toUser: User, fromUser: any): boolean {
         let flag = false;

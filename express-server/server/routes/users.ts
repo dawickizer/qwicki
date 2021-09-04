@@ -33,7 +33,7 @@ router.post('/', [isAuthenticatedJWT, isAdmin, requestBody], async (req: any, re
 // GET one user.
 router.get('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], async (req: any, res: any) => {
     if (!req.body.isAdmin && !req.body.isAuthorized) return res.sendStatus(401);
-    let user: User | null = await userService.get(req.params.id);
+    let user: User | null = await userService.getAndPopulateFriends(req.params.id);
     if (user) res.status(200).json(user);
     else res.status(500).send('Problem getting user');
 });
@@ -43,7 +43,7 @@ router.put('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], asy
     if (!req.body.isAdmin && !req.body.isAuthorized) return res.sendStatus(401);
     if (!req.body.isAdmin) req.body.role = "user"; // dont allow non admin users to update role
     try {
-        let user: User | null = await userService.put(req.params.id, req.body);
+        let user: User | null = await userService.putAndPopulateFriends(req.params.id, req.body);
         if (user) res.status(200).json(user);
         else res.status(500).send('Problem updating user'); 
     } catch (error: any) {

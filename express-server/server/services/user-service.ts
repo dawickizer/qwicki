@@ -1,5 +1,5 @@
 // Import dependencies (node_modules)
-import { connect } from 'mongoose';
+import { connect, Schema } from 'mongoose';
 
 // Import dependencies (module.exports)
 import config from '../config/config';
@@ -24,6 +24,26 @@ class UserService {
     return await User.findById(id);
   }
 
+  // GET a user by id and populate its friends
+  async getAndPopulateFriends(id: string): Promise<User | null> {
+    return await User.findById(id).populate('friends', 'username');
+  }
+
+  // GET a user by id and populate its friend requests
+  async getAndPopulateFriendRequests(id: string): Promise<User | null> {
+    return await User.findById(id)
+    .populate('inboundFriendRequests')
+    .populate('outboundFriendRequests');
+  }
+
+  // GET a user by id and populate children
+  async getAndPopulateChildren(id: string): Promise<User | null> {
+    return await User.findById(id)
+    .populate('friends', 'username')
+    .populate('inboundFriendRequests')
+    .populate('outboundFriendRequests');
+  }
+
   // GET a user by username (case insensitve) AND password (case sensitive)
   async getByCredentials(credentials: any): Promise<User | null> {
     return await User.findOne({usernameLower: credentials.username, password: credentials.password});
@@ -46,9 +66,32 @@ class UserService {
   }
 
   // PUT a user
-  async put(id: string, user: User): Promise<User | null> {
+  async put(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
     user.usernameLower = user.username;
     return await User.findOneAndUpdate({_id: id}, user, {new: true});
+  }
+
+  // PUT a user
+  async putAndPopulateFriends(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
+    user.usernameLower = user.username;
+    return await User.findOneAndUpdate({_id: id}, user, {new: true}).populate('friends', 'username');
+  }
+
+  // PUT a user
+  async putAndPopulateFriendRequests(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
+    user.usernameLower = user.username;
+    return await User.findOneAndUpdate({_id: id}, user, {new: true})
+    .populate('inboundFriendRequests')
+    .populate('outboundFriendRequests');
+  }
+
+  // PUT a user
+  async putAndPopulateChildren(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
+    user.usernameLower = user.username;
+    return await User.findOneAndUpdate({_id: id}, user, {new: true})
+    .populate('friends', 'username')
+    .populate('inboundFriendRequests')
+    .populate('outboundFriendRequests');
   }
 
   // DELETE many users

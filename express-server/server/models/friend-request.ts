@@ -1,18 +1,17 @@
 import { Schema, model, Document } from 'mongoose';
-import { Friend, FriendSchema } from './friend';
 
 interface FriendRequest extends Document {
     createdAt: Date;
-    from: Friend;
-    to: Friend;
+    from: Schema.Types.ObjectId;
+    to: Schema.Types.ObjectId;
     accepted: boolean;
 }
 
 // create mongoose schema
 const FriendRequestSchema = new Schema<FriendRequest>({
     createdAt: { type: Date },
-    from: { type: FriendSchema },
-    to: { type: FriendSchema },
+    from: { type: Schema.Types.ObjectId, default: null, ref: 'User' },
+    to: { type: Schema.Types.ObjectId, default: null, ref: 'User' },
     accepted: { type: Boolean }
   });
 

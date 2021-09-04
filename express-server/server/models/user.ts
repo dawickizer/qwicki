@@ -1,6 +1,5 @@
 import { Schema, model, Document } from 'mongoose';
 import { handleE11000, handleRequiredField } from '../middleware/error';
-import { Friend, FriendSchema } from './friend';
 import { FriendRequest, FriendRequestSchema } from './friend-request';
 interface User extends Document {
   username: String;
@@ -11,9 +10,9 @@ interface User extends Document {
   firstName: String;
   middleName: String;
   lastName: String;
-  friends: Friend[];
-  inboundFriendRequests: FriendRequest[];
-  outboundFriendRequests: FriendRequest[];
+  friends: Schema.Types.ObjectId[];
+  inboundFriendRequests: Schema.Types.ObjectId[];
+  outboundFriendRequests: Schema.Types.ObjectId[];
 }
 
 // create mongoose schema
@@ -26,9 +25,9 @@ const UserSchema = new Schema<User>({
   firstName: { type: String, default: null },
   middleName: { type: String, default: null },
   lastName: { type: String, default: null },
-  friends: [FriendSchema],
-  inboundFriendRequests: [FriendRequestSchema],
-  outboundFriendRequests: [FriendRequestSchema]
+  friends: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
+  inboundFriendRequests: [{ type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' }],
+  outboundFriendRequests: [{ type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' }],
 });
 
 UserSchema.post('save', handleE11000);
