@@ -47,7 +47,7 @@ router.put('/:id', [isAuthenticatedJWT, isAdmin, isAuthorized, requestBody], asy
         if (user) res.status(200).json(user);
         else res.status(500).send('Problem updating user'); 
     } catch (error: any) {
-        res.status(409).send(error.message)
+        res.status(409).send(error.message);
     }
 });
 

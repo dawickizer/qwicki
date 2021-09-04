@@ -17,8 +17,8 @@ export class SocialService {
 
   constructor(private http: HttpClient) { }
 
-  sendFriendRequest(friendRequest: FriendRequest): Observable<User> {
-    return this.http.post<User>(`${this.API}/social/friend-request`, friendRequest)
+  sendFriendRequest(username: string): Observable<User> {
+    return this.http.post<User>(`${this.API}/social/friend-request`, {username})
     .pipe(catchError(this.handleError));
   }
 
