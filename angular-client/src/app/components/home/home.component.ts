@@ -70,7 +70,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.dataSource.data = this.user.friends;
       this.dataSource._updateChangeSubscription();  
       this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
-      console.log(this.user);
     }, error => this.openSnackBar(error, 'Dismiss'));
   }
 
