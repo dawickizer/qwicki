@@ -58,6 +58,27 @@ class SocialService {
     async createFriendRequest(friendRequest: FriendRequest): Promise<FriendRequest> {
         return await FriendRequest.create(friendRequest);
     }
+
+    async removeFriend(req: any): Promise<User | null> {
+
+        let requestor: User | null = new User();
+        let requested: User | null = new User(); 
+
+        // retrieve the users
+        requestor = await this.userService.get(req.body.decodedJWT._id);
+        requested = await this.userService.get(req.params.id);
+
+        // if they exist remove each other from each others' friend list
+        if (requestor && requested) {
+            requestor.friends.splice(requestor.friends.indexOf(requested._id), 1);
+            requested.friends.splice(requested.friends.indexOf(requestor._id), 1);
+
+            requestor = await this.userService.putAndPopulateFriends(requestor._id, requestor);
+            requested = await this.userService.put(requested._id, requested);
+
+            return requestor;
+        } else throw Error('User does not exist');
+    }
 }
 
 export default SocialService;

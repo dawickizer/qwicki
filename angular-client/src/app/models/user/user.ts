@@ -9,5 +9,6 @@ export class User {
   firstName: string;
   middleName?: string;
   lastName: string;
+  online: boolean;
   friends: Friend[] = [];
 }

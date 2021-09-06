@@ -22,6 +22,11 @@ export class SocialService {
     .pipe(catchError(this.handleError));
   }
 
+  removeFriend(friend: Friend): Observable<User> {
+    return this.http.delete<User>(`${this.API}/social/remove-friend/${friend._id}`)
+    .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.

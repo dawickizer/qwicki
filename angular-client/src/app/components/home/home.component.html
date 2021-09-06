@@ -20,7 +20,7 @@
         <h1><span style="color:rgb(0, 255, 149)">online</span></h1>
         <mat-divider></mat-divider>
  
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+        <table mat-table [dataSource]="onlineFriends" class="mat-elevation-z0">
 
             <ng-container matColumnDef="name">
               <td mat-cell *matCellDef="let element"> {{element.username}} </td>
@@ -46,7 +46,7 @@
         <h1><span style="color:rgb(255, 0, 76)">offline</span></h1>
         <mat-divider></mat-divider>
 
-        <table mat-table [dataSource]="dataSource" class="mat-elevation-z0">
+        <table mat-table [dataSource]="offlineFriends" class="mat-elevation-z0">
 
             <ng-container matColumnDef="name">
               <td mat-cell *matCellDef="let element"> {{element.username}} </td>
@@ -54,7 +54,7 @@
 
             <ng-container matColumnDef="delete">
                 <td mat-cell *matCellDef="let element">
-                    <span class="material-icons">close</span>
+                    <span (click)="removeFriend(element)" class="material-icons">close</span>
                 </td>
             </ng-container>
 

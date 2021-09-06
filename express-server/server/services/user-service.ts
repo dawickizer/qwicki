@@ -26,7 +26,7 @@ class UserService {
 
   // GET a user by id and populate its friends
   async getAndPopulateFriends(id: string): Promise<User | null> {
-    return await User.findById(id).populate('friends', 'username');
+    return await User.findById(id).populate('friends', ['username', 'online']);
   }
 
   // GET a user by id and populate its friend requests
@@ -74,7 +74,7 @@ class UserService {
   // PUT a user
   async putAndPopulateFriends(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
     user.usernameLower = user.username;
-    return await User.findOneAndUpdate({_id: id}, user, {new: true}).populate('friends', 'username');
+    return await User.findOneAndUpdate({_id: id}, user, {new: true}).populate('friends', ['username', 'online']);
   }
 
   // PUT a user
@@ -89,7 +89,7 @@ class UserService {
   async putAndPopulateChildren(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
     user.usernameLower = user.username;
     return await User.findOneAndUpdate({_id: id}, user, {new: true})
-    .populate('friends', 'username')
+    .populate('friends', ['username', 'online'])
     .populate('inboundFriendRequests')
     .populate('outboundFriendRequests');
   }
