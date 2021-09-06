@@ -18,14 +18,6 @@ router.post('/friend-request', [isAuthenticatedJWT, requestBody], async (req: an
     }
 });
 
-router.delete('/remove-friend/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
-    try {
-        res.send(await socialService.removeFriend(req));
-    } catch (error: any) {
-        res.status(500).send(error.message);
-    }
-});
-
 router.post('/accept-friend-request/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
     try {
         res.send(await socialService.acceptFriendRequest(req));
@@ -37,6 +29,14 @@ router.post('/accept-friend-request/:id', [isAuthenticatedJWT, requestBody], asy
 router.post('/reject-friend-request/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
     try {
         res.send(await socialService.rejectFriendRequest(req));
+    } catch (error: any) {
+        res.status(500).send(error.message);
+    }
+});
+
+router.delete('/remove-friend/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
+    try {
+        res.send(await socialService.removeFriend(req));
     } catch (error: any) {
         res.status(500).send(error.message);
     }

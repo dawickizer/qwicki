@@ -70,7 +70,11 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.user = user;
       this.updateFriends();
       this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
-    }, error => this.openSnackBar(error, 'Dismiss'));
+      this.potentialFriend = '';
+    }, error => {
+      this.openSnackBar(error, 'Dismiss');
+      this.potentialFriend = '';
+    });
   }
 
   acceptFriendRequest(friendRequest: FriendRequest) {
