@@ -3,6 +3,7 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { Friend } from 'src/app/models/friend/friend';
 import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
@@ -19,9 +20,12 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   @ViewChild('drawer') drawer: MatSidenav;
 
-  displayedColumns: string[] = ['name', 'delete', 'send'];
+  friendsDisplayedColumns: string[] = ['username', 'delete', 'send'];
   onlineFriends = new MatTableDataSource<Friend>([] as Friend[]);
   offlineFriends = new MatTableDataSource<Friend>([] as Friend[]);
+
+  friendRequestsDisplayedColumns: string[] = ['username', 'reject', 'accept'];
+  friendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
 
   user: User = new User();
   potentialFriend: string = '';
@@ -39,8 +43,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     .subscribe(user => this.userService.get(user._id)
     .subscribe(user => {
       this.user = user;
-      this.onlineFriends.data = this.user.friends.filter(friend => friend.online);
-      this.offlineFriends.data = this.user.friends.filter(friend => !friend.online);
+      this.updateFriends();
+      this.updateFriendRequests();
     }));
     this.handleSideNavKeyBind();
   }
@@ -54,36 +58,49 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   removeFriend(friend: Friend) {
-
-    // use social service to remove friend
     this.socialService.removeFriend(friend).subscribe(user => {
       this.user = user;
-      this.onlineFriends.data = this.user.friends.filter(friend => friend.online);
-      this.offlineFriends.data = this.user.friends.filter(friend => !friend.online);
-      this.onlineFriends._updateChangeSubscription();
-      this.offlineFriends._updateChangeSubscription();
-      this.openSnackBar('Successfully unfriended ' + friend.username, 'Dismiss');   
+      this.updateFriends();
+      this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
     }, error => this.openSnackBar(error, 'Dismiss'));
   }
 
   sendFriendRequest() {
-
-    // use social service to send friend request
     this.socialService.sendFriendRequest(this.potentialFriend).subscribe(user => {
       this.user = user;
-      this.onlineFriends.data = this.user.friends.filter(friend => friend.online);
-      this.offlineFriends.data = this.user.friends.filter(friend => !friend.online);
-      this.onlineFriends._updateChangeSubscription();
-      this.offlineFriends._updateChangeSubscription();
+      this.updateFriends();
       this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
     }, error => this.openSnackBar(error, 'Dismiss'));
   }
 
-  updateFriendsList() {
+  acceptFriendRequest(friendRequest: FriendRequest) {
+    this.socialService.acceptFriendRequest(friendRequest).subscribe(user => {
+      this.user = user;
+      this.updateFriends();
+      this.updateFriendRequests();
+      this.openSnackBar(`You and ${friendRequest.from.username} are now friends` , 'Dismiss');   
+    }, error => this.openSnackBar(error, 'Dismiss'));
+  }
+
+  rejectFriendRequest(friendRequest: FriendRequest) {
+    this.socialService.rejectFriendRequest(friendRequest).subscribe(user => {
+      this.user = user;
+      this.updateFriends();
+      this.updateFriendRequests();
+      this.openSnackBar(`Rejected ${friendRequest.from.username}'s friend request` , 'Dismiss');   
+    }, error => this.openSnackBar(error, 'Dismiss'));
+  }
+
+  private updateFriends() {
     this.onlineFriends.data = this.user.friends.filter(friend => friend.online);
     this.offlineFriends.data = this.user.friends.filter(friend => !friend.online);
     this.onlineFriends._updateChangeSubscription();
     this.offlineFriends._updateChangeSubscription();   
+  }
+
+  private updateFriendRequests() {
+    this.friendRequests.data = this.user.inboundFriendRequests;
+    this.friendRequests._updateChangeSubscription();  
   }
 
   filter(filterValue: any) {

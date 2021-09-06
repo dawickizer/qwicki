@@ -32,16 +32,16 @@ class UserService {
   // GET a user by id and populate its friend requests
   async getAndPopulateFriendRequests(id: string): Promise<User | null> {
     return await User.findById(id)
-    .populate('inboundFriendRequests')
-    .populate('outboundFriendRequests');
+    .populate(this.friendRequest('inboundFriendRequests'))
+    .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // GET a user by id and populate children
   async getAndPopulateChildren(id: string): Promise<User | null> {
     return await User.findById(id)
     .populate('friends', 'username')
-    .populate('inboundFriendRequests')
-    .populate('outboundFriendRequests');
+    .populate(this.friendRequest('inboundFriendRequests'))
+    .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // GET a user by username (case insensitve) AND password (case sensitive)
@@ -81,8 +81,8 @@ class UserService {
   async putAndPopulateFriendRequests(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
     user.usernameLower = user.username;
     return await User.findOneAndUpdate({_id: id}, user, {new: true})
-    .populate('inboundFriendRequests')
-    .populate('outboundFriendRequests');
+    .populate(this.friendRequest('inboundFriendRequests'))
+    .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // PUT a user
@@ -90,8 +90,8 @@ class UserService {
     user.usernameLower = user.username;
     return await User.findOneAndUpdate({_id: id}, user, {new: true})
     .populate('friends', ['username', 'online'])
-    .populate('inboundFriendRequests')
-    .populate('outboundFriendRequests');
+    .populate(this.friendRequest('inboundFriendRequests'))
+    .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // DELETE many users
@@ -102,6 +102,27 @@ class UserService {
   // DELETE one user
   async delete(id: string[]): Promise<any> {
     return await User.deleteOne({_id: id});
+  }
+
+  private friendRequest(path: string) {
+    return [ // reference
+      {
+        path: path,
+        model: 'FriendRequest',
+        populate: [ // reference
+          {
+            path: 'from',
+            model: 'User',
+            select: 'username'
+          },
+          {
+            path: 'to',
+            model: 'User',
+            select: 'username'
+          },
+        ]
+      }
+    ];
   }
 }
 

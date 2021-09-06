@@ -34,13 +34,9 @@ class SocialService {
             friendRequest.createdAt = new Date();
             friendRequest.accepted = false;
     
-            // update the 'to user' inbound friend request ids
+            // update the users friend request ids
             toUser.inboundFriendRequests.push(friendRequest._id);
-            toUser.friends.push(friendRequest.from);
-    
-            // update the 'from user' outbound friend request ids
             fromUser.outboundFriendRequests.push(friendRequest._id);
-            fromUser.friends.push(friendRequest.to);
     
             // persist the friend request
             friendRequest = await this.createFriendRequest(friendRequest);
@@ -49,7 +45,7 @@ class SocialService {
             toUser = await this.userService.put(friendRequest.to, toUser);
     
             // persist the updated from user
-            fromUser = await this.userService.putAndPopulateFriends(friendRequest.from, fromUser);
+            fromUser = await this.userService.putAndPopulateChildren(friendRequest.from, fromUser);
 
             return fromUser;
         } else throw Error('User does not exist');
@@ -57,6 +53,67 @@ class SocialService {
 
     async createFriendRequest(friendRequest: FriendRequest): Promise<FriendRequest> {
         return await FriendRequest.create(friendRequest);
+    }
+
+    async acceptFriendRequest(req: any): Promise<User | null> {
+
+        let requestor: User | null = new User();
+        let requested: User | null = new User(); 
+        let friendRequestId: any;
+
+        // retrieve the users and friend request id
+        requestor = await this.userService.get(req.body.decodedJWT._id);
+        requested = await this.userService.get(req.params.id);
+        friendRequestId = req.body.friendRequestId;
+
+        // if they exist add each other to each others' friend list and remove the active friend request
+        if (requestor && requested) {
+
+            // confirm friend request really exists between the two users
+            if (!requestor.inboundFriendRequests.includes(friendRequestId) &&
+            !requested.outboundFriendRequests.includes(friendRequestId)) 
+                throw Error('A friend request does not exist between you and the other user')
+
+            requestor.friends.push(requested._id);
+            requested.friends.push(requestor._id);
+
+            requestor.inboundFriendRequests.splice(requestor.inboundFriendRequests.indexOf(friendRequestId), 1);
+            requested.outboundFriendRequests.splice(requested.outboundFriendRequests.indexOf(friendRequestId), 1);
+
+            requestor = await this.userService.putAndPopulateChildren(requestor._id, requestor);
+            requested = await this.userService.put(requested._id, requested);
+
+            return requestor;
+        } else throw Error('User does not exist');
+    }
+
+    async rejectFriendRequest(req: any): Promise<User | null> {
+
+        let requestor: User | null = new User();
+        let requested: User | null = new User(); 
+        let friendRequestId: any;
+
+        // retrieve the users and friend request id
+        requestor = await this.userService.get(req.body.decodedJWT._id);
+        requested = await this.userService.get(req.params.id);
+        friendRequestId = req.body.friendRequestId;
+
+        // if they exist add each other to each others' friend list and remove the active friend request
+        if (requestor && requested) {
+
+            // confirm friend request really exists between the two users
+            if (!requestor.inboundFriendRequests.includes(friendRequestId) &&
+            !requested.outboundFriendRequests.includes(friendRequestId)) 
+                throw Error('A friend request does not exist between you and the other user')
+
+            requestor.inboundFriendRequests.splice(requestor.inboundFriendRequests.indexOf(friendRequestId), 1);
+            requested.outboundFriendRequests.splice(requested.outboundFriendRequests.indexOf(friendRequestId), 1);
+
+            requestor = await this.userService.putAndPopulateChildren(requestor._id, requestor);
+            requested = await this.userService.put(requested._id, requested);
+
+            return requestor;
+        } else throw Error('User does not exist');
     }
 
     async removeFriend(req: any): Promise<User | null> {
@@ -73,7 +130,7 @@ class SocialService {
             requestor.friends.splice(requestor.friends.indexOf(requested._id), 1);
             requested.friends.splice(requested.friends.indexOf(requestor._id), 1);
 
-            requestor = await this.userService.putAndPopulateFriends(requestor._id, requestor);
+            requestor = await this.userService.putAndPopulateChildren(requestor._id, requestor);
             requested = await this.userService.put(requested._id, requested);
 
             return requestor;

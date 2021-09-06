@@ -1,3 +1,4 @@
+import { FriendRequest } from "../friend-request/friend-request";
 import { Friend } from "../friend/friend";
 
 export class User {
@@ -11,4 +12,6 @@ export class User {
   lastName: string;
   online: boolean;
   friends: Friend[] = [];
+  inboundFriendRequests: FriendRequest[] = [];
+  outboundFriendRequests: FriendRequest[] = [];
 }
