@@ -10,7 +10,7 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
-import Colyseus from 'colyseus.js';
+import * as Colyseus from 'colyseus.js';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -20,7 +20,7 @@ import { environment } from 'src/environments/environment';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  readonly client = new Colyseus.Client(environment.COLYSEUS_ENDPOINT);
+  readonly client = new Colyseus.Client(environment.COLYSEUS_CHAT);
 
   @ViewChild('drawer') drawer: MatSidenav;
 
@@ -51,6 +51,8 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.updateFriendRequests();
     }));
     this.handleSideNavKeyBind();
+
+    this.client.joinOrCreate('my_room');
   }
 
   ngOnDestroy() {

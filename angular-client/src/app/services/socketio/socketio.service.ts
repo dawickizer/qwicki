@@ -12,7 +12,7 @@ export class SocketioService {
   constructor() { }
 
   setupSocketConnection(): SocketIOClient.Socket {
-    return this.socket = io(environment.EXPRESS_ENDPOINT, {
+    return this.socket = io(environment.EXPRESS_SERVER, {
       query: {
         token: 'cde'
       }

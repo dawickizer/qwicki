@@ -12,7 +12,7 @@ import { User } from 'src/app/models/user/user';
 })
 export class AuthService {
 
-  readonly API = environment.EXPRESS_ENDPOINT;
+  readonly API = environment.EXPRESS_SERVER;
 
   constructor(private http: HttpClient, private router: Router) { }
 

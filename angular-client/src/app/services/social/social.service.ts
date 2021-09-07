@@ -13,7 +13,7 @@ import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 })
 export class SocialService {
 
-  readonly API = environment.EXPRESS_ENDPOINT;
+  readonly API = environment.EXPRESS_SERVER;
 
   constructor(private http: HttpClient) { }
 

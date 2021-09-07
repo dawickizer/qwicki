@@ -12,7 +12,7 @@ import { Friend } from 'src/app/models/friend/friend';
 })
 export class UserService {
 
-  readonly API = environment.EXPRESS_ENDPOINT;
+  readonly API = environment.EXPRESS_SERVER;
 
   constructor(private http: HttpClient) { }
 
