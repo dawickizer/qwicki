@@ -10,6 +10,8 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
+import Colyseus from 'colyseus.js';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-home',
@@ -17,6 +19,8 @@ import { UserService } from 'src/app/services/user/user.service';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit, OnDestroy {
+
+  readonly client = new Colyseus.Client(environment.COLYSEUS_ENDPOINT);
 
   @ViewChild('drawer') drawer: MatSidenav;
 

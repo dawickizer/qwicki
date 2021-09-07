@@ -32,6 +32,7 @@
     "@babylonjs/viewer": "^4.2.0",
     "cannon": "^0.6.2",
     "cannon-es": "^0.16.0",
+    "colyseus.js": "^0.14.13",
     "dat.gui": "^0.7.7",
     "jwt-decode": "^3.1.2",
     "material-design-icons": "^3.0.1",

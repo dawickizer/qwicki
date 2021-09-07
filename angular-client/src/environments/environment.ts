@@ -4,7 +4,8 @@
 
 export const environment = {
   production: false,
-  EXPRESS_ENDPOINT: 'http://localhost:3000'
+  EXPRESS_ENDPOINT: 'http://localhost:3000',
+  COLYSEUS_ENDPOINT: 'ws://localhost:2567'
 };
 
 
