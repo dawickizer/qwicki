@@ -27,7 +27,6 @@ import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Services
-import { SocketioService } from './services/socketio/socketio.service';
 import { UserService } from './services/user/user.service';
 import { AuthGuardService, AuthInterceptor, AuthService } from './services/auth/auth.service';
 import { PlayerService } from './services/player/player.service';
@@ -65,7 +64,6 @@ import { SocialService } from './services/social/social.service';
     BrowserAnimationsModule
   ],
   providers: [
-              SocketioService,
               UserService,
               AuthService,
               AuthGuardService,

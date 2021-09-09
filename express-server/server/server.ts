@@ -2,7 +2,6 @@
 import express from 'express';
 import http from 'http'
 import cors from 'cors';
-import SocketIO from 'socket.io';
 import { json, urlencoded } from 'body-parser';
 
 // Get our API routes
@@ -14,7 +13,6 @@ import { requestTime } from './middleware/log';
 
 const app = express();
 const server = http.createServer(app);
-const io = SocketIO(server);
 
 // Parsers for POST data
 app.use(json());
