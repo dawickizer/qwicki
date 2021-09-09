@@ -1,17 +1,24 @@
 import { Room, Client } from "colyseus";
-import { MyRoomState } from "./schema/MyRoomState";
+import { ChatRoomState } from "./schema/ChatRoomState";
+import { isAuthenticatedJWT } from "../../middleware/auth";
+import http from 'http';
 
-export class MyRoom extends Room<MyRoomState> {
+export class ChatRoom extends Room<ChatRoomState> {
 
   onCreate (options: any) {
-    this.setState(new MyRoomState());
+    this.setState(new ChatRoomState());
 
     this.onMessage("type", (client, message) => {
       //
       // handle "type" message
       //
+      console.log(message)
     });
 
+  }
+
+  onAuth (client: Client, options: any, request: http.IncomingMessage) {
+    return isAuthenticatedJWT(options.accessToken);
   }
 
   onJoin (client: Client, options: any) {

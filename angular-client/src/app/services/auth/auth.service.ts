@@ -32,6 +32,10 @@ export class AuthService {
     return this.http.get<any>(`${this.API}/auth/current-user`)
     .pipe(catchError(this.handleError));
   }
+
+  currentUserJWT() {
+    return localStorage.getItem('id_token');
+  }
   
   logout(extras?: NavigationExtras) {
     localStorage.removeItem("id_token");
@@ -39,8 +43,10 @@ export class AuthService {
   }
 
   isLoggedInFrontendCheck() {
-    return localStorage.getItem('id_token'); // keep in mind user can set a fake id_token to simulate login
+    return this.currentUserJWT(); // keep in mind user can set a fake id_token to simulate login
   }
+
+
 
   isLoggedInBackendCheck(): Observable<boolean> {
     return this.http.get<boolean>(`${this.API}/auth/is-logged-in`)

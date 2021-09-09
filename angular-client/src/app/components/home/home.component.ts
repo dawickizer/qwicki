@@ -42,18 +42,40 @@ export class HomeComponent implements OnInit, OnDestroy {
     private userService: UserService,
     private socialService: SocialService) { }
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.authService.currentUser()
     .subscribe(user => this.userService.get(user._id)
-    .subscribe(user => {
+    .subscribe(async user => {
       this.user = user;
       this.updateFriends();
       this.updateFriendRequests();
+
+      try {
+        const room = await this.client.joinOrCreate("chat_room", {accessToken: this.authService.currentUserJWT()});
+        console.log("joined successfully", room);
+        
+        room.onMessage("hello", (message) => {
+          console.log("message received from server");
+          console.log(message);
+        });
+
+        room.onError((code, message) => {
+          console.log("oops, error ocurred:");
+          console.log(message);
+        });
+  
+        room.send('type', `Hello from ${this.user.username}`);
+        console.log(room.state)
+  
+      } catch (e) {
+        console.error("join error", e);
+      }
+
     }));
     this.handleSideNavKeyBind();
-
-    this.client.joinOrCreate('my_room');
   }
+
+
 
   ngOnDestroy() {
     this.keyBindService.removeKeyBinds();
