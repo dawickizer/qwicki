@@ -4,7 +4,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-import { Friend } from 'src/app/models/friend/friend';
 import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
@@ -25,8 +24,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') drawer: MatSidenav;
 
   friendsDisplayedColumns: string[] = ['username', 'delete', 'send'];
-  onlineFriends = new MatTableDataSource<Friend>([] as Friend[]);
-  offlineFriends = new MatTableDataSource<Friend>([] as Friend[]);
+  onlineFriends = new MatTableDataSource<User>([] as User[]);
+  offlineFriends = new MatTableDataSource<User>([] as User[]);
 
   friendRequestsDisplayedColumns: string[] = ['username', 'reject', 'accept'];
   friendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
@@ -46,26 +45,42 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.authService.currentUser()
     .subscribe(user => this.userService.get(user._id)
     .subscribe(async user => {
+
+      // get user data
       this.user = user;
       this.updateFriends();
       this.updateFriendRequests();
 
+      // onJoin let the host know you are online
       try {
-        const room = await this.client.joinOrCreate("chat_room", {accessToken: this.authService.currentUserJWT()});
-        console.log("joined successfully", room);
-        
-        room.onMessage("hello", (message) => {
-          console.log("message received from server");
-          console.log(message);
-        });
+        let availableRooms = await this.client.getAvailableRooms();
+        let room: Colyseus.Room;
+        let friendsRooms: Colyseus.Room[] = [];
+        let hasExistingRoom: boolean = availableRooms.some(availableRoom => availableRoom.roomId === user._id)
 
-        room.onError((code, message) => {
-          console.log("oops, error ocurred:");
-          console.log(message);
-        });
+        // create chat room instance for people who log on after you to be able to join (host broadcasts to everyone)
+        if (hasExistingRoom) room = await this.client.joinById(user._id, {accessToken: this.authService.currentUserJWT()});
+        else room = await this.client.create("chat_room", {accessToken: this.authService.currentUserJWT()}); 
+
+        // join your friends room instances to get connected with them (client messages only host)
+        this.onlineFriends.data.forEach(async friend => friendsRooms.push(await this.client.joinById(friend._id, {accessToken: this.authService.currentUserJWT()})));
+
+        // TODO:
+        // when host user disconnects from room..kick everyone and close the room
+        // need to think of when to set online to true/false
+        
+        // room.onMessage("hello", (message) => {
+        //   console.log("message received from server");
+        //   console.log(message);
+        // });
+
+        // room.onError((code, message) => {
+        //   console.log("oops, error ocurred:");
+        //   console.log(message);
+        // });
   
-        room.send('type', `Hello from ${this.user.username}`);
-        console.log(room.state)
+        // room.send('type', `Hello from ${this.user.username}`);
+        // console.log(room.state)
   
       } catch (e) {
         console.error("join error", e);
@@ -85,7 +100,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     console.log('send')
   }
 
-  removeFriend(friend: Friend) {
+  removeFriend(friend: User) {
     this.socialService.removeFriend(friend).subscribe(user => {
       this.user = user;
       this.updateFriends();

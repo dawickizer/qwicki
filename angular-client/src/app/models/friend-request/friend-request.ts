@@ -1,9 +1,9 @@
-import { Friend } from "../friend/friend";
+import { User } from "../user/user";
 
 export class FriendRequest {
   _id?: string;
   createdAt: Date;
-  from: Friend
-  to: Friend;
+  from: User
+  to: User;
   accepted: boolean;
 }

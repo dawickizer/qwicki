@@ -1,5 +1,4 @@
 import { FriendRequest } from "../friend-request/friend-request";
-import { Friend } from "../friend/friend";
 
 export class User {
   _id?: string;
@@ -11,7 +10,7 @@ export class User {
   middleName?: string;
   lastName: string;
   online: boolean;
-  friends: Friend[] = [];
+  friends: User[] = [];
   inboundFriendRequests: FriendRequest[] = [];
   outboundFriendRequests: FriendRequest[] = [];
 }

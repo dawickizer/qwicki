@@ -39,7 +39,7 @@ class UserService {
   // GET a user by id and populate children
   async getAndPopulateChildren(id: string): Promise<User | null> {
     return await User.findById(id)
-    .populate('friends', 'username')
+    .populate('friends', ['username', 'online'])
     .populate(this.friendRequest('inboundFriendRequests'))
     .populate(this.friendRequest('outboundFriendRequests'));
   }

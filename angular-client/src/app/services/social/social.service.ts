@@ -5,7 +5,6 @@ import { map, catchError, retry } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
 
 import { User } from '../../models/user/user';
-import { Friend } from 'src/app/models/friend/friend';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 
 @Injectable({
@@ -32,7 +31,7 @@ export class SocialService {
     .pipe(catchError(this.handleError));
   }
 
-  removeFriend(friend: Friend): Observable<User> {
+  removeFriend(friend: User): Observable<User> {
     return this.http.delete<User>(`${this.API}/social/remove-friend/${friend._id}`)
     .pipe(catchError(this.handleError));
   }

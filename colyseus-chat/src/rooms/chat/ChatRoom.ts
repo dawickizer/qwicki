@@ -9,6 +9,7 @@ export class ChatRoom extends Room<ChatRoomState> {
     this.setState(new ChatRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
     this.onMessage("type", (client, message) => console.log(message));
+    console.log(this.roomId, "created!")
   }
 
   onAuth (client: Client, options: any, request: http.IncomingMessage) {

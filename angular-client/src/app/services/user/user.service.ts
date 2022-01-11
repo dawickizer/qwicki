@@ -5,7 +5,6 @@ import { map, catchError, retry } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
 
 import { User } from '../../models/user/user';
-import { Friend } from 'src/app/models/friend/friend';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +25,8 @@ export class UserService {
     .pipe(catchError(this.handleError));
   }
 
-  getFriendByUsername(username: string): Observable<Friend> {
-    return this.http.get<Friend>(`${this.API}/users/friends/${username}`)
+  getFriendByUsername(username: string): Observable<User> {
+    return this.http.get<User>(`${this.API}/users/friends/${username}`)
     .pipe(catchError(this.handleError));
   }
 
