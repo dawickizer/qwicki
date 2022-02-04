@@ -4,7 +4,7 @@ import { monitor } from "@colyseus/monitor";
 /**
  * Import your Room files
  */
-import { ChatRoom } from "./rooms/chat/ChatRoom";
+import { ChatRoom } from "./rooms/ChatRoom";
 
 export default Arena({
     getId: () => "Qwicki",

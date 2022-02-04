@@ -56,7 +56,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         let availableRooms = await this.client.getAvailableRooms();
         let room: Colyseus.Room;
         let friendsRooms: Colyseus.Room[] = [];
-        let hasExistingRoom: boolean = availableRooms.some(availableRoom => availableRoom.roomId === user._id)
+        let hasExistingRoom: boolean = availableRooms.some(availableRoom => availableRoom.roomId === user._id);
 
         // create chat room instance for people who log on after you to be able to join (host broadcasts to everyone)
         if (hasExistingRoom) room = await this.client.joinById(user._id, {accessToken: this.authService.currentUserJWT()});
@@ -65,21 +65,22 @@ export class HomeComponent implements OnInit, OnDestroy {
         // join your friends room instances to get connected with them (client messages only host)
         this.onlineFriends.data.forEach(async friend => friendsRooms.push(await this.client.joinById(friend._id, {accessToken: this.authService.currentUserJWT()})));
 
+        room.onStateChange((state) => {
+          state.users.forEach((value, key) => {
+            console.log("key:", key)
+            console.log("value:", value)
+          });
+        });
+
+  
         // TODO:
         // when host user disconnects from room..kick everyone and close the room
         // need to think of when to set online to true/false
         
-        // room.onMessage("hello", (message) => {
-        //   console.log("message received from server");
-        //   console.log(message);
-        // });
-
         // room.onError((code, message) => {
         //   console.log("oops, error ocurred:");
         //   console.log(message);
         // });
-  
-        // room.send('type', `Hello from ${this.user.username}`);
         // console.log(room.state)
   
       } catch (e) {

@@ -40,6 +40,13 @@ export class AuthService {
   logout(extras?: NavigationExtras) {
     localStorage.removeItem("id_token");
     this.router.navigate(['auth/login'], extras);
+    this.logout2()
+  }
+
+  logout2(): Observable<User> {
+    console.log('YOOOOOO')
+    return this.http.post<User>(`${this.API}/auth/logout`, new User())
+    .pipe(catchError(this.handleError));
   }
 
   isLoggedInFrontendCheck() {
