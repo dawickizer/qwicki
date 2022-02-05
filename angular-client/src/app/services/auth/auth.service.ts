@@ -7,6 +7,7 @@ import { map, catchError, retry, tap } from 'rxjs/operators';
 import { Observable, of, from, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
+import { ColyseusService } from '../colyseus/colyseus.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,7 +15,10 @@ export class AuthService {
 
   readonly API = environment.EXPRESS_SERVER;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private colyseusService: ColyseusService) { }
 
   login(credentials: Credentials): Observable<Credentials> {
     return this.http.post<Credentials>(`${this.API}/auth/login`, credentials)
@@ -38,7 +42,7 @@ export class AuthService {
   }
   
   logout(extras?: NavigationExtras, makeBackendCall: boolean = true) {
-
+    this.colyseusService.leaveAllRooms();
     if (makeBackendCall) this.http.put<any>(`${this.API}/auth/logout`, null).pipe(catchError(this.handleError)).subscribe();
     localStorage.removeItem("id_token");
     this.router.navigate(['auth/login'], extras);

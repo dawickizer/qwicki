@@ -34,6 +34,7 @@ import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
 import { KeyBindService } from './services/key-bind/key-bind.service';
 import { SocialService } from './services/social/social.service';
+import { ColyseusService } from './services/colyseus/colyseus.service';
 
 @NgModule({
   declarations: [
@@ -67,6 +68,7 @@ import { SocialService } from './services/social/social.service';
               UserService,
               AuthService,
               AuthGuardService,
+              ColyseusService,
               PlayerService,
               GunService,
               FpsService,

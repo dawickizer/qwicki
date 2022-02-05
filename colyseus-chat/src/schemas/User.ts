@@ -2,11 +2,11 @@ import { Schema, type } from "@colyseus/schema";
 
 export class User extends Schema {
     @type("string")
-    name: string;
+    sessionId: string;
   
-    constructor(name?: string) {
+    constructor(sessionId: string) {
        super(); 
-       this.name = name ?? 'NOT HOST';
+       this.sessionId = sessionId;
     }
 }
   

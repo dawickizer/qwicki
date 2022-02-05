@@ -11,6 +11,7 @@ import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
 import * as Colyseus from 'colyseus.js';
 import { environment } from 'src/environments/environment';
+import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 
 @Component({
   selector: 'app-home',
@@ -19,7 +20,7 @@ import { environment } from 'src/environments/environment';
 })
 export class HomeComponent implements OnInit, OnDestroy {
 
-  readonly client = new Colyseus.Client(environment.COLYSEUS_CHAT);
+  readonly client = this.colyseusService.client;
 
   @ViewChild('drawer') drawer: MatSidenav;
 
@@ -38,6 +39,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     private snackBar: MatSnackBar,
     private keyBindService: KeyBindService,
     private authService: AuthService,
+    private colyseusService: ColyseusService,
     private userService: UserService,
     private socialService: SocialService) { }
 
@@ -45,53 +47,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.authService.currentUser()
     .subscribe(user => this.userService.get(user._id)
     .subscribe(async user => {
-
-      // get user data
       this.user = user;
       this.updateFriends();
       this.updateFriendRequests();
-
-      // onJoin let the host know you are online
-      try {
-        let availableRooms = await this.client.getAvailableRooms();
-        let room: Colyseus.Room;
-        let friendsRooms: Colyseus.Room[] = [];
-        let hasExistingRoom: boolean = availableRooms.some(availableRoom => availableRoom.roomId === user._id);
-
-        // create chat room instance for people who log on after you to be able to join (host broadcasts to everyone)
-        if (hasExistingRoom) room = await this.client.joinById(user._id, {accessToken: this.authService.currentUserJWT()});
-        else room = await this.client.create("chat_room", {accessToken: this.authService.currentUserJWT()}); 
-
-        // join your friends room instances to get connected with them (client messages only host)
-        this.onlineFriends.data.forEach(async friend => friendsRooms.push(await this.client.joinById(friend._id, {accessToken: this.authService.currentUserJWT()})));
-
-        room.onStateChange((state) => {
-          state.users.forEach((value, key) => {
-            console.log("key:", key)
-            console.log("value:", value)
-          });
-        });
-
-  
-        // TODO:
-        // when host user disconnects from room..kick everyone and close the room
-        // need to think of when to set online to true/false
-        
-        // room.onError((code, message) => {
-        //   console.log("oops, error ocurred:");
-        //   console.log(message);
-        // });
-        // console.log(room.state)
-  
-      } catch (e) {
-        console.error("join error", e);
-      }
-
+      this.colyseusService.startSession(this.user, this.authService.currentUserJWT());
     }));
     this.handleSideNavKeyBind();
   }
-
-
 
   ngOnDestroy() {
     this.keyBindService.removeKeyBinds();
@@ -104,6 +66,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   removeFriend(friend: User) {
     this.socialService.removeFriend(friend).subscribe(user => {
       this.user = user;
+      this.colyseusService.updateUser(user);
       this.updateFriends();
       this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
     }, error => this.openSnackBar(error, 'Dismiss'));
@@ -112,6 +75,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   sendFriendRequest() {
     this.socialService.sendFriendRequest(this.potentialFriend).subscribe(user => {
       this.user = user;
+      this.colyseusService.updateUser(user);
       this.updateFriends();
       this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
       this.potentialFriend = '';
@@ -124,6 +88,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   acceptFriendRequest(friendRequest: FriendRequest) {
     this.socialService.acceptFriendRequest(friendRequest).subscribe(user => {
       this.user = user;
+      this.colyseusService.updateUser(user);
       this.updateFriends();
       this.updateFriendRequests();
       this.openSnackBar(`You and ${friendRequest.from.username} are now friends` , 'Dismiss');   
@@ -133,6 +98,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   rejectFriendRequest(friendRequest: FriendRequest) {
     this.socialService.rejectFriendRequest(friendRequest).subscribe(user => {
       this.user = user;
+      this.colyseusService.updateUser(user);
       this.updateFriends();
       this.updateFriendRequests();
       this.openSnackBar(`Rejected ${friendRequest.from.username}'s friend request` , 'Dismiss');   

@@ -4,7 +4,7 @@ import { User } from "./User";
 export class ChatRoomState extends Schema {
 
   @type(User)
-  host = new User();
+  host: User;
 
   @type({ map: User })
   users = new MapSchema<User>();

@@ -9,9 +9,7 @@ export class ChatRoom extends Room<ChatRoomState> {
   onCreate (options: any) {
     this.setState(new ChatRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
-
-    this.state.host = new User('HOST');
-
+    this.onMessage('host', (client, message) => this.state.host = new User(client.sessionId));
     console.log(this.roomId, "created!")
   }
 
@@ -20,11 +18,12 @@ export class ChatRoom extends Room<ChatRoomState> {
   }
 
   onJoin (client: Client, options: any) {
-    this.state.users.set(client.sessionId, new User());
+    this.state.users.set(client.sessionId, new User(client.sessionId));
     console.log(client.sessionId, "joined!");
   }
 
   onLeave (client: Client, consented: boolean) {
+    if (this.state.host.sessionId === client.sessionId) this.disconnect();
     this.state.users.delete(client.sessionId);
     console.log(client.sessionId, "left!");
   }
