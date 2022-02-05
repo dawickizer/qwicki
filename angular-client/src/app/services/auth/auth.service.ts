@@ -37,16 +37,11 @@ export class AuthService {
     return localStorage.getItem('id_token');
   }
   
-  logout(extras?: NavigationExtras) {
+  logout(extras?: NavigationExtras, makeBackendCall: boolean = true) {
+
+    if (makeBackendCall) this.http.put<any>(`${this.API}/auth/logout`, null).pipe(catchError(this.handleError)).subscribe();
     localStorage.removeItem("id_token");
     this.router.navigate(['auth/login'], extras);
-    this.logout2()
-  }
-
-  logout2(): Observable<User> {
-    console.log('YOOOOOO')
-    return this.http.post<User>(`${this.API}/auth/logout`, new User())
-    .pipe(catchError(this.handleError));
   }
 
   isLoggedInFrontendCheck() {
@@ -87,7 +82,7 @@ export class AuthGuardService implements CanActivate {
     if (await this.authService.isLoggedInBackendCheck().toPromise()) {
       return true;
     } else {
-      this.authService.logout({queryParams: {return: state.url}});
+      this.authService.logout({queryParams: {return: state.url}}, false);
       return false;
     }
   }

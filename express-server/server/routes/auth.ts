@@ -46,7 +46,7 @@ router.put('/logout', [isAuthenticatedJWT, requestBody], async (req: any, res: a
         if (user) {
             user.online = false;
             user = await userService.put(user.id, user);
-            res.status(200);
+            res.status(200).send();
         }
         else res.status(500).send('Problem logging out user'); 
     } catch (error: any) {
