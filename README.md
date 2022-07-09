@@ -26,6 +26,8 @@ Endpoints
 2. Node/Express: `localhost:3000`
 3. MongoDB: `localhost:27017`
 4. Mongo Express: `localhost:8081`
+5. Colyseus `localhost:2567`
+6. Colyseus Metrics Dashboard `localhost:2567/colyseus`
 
 Note
 ===============

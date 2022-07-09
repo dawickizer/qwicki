@@ -9,8 +9,6 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
-import * as Colyseus from 'colyseus.js';
-import { environment } from 'src/environments/environment';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 
 @Component({

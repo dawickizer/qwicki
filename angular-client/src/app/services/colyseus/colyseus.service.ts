@@ -32,7 +32,6 @@ export class ColyseusService implements OnInit {
       this.debug();
 
       // TODO:
-      // on logout need to destroy room..right now it only happens on user closing browser tab
       // think about implications of setting host if multiple browser tabs are open
       // what happens when you accept friend request? Prob should join the friends room if they are online
   
