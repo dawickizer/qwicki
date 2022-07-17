@@ -1,14 +1,14 @@
-import { Injectable, NgZone, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, NavigationExtras } from '@angular/router';
 import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { map, catchError, retry, tap } from 'rxjs/operators';
-import { Observable, of, from, throwError, timer, Subscription } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 import { ColyseusService } from '../colyseus/colyseus.service';
-import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
+import { InactivityService } from '../inactivity/inactivity.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -16,76 +16,16 @@ export class AuthService {
 
   readonly API = `${environment.EXPRESS_SERVER}/auth`;
 
-  private inactivityThreshold: number = 5000; // 15 minutes
-  private logoutThreshold: number = 10000 // this.inactivityThreshold + 1000 * 30; // inactivityThreshold + 30 seconds
-  private inactiveTimer: Observable<number> = timer(this.inactivityThreshold);
-  private logoutTimer: Observable<number> = timer(this.logoutThreshold);
-  private inactiveTimerSubscription: Subscription = new Subscription();
-  private logoutTimerSubscription: Subscription = new Subscription();
   private broadcast: BroadcastChannel = new BroadcastChannel('igima');
-  private snackBarRef!: MatSnackBarRef<any>;
-  //private currentUser: DecodedJwt | null | undefined;
 
   constructor(
     private http: HttpClient, 
     private router: Router,
-    private ngZone: NgZone,
-    private snackBar: MatSnackBar,
-    private colyseusService: ColyseusService) { }
+    private colyseusService: ColyseusService,
+    private inactivityService: InactivityService) {
 
-  handleInactivityEvent = () => {
-    this.broadcast.postMessage('active');
-    this.startInactivityTimer();
-  };
-
-  broadcastEvents = (event: any) => {
-    if (event.data === 'logout') {
-      this.ngZone.run(() => this.logout(undefined, false, false));
-    } else if (event.data === 'active') {
-      this.ngZone.run(() => this.startInactivityTimer());
-    }
-  };
-
-  setInactivityEvents() {
-    window.addEventListener('keydown', this.handleInactivityEvent);
-    window.addEventListener('wheel', this.handleInactivityEvent);
-    window.addEventListener('mousemove', this.handleInactivityEvent);
-    window.addEventListener('pointerdown', this.handleInactivityEvent);
-  }
-
-  removeInactivityEvents() {
-    window.removeEventListener('keydown', this.handleInactivityEvent);
-    window.removeEventListener('wheel', this.handleInactivityEvent);
-    window.removeEventListener('mousemove', this.handleInactivityEvent);
-    window.removeEventListener('pointerdown', this.handleInactivityEvent);
-  }
-
-  setBroadcastEvents() {
-    this.broadcast.onmessage = this.broadcastEvents;
-  }
-
-  startInactivityTimer() {
-    this.startLogoutTimer();
-    if (this.snackBarRef) {
-      this.snackBarRef.dismiss();
-    }
-    this.inactiveTimerSubscription.unsubscribe();
-    this.inactiveTimerSubscription = this.inactiveTimer.subscribe(() => {
-      this.snackBarRef = this.snackBar.open('Your session is about to expire due to inactivity');
-    });
-  }
-
-  stopInactivityTimer() {
-    this.inactiveTimerSubscription.unsubscribe();
-    this.logoutTimerSubscription.unsubscribe();
-  }
-
-  startLogoutTimer() {
-    this.logoutTimerSubscription.unsubscribe();
-    this.logoutTimerSubscription = this.logoutTimer.subscribe(() => {
-      this.logout();
-      this.snackBarRef = this.snackBar.open('You were logged out due to inactivity', '', { duration: 5000 });
-    });
+      // need to set authService like this to avoid circular dependancy
+      this.inactivityService.setAuthService(this);
   }
 
   login(credentials: Credentials): Observable<Credentials> {
@@ -110,12 +50,12 @@ export class AuthService {
   }
   
   logout(extras?: NavigationExtras, makeBackendCall: boolean = true, broadcast: boolean = true) {
-    if (broadcast) this.colyseusService.leaveAllRooms();
     if (makeBackendCall) this.http.put<any>(`${this.API}/logout`, null).pipe(catchError(this.handleError)).subscribe();
     localStorage.removeItem("id_token");
-    this.removeInactivityEvents();
-    this.stopInactivityTimer();
+    this.inactivityService.removeActiveEvents();
+    this.inactivityService.stopTimers();
     if (broadcast) {
+      this.colyseusService.leaveAllRooms();
       this.broadcast.postMessage('logout');
     }
     this.router.navigate(['auth/login'], extras);
@@ -130,11 +70,9 @@ export class AuthService {
     return this.http.get<boolean>(`${this.API}/is-logged-in`)
     .pipe(tap(result => {
       if (result) {
-        this.setBroadcastEvents();
-        this.setInactivityEvents();
-
-        // fire off the inactivity events in case user doesnt perform 'active' actions
-        this.handleInactivityEvent();
+        this.inactivityService.setBroadcastEvents();
+        this.inactivityService.setActiveEvents();
+        this.inactivityService.handleActiveEvent(); // fire off an active event in case user doesnt perform 'active' actions
       }
     }))
     .pipe(catchError(this.handleError));
