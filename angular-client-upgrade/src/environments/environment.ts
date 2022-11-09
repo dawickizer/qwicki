@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  EXPRESS_SERVER: 'http://localhost:3000',
+  COLYSEUS_CHAT: 'ws://localhost:2567'
 };
 
 /*
