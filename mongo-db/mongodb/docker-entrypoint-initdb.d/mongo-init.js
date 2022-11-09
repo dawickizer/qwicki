@@ -16,7 +16,7 @@ db.createUser({
 // Insert a document into the users collection
 db.users.insert({
   username: 'admin',
-  usernameRaw: 'admin',
+  usernameLower: 'admin',
   password: 'password', 
   role: 'admin', 
   email: 'admin@gmail.com', 

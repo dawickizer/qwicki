@@ -26,6 +26,8 @@ Endpoints
 2. Node/Express: `localhost:3000`
 3. MongoDB: `localhost:27017`
 4. Mongo Express: `localhost:8081`
+5. Colyseus `localhost:2567`
+6. Colyseus Metrics Dashboard `localhost:2567/colyseus`
 
 Note
 ===============
@@ -123,7 +125,7 @@ Optional:  Past EXTERNAL_IP in browser to verify successful deployment of Expres
 ANGULAR
 -----------------------
 
-update EXPRESS_ENDPOINT with copied EXTERNAL_IP in ./angular-client/src/environments/environment.prod.ts (make sure to have http:// and remove end slash)
+update EXPRESS_SERVER with copied EXTERNAL_IP in ./angular-client/src/environments/environment.prod.ts (make sure to have http:// and remove end slash)
 
 `docker build -t dwickizer1/qwicki:angular_prod -f ./angular-client/Dockerfile.prod ./angular-client`\
 `docker push dwickizer1/qwicki:angular_prod`

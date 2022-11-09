@@ -9,6 +9,7 @@ import '@babylonjs/inspector';
 import { Gun } from 'src/app/models/gun/gun';
 import { FpsService } from 'src/app/services/fps/fps.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
+import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 
 @Component({
   selector: 'app-babylonjs',
@@ -32,7 +33,7 @@ export class BabylonjsComponent implements OnInit {
   cameraSensitivity: number = 0;
   username: string = '';
 
-  constructor(private fpsService: FpsService, private authService: AuthService) { }
+  constructor(private fpsService: FpsService, private authService: AuthService, private keyBindService: KeyBindService) { }
 
   async ngOnInit() {}
 
@@ -41,7 +42,7 @@ export class BabylonjsComponent implements OnInit {
 
     this.authService.currentUser().subscribe(
       async user => {
-        this.username = user.usernameRaw;
+        this.username = user.username;
 
         this.createScene();
         this.handleWindowResize();
@@ -64,7 +65,12 @@ export class BabylonjsComponent implements OnInit {
       }, 
       error => this.authService.logout()
     );
+  }
 
+  ngOnDestroy() {
+    console.log('Disposing scene')
+    this.scene?.dispose();
+    this.keyBindService.removeKeyBinds();
   }
 
   createScene() {
@@ -128,7 +134,7 @@ export class BabylonjsComponent implements OnInit {
   }
 
   handleSideNavKeyBind() {
-    document.addEventListener('keydown', event => { 
+    this.keyBindService.setKeyBind('keydown', event => { 
       if (event.code == 'Tab') {
         event.preventDefault();
         if (this.drawer.opened) this.canvas.nativeElement.requestPointerLock();
@@ -136,11 +142,11 @@ export class BabylonjsComponent implements OnInit {
         if (document.fullscreenElement) document.exitFullscreen();
         this.drawer.toggle();
       }
-    });  
+    })
   }
 
   handleFullScreen() {
-    document.addEventListener('keydown', event => {
+    this.keyBindService.setKeyBind('keydown', event => {
       if (event.code == 'Backquote')
         if (!document.fullscreenElement) {
           this.canvas.nativeElement.requestFullscreen();
@@ -153,7 +159,7 @@ export class BabylonjsComponent implements OnInit {
 
   handleDebugLayer() {
     let config: IInspectorOptions = {initialTab: DebugLayerTab.Statistics, embedMode: true}
-    document.addEventListener('keydown', event => { 
+    this.keyBindService.setKeyBind('keydown', event => { 
       if (event.code == 'NumpadAdd') {
         if (this.scene.debugLayer.isVisible()) this.scene.debugLayer.hide();
         else this.scene.debugLayer.show(config);
@@ -162,7 +168,7 @@ export class BabylonjsComponent implements OnInit {
   }
 
   handleDebugCamera() {
-    document.addEventListener('keydown', event => { 
+    this.keyBindService.setKeyBind('keydown', event => { 
       if (event.code == 'NumpadSubtract' ) {
         this.debugCameraIsActive = !this.debugCameraIsActive;
         if (this.debugCameraIsActive) {
@@ -194,17 +200,12 @@ export class BabylonjsComponent implements OnInit {
   }
 
   handleBoundingBoxes() {
-    document.addEventListener('keydown', event => { if (event.code == 'NumpadEnter') for (let i = 0; i < this.scene.meshes.length; i++) this.scene.meshes[i].showBoundingBox = !this.scene.meshes[i].showBoundingBox });
+    this.keyBindService.setKeyBind('keydown', event => { if (event.code == 'NumpadEnter') for (let i = 0; i < this.scene.meshes.length; i++) this.scene.meshes[i].showBoundingBox = !this.scene.meshes[i].showBoundingBox });
   }
 
   render() {
     this.engine.runRenderLoop(() => {
       this.scene.render();
     });
-  }
-
-  ngOnDestroy() {
-    console.log('Disposing scene')
-    this.scene?.dispose();
   }
 }

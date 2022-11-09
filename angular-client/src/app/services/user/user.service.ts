@@ -11,7 +11,7 @@ import { User } from '../../models/user/user';
 })
 export class UserService {
 
-  readonly API = environment.EXPRESS_ENDPOINT;
+  readonly API = environment.EXPRESS_SERVER;
 
   constructor(private http: HttpClient) { }
 
@@ -22,14 +22,17 @@ export class UserService {
 
   get(id: string): Observable<User> {
     return this.http.get<User>(`${this.API}/users/${id}`)
-    .pipe(catchError(this.handleError))
-    .pipe(map(user => ({...user, username: user.usernameRaw})));
+    .pipe(catchError(this.handleError));
+  }
+
+  getFriendByUsername(username: string): Observable<User> {
+    return this.http.get<User>(`${this.API}/users/friends/${username}`)
+    .pipe(catchError(this.handleError));
   }
 
   update(user: User): Observable<User> {
     return this.http.put<User>(`${this.API}/users/${user._id}`, user)
-    .pipe(catchError(this.handleError))
-    .pipe(map(user => ({...user, username: user.usernameRaw})));
+    .pipe(catchError(this.handleError));
   }
 
   delete(user: User): Observable<any> {
@@ -45,8 +48,7 @@ export class UserService {
 
   getAll(): Observable<User[]> {
     return this.http.get<User[]>(`${this.API}/users`)
-    .pipe(catchError(this.handleError))
-    .pipe(map(users => users.map(user => ({...user, username: user.usernameRaw}))));
+    .pipe(catchError(this.handleError));
   }
 
   private handleError(error: HttpErrorResponse) {

@@ -2,22 +2,17 @@
 import express from 'express';
 import http from 'http'
 import cors from 'cors';
-import SocketIO from 'socket.io';
 import { json, urlencoded } from 'body-parser';
 
 // Get our API routes
 import api from './routes/api';
 import auth from './routes/auth';
 import users from './routes/users';
-import cars from './routes/cars';
-import addresses from './routes/addresses';
-import dogs from './routes/dogs';
-import contacts from './routes/contacts';
+import social from './routes/social'
 import { requestTime } from './middleware/log';
 
 const app = express();
 const server = http.createServer(app);
-const io = SocketIO(server);
 
 // Parsers for POST data
 app.use(json());
@@ -33,10 +28,7 @@ app.use(requestTime);
 app.use('/', api);
 app.use('/auth', auth);
 app.use('/users', users);
-app.use('/cars', cars);
-app.use('/addresses', addresses);
-app.use('/dogs', dogs);
-app.use('/contacts', contacts);
+app.use('/social', social);
 
 // Get port from environment and store in Express.
 const port = process.env.PORT || '3000';

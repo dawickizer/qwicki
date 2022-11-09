@@ -1,56 +1,85 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot, NavigationExtras } from '@angular/router';
 import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { map, catchError, retry, tap } from 'rxjs/operators';
-import { Observable, of, from, throwError } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
+import { ColyseusService } from '../colyseus/colyseus.service';
+import { InactivityService } from '../inactivity/inactivity.service';
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  readonly API = environment.EXPRESS_ENDPOINT;
+  readonly API = `${environment.EXPRESS_SERVER}/auth`;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  private broadcast: BroadcastChannel = new BroadcastChannel('igima');
+
+  constructor(
+    private http: HttpClient, 
+    private router: Router,
+    private colyseusService: ColyseusService,
+    private inactivityService: InactivityService) {
+
+      // need to set authService like this to avoid circular dependancy
+      this.inactivityService.setAuthService(this);
+  }
 
   login(credentials: Credentials): Observable<Credentials> {
-    return this.http.post<Credentials>(`${this.API}/auth/login`, credentials)
+    return this.http.post<Credentials>(`${this.API}/login`, credentials)
     .pipe(tap(credentials => this.setSession(credentials.token)))
     .pipe(catchError(this.handleError));
   }
 
   signup(user: User): Observable<Credentials> {
-    return this.http.post<Credentials>(`${this.API}/auth/signup`, user)
+    return this.http.post<Credentials>(`${this.API}/signup`, user)
     .pipe(tap(credentials => this.setSession(credentials.token)))
     .pipe(catchError(this.handleError));
   }
 
   currentUser(): Observable<any> {
-    return this.http.get<any>(`${this.API}/auth/current-user`)
+    return this.http.get<any>(`${this.API}/current-user`)
     .pipe(catchError(this.handleError));
   }
+
+  currentUserJWT() {
+    return localStorage.getItem('id_token');
+  }
   
-  logout(extras?: NavigationExtras) {
+  logout(extras?: NavigationExtras, makeBackendCall: boolean = true, broadcast: boolean = true) {
+    if (makeBackendCall) this.http.put<any>(`${this.API}/logout`, null).pipe(catchError(this.handleError)).subscribe();
     localStorage.removeItem("id_token");
+    this.inactivityService.removeActiveEvents();
+    this.inactivityService.stopTimers();
+    if (broadcast) {
+      this.colyseusService.leaveAllRooms();
+      this.broadcast.postMessage('logout');
+    }
     this.router.navigate(['auth/login'], extras);
+
   }
 
   isLoggedInFrontendCheck() {
-    return localStorage.getItem('id_token'); // keep in mind user can set a fake id_token to simulate login
+    return this.currentUserJWT(); // keep in mind user can set a fake id_token to simulate login
   }
 
   isLoggedInBackendCheck(): Observable<boolean> {
-    return this.http.get<boolean>(`${this.API}/auth/is-logged-in`)
+    return this.http.get<boolean>(`${this.API}/is-logged-in`)
+    .pipe(tap(result => {
+      if (result) {
+        this.inactivityService.setBroadcastEvents();
+        this.inactivityService.setActiveEvents();
+        this.inactivityService.handleActiveEvent(); // fire off an active event in case user doesnt perform 'active' actions
+      }
+    }))
     .pipe(catchError(this.handleError));
   }
 
   private setSession(token: String) {
-    // const expiresAt = moment().add(authResult.expiresIn,'second');
     localStorage.setItem('id_token', token as string);
-    // localStorage.setItem("expires_at", JSON.stringify(expiresAt.valueOf()) );
   }     
 
   private handleError(error: HttpErrorResponse) {
@@ -68,6 +97,7 @@ export class AuthService {
     return throwError(error.error);
   }
 }
+
 @Injectable()
 export class AuthGuardService implements CanActivate {
   constructor(private router: Router, private authService: AuthService) {}
@@ -76,7 +106,7 @@ export class AuthGuardService implements CanActivate {
     if (await this.authService.isLoggedInBackendCheck().toPromise()) {
       return true;
     } else {
-      this.authService.logout({queryParams: {return: state.url}});
+      this.authService.logout({queryParams: {return: state.url}}, false);
       return false;
     }
   }

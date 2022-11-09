@@ -1,6 +1,4 @@
 import { Schema, model } from 'mongoose';
-import { DogSchema } from './dog';
-import { ContactSchema } from './contact';
 
 // create mongoose schema
 const AddressSchema = new Schema({
@@ -9,11 +7,7 @@ const AddressSchema = new Schema({
   city: { type: String, default: null },
   state: { type: String, default: null },
   zip: { type: String, default: null },
-  country: { type: String, default: null },
-  cars: [{ type: Schema.Types.ObjectId, default: [], ref: 'Car' }],
-  dogs: [DogSchema],
-  contact: { type: Schema.Types.ObjectId, default: null, ref: 'Contact' },
-  contactEmbedded: { type: ContactSchema, default: null }
+  country: { type: String, default: null }
 });
 
 // create mongoose model

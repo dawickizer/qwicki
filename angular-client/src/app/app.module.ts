@@ -11,6 +11,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableModule } from '@angular/material/table'
 
 // Components
 import { AppRoutingModule } from './app-routing.module';
@@ -26,13 +27,15 @@ import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 // Services
-import { SocketioService } from './services/socketio/socketio.service';
 import { UserService } from './services/user/user.service';
 import { AuthGuardService, AuthInterceptor, AuthService } from './services/auth/auth.service';
 import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
-
+import { KeyBindService } from './services/key-bind/key-bind.service';
+import { SocialService } from './services/social/social.service';
+import { ColyseusService } from './services/colyseus/colyseus.service';
+import { InactivityService } from './services/inactivity/inactivity.service';
 
 @NgModule({
   declarations: [
@@ -54,6 +57,7 @@ import { FpsService } from './services/fps/fps.service';
     MatCardModule,
     MatDividerModule,
     MatSnackBarModule,
+    MatTableModule,
     MatButtonModule,
     MatSidenavModule,
     MatSliderModule,
@@ -62,13 +66,16 @@ import { FpsService } from './services/fps/fps.service';
     BrowserAnimationsModule
   ],
   providers: [
-              SocketioService,
               UserService,
               AuthService,
               AuthGuardService,
+              InactivityService,
+              ColyseusService,
               PlayerService,
               GunService,
               FpsService,
+              KeyBindService,
+              SocialService,
               { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
             ],
   bootstrap: [AppComponent],
