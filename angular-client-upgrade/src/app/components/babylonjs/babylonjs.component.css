@@ -1,0 +1,24 @@
+canvas {
+  height: 100vh;
+  width: 100%;
+  display: block;
+}
+
+.example-sidenav {
+  padding: 20px;
+  color: aliceblue;
+  background-color: #212529;
+}
+
+.material-icons {
+  vertical-align: middle;
+  color:#673ab7
+}
+
+#face {
+  padding-left: 14px;
+}
+
+#strong {
+  float: right;
+}

@@ -1,0 +1,43 @@
+<div class='main-div'>
+    <mat-card class="user-profile-card">
+      <mat-card-header>
+        <div mat-card-avatar class="user-profile-header-image"></div>
+        <mat-card-title>Hello, {{user.username}}</mat-card-title>
+        <mat-card-subtitle>Need to update your user profile?</mat-card-subtitle>
+      </mat-card-header>
+      <mat-card-content>
+        <form class="user-profile-form" (ngSubmit)="update()">
+          <mat-form-field class="user-profile-full-width">
+            <mat-label>First Name</mat-label>
+            <input matInput [(ngModel)]="user.firstName" name="firstName">
+          </mat-form-field>
+          <mat-form-field class="user-profile-full-width">
+            <mat-label>Middle Name</mat-label>
+            <input matInput [(ngModel)]="user.middleName" name="middleName">
+          </mat-form-field>
+          <mat-form-field class="user-profile-full-width">
+            <mat-label>Last Name</mat-label>
+            <input matInput [(ngModel)]="user.lastName" name="lastName">
+          </mat-form-field>
+          <mat-form-field class="user-profile-full-width">
+            <mat-label>Email</mat-label>
+            <input matInput [(ngModel)]="user.email" type="email" name="email">
+          </mat-form-field>
+          <mat-form-field class="user-profile-full-width">
+            <mat-label>Role</mat-label>
+            <input matInput disabled [(ngModel)]="user.role" name="role">
+          </mat-form-field>
+          <mat-form-field class="user-profile-full-width">
+            <mat-label>username</mat-label>
+            <input matInput [(ngModel)]="user.username" name="username">
+          </mat-form-field>
+          <mat-form-field class="user-profile-full-width">
+            <mat-label>password</mat-label>
+            <input matInput [(ngModel)]="user.password" type="password" name="password">
+          </mat-form-field>
+          <button mat-raised-button color="primary" type="submit">Update</button>
+          <button mat-raised-button color="warn" type="button" (click)="delete()">Delete</button>
+        </form>
+      </mat-card-content>
+    </mat-card>
+  </div>
