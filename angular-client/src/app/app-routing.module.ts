@@ -3,7 +3,6 @@ import { Routes, RouterModule } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
-import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { AuthGuardService } from './services/auth/auth.service';
 import { NotFoundComponent } from './components/not-found/not-found.component';
@@ -18,7 +17,6 @@ const routes: Routes = [
       { path: 'signup', component: SignupComponent }
     ]
   },
-  { path: 'phaserio', component: PhaserioComponent, canActivate: [AuthGuardService] },
   { path: 'babylonjs', component: BabylonjsComponent, canActivate: [AuthGuardService] },
   { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuardService] },
   { path: '**', component: NotFoundComponent, pathMatch: 'full' },

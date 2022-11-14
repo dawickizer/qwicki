@@ -637,7 +637,7 @@ export class FpsService {
     let currentAmmo = this.self.getActiveWeapon().ammo;
     this.self.canShoot = true;
     // Returns a Promise that resolves after 'ms' Milliseconds
-    const timer = ms => new Promise(res => setTimeout(res, ms));
+    const timer = (ms: any) => new Promise(res => setTimeout(res, ms));
 
     let fire = async () => { // We need to wrap the loop into an async function for this to work
 
