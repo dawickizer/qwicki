@@ -4,7 +4,7 @@ import { HttpInterceptor, HttpRequest, HttpHandler } from '@angular/common/http'
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError, tap } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 import { ColyseusService } from '../colyseus/colyseus.service';

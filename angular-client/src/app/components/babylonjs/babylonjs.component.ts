@@ -3,7 +3,7 @@ import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core'
 import { MatSidenav } from '@angular/material/sidenav';
 import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
-import '@babylonjs/inspector';
+// import '@babylonjs/inspector'; // This causes an error that exists in node_modules\@babylonjs\inspector\dist\babylon.inspector.module.d.ts line 4970 where the import is wrong
 
 // Services/Models
 import { Gun } from 'src/app/models/gun/gun';

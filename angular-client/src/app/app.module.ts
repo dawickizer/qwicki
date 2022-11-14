@@ -22,7 +22,6 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
-import { PhaserioComponent } from './components/phaserio/phaserio.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -42,7 +41,6 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     AppComponent,
     NavbarComponent,
     HomeComponent,
-    PhaserioComponent,
     BabylonjsComponent,
     LoginComponent,
     SignupComponent,

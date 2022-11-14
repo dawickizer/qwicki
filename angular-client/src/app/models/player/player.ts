@@ -50,7 +50,8 @@ export class Player {
 
   getActiveWeapon(): Gun {
     if (this.activeWeaponName == this.primaryWeapon.name) return this.primaryWeapon;
-    else if (this.activeWeaponName == this.secondaryWeapon.name) return this.secondaryWeapon
+    else if (this.activeWeaponName == this.secondaryWeapon.name) return this.secondaryWeapon;
+    return null;
   }
 
   setActiveWeapon(gun: Gun) {

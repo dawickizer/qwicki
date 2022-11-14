@@ -9,7 +9,7 @@ export class KeyBindService {
 
   constructor() { }
 
-  setKeyBind(type: string, listener: (this: Document, ev: KeyboardEvent) => any, options?: boolean | AddEventListenerOptions) {
+  setKeyBind(type: string, listener: (this: Document, ev: KeyboardEvent | any) => any, options?: boolean | AddEventListenerOptions) {
     document.addEventListener(type, listener, options); 
     this.keyBinds.push({type, listener});
   }

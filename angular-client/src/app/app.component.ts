@@ -12,6 +12,5 @@ export class AppComponent implements OnInit {
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
-  // Angular 2 Life Cycle event when component has been initialized
   ngOnInit(): void {}
 }
