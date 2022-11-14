@@ -2,7 +2,7 @@ version: '2' # specify docker-compose version
 
 # Define the services/containers to be run
 services:
-  angular: # name of the first service
+  angular-client: # name of the first service
     build:
       context: ./angular-client-upgrade
       dockerfile: Dockerfile
@@ -15,7 +15,7 @@ services:
     networks:
       - front-end
 
-  express: #name of the second service
+  express-server: #name of the second service
     build:
       context: ./express-server-upgrade
       dockerfile: Dockerfile
@@ -27,23 +27,23 @@ services:
       - front-end
       - back-end
     depends_on:
-      - database
-    command: bash -c "/usr/wait-for-it.sh --timeout=0 database:27017 && npm start" # wait for the database to finish initializing
+      - mongo-db
+    command: bash -c "/usr/wait-for-it.sh --timeout=0 mongo-db:27017 && npm start" # wait for the database to finish initializing
 
   colyseus-chat: #name of the second service
     build:
-      context: ./colyseus-chat
+      context: ./colyseus-chat-upgrade
       dockerfile: Dockerfile
     ports:
       - "2567:2567" #specify ports forewarding
     volumes:
-      - ./colyseus-chat/src:/usr/src/app/src # this will enable changes made to the express app reflect in the container
+      - ./colyseus-chat-upgrade/src:/usr/src/app/src # this will enable changes made to the express app reflect in the container
     networks:
       - front-end
       - back-end
     depends_on:
-      - database
-    command: bash -c "/usr/wait-for-it.sh --timeout=0 database:27017 && npm start" # wait for the database to finish initializing
+      - mongo-db
+    command: bash -c "/usr/wait-for-it.sh --timeout=0 mongo-db:27017 && npm start" # wait for the database to finish initializing
 
   mongo-express: # name of the third service
     image: mongo-express # specify image to build container from
@@ -51,7 +51,7 @@ services:
     ports:
       - "8081:8081" # specify port forewarding
     environment: 
-      - ME_CONFIG_MONGODB_SERVER=database # name of service to connect to
+      - ME_CONFIG_MONGODB_SERVER=mongo-db # name of service to connect to
       - ME_CONFIG_BASICAUTH_USERNAME=username # username for logging into mongo-express UI 
       - ME_CONFIG_BASICAUTH_PASSWORD=password # password for logging into mongo-express UI
       - ME_CONFIG_MONGODB_ADMINUSERNAME=username # username for mongodb 
@@ -59,9 +59,9 @@ services:
     networks:
       - back-end
     depends_on:
-      - database
+      - mongo-db
 
-  database: # name of the fourth service
+  mongo-db: # name of the fourth service
     image: mongo # specify image to build container from
     ports:
       - "27017:27017" # specify port forewarding
