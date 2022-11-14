@@ -4,16 +4,16 @@ import { monitor } from "@colyseus/monitor";
 /**
  * Import your Room files
  */
-import { MyRoom } from "./rooms/MyRoom";
+import { ChatRoom } from "./rooms/ChatRoom";
 
 export default Arena({
-    getId: () => "Your Colyseus App",
+    getId: () => "Qwicki",
 
     initializeGameServer: (gameServer) => {
         /**
          * Define your room handlers:
          */
-        gameServer.define('my_room', MyRoom);
+        gameServer.define('chat_room', ChatRoom);
 
     },
 
