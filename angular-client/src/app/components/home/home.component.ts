@@ -10,6 +10,7 @@ import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
+import * as Colyseus from 'colyseus.js';
 
 @Component({
   selector: 'app-home',
@@ -32,6 +33,8 @@ export class HomeComponent implements OnInit, OnDestroy {
   user: User = new User();
   potentialFriend: string = '';
 
+  userRoom: Colyseus.Room;
+
   constructor(
     private router: Router, 
     private snackBar: MatSnackBar,
@@ -48,7 +51,25 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.user = user;
       this.updateFriends();
       this.updateFriendRequests();
-      this.colyseusService.startSession(this.user, this.authService.currentUserJWT());
+      this.userRoom = await this.colyseusService.startSession(this.user, this.authService.currentUserJWT());
+
+      // message listeners
+      this.userRoom.onMessage("online", data => {
+        if (this.user._id !== data._id) {
+          let friend: User = this.user.friends.find(friend => friend._id === data._id);
+          friend.online = true;
+          this.updateFriends();
+        }
+      });
+
+      this.userRoom.onMessage("offline", data => {
+        if (this.user._id !== data._id) {
+          let friend: User = this.user.friends.find(friend => friend._id === data._id);
+          friend.online = false;
+          this.updateFriends();
+        }
+      });
+
     }));
     this.handleSideNavKeyBind();
   }

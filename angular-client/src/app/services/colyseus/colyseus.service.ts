@@ -22,14 +22,16 @@ export class ColyseusService implements OnInit {
 
   ngOnInit() {}
 
-  async startSession(user: User, userJWT: any) {
+  async startSession(user: User, userJWT: any): Promise<Colyseus.Room> {
     try {
       this.user = user;
       this.userJWT = userJWT;
       this.updateFriends();
       await this.connectToUserRoom();
       await this.connectToOnlineFriendsRooms(); //prob doesnt actually await due to promise loop..prob need to use Promise.all() in the function
-      this.debug();
+      //this.debug();
+
+      return this.userRoom;
 
       // TODO:
       // think about implications of setting host if multiple browser tabs are open
@@ -37,6 +39,7 @@ export class ColyseusService implements OnInit {
   
       } catch (e) {
         console.error("join error", e);
+        return null;
       }
   }
 
@@ -53,7 +56,6 @@ export class ColyseusService implements OnInit {
 
     // error listener
     this.userRoom.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
-  
   }
 
   async connectToOnlineFriendsRooms() {

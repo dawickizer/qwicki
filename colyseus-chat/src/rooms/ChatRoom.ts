@@ -21,27 +21,40 @@ export class ChatRoom extends Room<ChatRoomState> {
   }
 
   onJoin (client: Client, options: any, auth: any) {
-
-    let user: User = new User(client.sessionId, auth.username);
+    let user: User = new User(auth._id, client.sessionId, auth.username);
 
     // determine host
     if (auth._id === this.roomId) {
       this.state.host = user;
       console.log(`${this.state.host.username} is the host`);
     }
+
+    // add host/user to users
     this.state.users.set(user.sessionId, user);
     console.log(`${user.username} joined`);
     
+    // show users in room
     console.log("Users in the chat:")
     this.state.users.forEach(user => console.log(`${user.username}`));
+
+    // Send message to host client that someone (including self) joined
+    let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+    hostClient.send("online", user);
   }
 
   onLeave (client: Client, consented: boolean) {
     if (this.state.host.sessionId === client.sessionId) this.disconnect();
+
+    // Send message to host client that someone (including self) left
+    let user: User = this.state.users.get(client.sessionId);
+    let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+    hostClient.send("offline", user);
+
     this.state.users.delete(client.sessionId);
     console.log(`${client.auth.username} left`);
     console.log("Users in the chat:")
     this.state.users.forEach(user => console.log(`${user.username}`));
+
   }
 
   onDispose() {
