@@ -9,27 +9,43 @@ export class ChatRoom extends Room<ChatRoomState> {
   onCreate (options: any) {
     this.setState(new ChatRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
-    this.onMessage('host', (client, message) => this.state.host = new User(client.sessionId));
-    console.log(this.roomId, "created!")
+    console.log(`Room ${this.roomId} created`);
   }
 
   onAuth (client: Client, options: any, request: http.IncomingMessage) {
-    return isAuthenticatedJWT(options.accessToken);
+    console.log("Authenticating user...")
+    // whatever is returned will be tacked onto the client object in onJoin()/onLeave() 
+    // as auth: {returnValue} and it will be added as a third optional auth 
+    // parameter to the onJoin() method
+    return isAuthenticatedJWT(options.accessToken); 
   }
 
-  onJoin (client: Client, options: any) {
-    this.state.users.set(client.sessionId, new User(client.sessionId));
-    console.log(client.sessionId, "joined!");
+  onJoin (client: Client, options: any, auth: any) {
+
+    let user: User = new User(client.sessionId, auth.username);
+
+    // determine host
+    if (auth._id === this.roomId) {
+      this.state.host = user;
+      console.log(`${this.state.host.username} is the host`);
+    }
+    this.state.users.set(user.sessionId, user);
+    console.log(`${user.username} joined`);
+    
+    console.log("Users in the chat:")
+    this.state.users.forEach(user => console.log(`${user.username}`));
   }
 
   onLeave (client: Client, consented: boolean) {
     if (this.state.host.sessionId === client.sessionId) this.disconnect();
     this.state.users.delete(client.sessionId);
-    console.log(client.sessionId, "left!");
+    console.log(`${client.auth.username} left`);
+    console.log("Users in the chat:")
+    this.state.users.forEach(user => console.log(`${user.username}`));
   }
 
   onDispose() {
-    console.log("room", this.roomId, "disposing...");
+    console.log(`Room ${this.roomId} disposing`);
   }
 
 }

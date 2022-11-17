@@ -49,7 +49,6 @@ export class ColyseusService implements OnInit {
     if (this.hasExistingRoom) this.userRoom = await this.client.joinById(this.user._id, {accessToken: this.userJWT});
     else {
       this.userRoom = await this.client.create("chat_room", {accessToken: this.userJWT});
-      this.userRoom.send('host', 'Establishing Host'); //consider what happens with multiple browser tabs open 
     }
 
     // error listener
