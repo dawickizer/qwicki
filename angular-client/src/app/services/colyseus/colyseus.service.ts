@@ -72,6 +72,9 @@ export class ColyseusService implements OnInit {
 
   leaveAllRooms() {
     if (this.userRoom) this.userRoom.leave();
+
+    // This is throwing an error if a host destroys his room...
+    //and then you try to leave an already disconnected room
     this.onlineFriendsRooms.forEach((room: Colyseus.Room) => room.leave());
   }
 
