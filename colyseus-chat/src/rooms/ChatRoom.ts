@@ -43,18 +43,25 @@ export class ChatRoom extends Room<ChatRoomState> {
   }
 
   onLeave (client: Client, consented: boolean) {
-    if (this.state.host.sessionId === client.sessionId) this.disconnect();
 
-    // Send message to host client that someone (including self) left
-    let user: User = this.state.users.get(client.sessionId);
-    let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-    hostClient.send("offline", user);
+    // disconnect room totally if host leaves
+    if (this.state.host.sessionId === client.sessionId) {
+      console.log("HOST IS LEAVING...disconnecting room")
+      this.broadcast("offline", this.state.host);
+      this.broadcast("dispose", this.roomId);
+      this.disconnect();
+    }
+    else {
+      // Send message to host client that someone (including self) left
+      let user: User = this.state.users.get(client.sessionId);
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      if (hostClient) hostClient.send("offline", user);
 
-    this.state.users.delete(client.sessionId);
-    console.log(`${client.auth.username} left`);
-    console.log("Users in the chat:")
-    this.state.users.forEach(user => console.log(`${user.username}`));
-
+      this.state.users.delete(client.sessionId);
+      console.log(`${client.auth.username} left`);
+      console.log("Users in the chat:")
+      this.state.users.forEach(user => console.log(`${user.username}`));
+    }
   }
 
   onDispose() {
