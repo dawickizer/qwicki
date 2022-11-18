@@ -17,6 +17,7 @@ export class AppComponent implements OnInit {
   // this will call on any browser close...prob need to use 
   // broadcast channels to handle if multiple browser tabs 
   // are open from the same user..only logout when ALL tabs are closed
+  // also this logs user out on browser refresh
   @HostListener('window:beforeunload', [ '$event' ])
   beforeUnloadHandler(event: any) {
     this.authService.logout();
