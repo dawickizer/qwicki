@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from './services/auth/auth.service';
 
@@ -13,4 +13,12 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient, private authService: AuthService) {}
 
   ngOnInit(): void {}
+
+  // this will call on any browser close...prob need to use 
+  // broadcast channels to handle if multiple browser tabs 
+  // are open from the same user..only logout when ALL tabs are closed
+  @HostListener('window:beforeunload', [ '$event' ])
+  beforeUnloadHandler(event: any) {
+    this.authService.logout();
+  }
 }
