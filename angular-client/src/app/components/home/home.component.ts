@@ -119,41 +119,54 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   removeFriend(friend: User) {
-    this.socialService.removeFriend(friend).subscribe(user => {
-      this.setUser(user);
-      this.updateFriends();
-      this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
-    }, error => this.openSnackBar(error, 'Dismiss'));
+    this.socialService.removeFriend(friend).subscribe({
+      next: user => {
+        this.setUser(user);
+        this.updateFriends();
+        this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
+        this.potentialFriend = '';
+      }, 
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
   }
 
   sendFriendRequest() {
-    this.socialService.sendFriendRequest(this.potentialFriend).subscribe(user => {
-      this.setUser(user);
-      this.updateFriends();
-      this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
-      this.potentialFriend = '';
-    }, error => {
-      this.openSnackBar(error, 'Dismiss');
-      this.potentialFriend = '';
+    this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
+      next: user => {
+        this.setUser(user);
+        this.updateFriends();
+        this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
+        this.potentialFriend = '';
+      }, 
+      error: error => {
+        this.openSnackBar(error, 'Dismiss');
+        this.potentialFriend = '';
+      }
     });
   }
 
   acceptFriendRequest(friendRequest: FriendRequest) {
-    this.socialService.acceptFriendRequest(friendRequest).subscribe(user => {
-      this.setUser(user);
-      this.updateFriends();
-      this.updateFriendRequests();
-      this.openSnackBar(`You and ${friendRequest.from.username} are now friends` , 'Dismiss');   
-    }, error => this.openSnackBar(error, 'Dismiss'));
+    this.socialService.acceptFriendRequest(friendRequest).subscribe({
+      next: user => {
+        this.setUser(user);
+        this.updateFriends();
+        this.updateFriendRequests();
+        this.openSnackBar(`You and ${friendRequest.from.username} are now friends` , 'Dismiss');   
+      },
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
   }
 
   rejectFriendRequest(friendRequest: FriendRequest) {
-    this.socialService.rejectFriendRequest(friendRequest).subscribe(user => {
-      this.setUser(user);
-      this.updateFriends();
-      this.updateFriendRequests();
-      this.openSnackBar(`Rejected ${friendRequest.from.username}'s friend request` , 'Dismiss');   
-    }, error => this.openSnackBar(error, 'Dismiss'));
+    this.socialService.rejectFriendRequest(friendRequest).subscribe({
+      next: user => {
+        this.setUser(user);
+        this.updateFriends();
+        this.updateFriendRequests();
+        this.openSnackBar(`Rejected ${friendRequest.from.username}'s friend request` , 'Dismiss');   
+      },
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
   }
 
   private updateFriends() {
