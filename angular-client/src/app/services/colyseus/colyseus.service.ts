@@ -9,77 +9,74 @@ import { environment } from 'src/environments/environment';
 export class ColyseusService implements OnInit {
 
   public client = new Colyseus.Client(environment.COLYSEUS_CHAT);
-  public user: User;
-  public userJWT: any;
-  public onlineFriends: User[] = [];
-  public offlineFriends: User[] = [];
-  public userRoom: Colyseus.Room;
-  public availableRooms: any;
-  public onlineFriendsRooms: Colyseus.Room[] = [];
-  public hasExistingRoom: boolean;
+  public rooms: Colyseus.Room[] = [];
 
   constructor() { }
 
   ngOnInit() {}
 
-  async startSession(user: User, userJWT: any) {
+  async createRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
     try {
-      this.user = user;
-      this.userJWT = userJWT;
-      this.updateFriends();
-      await this.connectToUserRoom();
-      await this.connectToOnlineFriendsRooms(); //prob doesnt actually await due to promise loop..prob need to use Promise.all() in the function
-      this.debug();
-
-      // TODO:
-      // think about implications of setting host if multiple browser tabs are open
-      // what happens when you accept friend request? Prob should join the friends room if they are online
+      let availableRooms = await this.client.getAvailableRooms();
+      let hasExistingRoom = availableRooms.some((availableRoom: any) => availableRoom.roomId === user._id);
+      let room: Colyseus.Room;
   
-      } catch (e) {
-        console.error("join error", e);
-      }
-  }
-
-  async connectToUserRoom() {
+      // create chat room instance for people who log on after you
+      if (hasExistingRoom) room = await this.client.joinById(user._id, {accessToken: userJWT});
+      else room = await this.client.create("chat_room", {accessToken: userJWT});
   
-    this.availableRooms = await this.client.getAvailableRooms();
-    this.hasExistingRoom = this.availableRooms.some((availableRoom: any) => availableRoom.roomId === this.user._id);
-
-    // create chat room instance for people who log on after you to be able to join (host broadcasts to everyone)
-    if (this.hasExistingRoom) this.userRoom = await this.client.joinById(this.user._id, {accessToken: this.userJWT});
-    else {
-      this.userRoom = await this.client.create("chat_room", {accessToken: this.userJWT});
-      this.userRoom.send('host', 'Establishing Host'); //consider what happens with multiple browser tabs open 
+      // error listener
+      room.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
+  
+      this.rooms.push(room);
+      return room;
+    } catch (e) {
+      console.error("join error", e);
+      return null;
     }
-
-    // error listener
-    this.userRoom.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
-  
   }
 
-  async connectToOnlineFriendsRooms() {
-    this.onlineFriends.forEach(async friend => this.onlineFriendsRooms.push(await this.client.joinById(friend._id, {accessToken: this.userJWT})));
+  async connectToRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
+    try {
+      let room: Colyseus.Room = await this.client.joinById(user._id, {accessToken: userJWT});
+      this.rooms.push(room);
+      return room;
+    } catch (e) {
+      console.error("join error", e);
+      return null;
+    }
   }
 
-  updateUser(user: User) {
-    this.user = user;
-    this.updateFriends();
+  async connectToRooms(users: User[], userJWT: any): Promise<Colyseus.Room[]> {
+    try {
+      let promises: Promise<Colyseus.Room>[] = [];
+      users.forEach(user => promises.push(this.connectToRoom(user, userJWT)));
+      return await Promise.all(promises);
+    } catch (e) {
+      console.error("join error", e);
+      return null;
+    }
   }
 
-  updateFriends() {
-    this.onlineFriends = this.user.friends.filter(friend => friend.online);
-    this.offlineFriends = this.user.friends.filter(friend => !friend.online); 
+  removeRoomById(id: string) {
+   this.rooms = this.rooms.filter((room: Colyseus.Room) => room.id !== id);
+  }
+
+  leaveRoom(room: Colyseus.Room) {
+    this.removeRoomById(room.id);
+    room.leave();
+  }
+
+  leaveRooms(rooms: Colyseus.Room[]) {
+    rooms.forEach((room: Colyseus.Room) => this.leaveRoom(room));
   }
 
   leaveAllRooms() {
-    if (this.userRoom) this.userRoom.leave();
-    this.onlineFriendsRooms.forEach((room: Colyseus.Room) => room.leave());
+    this.leaveRooms(this.rooms);
   }
 
-  debug() {
-    this.userRoom.onStateChange((state) => {
-      console.log(state)
-    })
+  debug(room: Colyseus.Room) {
+    room.onStateChange(state => console.log(state));
   }
 }
 
