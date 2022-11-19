@@ -9,6 +9,34 @@ export class ChatRoom extends Room<ChatRoomState> {
   onCreate (options: any) {
     this.setState(new ChatRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
+
+    // set room listeners
+    this.onMessage("inboundFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("inboundFriendRequest", friendRequest);
+    });
+
+    this.onMessage("acceptFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("acceptFriendRequest", friendRequest);
+    });
+
+    this.onMessage("rejectFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("rejectFriendRequest", friendRequest);
+    });
+
+    this.onMessage("revokeFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("revokeFriendRequest", friendRequest);
+    });
+
+    this.onMessage("removeFriend", (client, friend) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("removeFriend", friend);
+    });
+
+
     console.log(`Room ${this.roomId} created`);
   }
 

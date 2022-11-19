@@ -31,6 +31,11 @@ export class SocialService {
     .pipe(catchError(this.handleError));
   }
 
+  revokeFriendRequest(friendRequest: FriendRequest): Observable<User> {
+    return this.http.post<User>(`${this.API}/social/revoke-friend-request/${friendRequest.to._id}`, {friendRequestId: friendRequest._id})
+    .pipe(catchError(this.handleError));
+  }
+
   removeFriend(friend: User): Observable<User> {
     return this.http.delete<User>(`${this.API}/social/remove-friend/${friend._id}`)
     .pipe(catchError(this.handleError));

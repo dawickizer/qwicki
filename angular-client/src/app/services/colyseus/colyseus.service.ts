@@ -15,6 +15,19 @@ export class ColyseusService implements OnInit {
 
   ngOnInit() {}
 
+  async isUserOnline(user: User, userJWT: any): Promise<Colyseus.Room> {
+    let availableRooms = await this.client.getAvailableRooms();
+    let hasExistingRoom = availableRooms.some((availableRoom: any) => availableRoom.roomId === user._id);
+    let room: Colyseus.Room;
+
+    // create chat room instance for people who log on after you
+    if (hasExistingRoom) {
+      room = await this.client.joinById(user._id, {accessToken: userJWT});
+      this.rooms.push(room);
+    }
+    return room;
+  }
+
   async createRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
     try {
       let availableRooms = await this.client.getAvailableRooms();
@@ -39,7 +52,7 @@ export class ColyseusService implements OnInit {
   async connectToRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
     try {
       let room: Colyseus.Room = await this.client.joinById(user._id, {accessToken: userJWT});
-      this.rooms.push(room);
+      if (room) this.rooms.push(room);
       return room;
     } catch (e) {
       console.error("join error", e);
