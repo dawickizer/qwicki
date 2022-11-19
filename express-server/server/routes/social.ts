@@ -34,6 +34,14 @@ router.post('/reject-friend-request/:id', [isAuthenticatedJWT, requestBody], asy
     }
 });
 
+router.post('/revoke-friend-request/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
+    try {
+        res.send(await socialService.revokeFriendRequest(req));
+    } catch (error: any) {
+        res.status(500).send(error.message);
+    }
+});
+
 router.delete('/remove-friend/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
     try {
         res.send(await socialService.removeFriend(req));

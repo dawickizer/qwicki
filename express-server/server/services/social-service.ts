@@ -116,6 +116,35 @@ class SocialService {
         } else throw Error('User does not exist');
     }
 
+    async revokeFriendRequest(req: any): Promise<User | null> {
+
+        let requestor: User | null = new User();
+        let requested: User | null = new User(); 
+        let friendRequestId: any;
+
+        // retrieve the users and friend request id
+        requestor = await this.userService.get(req.body.decodedJWT._id);
+        requested = await this.userService.get(req.params.id);
+        friendRequestId = req.body.friendRequestId;
+
+        // if they exist add each other to each others' friend list and remove the active friend request
+        if (requestor && requested) {
+
+            // confirm friend request really exists between the two users
+            if (!requestor.outboundFriendRequests.includes(friendRequestId) &&
+            !requested.inboundFriendRequests.includes(friendRequestId)) 
+                throw Error('A friend request does not exist between you and the other user')
+
+            requestor.outboundFriendRequests.splice(requestor.outboundFriendRequests.indexOf(friendRequestId), 1);
+            requested.inboundFriendRequests.splice(requested.inboundFriendRequests.indexOf(friendRequestId), 1);
+
+            requestor = await this.userService.putAndPopulateChildren(requestor._id, requestor);
+            requested = await this.userService.put(requested._id, requested);
+
+            return requestor;
+        } else throw Error('User does not exist');
+    }
+
     async removeFriend(req: any): Promise<User | null> {
 
         let requestor: User | null = new User();
