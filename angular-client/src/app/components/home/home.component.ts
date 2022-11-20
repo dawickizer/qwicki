@@ -36,7 +36,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   user: User = new User();
   potentialFriend: string = '';
 
-  userRoom: Colyseus.Room;
+  hostRoom: Colyseus.Room;
   onlineFriendsRooms: Colyseus.Room[] = [];
 
   constructor(
@@ -55,7 +55,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.setUser(user);
       this.updateFriends();
       this.updateFriendRequests();
-      await this.createUserRoom();
+      await this.createHostRoom();
       await this.connectToOnlineFriendsRooms();
     }));
     this.handleSideNavKeyBind();
@@ -65,13 +65,13 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.keyBindService.removeKeyBinds();
   }
 
-  async createUserRoom() {
-    this.userRoom = await this.colyseusService.createRoom(this.user, this.authService.currentUserJWT());
-    this.setUserRoomListeners();
+  async createHostRoom() {
+    this.hostRoom = await this.colyseusService.createRoom(this.user, this.authService.currentUserJWT());
+    this.setHostRoomListeners();
   }
 
-  setUserRoomListeners() {
-    this.userRoom.onMessage("online", data => {
+  setHostRoomListeners() {
+    this.hostRoom.onMessage("online", data => {
       if (this.user._id !== data._id) {
         let friend: User = this.findFriend(data._id);
         if (friend) {
@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.userRoom.onMessage("offline", data => {
+    this.hostRoom.onMessage("offline", data => {
       if (this.user._id !== data._id) {
         let friend: User = this.findFriend(data._id);
         if (friend) {
@@ -91,12 +91,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       }
     });
 
-    this.userRoom.onMessage("inboundFriendRequest", (friendRequest: FriendRequest) => {
+    this.hostRoom.onMessage("inboundFriendRequest", (friendRequest: FriendRequest) => {
       this.user.inboundFriendRequests.push(friendRequest);
       this.updateFriendRequests();
     });
 
-    this.userRoom.onMessage("acceptFriendRequest", (friendRequest: FriendRequest) => {
+    this.hostRoom.onMessage("acceptFriendRequest", (friendRequest: FriendRequest) => {
       friendRequest.to.online = true;
       this.user.friends.push(friendRequest.to);
       this.user.outboundFriendRequests = this.user.outboundFriendRequests.filter(outboundFriendRequest => outboundFriendRequest.to._id !== friendRequest.to._id);
@@ -104,26 +104,26 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.updateFriendRequests();
     });
 
-    this.userRoom.onMessage("rejectFriendRequest", (friendRequest: FriendRequest) => {
+    this.hostRoom.onMessage("rejectFriendRequest", (friendRequest: FriendRequest) => {
       this.user.friends = this.user.friends.filter(friend => friend._id !== friendRequest.to._id);
       this.user.outboundFriendRequests = this.user.outboundFriendRequests.filter(outboundFriendRequest => outboundFriendRequest.to._id !== friendRequest.to._id);
       this.updateFriends();
       this.updateFriendRequests();
     });
 
-    this.userRoom.onMessage("revokeFriendRequest", (friendRequest: FriendRequest) => {
+    this.hostRoom.onMessage("revokeFriendRequest", (friendRequest: FriendRequest) => {
       this.user.friends = this.user.friends.filter(friend => friend._id !== friendRequest.from._id);
       this.user.inboundFriendRequests = this.user.inboundFriendRequests.filter(inboundFriendRequest => inboundFriendRequest.from._id !== friendRequest.from._id);
       this.updateFriends();
       this.updateFriendRequests();
     });
 
-    this.userRoom.onMessage("removeFriend", (removeFriend: User) => {
+    this.hostRoom.onMessage("removeFriend", (removeFriend: User) => {
       this.user.friends = this.user.friends.filter(friend => friend._id !== removeFriend._id);
       this.updateFriends();
     });
 
-    this.userRoom.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
+    this.hostRoom.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
   }
 
   async connectToOnlineFriendsRooms() {
@@ -169,7 +169,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.socialService.removeFriend(friend).subscribe({
       next: async user => {
         this.setUser(user);
-        
+
         // am i in his room?
         let rooms: Colyseus.Room[] = this.onlineFriendsRooms.filter(room => room.id === friend._id);
         if (rooms.length === 1) {
@@ -180,7 +180,7 @@ export class HomeComponent implements OnInit, OnDestroy {
 
         // is he in my room?
         } else {
-          this.userRoom.send("disconnectFriend", friend);
+          this.hostRoom.send("disconnectFriend", friend);
         }
 
         this.updateFriends();
@@ -200,7 +200,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         // get actual user id from list of friend requests based on username
         let friendRequest: FriendRequest = this.user.outboundFriendRequests.filter(friendRequest => friendRequest.to.username.toLowerCase() === this.potentialFriend.toLowerCase())[0];
         // is user online
-        let room: Colyseus.Room = await this.colyseusService.isUserOnline(friendRequest.to, this.authService.currentUserJWT());
+        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.to, this.authService.currentUserJWT());
 
         // if online send notification and leave
         if (room) {
@@ -227,7 +227,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.setUser(user);
 
         // is user online
-        let room: Colyseus.Room = await this.colyseusService.isUserOnline(friendRequest.from, this.authService.currentUserJWT());
+        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from, this.authService.currentUserJWT());
 
         // if online send notification
         if (room) {
@@ -254,7 +254,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.setUser(user);
 
         // is user online
-        let room: Colyseus.Room = await this.colyseusService.isUserOnline(friendRequest.from, this.authService.currentUserJWT());
+        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from, this.authService.currentUserJWT());
 
         // if online send notification
         if (room) {
@@ -276,7 +276,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       next: async user => {
 
         // is user online
-        let room: Colyseus.Room = await this.colyseusService.isUserOnline(friendRequest.to, this.authService.currentUserJWT());
+        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.to, this.authService.currentUserJWT());
 
         // if online send notification
         if (room) {
