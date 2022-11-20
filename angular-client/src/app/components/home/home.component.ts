@@ -174,6 +174,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   sendFriendRequest() {
     this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
       next: async user => {
+
         this.setUser(user);
 
         // get actual user id from list of friend requests based on username
@@ -203,15 +204,21 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.socialService.acceptFriendRequest(friendRequest).subscribe({
       next: async user => {
 
+        this.setUser(user);
+
         // is user online
         let room: Colyseus.Room = await this.colyseusService.isUserOnline(friendRequest.from, this.authService.currentUserJWT());
 
         // if online send notification
         if (room) {
           room.send("acceptFriendRequest", friendRequest);
+
+          // jank
+          this.onlineFriendsRooms.push(room);
+          this.colyseusService.rooms.push(room);
+          this.setOnlineFriendsRoomsListeners();
         }
 
-        this.setUser(user);
         this.updateFriends();
         this.updateFriendRequests();
         this.openSnackBar(`You and ${friendRequest.from.username} are now friends` , 'Dismiss');   
@@ -224,6 +231,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.socialService.rejectFriendRequest(friendRequest).subscribe({
       next: async user => {
 
+        this.setUser(user);
+
         // is user online
         let room: Colyseus.Room = await this.colyseusService.isUserOnline(friendRequest.from, this.authService.currentUserJWT());
 
@@ -233,7 +242,6 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.colyseusService.leaveRoom(room);
         }
 
-        this.setUser(user);
         this.updateFriends();
         this.updateFriendRequests();
         this.openSnackBar(`Rejected ${friendRequest.from.username}'s friend request` , 'Dismiss');   
