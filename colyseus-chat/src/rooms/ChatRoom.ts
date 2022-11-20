@@ -36,6 +36,7 @@ export class ChatRoom extends Room<ChatRoomState> {
       hostClient.send("removeFriend", friend);
     });
 
+    // i have a hunch that searching by sessionId might be causing it to wig out
     this.onMessage("disconnectFriend", (client, friend) => {
       this.state.users.forEach(user => {
         if (user._id === friend._id) {
