@@ -192,12 +192,15 @@ export class HomeComponent implements OnInit, OnDestroy {
         // am i in his room?
         let room: Colyseus.Room = this.onlineFriendsRooms.find(room => room.id === friend._id);
         if (room) {
+          console.log("IM IN HIS ROOM")
           room.send("removeFriend", host);
           this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== friend._id);
           this.colyseusService.leaveRoom(room);
 
         // is he in my room?
+        // wrong logic maybe...gets called even if hes offline and not in my room
         } else {
+          console.log("HES IN MY ROOM")
           this.hostRoom.send("disconnectFriend", friend);
         }
         this.updateFriends();
@@ -281,6 +284,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private handleDisposeEvent(id: string) {
+    this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== id);
     this.colyseusService.removeRoomById(id);
   }
 
