@@ -103,21 +103,14 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   sendFriendRequest() {
     this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
-      next: async user => {
-
-        this.setHost(user);
-
-        // get actual user id from list of friend requests based on username
-        let friendRequest: FriendRequest = this.host.outboundFriendRequests.filter(friendRequest => friendRequest.to.username.toLowerCase() === this.potentialFriend.toLowerCase())[0];
-        // is user online
+      next: async host => {
+        this.setHost(host);
+        let friendRequest: FriendRequest = this.findOutboundFriendRequest();
         let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.to, this.authService.currentUserJWT());
-
-        // if online send notification and leave
         if (room) {
           room.send("inboundFriendRequest", friendRequest);
           this.colyseusService.leaveRoom(room);
         }
-
         this.updateFriends();
         this.updateFriendRequests();
         this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
@@ -132,23 +125,14 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   acceptFriendRequest(friendRequest: FriendRequest) {
     this.socialService.acceptFriendRequest(friendRequest).subscribe({
-      next: async user => {
-
-        this.setHost(user);
-
-        // is user online
+      next: async host => {
+        this.setHost(host);
         let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from, this.authService.currentUserJWT());
-
-        // if online send notification
         if (room) {
           room.send("acceptFriendRequest", friendRequest);
-
-          // jank
           this.onlineFriendsRooms.push(room);
-          this.colyseusService.rooms.push(room);
           this.setOnlineFriendsRoomsListeners();
         }
-
         this.updateFriends();
         this.updateFriendRequests();
         this.openSnackBar(`You and ${friendRequest.from.username} are now friends` , 'Dismiss');   
@@ -159,19 +143,13 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   rejectFriendRequest(friendRequest: FriendRequest) {
     this.socialService.rejectFriendRequest(friendRequest).subscribe({
-      next: async user => {
-
-        this.setHost(user);
-
-        // is user online
+      next: async host => {
+        this.setHost(host);
         let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from, this.authService.currentUserJWT());
-
-        // if online send notification
         if (room) {
           room.send("rejectFriendRequest", friendRequest);
           this.colyseusService.leaveRoom(room);
         }
-
         this.updateFriends();
         this.updateFriendRequests();
         this.openSnackBar(`Rejected ${friendRequest.from.username}'s friend request` , 'Dismiss');   
@@ -180,21 +158,15 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // TO DO
   revokeFriendRequest(friendRequest: FriendRequest) {
     this.socialService.revokeFriendRequest(friendRequest).subscribe({
-      next: async user => {
-
-        // is user online
+      next: async host => {
+        this.setHost(host);
         let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.to, this.authService.currentUserJWT());
-
-        // if online send notification
         if (room) {
           room.send("revokeFriendRequest", friendRequest);
           this.colyseusService.leaveRoom(room);
         }
-
-        this.setHost(user);
         this.updateFriends();
         this.updateFriendRequests();
         this.openSnackBar(`Revoked ${friendRequest.to.username}'s friend request` , 'Dismiss');   
@@ -203,33 +175,29 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-    // TO DO
-    removeFriend(friend: User) {
-      this.socialService.removeFriend(friend).subscribe({
-        next: async user => {
-          this.setHost(user);
-  
-          // am i in his room?
-          let rooms: Colyseus.Room[] = this.onlineFriendsRooms.filter(room => room.id === friend._id);
-          if (rooms.length === 1) {
-            let room: Colyseus.Room = rooms[0];
-            room.send("removeFriend", user);
-            this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== friend._id);
-            this.colyseusService.leaveRoom(room);
-  
-          // is he in my room?
-          } else {
-            this.hostRoom.send("disconnectFriend", friend);
-          }
-  
-          this.updateFriends();
-          this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
-          this.potentialFriend = '';
-        }, 
-        error: error => this.openSnackBar(error, 'Dismiss')
-      });
-    }
-  
+  // FIX THIS
+  removeFriend(friend: User) {
+    this.socialService.removeFriend(friend).subscribe({
+      next: async host => {
+        this.setHost(host);
+
+        // am i in his room?
+        let room: Colyseus.Room = this.onlineFriendsRooms.find(room => room.id === friend._id);
+        if (room) {
+          room.send("removeFriend", host);
+          this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== friend._id);
+          this.colyseusService.leaveRoom(room);
+
+        // is he in my room?
+        } else {
+          this.hostRoom.send("disconnectFriend", friend);
+        }
+        this.updateFriends();
+        this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
+      }, 
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
+  }
 
   private updateFriends() {
     this.onlineFriends.data = this.host.friends.filter(friend => friend.online);
@@ -244,6 +212,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.outboundFriendRequests.data = this.host.outboundFriendRequests;
     this.outboundFriendRequests._updateChangeSubscription();  
   }
+
+  private findOutboundFriendRequest(): FriendRequest {
+    return this.host.outboundFriendRequests.find(friendRequest => friendRequest.to.username.toLowerCase() === this.potentialFriend.toLowerCase());
+  }
+
+  private setOnlineStatusOfFriend(user: any, online: boolean) {
+    if (this.host._id !== user._id) {
+      let friend: User = this.findFriend(user._id);
+      if (friend) {
+        friend.online = online;
+        this.updateFriends();
+      }
+    }
+  }
+
+  private findFriend(id: string): User {
+    return this.host.friends.find(friend => friend._id === id);
+  }
+
 
   private handleOnlineEvent(user: any) {
     this.setOnlineStatusOfFriend(user, true);
@@ -288,21 +275,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   private handleDisposeEvent(id: string) {
     this.colyseusService.removeRoomById(id);
   }
-
-  private setOnlineStatusOfFriend(user: any, online: boolean) {
-    if (this.host._id !== user._id) {
-      let friend: User = this.findFriend(user._id);
-      if (friend) {
-        friend.online = online;
-        this.updateFriends();
-      }
-    }
-  }
-
-  private findFriend(id: string): User {
-    return this.host.friends.find(friend => friend._id === id);
-  }
-
 
   filter(filterValue: any) {
     this.onlineFriends.filterPredicate = (friend, filter) => friend.username.trim().toLowerCase().includes(filter);
