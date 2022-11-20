@@ -88,7 +88,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.onlineFriendsRooms.forEach(room => {
       room.onMessage("offline", (user: any) => this.handleOfflineEvent(user));
       room.onMessage("dispose", (id: string) => this.handleDisposeEvent(id));
-      room.onMessage("removeFriend", (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend));
+      room.onMessage("disconnectFriend", (disconnectFriend: User) => this.handleDisconnectFriendEvent(disconnectFriend));
       room.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
     });
   }
@@ -175,32 +175,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  // FIX THIS
-  // Login as MintOwl
-  // Login as Senjoku
-  // Senjoku send friend request to MintOwl
-  // MintOwl accept friend request
-  // Senjoku unfriend MintOwl
-  // Senjoku sends friend request
-  // MintOwl accept friends request
-  // MintOwl unfriend...ERROR
   removeFriend(friend: User) {
     this.socialService.removeFriend(friend).subscribe({
       next: async host => {
         this.setHost(host);
-
-        // am i in his room?
         let room: Colyseus.Room = this.onlineFriendsRooms.find(room => room.id === friend._id);
         if (room) {
-          console.log("IM IN HIS ROOM")
           room.send("removeFriend", host);
           this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== friend._id);
           this.colyseusService.leaveRoom(room);
-
-        // is he in my room?
-        // wrong logic maybe...gets called even if hes offline and not in my room
         } else {
-          console.log("HES IN MY ROOM")
           this.hostRoom.send("disconnectFriend", friend);
         }
         this.updateFriends();
@@ -281,6 +265,13 @@ export class HomeComponent implements OnInit, OnDestroy {
   private handleRemoveFriendEvent(removeFriend: User) {
     this.host.friends = this.host.friends.filter(friend => friend._id !== removeFriend._id);
     this.updateFriends();
+  }
+
+  private handleDisconnectFriendEvent(disconnectFriend: User) {
+    this.host.friends = this.host.friends.filter(friend => friend._id !== disconnectFriend._id);
+    this.updateFriends();
+    this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== disconnectFriend._id);
+    this.colyseusService.removeRoomById(disconnectFriend._id);
   }
 
   private handleDisposeEvent(id: string) {

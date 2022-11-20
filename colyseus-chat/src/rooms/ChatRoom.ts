@@ -41,14 +41,12 @@ export class ChatRoom extends Room<ChatRoomState> {
       this.state.users.forEach(user => {
         if (user._id === friend._id) {
           let userClient: Client = this.clients.find(client => client.sessionId === user.sessionId);
-          userClient.send("removeFriend", this.state.host);
+          userClient.send("disconnectFriend", this.state.host);
+          this.state.users.delete(userClient.sessionId);
           userClient.leave();
         }
       });
     });
-
-
-
     console.log(`Room ${this.roomId} created`);
   }
 
@@ -95,7 +93,7 @@ export class ChatRoom extends Room<ChatRoomState> {
       // Send message to host client that someone (including self) left
       let user: User = this.state.users.get(client.sessionId);
       let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      if (hostClient) hostClient.send("offline", user);
+      if (hostClient && user) hostClient.send("offline", user);
 
       this.state.users.delete(client.sessionId);
       console.log(`${client.auth.username} left`);
