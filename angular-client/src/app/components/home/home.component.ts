@@ -118,8 +118,9 @@ export class HomeComponent implements OnInit, OnDestroy {
       this.updateFriendRequests();
     });
 
-    this.userRoom.onMessage("removeFriend", (friendRequest: FriendRequest) => {
-
+    this.userRoom.onMessage("removeFriend", (removeFriend: User) => {
+      this.user.friends = this.user.friends.filter(friend => friend._id !== removeFriend._id);
+      this.updateFriends();
     });
 
     this.userRoom.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
@@ -146,6 +147,11 @@ export class HomeComponent implements OnInit, OnDestroy {
         this.colyseusService.removeRoomById(data);
       });
 
+      room.onMessage("removeFriend", (removeFriend: User) => {
+        this.user.friends = this.user.friends.filter(friend => friend._id !== removeFriend._id);
+        this.updateFriends();
+      });
+
       room.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
     });
   }
@@ -161,8 +167,22 @@ export class HomeComponent implements OnInit, OnDestroy {
   // TO DO
   removeFriend(friend: User) {
     this.socialService.removeFriend(friend).subscribe({
-      next: user => {
+      next: async user => {
         this.setUser(user);
+        
+        // am i in his room?
+        let rooms: Colyseus.Room[] = this.onlineFriendsRooms.filter(room => room.id === friend._id);
+        if (rooms.length === 1) {
+          let room: Colyseus.Room = rooms[0];
+          room.send("removeFriend", user);
+          this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== friend._id);
+          this.colyseusService.leaveRoom(room);
+
+        // is he in my room?
+        } else {
+          this.userRoom.send("disconnectFriend", friend);
+        }
+
         this.updateFriends();
         this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
         this.potentialFriend = '';

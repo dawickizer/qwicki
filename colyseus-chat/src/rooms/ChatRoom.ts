@@ -36,6 +36,17 @@ export class ChatRoom extends Room<ChatRoomState> {
       hostClient.send("removeFriend", friend);
     });
 
+    this.onMessage("disconnectFriend", (client, friend) => {
+      this.state.users.forEach(user => {
+        if (user._id === friend._id) {
+          let userClient: Client = this.clients.find(client => client.sessionId === user.sessionId);
+          userClient.send("removeFriend", this.state.host);
+          userClient.leave();
+        }
+      });
+    });
+
+
 
     console.log(`Room ${this.roomId} created`);
   }
