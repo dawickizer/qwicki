@@ -176,6 +176,14 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   // FIX THIS
+  // Login as MintOwl
+  // Login as Senjoku
+  // Senjoku send friend request to MintOwl
+  // MintOwl accept friend request
+  // Senjoku unfriend MintOwl
+  // Senjoku sends friend request
+  // MintOwl accept friends request
+  // MintOwl unfriend...ERROR
   removeFriend(friend: User) {
     this.socialService.removeFriend(friend).subscribe({
       next: async host => {
