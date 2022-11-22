@@ -21,6 +21,7 @@ class SocialService {
         if (toUser && fromUser) {
 
             // Check friend request eligibility
+            if (toUser.id === fromUser.id) throw Error('You cannot send a friend request to yourself');
             if (toUser.friends.includes(fromUser._id)) throw Error('You already are friends with this user');
             for (let fromUserOutboundFriendRequest of fromUser.outboundFriendRequests) 
                  if (toUser.inboundFriendRequests.includes(fromUserOutboundFriendRequest))
