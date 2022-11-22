@@ -1,15 +1,15 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { HomeComponent } from './components/home/home.component';
 import { LoginComponent } from './components/login/login.component';
 import { SignupComponent } from './components/signup/signup.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { AuthGuardService } from './services/auth/auth.service';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
 
 const routes: Routes = [
-  { path: '', component: HomeComponent, canActivate: [AuthGuardService] },
+  { path: '', component: SocialSidenavComponent, canActivate: [AuthGuardService] },
   { 
     path: 'auth',
     children: [

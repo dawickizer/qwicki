@@ -24,6 +24,7 @@ import { SignupComponent } from './components/signup/signup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
 
 // Services
 import { UserService } from './services/user/user.service';
@@ -45,7 +46,8 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     LoginComponent,
     SignupComponent,
     NotFoundComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    SocialSidenavComponent
   ],
   imports: [
     BrowserModule,
