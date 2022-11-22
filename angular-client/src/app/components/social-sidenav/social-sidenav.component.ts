@@ -112,24 +112,21 @@ export class SocialSidenavComponent implements OnInit {
     });
   }
 
-  open: boolean = false;
   sendMessage(friend: User) {
 
-    // let message: Message = new Message();
-    // message.content = "Hello"
-    // message.to = friend;
+    let message: Message = new Message();
+    message.content = "Hello"
+    message.to = friend;
 
-    // this.socialService.sendMessage(message).subscribe({
-    //   next: async (message: Message) => {
-    //     this.socialService.getMessagesBetween(friend).subscribe({
-    //       next: async (messages: Message[]) => {console.log(messages)}, 
-    //       error: error => this.openSnackBar(error, 'Dismiss')
-    //     });
-    //   }, 
-    //   error: error => this.openSnackBar(error, 'Dismiss')
-    // });
-
-    this.open = true;
+    this.socialService.sendMessage(message).subscribe({
+      next: async (message: Message) => {
+        this.socialService.getMessagesBetween(friend).subscribe({
+          next: async (messages: Message[]) => {console.log(messages)}, 
+          error: error => this.openSnackBar(error, 'Dismiss')
+        });
+      }, 
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
   }
 
   setHost(host: User) {
