@@ -47,6 +47,11 @@ export class SocialService {
     .pipe(catchError(this.handleError));
   }
 
+  getMessagesBetween(friend: User): Observable<Message[]> {
+    return this.http.get<Message[]>(`${this.API}/social/get-messages-between/${friend._id}`)
+    .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.

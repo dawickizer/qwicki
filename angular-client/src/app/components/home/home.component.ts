@@ -101,9 +101,18 @@ export class HomeComponent implements OnInit, OnDestroy {
     message.to = friend;
 
     this.socialService.sendMessage(message).subscribe({
-      next: async message => {console.log(message)}, 
+      next: async (message: Message) => {
+        this.socialService.getMessagesBetween(friend).subscribe({
+          next: async (messages: Message[]) => {console.log(messages)}, 
+          error: error => this.openSnackBar(error, 'Dismiss')
+        });
+      }, 
       error: error => this.openSnackBar(error, 'Dismiss')
     });
+
+
+
+
   }
 
   setHost(host: User) {

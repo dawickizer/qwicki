@@ -197,6 +197,16 @@ class SocialService {
     async createMessage(message: Message): Promise<Message> {
         return await Message.create(message);
     }
+
+    async getMessagesBetween(req: any): Promise<Message[]> {   
+        let requestor: User | null = await this.userService.get(req.body.decodedJWT._id);
+        let requested: User | null = await this.userService.get(req.params.id);
+        return await Message.find({ $or: [
+            {$and: [{ to: requestor._id }, { from: requested._id }]},
+            {$and: [{ to: requested._id }, { from: requestor._id }]}
+          ]
+        }).sort('-createdAt');
+    }
 }
 
 export default SocialService;
