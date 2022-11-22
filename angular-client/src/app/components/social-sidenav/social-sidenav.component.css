@@ -38,6 +38,23 @@ table {
 }
 
 /* get rid of padding left for the table */
-th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type {
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, td.mat-cell:last-of-type {
   padding-left: 0px;
+  padding-right: 0px;
 }
+
+.mat-expansion-panel {
+  background-color: #212529;
+  color: aliceblue;
+}
+
+.mat-expansion-panel-header {
+  padding: 0;
+  padding-right: 7px;
+}
+
+::ng-deep .mat-expansion-indicator:after {
+  color: rgba(255,255,255,.5);
+}
+
+

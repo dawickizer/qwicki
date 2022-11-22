@@ -12,6 +12,7 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table'
+import { MatExpansionModule } from '@angular/material/expansion';
 
 // Components
 import { AppRoutingModule } from './app-routing.module';
@@ -61,6 +62,7 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     MatButtonModule,
     MatSidenavModule,
     MatSliderModule,
+    MatExpansionModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule
