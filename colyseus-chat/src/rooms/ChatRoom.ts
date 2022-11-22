@@ -9,6 +9,44 @@ export class ChatRoom extends Room<ChatRoomState> {
   onCreate (options: any) {
     this.setState(new ChatRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
+
+    // set room listeners
+    this.onMessage("inboundFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("inboundFriendRequest", friendRequest);
+    });
+
+    this.onMessage("acceptFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("acceptFriendRequest", friendRequest);
+    });
+
+    this.onMessage("rejectFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("rejectFriendRequest", friendRequest);
+    });
+
+    this.onMessage("revokeFriendRequest", (client, friendRequest) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("revokeFriendRequest", friendRequest);
+    });
+
+    this.onMessage("removeFriend", (client, friend) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("removeFriend", friend);
+    });
+
+    // i have a hunch that searching by sessionId might be causing it to wig out
+    this.onMessage("disconnectFriend", (client, friend) => {
+      this.state.users.forEach(user => {
+        if (user._id === friend._id) {
+          let userClient: Client = this.clients.find(client => client.sessionId === user.sessionId);
+          userClient.send("disconnectFriend", this.state.host);
+          this.state.users.delete(userClient.sessionId);
+          userClient.leave();
+        }
+      });
+    });
     console.log(`Room ${this.roomId} created`);
   }
 
@@ -55,7 +93,7 @@ export class ChatRoom extends Room<ChatRoomState> {
       // Send message to host client that someone (including self) left
       let user: User = this.state.users.get(client.sessionId);
       let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      if (hostClient) hostClient.send("offline", user);
+      if (hostClient && user) hostClient.send("offline", user);
 
       this.state.users.delete(client.sessionId);
       console.log(`${client.auth.username} left`);

@@ -17,18 +17,11 @@ export class ColyseusService implements OnInit {
 
   async createRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
     try {
-      let availableRooms = await this.client.getAvailableRooms();
-      let hasExistingRoom = availableRooms.some((availableRoom: any) => availableRoom.roomId === user._id);
-      let room: Colyseus.Room;
-  
-      // create chat room instance for people who log on after you
-      if (hasExistingRoom) room = await this.client.joinById(user._id, {accessToken: userJWT});
-      else room = await this.client.create("chat_room", {accessToken: userJWT});
-  
-      // error listener
-      room.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
-  
-      this.rooms.push(room);
+      let room: Colyseus.Room = await this.joinExistingRoomIfPresent(user, userJWT);
+      if (!room) {
+        room = await this.client.create("chat_room", {accessToken: userJWT});
+        this.rooms.push(room);
+      }
       return room;
     } catch (e) {
       console.error("join error", e);
@@ -36,10 +29,18 @@ export class ColyseusService implements OnInit {
     }
   }
 
+  async joinExistingRoomIfPresent(user: User, userJWT: any): Promise<Colyseus.Room> {
+    let availableRooms: Colyseus.RoomAvailable[] = await this.client.getAvailableRooms();
+    let hasExistingRoom: boolean = availableRooms.some((availableRoom: any) => availableRoom.roomId === user._id);
+    let room: Colyseus.Room;
+    if (hasExistingRoom) room = await this.connectToRoom(user, userJWT);
+    return room;
+  }
+
   async connectToRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
     try {
       let room: Colyseus.Room = await this.client.joinById(user._id, {accessToken: userJWT});
-      this.rooms.push(room);
+      if (room) this.rooms.push(room);
       return room;
     } catch (e) {
       console.error("join error", e);
@@ -59,7 +60,7 @@ export class ColyseusService implements OnInit {
   }
 
   removeRoomById(id: string) {
-   this.rooms = this.rooms.filter((room: Colyseus.Room) => room.id !== id);
+    this.rooms = this.rooms.filter((room: Colyseus.Room) => room.id !== id);
   }
 
   leaveRoom(room: Colyseus.Room) {
@@ -79,4 +80,8 @@ export class ColyseusService implements OnInit {
     room.onStateChange(state => console.log(state));
   }
 }
+
+
+
+
 
