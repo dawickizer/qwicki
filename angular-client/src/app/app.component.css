@@ -25,6 +25,7 @@
 /* All scrollbars will have this styling */
 ::ng-deep ::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
   overflow-y: scroll;
   background: grey;
   box-shadow: inset 0 0 4px #707070;
