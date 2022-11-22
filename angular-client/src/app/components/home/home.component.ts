@@ -52,6 +52,24 @@ export class HomeComponent implements OnInit, OnDestroy {
     .subscribe(user => this.userService.get(user._id)
     .subscribe(async user => {
       this.setHost(user);
+
+      this.host.friends.push({_id: '123', username: '012345x 012345x'} as User);
+      this.host.friends.push({_id: '123', username: 'Hodoo Prophet'} as User);
+      this.host.friends.push({_id: '123', username: 'Sandman'} as User);
+      this.host.friends.push({_id: '123', username: 'Queen Bee'} as User);
+      this.host.friends.push({_id: '123', username: 'xCrime_-Time'} as User);
+      this.host.friends.push({_id: '123', username: 'xCrime_-Phantom'} as User);
+      this.host.friends.push({_id: '123', username: 'AmericasFreshest'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+      this.host.friends.push({_id: '123', username: 'TEST USER'} as User);
+
       this.updateFriends();
       this.updateFriendRequests();
       await this.createHostRoom();
