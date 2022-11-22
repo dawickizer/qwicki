@@ -1,4 +1,5 @@
 import { FriendRequest } from '../models/friend-request';
+import { Message } from '../models/message';
 import { User } from '../models/user';
 import UserService from './user-service';
 
@@ -8,7 +9,7 @@ class SocialService {
     // create UserService
     userService: UserService = new UserService();
 
-    async handleFriendRequest(req: any): Promise<User | null> {
+    async sendFriendRequest(req: any): Promise<User | null> {
 
         let toUser: User | null = new User();
         let fromUser: User | null = new User(); 
@@ -20,7 +21,7 @@ class SocialService {
     
         if (toUser && fromUser) {
 
-            // Check friend request eligibility
+            // Check friend request eligibility (could add blocked logic later)
             if (toUser.id === fromUser.id) throw Error('You cannot send a friend request to yourself');
             if (toUser.friends.includes(fromUser._id)) throw Error('You already are friends with this user');
             for (let fromUserOutboundFriendRequest of fromUser.outboundFriendRequests) 
@@ -165,6 +166,36 @@ class SocialService {
 
             return requestor;
         } else throw Error('User does not exist');
+    }
+
+    async sendMessage(req: any): Promise<Message | null> {
+        let message: Message = new Message();
+        let toUser: User | null = await this.userService.get(req.body.message.to._id);
+        let fromUser: User | null = await this.userService.get(req.body.decodedJWT._id);
+    
+        if (toUser && fromUser) {
+
+            // Check message eligibility (could add blocked logic later)
+            if (toUser.id === fromUser.id) throw Error('You cannot message yourself');
+            if (!fromUser.friends.includes(toUser._id)) throw Error('You cannot send a message to someone that is not your friend');
+
+            // update message with 'to' and 'from' friends ids
+            message.to = toUser._id;
+            message.from = fromUser._id;
+    
+            // handle message metadata
+            message.createdAt = new Date();
+            message.content = req.body.message.content;
+    
+            // persist the message
+            message = await this.createMessage(message);
+
+            return message;
+        } else throw Error('User does not exist');
+    }
+
+    async createMessage(message: Message): Promise<Message> {
+        return await Message.create(message);
     }
 }
 

@@ -11,6 +11,7 @@ import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import * as Colyseus from 'colyseus.js';
+import { Message } from 'src/app/models/message/message';
 
 @Component({
   selector: 'app-home',
@@ -93,8 +94,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     });
   }
 
-  send() {
-    console.log('send')
+  sendMessage(friend: User) {
+
+    let message: Message = new Message();
+    message.content = "Hello"
+    message.to = friend;
+
+    this.socialService.sendMessage(message).subscribe({
+      next: async message => {console.log(message)}, 
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
   }
 
   setHost(host: User) {

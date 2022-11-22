@@ -1,11 +1,12 @@
-import { Injectable, OnInit } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { map, catchError, retry } from 'rxjs/operators';
-import { Observable, of, from, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
 
 import { User } from '../../models/user/user';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { Message } from 'src/app/models/message/message';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class SocialService {
   constructor(private http: HttpClient) { }
 
   sendFriendRequest(username: string): Observable<User> {
-    return this.http.post<User>(`${this.API}/social/friend-request`, {username})
+    return this.http.post<User>(`${this.API}/social/send-friend-request`, {username})
     .pipe(catchError(this.handleError));
   }
 
@@ -38,6 +39,11 @@ export class SocialService {
 
   removeFriend(friend: User): Observable<User> {
     return this.http.delete<User>(`${this.API}/social/remove-friend/${friend._id}`)
+    .pipe(catchError(this.handleError));
+  }
+
+  sendMessage(message: Message): Observable<Message> {
+    return this.http.post<Message>(`${this.API}/social/send-message`, {message})
     .pipe(catchError(this.handleError));
   }
 

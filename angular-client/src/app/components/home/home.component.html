@@ -60,7 +60,7 @@
 
             <ng-container matColumnDef="send">
                 <td mat-cell *matCellDef="let element">
-                    <span class="material-icons">send</span>
+                    <span (click)="sendMessage(element)" class="material-icons">send</span>
                 </td>
             </ng-container>
           
@@ -86,7 +86,7 @@
 
             <ng-container matColumnDef="send">
                 <td mat-cell *matCellDef="let element">
-                    <span class="material-icons">send</span>
+                    <span (click)="sendMessage(element)" class="material-icons">send</span>
                 </td>
             </ng-container>
           
