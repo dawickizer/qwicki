@@ -25,10 +25,10 @@ export class SocialSidenavComponent implements OnInit {
   onlineFriends = new MatTableDataSource<User>([] as User[]);
   offlineFriends = new MatTableDataSource<User>([] as User[]);
 
-  inboundFriendRequestsDisplayedColumns: string[] = ['username', 'reject', 'accept'];
+  inboundFriendRequestsDisplayedColumns: string[] = ['username', 'action'];
   inboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
 
-  outboundFriendRequestsDisplayedColumns: string[] = ['username', 'reject'];
+  outboundFriendRequestsDisplayedColumns: string[] = ['username', 'action'];
   outboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
 
   host: User = new User();

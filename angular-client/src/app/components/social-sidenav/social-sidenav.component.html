@@ -1,6 +1,9 @@
 <mat-drawer-container class="example-container" autosize>
     <mat-drawer #drawer class="example-sidenav" mode="over">
-        <h1>Hello, {{host.username}}</h1>
+        <h1>
+            <span routerLink="/user-profile" matTooltip="Go to User Profile" class="material-icons profile-icon">account_circle</span>
+            {{host.username}}
+        </h1>
         <mat-divider></mat-divider>
         <br>
         <br>
@@ -26,18 +29,12 @@
             <td mat-cell *matCellDef="let element"> {{element.from.username}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="reject">
-                <td mat-cell *matCellDef="let element">
-                    <span matTooltip="Reject Friend Request" (click)="rejectFriendRequest(element)" class="material-icons">person_remove</span>
+            <ng-container matColumnDef="action">
+                <td class="right-justify" mat-cell *matCellDef="let element">
+                    <span matTooltip="Reject Friend Request" (click)="rejectFriendRequest(element)" class="material-icons-outlined">person_remove</span>
+                    <span matTooltip="Accept Friend Request" (click)="acceptFriendRequest(element)" class="material-icons-outlined">person_add_alt</span>
                 </td>
             </ng-container>
-
-            <ng-container matColumnDef="accept">
-                <td mat-cell *matCellDef="let element">
-                    <span matTooltip="Accept Friend Request" (click)="acceptFriendRequest(element)" class="material-icons">person_add_alt</span>
-                </td>
-            </ng-container>
-        
             <tr mat-row *matRowDef="let row; columns: inboundFriendRequestsDisplayedColumns;"></tr>
         </table>
         <br>
@@ -80,9 +77,9 @@
               <td mat-cell *matCellDef="let element"> {{element.to.username}} </td>
             </ng-container>
 
-            <ng-container matColumnDef="reject">
+            <ng-container matColumnDef="action">
                 <td mat-cell *matCellDef="let element">
-                    <span (click)="revokeFriendRequest(element)" class="material-icons">close</span>
+                    <span matTooltip="Revoke Friend Request" (click)="revokeFriendRequest(element)" class="material-icons">close</span>
                 </td>
             </ng-container>
           
