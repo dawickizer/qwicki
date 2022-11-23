@@ -205,7 +205,7 @@ class SocialService {
             {$and: [{ to: requestor._id }, { from: requested._id }]},
             {$and: [{ to: requested._id }, { from: requestor._id }]}
           ]
-        }).sort('-createdAt');
+        }).sort('createdAt');
     }
 }
 
