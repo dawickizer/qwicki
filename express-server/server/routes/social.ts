@@ -58,7 +58,7 @@ router.post('/send-message', [isAuthenticatedJWT, requestBody], async (req: any,
 
 router.get('/get-messages-between/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
     try {
-        res.send(await socialService.getMessagesBetween(req));
+        res.send(await socialService.getMessagesBetweenAndPopulate(req));
     } catch (error: any) {
         res.status(500).send(error.message);
     }

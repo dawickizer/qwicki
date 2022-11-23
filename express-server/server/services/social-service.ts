@@ -207,6 +207,29 @@ class SocialService {
           ]
         }).sort('createdAt');
     }
+
+    async getMessagesBetweenAndPopulate(req: any): Promise<Message[]> {   
+        let requestor: User | null = await this.userService.get(req.body.decodedJWT._id);
+        let requested: User | null = await this.userService.get(req.params.id);
+        return await Message.find({ $or: [
+            {$and: [{ to: requestor._id }, { from: requested._id }]},
+            {$and: [{ to: requested._id }, { from: requestor._id }]}
+          ]
+        })
+        .populate(this.user('from'))
+        .populate(this.user('to'))
+        .sort('createdAt');
+    }
+
+    private user(path: string) {
+        return [ // reference
+              {
+                path: path,
+                model: 'User',
+                select: 'username'
+              }
+            ]
+      }
 }
 
 export default SocialService;
