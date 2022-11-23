@@ -13,6 +13,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table'
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Components
 import { AppRoutingModule } from './app-routing.module';
@@ -63,6 +64,7 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     MatSidenavModule,
     MatSliderModule,
     MatExpansionModule,
+    MatTooltipModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule

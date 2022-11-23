@@ -49,24 +49,28 @@
         <table mat-table [dataSource]="onlineFriends" class="mat-elevation-z0">
             <ng-container matColumnDef="username">
                 <td mat-cell *matCellDef="let element"> 
-                    <mat-expansion-panel class="mat-elevation-z0">
+                    <mat-expansion-panel class="mat-elevation-z0" hideToggle>
                         <mat-expansion-panel-header>
                             {{element.username}}
                         </mat-expansion-panel-header>
-                      
                         <ng-template matExpansionPanelContent>
-                            <span (click)="removeFriend(element)" class="material-icons">close</span>
-                            <form class="example-form">
-                                <mat-form-field class="example-full-width">
-                                  <mat-label>Leave a comment</mat-label>
-                                  <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
-                                </mat-form-field>
-                              </form>
-                            <span (click)="sendMessage(element)" class="material-icons">send</span>
+                            <mat-form-field class="onlineInput">
+                                <mat-label>Chat</mat-label>
+                                <textarea cdkTextareaAutosize matInput maxlength="250" #onlineInput></textarea>
+                                <mat-hint class="onlineHint" align="end">{{onlineInput.value.length || 0}}/250</mat-hint>
+                            </mat-form-field>
+                            <span matTooltip="Send Message" matTooltipPosition="right" (click)="sendMessage(element)" class="material-icons">send</span>
                         </ng-template>
                     </mat-expansion-panel>
                 </td>
             </ng-container>
+
+            <ng-container matColumnDef="remove">
+                <td mat-cell *matCellDef="let element"> 
+                    <span matTooltip="Remove Friend" matTooltipPosition="right" (click)="removeFriend(element)" class="material-icons">close</span>
+                </td>
+            </ng-container>
+
             <tr mat-row *matRowDef="let row; columns: friendsDisplayedColumns;"></tr>
         </table>
         <br>
@@ -78,24 +82,28 @@
         <table mat-table [dataSource]="offlineFriends" class="mat-elevation-z0">
             <ng-container matColumnDef="username">
                 <td mat-cell *matCellDef="let element"> 
-                    <mat-expansion-panel class="mat-elevation-z0">
+                    <mat-expansion-panel class="mat-elevation-z0" hideToggle>
                         <mat-expansion-panel-header>
                             {{element.username}}
                         </mat-expansion-panel-header>
-                      
                         <ng-template matExpansionPanelContent>
-                            <span (click)="removeFriend(element)" class="material-icons">close</span>
-                            <form class="example-form">
-                                <mat-form-field class="example-full-width">
-                                  <mat-label>Leave a comment</mat-label>
-                                  <textarea matInput placeholder="Ex. It makes me feel..."></textarea>
-                                </mat-form-field>
-                              </form>
-                            <span (click)="sendMessage(element)" class="material-icons">send</span>
+                            <mat-form-field class="offlineInput">
+                                <mat-label>Chat</mat-label>
+                                <textarea cdkTextareaAutosize matInput maxlength="250" #offlineInput></textarea>
+                                <mat-hint class="offlineHint" align="end">{{offlineInput.value.length || 0}}/250</mat-hint>
+                            </mat-form-field>
+                            <span matTooltip="Send Message" matTooltipPosition="right" (click)="sendMessage(element)" class="material-icons">send</span>
                         </ng-template>
                     </mat-expansion-panel>
                 </td>
             </ng-container>
+
+            <ng-container matColumnDef="remove">
+                <td mat-cell *matCellDef="let element"> 
+                    <span matTooltip="Remove Friend" matTooltipPosition="right" (click)="removeFriend(element)" class="material-icons">close</span>
+                </td>
+            </ng-container>
+
             <tr mat-row *matRowDef="let row; columns: friendsDisplayedColumns;"></tr>
           </table>
           <br>
