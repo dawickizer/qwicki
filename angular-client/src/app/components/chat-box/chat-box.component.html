@@ -4,9 +4,9 @@
     <ng-container matColumnDef="message">
       <td mat-cell *matCellDef="let element">
         <mat-form-field class="input">
-            <mat-label>MintOwl</mat-label>
+            <mat-label>{{element.from}}</mat-label>
             <textarea [value]="element.content" disabled cdkTextareaAutosize matInput maxlength="250"></textarea>
-            <mat-hint class="createdAt" align="end">5:47pm</mat-hint>
+            <mat-hint class="createdAt" align="end">{{element.createdAt}}</mat-hint>
         </mat-form-field>
       </td>
     </ng-container>
