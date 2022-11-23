@@ -1,5 +1,10 @@
-<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" class="mat-elevation-z0" hideToggle>
-    <mat-expansion-panel-header>
+<mat-expansion-panel 
+(opened)="panelOpenState = true" 
+(closed)="panelOpenState = false" 
+class="mat-elevation-z0" border 
+[bStyle]="panelOpenState ? 'solid' : 'hidden'" 
+[bPadding]="panelOpenState ? 5 : 0">
+    <mat-expansion-panel-header [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'" >
         {{friend.username}}
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>

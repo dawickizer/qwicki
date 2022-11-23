@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
 import { User } from 'src/app/models/user/user';
 import { SocialService } from 'src/app/services/social/social.service';
@@ -16,11 +17,23 @@ export class ChatBoxComponent implements OnInit {
 
   newMessage: string = '';
 
+  messagesDisplayedColumns: string[] = ['message'];
+  messages = new MatTableDataSource<Message>([] as Message[]);
+
   constructor(
     private snackBar: MatSnackBar,
     private socialService: SocialService) { }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.socialService.getMessagesBetween(this.friend).subscribe({
+      next: async (messages: Message[]) => {
+        this.messages.data = messages;
+      }, 
+      error: error => {
+        this.openSnackBar(error, 'Dismiss');
+      }
+    });
+  }
 
   sendMessage(event?: any) {
 
@@ -38,7 +51,8 @@ export class ChatBoxComponent implements OnInit {
         next: async (message: Message) => {
           this.socialService.getMessagesBetween(this.friend).subscribe({
             next: async (messages: Message[]) => {
-              console.log(messages);
+              this.messages.data = messages;
+              this.messages._updateChangeSubscription();
               this.newMessage = '';
             }, 
             error: error => {
