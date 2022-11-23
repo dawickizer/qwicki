@@ -1,0 +1,49 @@
+.example-sidenav {
+  width: 350px;
+  padding: 20px;
+  color: aliceblue;
+  background-color: #212529;
+}
+
+/* 
+   Need to use ::ng-deep to get access to angular material applied class...use !important to override the last laye of css being applied.
+   This will override the overflow property to get rid of the double scroll bars...while still allowing for one
+*/
+::ng-deep .mat-drawer-inner-container {
+  overflow: visible !important;
+} 
+
+/* 
+   If i want to get rid of both scroll bars comment this css in and the above css out
+*/
+/* .mat-drawer-inner-container::-webkit-scrollbar {
+  display: none;
+} */
+
+.material-icons {
+  vertical-align: middle;
+  color:#673ab7;
+}
+
+.material-icons:hover {
+  cursor: pointer;
+}
+
+table {
+  width: 100%;
+  background-color: #212529;
+}
+
+.mat-cell {
+  color: aliceblue;
+}
+
+/* get rid of padding left for the table */
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, td.mat-cell:last-of-type {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.right-justify {
+  text-align: right;
+}

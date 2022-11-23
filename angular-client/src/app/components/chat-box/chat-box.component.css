@@ -1,0 +1,44 @@
+/* social cell stuff */
+.hint {
+    color: aliceblue;
+}
+
+.createdAt {
+    color: rgba(255,255,255,.5);
+}
+
+.input {
+    width: 100%;
+}
+
+.material-icons {
+    vertical-align: middle;
+    color:#673ab7;
+}
+  
+.material-icons:hover {
+    cursor: pointer;
+}
+
+table {
+    width: 100%;
+    background-color: #212529;
+}
+
+.scrollable {
+    height: 200px;
+    max-width: 100%;
+    overflow: auto;
+}
+  
+.mat-cell {
+    color: aliceblue;
+    font-size: 13px;
+    border-bottom-style: none;
+}
+  
+/* get rid of padding left for the table */
+th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, td.mat-cell:last-of-type {
+    padding-left: 0px;
+    padding-right: 0px;
+}

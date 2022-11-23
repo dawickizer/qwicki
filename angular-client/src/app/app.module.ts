@@ -12,6 +12,8 @@ import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table'
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 // Components
 import { AppRoutingModule } from './app-routing.module';
@@ -24,6 +26,12 @@ import { SignupComponent } from './components/signup/signup.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
+import { ChatBoxComponent } from './components/chat-box/chat-box.component';
+import { SocialCellComponent } from './components/social-cell/social-cell.component';
+
+// Directives
+import { BorderDirective } from './directives/border.directive';
 
 // Services
 import { UserService } from './services/user/user.service';
@@ -36,6 +44,7 @@ import { SocialService } from './services/social/social.service';
 import { ColyseusService } from './services/colyseus/colyseus.service';
 import { InactivityService } from './services/inactivity/inactivity.service';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -45,7 +54,11 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     LoginComponent,
     SignupComponent,
     NotFoundComponent,
-    UserProfileComponent
+    UserProfileComponent,
+    SocialSidenavComponent,
+    ChatBoxComponent,
+    SocialCellComponent,
+    BorderDirective,
   ],
   imports: [
     BrowserModule,
@@ -59,6 +72,8 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     MatButtonModule,
     MatSidenavModule,
     MatSliderModule,
+    MatExpansionModule,
+    MatTooltipModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule

@@ -1,0 +1,23 @@
+<div class="scrollable" #scrollable>
+<table mat-table [dataSource]="messages" class="mat-elevation-z0">
+
+    <ng-container matColumnDef="message">
+      <td mat-cell *matCellDef="let element">
+        <mat-form-field class="input">
+            <mat-label>{{element.from?.username}}</mat-label>
+            <textarea [value]="element.content" disabled cdkTextareaAutosize matInput maxlength="250"></textarea>
+            <mat-hint class="createdAt" align="end">{{element.createdAt | date : 'short'}}</mat-hint>
+        </mat-form-field>
+      </td>
+    </ng-container>
+    <tr mat-row *matRowDef="let row; columns: messagesDisplayedColumns;"></tr>
+</table>
+</div>
+
+<mat-form-field class="input">
+    <mat-label>Chat</mat-label>
+    <textarea [(ngModel)]="newMessage" (keydown.enter)="sendMessage($event)" cdkTextareaAutosize matInput maxlength="250" #input></textarea>
+    <mat-hint class="hint" align="end">{{input.value.length || 0}}/250</mat-hint>
+</mat-form-field>
+<span matTooltip="Send Message" (click)="sendMessage()" class="material-icons">send</span>
+<span matTooltip="Remove Friend" (click)="removeFriend()" class="material-icons">person_remove</span>
