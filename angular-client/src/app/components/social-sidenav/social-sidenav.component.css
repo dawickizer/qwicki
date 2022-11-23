@@ -57,27 +57,3 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 ::ng-deep .mat-expansion-indicator:after {
   color: rgba(255,255,255,.5);
 }
-
-
-/* social cell stuff */
-.offlineHint {
-  color: aliceblue;
-}
-
-.offlineInput {
-  width: 100%;
-}
-
-.onlineHint {
-  color: aliceblue;
-}
-
-.onlineInput {
-  width: 100%;
-}
-
-::ng-deep .mat-expansion-panel-body {
-  padding: 0px !important;
-  padding-bottom: 7px !important;
-}
-

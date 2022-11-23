@@ -1,0 +1,6 @@
+<mat-form-field class="input">
+    <mat-label>Chat</mat-label>
+    <textarea [(ngModel)]="newMessage" (keydown.enter)="sendMessage($event)" cdkTextareaAutosize matInput maxlength="250" #input></textarea>
+    <mat-hint class="hint" align="end">{{input.value.length || 0}}/250</mat-hint>
+</mat-form-field>
+<span matTooltip="Send Message" matTooltipPosition="right" (click)="sendMessage()" class="material-icons">send</span>

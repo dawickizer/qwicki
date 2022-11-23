@@ -27,6 +27,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
+import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 
 // Services
 import { UserService } from './services/user/user.service';
@@ -49,7 +50,8 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     SignupComponent,
     NotFoundComponent,
     UserProfileComponent,
-    SocialSidenavComponent
+    SocialSidenavComponent,
+    ChatBoxComponent
   ],
   imports: [
     BrowserModule,

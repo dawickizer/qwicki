@@ -54,12 +54,7 @@
                             {{element.username}}
                         </mat-expansion-panel-header>
                         <ng-template matExpansionPanelContent>
-                            <mat-form-field class="onlineInput">
-                                <mat-label>Chat</mat-label>
-                                <textarea cdkTextareaAutosize matInput maxlength="250" #onlineInput></textarea>
-                                <mat-hint class="onlineHint" align="end">{{onlineInput.value.length || 0}}/250</mat-hint>
-                            </mat-form-field>
-                            <span matTooltip="Send Message" matTooltipPosition="right" (click)="sendMessage(element, onlineInput)" class="material-icons">send</span>
+                            <app-chat-box [friend]="element" [host]="host"></app-chat-box>
                         </ng-template>
                     </mat-expansion-panel>
                 </td>
@@ -87,12 +82,7 @@
                             {{element.username}}
                         </mat-expansion-panel-header>
                         <ng-template matExpansionPanelContent>
-                            <mat-form-field class="offlineInput">
-                                <mat-label>Chat</mat-label>
-                                <textarea (keydown.enter)="sendMessage(element, offlineInput, $event)" cdkTextareaAutosize matInput maxlength="250" #offlineInput></textarea>
-                                <mat-hint class="offlineHint" align="end">{{offlineInput.value.length || 0}}/250</mat-hint>
-                            </mat-form-field>
-                            <span (click)="sendMessage(element, offlineInput)" matTooltip="Send Message" matTooltipPosition="right" class="material-icons">send</span>
+                            <app-chat-box [friend]="element" [host]="host"></app-chat-box>
                         </ng-template>
                     </mat-expansion-panel>
                 </td>

@@ -1,0 +1,22 @@
+/* social cell stuff */
+.hint {
+    color: aliceblue;
+}
+
+.input {
+    width: 100%;
+}
+
+::ng-deep .mat-expansion-panel-body {
+    padding: 0px !important;
+    padding-bottom: 7px !important;
+}
+
+.material-icons {
+    vertical-align: middle;
+    color:#673ab7;
+}
+  
+.material-icons:hover {
+    cursor: pointer;
+}
