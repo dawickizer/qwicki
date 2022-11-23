@@ -6,7 +6,7 @@
         <mat-form-field class="input">
             <mat-label>{{element.from?.username}}</mat-label>
             <textarea [value]="element.content" disabled cdkTextareaAutosize matInput maxlength="250"></textarea>
-            <mat-hint class="createdAt" align="end">{{element.createdAt}}</mat-hint>
+            <mat-hint class="createdAt" align="end">{{element.createdAt | date : 'short'}}</mat-hint>
         </mat-form-field>
       </td>
     </ng-container>
