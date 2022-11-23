@@ -1,0 +1,8 @@
+<mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" class="mat-elevation-z0" hideToggle>
+    <mat-expansion-panel-header>
+        {{friend.username}}
+    </mat-expansion-panel-header>
+    <ng-template matExpansionPanelContent>
+        <app-chat-box [host]="host" [friend]="friend" ></app-chat-box>
+    </ng-template>
+</mat-expansion-panel>

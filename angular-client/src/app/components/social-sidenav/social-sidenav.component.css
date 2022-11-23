@@ -47,22 +47,3 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 .right-justify {
   text-align: right;
 }
-
-.mat-expansion-panel {
-  background-color: #212529;
-  color: aliceblue;
-}
-
-.mat-expansion-panel-header {
-  padding: 0px;
-  padding-right: 7px;
-}
-
-::ng-deep .mat-expansion-panel-body {
-  padding: 0px !important;
-  padding-bottom: 7px !important;
-}
-
-::ng-deep .mat-expansion-indicator:after {
-  color: rgba(255,255,255,.5);
-}
