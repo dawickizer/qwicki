@@ -52,13 +52,6 @@
                     <app-social-cell [host]="host" [friend]="element" (remove)="removeFriend(element)"></app-social-cell>
                 </td>
             </ng-container>
-
-            <ng-container matColumnDef="remove">
-                <td class="right-justify" mat-cell *matCellDef="let element"> 
-                    <span matTooltip="Remove Friend" matTooltipPosition="right" (click)="removeFriend(element)" class="material-icons">close</span>
-                </td>
-            </ng-container>
-
             <tr mat-row *matRowDef="let row; columns: friendsDisplayedColumns;"></tr>
         </table>
         <br>
@@ -73,13 +66,6 @@
                     <app-social-cell [host]="host" [friend]="element" (remove)="removeFriend(element)"></app-social-cell>
                 </td>
             </ng-container>
-
-            <ng-container matColumnDef="remove">
-                <td class="right-justify" mat-cell *matCellDef="let element"> 
-                    <span matTooltip="Remove Friend" matTooltipPosition="right" (click)="removeFriend(element)" class="material-icons">close</span>
-                </td>
-            </ng-container>
-
             <tr mat-row *matRowDef="let row; columns: friendsDisplayedColumns;"></tr>
           </table>
           <br>
