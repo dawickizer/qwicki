@@ -17,5 +17,5 @@
     <textarea [(ngModel)]="newMessage" (keydown.enter)="sendMessage($event)" cdkTextareaAutosize matInput maxlength="250" #input></textarea>
     <mat-hint class="hint" align="end">{{input.value.length || 0}}/250</mat-hint>
 </mat-form-field>
-<span matTooltip="Send Message" matTooltipPosition="right" (click)="sendMessage()" class="material-icons">send</span>
-<span matTooltip="Remove Friend" matTooltipPosition="right" (click)="removeFriend()" class="material-icons">close</span>
+<span matTooltip="Send Message" (click)="sendMessage()" class="material-icons">send</span>
+<span matTooltip="Remove Friend" (click)="removeFriend()" class="material-icons">person_remove</span>

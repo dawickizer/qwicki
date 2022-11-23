@@ -12,6 +12,7 @@ export class SocialCellComponent implements OnInit {
   @Input() friend: User;
   @Output() remove: EventEmitter<User> = new EventEmitter();
 
+  newMessage: boolean = true;
   panelOpenState: boolean = false;
 
   constructor() {}

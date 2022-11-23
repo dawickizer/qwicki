@@ -1,11 +1,16 @@
-<mat-expansion-panel 
+<mat-expansion-panel  
 (opened)="panelOpenState = true" 
 (closed)="panelOpenState = false" 
 class="mat-elevation-z0" border 
 [bStyle]="panelOpenState ? 'solid' : 'hidden'" 
 [bPadding]="panelOpenState ? 5 : 0">
-    <mat-expansion-panel-header [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'" >
-        {{friend.username}}
+    <mat-expansion-panel-header>
+        <mat-panel-title [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'">
+            {{friend.username}}
+        </mat-panel-title> 
+        <mat-panel-description>
+            <span *ngIf="newMessage" class="material-icons">mail</span>
+        </mat-panel-description>     
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
         <app-chat-box [host]="host" [friend]="friend" (remove)="removeFriend()"></app-chat-box>
