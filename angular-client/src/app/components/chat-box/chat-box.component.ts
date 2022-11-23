@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ElementRef, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
@@ -12,6 +12,7 @@ import { SocialService } from 'src/app/services/social/social.service';
 })
 export class ChatBoxComponent implements OnInit {
 
+  @ViewChild('scrollable') scrollable: ElementRef;
   @Input() host: User;
   @Input() friend: User;
   @Output() remove: EventEmitter<User> = new EventEmitter();
@@ -27,7 +28,8 @@ export class ChatBoxComponent implements OnInit {
   ngOnInit(): void {
     this.socialService.getMessagesBetween(this.friend).subscribe({
       next: async (messages: Message[]) => {
-        this.messages.data = messages;
+        this.messages.data = this.addEmptyMessages(messages);
+        this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
       }, 
       error: error => {
         this.openSnackBar(error, 'Dismiss');
@@ -51,8 +53,9 @@ export class ChatBoxComponent implements OnInit {
         next: async (message: Message) => {
           this.socialService.getMessagesBetween(this.friend).subscribe({
             next: async (messages: Message[]) => {
-              this.messages.data = messages;
+              this.messages.data = this.addEmptyMessages(messages);
               this.messages._updateChangeSubscription();
+              this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
               this.newMessage = '';
             }, 
             error: error => {
@@ -72,6 +75,22 @@ export class ChatBoxComponent implements OnInit {
 
   removeFriend() {
     this.remove.emit(this.friend);
+  }
+
+  addEmptyMessages(messages: Message[]): Message[] {
+    let emptyMessage: Message = new Message();
+    emptyMessage.content = '';
+    if (messages.length < 1) {
+      messages.unshift(emptyMessage);
+      messages.unshift(emptyMessage);
+      messages.unshift(emptyMessage);
+    } else if (messages.length < 2) {
+      messages.unshift(emptyMessage);
+      messages.unshift(emptyMessage);
+    } else if (messages.length < 3) {
+      messages.unshift(emptyMessage);
+    }
+    return messages;
   }
 
   openSnackBar(message: string, action: string) {
