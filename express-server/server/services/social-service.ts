@@ -198,6 +198,25 @@ class SocialService {
         return await Message.create(message);
     }
 
+    async hasUnviewedMessages(req: any): Promise<boolean> {   
+        let requestor: User | null = await this.userService.get(req.body.decodedJWT._id);
+        let requested: User | null = await this.userService.get(req.params.id);
+        let unviewedMessages = await Message.find({
+            $and: [{ to: requestor._id }, { from: requested._id }, { viewed: false }]
+        });
+        return (unviewedMessages && unviewedMessages.length > 0) ? true : false;
+    }
+
+    async markUnviewedMessagesAsViewed(req: any): Promise<boolean> {   
+        let requestor: User | null = await this.userService.get(req.body.decodedJWT._id);
+        let requested: User | null = await this.userService.get(req.params.id);
+        await Message.updateMany(
+            { $and: [{ to: requestor._id }, { from: requested._id }, { viewed: false }]}, 
+            { viewed: true }
+        );
+        return false;
+    }
+
     async getMessagesBetween(req: any): Promise<Message[]> {   
         let requestor: User | null = await this.userService.get(req.body.decodedJWT._id);
         let requested: User | null = await this.userService.get(req.params.id);

@@ -36,3 +36,26 @@
   background: #673ab7;
   border-radius: 10px;
 }
+
+/* All icons apply these rules */
+::ng-deep .material-icons, .material-icons-outlined {
+  vertical-align: middle;
+  color:#673ab7;
+}
+
+/* All icons apply these rules */
+::ng-deep .material-icons:hover, .material-icons-outlined:hover {
+  cursor: pointer;
+}
+
+/* All icons apply these rules */
+::ng-deep .material-icons-outlined {
+  vertical-align: middle;
+  color:#673ab7;
+}
+
+/* All icons apply these rules */
+::ng-deep .material-icons-outlined:hover {
+  cursor: pointer;
+}
+

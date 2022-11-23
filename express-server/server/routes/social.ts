@@ -64,4 +64,20 @@ router.get('/get-messages-between/:id', [isAuthenticatedJWT, requestBody], async
     }
 });
 
+router.get('/has-unviewed-messages/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
+    try {
+        res.send(await socialService.hasUnviewedMessages(req));
+    } catch (error: any) {
+        res.status(500).send(error.message);
+    }
+});
+
+router.put('/mark-unviewed-messages-as-viewed/:id', [isAuthenticatedJWT, requestBody], async (req: any, res: any) => {
+    try {
+        res.send(await socialService.markUnviewedMessagesAsViewed(req));
+    } catch (error: any) {
+        res.status(500).send(error.message);
+    }
+});
+
 export default router;
