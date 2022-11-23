@@ -89,10 +89,10 @@
                         <ng-template matExpansionPanelContent>
                             <mat-form-field class="offlineInput">
                                 <mat-label>Chat</mat-label>
-                                <textarea cdkTextareaAutosize matInput maxlength="250" #offlineInput></textarea>
+                                <textarea (keydown.enter)="sendMessage(element, offlineInput, $event)" cdkTextareaAutosize matInput maxlength="250" #offlineInput></textarea>
                                 <mat-hint class="offlineHint" align="end">{{offlineInput.value.length || 0}}/250</mat-hint>
                             </mat-form-field>
-                            <span matTooltip="Send Message" matTooltipPosition="right" (click)="sendMessage(element, offlineInput)" class="material-icons">send</span>
+                            <span (click)="sendMessage(element, offlineInput)" matTooltip="Send Message" matTooltipPosition="right" class="material-icons">send</span>
                         </ng-template>
                     </mat-expansion-panel>
                 </td>

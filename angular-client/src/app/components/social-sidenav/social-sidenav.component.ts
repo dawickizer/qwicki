@@ -112,26 +112,40 @@ export class SocialSidenavComponent implements OnInit {
     });
   }
 
-  sendMessage(friend: User, elementReference: any) {
+  sendMessage(friend: User, elementReference: any, event?: any) {
 
-    console.log(friend)
-    console.log(elementReference.value);
-    elementReference.value = '';
+    // prevent that text area from causing an expand event
+    if (event) event.preventDefault();
+
+    // if text is empty dont do anything
+    if (elementReference.value && elementReference.value !== '') {
+
+      let message: Message = new Message();
+      message.content = elementReference.value;
+      message.to = friend;
+
+      this.socialService.sendMessage(message).subscribe({
+        next: async (message: Message) => {
+          this.socialService.getMessagesBetween(friend).subscribe({
+            next: async (messages: Message[]) => {
+              console.log(messages);
+              elementReference.value = '';
+            }, 
+            error: error => {
+              elementReference.value = '';
+              this.openSnackBar(error, 'Dismiss');
+            }
+          });
+        }, 
+        error: error => {
+          elementReference.value = '';
+          this.openSnackBar(error, 'Dismiss');
+        }
+      });
+      
+    }
 
 
-    // let message: Message = new Message();
-    // message.content = "Hello"
-    // message.to = friend;
-
-    // this.socialService.sendMessage(message).subscribe({
-    //   next: async (message: Message) => {
-    //     this.socialService.getMessagesBetween(friend).subscribe({
-    //       next: async (messages: Message[]) => {console.log(messages)}, 
-    //       error: error => this.openSnackBar(error, 'Dismiss')
-    //     });
-    //   }, 
-    //   error: error => this.openSnackBar(error, 'Dismiss')
-    // });
   }
 
   setHost(host: User) {
