@@ -241,7 +241,6 @@ export class SocialSidenavComponent implements OnInit {
     return this.host.friends.find(friend => friend._id === id);
   }
 
-
   private handleOnlineEvent(user: any) {
     this.setOnlineStatusOfFriend(user, true);
   }
@@ -300,6 +299,12 @@ export class SocialSidenavComponent implements OnInit {
 
     this.offlineFriends.filterPredicate = (friend, filter) => friend.username.trim().toLowerCase().includes(filter);
     this.offlineFriends.filter = filterValue.target.value.trim().toLowerCase();
+
+    this.inboundFriendRequests.filterPredicate = (friendRequest, filter) => friendRequest.from.username.trim().toLowerCase().includes(filter);
+    this.inboundFriendRequests.filter = filterValue.target.value.trim().toLowerCase();
+
+    this.outboundFriendRequests.filterPredicate = (friendRequest, filter) => friendRequest.to.username.trim().toLowerCase().includes(filter);
+    this.outboundFriendRequests.filter = filterValue.target.value.trim().toLowerCase();
   }
 
   handleSideNavKeyBind() {
