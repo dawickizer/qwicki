@@ -21,7 +21,7 @@ export class SocialSidenavComponent implements OnInit {
 
   @ViewChild('drawer') drawer: MatSidenav;
 
-  friendsDisplayedColumns: string[] = ['username', 'remove'];
+  friendsDisplayedColumns: string[] = ['username'];
   onlineFriends = new MatTableDataSource<User>([] as User[]);
   offlineFriends = new MatTableDataSource<User>([] as User[]);
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
@@ -14,9 +14,9 @@ export class ChatBoxComponent implements OnInit {
 
   @Input() host: User;
   @Input() friend: User;
+  @Output() remove: EventEmitter<User> = new EventEmitter();
 
   newMessage: string = '';
-
   messagesDisplayedColumns: string[] = ['message'];
   messages = new MatTableDataSource<Message>([] as Message[]);
 
@@ -68,6 +68,10 @@ export class ChatBoxComponent implements OnInit {
       });
       
     }
+  }
+
+  removeFriend() {
+    this.remove.emit(this.friend);
   }
 
   openSnackBar(message: string, action: string) {

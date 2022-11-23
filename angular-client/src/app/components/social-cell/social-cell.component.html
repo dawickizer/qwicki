@@ -8,6 +8,6 @@ class="mat-elevation-z0" border
         {{friend.username}}
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-        <app-chat-box [host]="host" [friend]="friend" ></app-chat-box>
+        <app-chat-box [host]="host" [friend]="friend" (remove)="removeFriend()"></app-chat-box>
     </ng-template>
 </mat-expansion-panel>
