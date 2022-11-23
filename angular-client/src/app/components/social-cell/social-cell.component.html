@@ -1,6 +1,6 @@
 <mat-expansion-panel  
-(opened)="panelOpenState = true" 
-(closed)="panelOpenState = false" 
+(opened)="onPanelOpen()" 
+(closed)="onPanelClose()" 
 class="mat-elevation-z0" border 
 [bStyle]="panelOpenState ? 'solid' : 'hidden'" 
 [bPadding]="panelOpenState ? 5 : 0">
@@ -9,10 +9,10 @@ class="mat-elevation-z0" border
             {{friend.username}}
         </mat-panel-title> 
         <mat-panel-description>
-            <span *ngIf="newMessage" class="material-icons">mail</span>
+            <span *ngIf="hasUnviewedMessages && !panelOpenState" class="material-icons">mail</span>
         </mat-panel-description>     
     </mat-expansion-panel-header>
     <ng-template matExpansionPanelContent>
-        <app-chat-box [host]="host" [friend]="friend" (remove)="removeFriend()"></app-chat-box>
+        <app-chat-box [host]="host" [friend]="friend" (onRemoveFriend)="removeFriend()" (onUnviewedMessage)="unviewedMessageAlert()"></app-chat-box>
     </ng-template>
 </mat-expansion-panel>

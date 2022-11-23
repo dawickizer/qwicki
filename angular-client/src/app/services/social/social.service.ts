@@ -52,6 +52,16 @@ export class SocialService {
     .pipe(catchError(this.handleError));
   }
 
+  hasUnviewedMessages(friend: User): Observable<boolean> {
+    return this.http.get<boolean>(`${this.API}/social/has-unviewed-messages/${friend._id}`)
+    .pipe(catchError(this.handleError));
+  }
+
+  markUnviewedMessagesAsViewed(friend: User): Observable<boolean> {
+    return this.http.put<boolean>(`${this.API}/social/mark-unviewed-messages-as-viewed/${friend._id}`, null)
+    .pipe(catchError(this.handleError));
+  }
+
   private handleError(error: HttpErrorResponse) {
     if (error.error instanceof ErrorEvent) {
       // A client-side or network error occurred. Handle it accordingly.

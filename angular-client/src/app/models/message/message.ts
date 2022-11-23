@@ -6,4 +6,5 @@ export class Message {
   from: User
   to: User;
   content: string;
+  viewed: boolean;
 }

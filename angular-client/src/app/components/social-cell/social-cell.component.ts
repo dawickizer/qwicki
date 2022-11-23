@@ -1,5 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/app/models/user/user';
+import { SocialService } from 'src/app/services/social/social.service';
 
 @Component({
   selector: 'app-social-cell',
@@ -10,17 +12,50 @@ export class SocialCellComponent implements OnInit {
 
   @Input() host: User;
   @Input() friend: User;
-  @Output() remove: EventEmitter<User> = new EventEmitter();
+  @Output() onRemoveFriend: EventEmitter<User> = new EventEmitter();
 
-  newMessage: boolean = true;
+  hasUnviewedMessages: boolean = false;
   panelOpenState: boolean = false;
 
-  constructor() {}
+  constructor(private socialService: SocialService, private snackBar: MatSnackBar) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.unviewedMessageAlert();
+  }
+
+  unviewedMessageAlert() {
+    if (!this.panelOpenState) {
+      this.socialService.hasUnviewedMessages(this.friend).subscribe({
+        next: async (hasUnviewedMessages: boolean) => {
+          this.hasUnviewedMessages = hasUnviewedMessages;
+        }, 
+        error: error => this.openSnackBar(error, 'Dismiss')
+      });
+    }
+  }
+
+  onPanelOpen() {
+    this.panelOpenState = true;
+    this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
+      next: async (hasUnviewedMessages: boolean) => {
+        this.hasUnviewedMessages = hasUnviewedMessages;
+      }, 
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
+  }
+
+  onPanelClose() {
+    this.panelOpenState = false;
+  }
 
   removeFriend() {
-    this.remove.emit(this.friend);
+    this.onRemoveFriend.emit(this.friend);
+  }
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 5000
+    });
   }
 
 }

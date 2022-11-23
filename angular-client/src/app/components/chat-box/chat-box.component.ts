@@ -15,7 +15,8 @@ export class ChatBoxComponent implements OnInit {
   @ViewChild('scrollable') scrollable: ElementRef;
   @Input() host: User;
   @Input() friend: User;
-  @Output() remove: EventEmitter<User> = new EventEmitter();
+  @Output() onRemoveFriend: EventEmitter<User> = new EventEmitter();
+  @Output() onUnviewedMessage: EventEmitter<boolean> = new EventEmitter();
 
   newMessage: string = '';
   messagesDisplayedColumns: string[] = ['message'];
@@ -53,6 +54,7 @@ export class ChatBoxComponent implements OnInit {
         next: async (message: Message) => {
           this.socialService.getMessagesBetween(this.friend).subscribe({
             next: async (messages: Message[]) => {
+              this.unviewedMessageAlert();
               this.messages.data = this.addEmptyMessages(messages);
               this.messages._updateChangeSubscription();
               this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
@@ -74,7 +76,7 @@ export class ChatBoxComponent implements OnInit {
   }
 
   removeFriend() {
-    this.remove.emit(this.friend);
+    this.onRemoveFriend.emit(this.friend);
   }
 
   addEmptyMessages(messages: Message[]): Message[] {
@@ -91,6 +93,10 @@ export class ChatBoxComponent implements OnInit {
       messages.unshift(emptyMessage);
     }
     return messages;
+  }
+
+  unviewedMessageAlert() {
+    this.onUnviewedMessage.emit(true);
   }
 
   openSnackBar(message: string, action: string) {
