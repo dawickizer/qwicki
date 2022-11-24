@@ -188,14 +188,26 @@ class SocialService {
             message.content = req.body.message.content;
     
             // persist the message
-            message = await this.createMessage(message);
+            message = await this.createMessageAndPopulate(message);
 
             return message;
         } else throw Error('User does not exist');
     }
 
-    async createMessage(message: Message): Promise<Message> {
-        return await Message.create(message);
+    async createMessageAndPopulate(message: Message): Promise<Message> {
+        return (await Message.create(message))
+        .populate([
+            {
+                path: 'from',
+                model: 'User',
+                select: 'username'
+            },
+            {
+                path: 'to',
+                model: 'User',
+                select: 'username'
+            },
+        ]);
     }
 
     async hasUnviewedMessages(req: any): Promise<boolean> {   

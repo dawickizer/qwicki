@@ -26,6 +26,7 @@ export class ChatBoxComponent implements OnInit {
 
   @Input() friend: User;
   @Output() friendChange: EventEmitter<User> = new EventEmitter();
+  
 
   @Output() onRemoveFriend: EventEmitter<User> = new EventEmitter();
   @Output() onUnviewedMessage: EventEmitter<boolean> = new EventEmitter();
@@ -39,6 +40,8 @@ export class ChatBoxComponent implements OnInit {
     private socialService: SocialService) { }
 
   ngOnInit(): void {
+    this.setHostRoomListeners();
+    this.setOnlineFriendsRoomsListeners();
     this.socialService.getMessagesBetween(this.friend).subscribe({
       next: async (messages: Message[]) => {
         this.messages.data = this.addEmptyMessages(messages);
@@ -54,50 +57,74 @@ export class ChatBoxComponent implements OnInit {
     return (this.host && this.hostRoom && this.onlineFriendsRooms && this.friend);
   }
 
+  setHostRoomListeners() {
+    this.hostRoom.onMessage("messageHost", (message: Message) => this.handleMessageHostEvent(message));
+  }
+
+  setOnlineFriendsRoomsListeners() {
+    this.onlineFriendsRooms.forEach(room => {
+      room.onMessage("messageUser", (message: Message) => this.handleMessageUserEvent(message));
+    });
+  }
+
+  handleMessageHostEvent(message: Message) {
+    console.log("MESSAGE TO HOST")
+    this.unviewedMessageAlert();
+    this.messages.data = this.addEmptyMessages([...this.messages.data, message]);
+    this.messages._updateChangeSubscription();
+    this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
+  }
+
+  handleMessageUserEvent(message: Message) {
+    console.log("MESSAGE TO USER")
+    this.unviewedMessageAlert();
+    this.messages.data = this.addEmptyMessages([...this.messages.data, message]);
+    this.messages._updateChangeSubscription();
+    this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
+  }
+
   sendMessage(event?: any) {
 
-    console.log(this.host)
-    console.log(this.hostRoom)
-    console.log(this.friend)
-    console.log(this.onlineFriendsRooms);
+    // prevent that text area from causing an expand event
+    if (event) event.preventDefault();
 
-    // // prevent that text area from causing an expand event
-    // if (event) event.preventDefault();
+    // if text is empty dont do anything
+    if (this.newMessage && this.newMessage !== '') {
 
-    // // if text is empty dont do anything
-    // if (this.newMessage && this.newMessage !== '') {
+      let message: Message = new Message();
+      message.content = this.newMessage;
+      message.to = this.friend;
 
-    //   let message: Message = new Message();
-    //   message.content = this.newMessage;
-    //   message.to = this.friend;
+      this.socialService.sendMessage(message).subscribe({
+        next: async (message: Message) => {
+          this.socialService.getMessagesBetween(this.friend).subscribe({
+            next: async (messages: Message[]) => {
 
-    //   this.socialService.sendMessage(message).subscribe({
-    //     next: async (message: Message) => {
-    //       this.socialService.getMessagesBetween(this.friend).subscribe({
-    //         next: async (messages: Message[]) => {
-
-    //           // if am in the users room send the message there...if they are in my room send via my room
-
-
-    //           this.unviewedMessageAlert();
-    //           this.messages.data = this.addEmptyMessages(messages);
-    //           this.messages._updateChangeSubscription();
-    //           this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
-    //           this.newMessage = '';
-    //         }, 
-    //         error: error => {
-    //           this.newMessage = '';
-    //           this.openSnackBar(error, 'Dismiss');
-    //         }
-    //       });
-    //     }, 
-    //     error: error => {
-    //       this.newMessage = '';
-    //       this.openSnackBar(error, 'Dismiss');
-    //     }
-    //   });
+              let room: Colyseus.Room = this.onlineFriendsRooms.find(room => room.id === message.to._id);
+              if (room) {
+                room.send("messageHost", message);
+              } else {
+                this.hostRoom.send("messageUser", message);
+              }
+              this.unviewedMessageAlert();
+              this.messages.data = this.addEmptyMessages(messages);
+              this.messages._updateChangeSubscription();
+              this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
+              this.newMessage = '';
+            }, 
+            error: error => {
+              this.newMessage = '';
+              this.openSnackBar(error, 'Dismiss');
+            }
+          });
+        }, 
+        error: error => {
+          this.newMessage = '';
+          this.openSnackBar(error, 'Dismiss');
+        }
+      });
       
-    // }
+    }
   }
 
   removeFriend() {

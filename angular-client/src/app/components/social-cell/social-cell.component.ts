@@ -46,17 +46,26 @@ export class SocialCellComponent implements OnInit {
         }, 
         error: error => this.openSnackBar(error, 'Dismiss')
       });
+    } else {
+      this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
+        next: async (hasUnviewedMessages: boolean) => {
+          this.hasUnviewedMessages = hasUnviewedMessages;
+        }, 
+        error: error => this.openSnackBar(error, 'Dismiss')
+      });
     }
   }
 
   onPanelOpen() {
     this.panelOpenState = true;
-    this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
-      next: async (hasUnviewedMessages: boolean) => {
-        this.hasUnviewedMessages = hasUnviewedMessages;
-      }, 
-      error: error => this.openSnackBar(error, 'Dismiss')
-    });
+    if (this.hasUnviewedMessages) {
+      this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
+        next: async (hasUnviewedMessages: boolean) => {
+          this.hasUnviewedMessages = hasUnviewedMessages;
+        }, 
+        error: error => this.openSnackBar(error, 'Dismiss')
+      });
+    }
   }
 
   onPanelClose() {

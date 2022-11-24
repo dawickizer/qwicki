@@ -11,6 +11,7 @@ import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import * as Colyseus from 'colyseus.js';
+import { Message } from 'src/app/models/message/message';
 
 @Component({
   selector: 'app-social-sidenav',
