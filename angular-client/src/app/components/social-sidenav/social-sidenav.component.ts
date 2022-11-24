@@ -31,11 +31,11 @@ export class SocialSidenavComponent implements OnInit {
   outboundFriendRequestsDisplayedColumns: string[] = ['username', 'action'];
   outboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
 
-  host: User = new User();
+  host: User;
   potentialFriend: string = '';
 
   hostRoom: Colyseus.Room;
-  onlineFriendsRooms: Colyseus.Room[] = [];
+  onlineFriendsRooms: Colyseus.Room[];
 
   constructor(
     private router: Router, 
@@ -63,6 +63,10 @@ export class SocialSidenavComponent implements OnInit {
     this.keyBindService.removeKeyBinds();
   }
 
+  asyncDataPresent() {
+    return (this.host && this.hostRoom && this.onlineFriendsRooms);
+  }
+
   async createHostRoom() {
     this.hostRoom = await this.colyseusService.createRoom(this.host, this.authService.currentUserJWT());
     this.setHostRoomListeners();
@@ -80,7 +84,7 @@ export class SocialSidenavComponent implements OnInit {
   }
 
   async connectToOnlineFriendsRooms() {
-    this.onlineFriendsRooms = await this.colyseusService.connectToRooms(this.onlineFriends.data, this.authService.currentUserJWT());
+    this.onlineFriendsRooms = await this.colyseusService.connectToRooms(this.onlineFriends.data, this.authService.currentUserJWT()) ?? [];
     this.setOnlineFriendsRoomsListeners();
   }
 

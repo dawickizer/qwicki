@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
 import { User } from 'src/app/models/user/user';
 import { SocialService } from 'src/app/services/social/social.service';
+import * as Colyseus from 'colyseus.js';
 
 @Component({
   selector: 'app-chat-box',
@@ -13,8 +14,19 @@ import { SocialService } from 'src/app/services/social/social.service';
 export class ChatBoxComponent implements OnInit {
 
   @ViewChild('scrollable') scrollable: ElementRef;
+
   @Input() host: User;
+  @Output() hostChange: EventEmitter<User> = new EventEmitter();
+
+  @Input() hostRoom: Colyseus.Room;
+  @Output() hostRoomChange: EventEmitter<Colyseus.Room> = new EventEmitter();
+
+  @Input() onlineFriendsRooms: Colyseus.Room[];
+  @Output() onlineFriendsRoomsChange: EventEmitter<Colyseus.Room[]> = new EventEmitter();
+
   @Input() friend: User;
+  @Output() friendChange: EventEmitter<User> = new EventEmitter();
+
   @Output() onRemoveFriend: EventEmitter<User> = new EventEmitter();
   @Output() onUnviewedMessage: EventEmitter<boolean> = new EventEmitter();
 
@@ -38,45 +50,62 @@ export class ChatBoxComponent implements OnInit {
     });
   }
 
+  asyncDataPresent() {
+    return (this.host && this.hostRoom && this.onlineFriendsRooms && this.friend);
+  }
+
   sendMessage(event?: any) {
 
-    // prevent that text area from causing an expand event
-    if (event) event.preventDefault();
+    console.log(this.host)
+    console.log(this.hostRoom)
+    console.log(this.friend)
+    console.log(this.onlineFriendsRooms);
 
-    // if text is empty dont do anything
-    if (this.newMessage && this.newMessage !== '') {
+    // // prevent that text area from causing an expand event
+    // if (event) event.preventDefault();
 
-      let message: Message = new Message();
-      message.content = this.newMessage;
-      message.to = this.friend;
+    // // if text is empty dont do anything
+    // if (this.newMessage && this.newMessage !== '') {
 
-      this.socialService.sendMessage(message).subscribe({
-        next: async (message: Message) => {
-          this.socialService.getMessagesBetween(this.friend).subscribe({
-            next: async (messages: Message[]) => {
-              this.unviewedMessageAlert();
-              this.messages.data = this.addEmptyMessages(messages);
-              this.messages._updateChangeSubscription();
-              this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
-              this.newMessage = '';
-            }, 
-            error: error => {
-              this.newMessage = '';
-              this.openSnackBar(error, 'Dismiss');
-            }
-          });
-        }, 
-        error: error => {
-          this.newMessage = '';
-          this.openSnackBar(error, 'Dismiss');
-        }
-      });
+    //   let message: Message = new Message();
+    //   message.content = this.newMessage;
+    //   message.to = this.friend;
+
+    //   this.socialService.sendMessage(message).subscribe({
+    //     next: async (message: Message) => {
+    //       this.socialService.getMessagesBetween(this.friend).subscribe({
+    //         next: async (messages: Message[]) => {
+
+    //           // if am in the users room send the message there...if they are in my room send via my room
+
+
+    //           this.unviewedMessageAlert();
+    //           this.messages.data = this.addEmptyMessages(messages);
+    //           this.messages._updateChangeSubscription();
+    //           this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
+    //           this.newMessage = '';
+    //         }, 
+    //         error: error => {
+    //           this.newMessage = '';
+    //           this.openSnackBar(error, 'Dismiss');
+    //         }
+    //       });
+    //     }, 
+    //     error: error => {
+    //       this.newMessage = '';
+    //       this.openSnackBar(error, 'Dismiss');
+    //     }
+    //   });
       
-    }
+    // }
   }
 
   removeFriend() {
     this.onRemoveFriend.emit(this.friend);
+  }
+
+  unviewedMessageAlert() {
+    this.onUnviewedMessage.emit(true);
   }
 
   addEmptyMessages(messages: Message[]): Message[] {
@@ -93,10 +122,6 @@ export class ChatBoxComponent implements OnInit {
       messages.unshift(emptyMessage);
     }
     return messages;
-  }
-
-  unviewedMessageAlert() {
-    this.onUnviewedMessage.emit(true);
   }
 
   openSnackBar(message: string, action: string) {
