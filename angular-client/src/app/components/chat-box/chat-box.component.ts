@@ -5,6 +5,7 @@ import { Message } from 'src/app/models/message/message';
 import { User } from 'src/app/models/user/user';
 import { SocialService } from 'src/app/services/social/social.service';
 import * as Colyseus from 'colyseus.js';
+import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 
 @Component({
   selector: 'app-chat-box',
@@ -15,27 +16,29 @@ export class ChatBoxComponent implements OnInit {
 
   @ViewChild('scrollable') scrollable: ElementRef;
 
-  @Input() host: User;
-  @Output() hostChange: EventEmitter<User> = new EventEmitter();
-
-  @Input() hostRoom: Colyseus.Room;
-  @Output() hostRoomChange: EventEmitter<Colyseus.Room> = new EventEmitter();
-
-  @Input() onlineFriendsRooms: Colyseus.Room[];
-  @Output() onlineFriendsRoomsChange: EventEmitter<Colyseus.Room[]> = new EventEmitter();
-
   @Input() friend: User;
   @Output() friendChange: EventEmitter<User> = new EventEmitter();
   
-
   @Output() onRemoveFriend: EventEmitter<User> = new EventEmitter();
   @Output() onUnviewedMessage: EventEmitter<boolean> = new EventEmitter();
+
+  private _potentialMessage: Message;
+  @Input() set potentialMessage(message: Message) {
+    this._potentialMessage = message;
+    if (message && this.friend && message.from._id === this.friend._id) 
+       this.handlePotentialMessage(message);
+  }
+ 
+  get potentialMessage(): Message {
+     return this._potentialMessage;
+  }
 
   newMessage: string = '';
   messagesDisplayedColumns: string[] = ['message'];
   messages = new MatTableDataSource<Message>([] as Message[]);
-
+  
   constructor(
+    private colyseusService: ColyseusService,
     private snackBar: MatSnackBar,
     private socialService: SocialService) { }
 
@@ -45,26 +48,11 @@ export class ChatBoxComponent implements OnInit {
         this.messages.data = this.addEmptyMessages(messages);
         this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
       }, 
-      error: error => {
-        this.openSnackBar(error, 'Dismiss');
-      }
+      error: error => this.openSnackBar(error, 'Dismiss')
     });
   }
 
-  asyncDataPresent() {
-    return (this.host && this.hostRoom && this.onlineFriendsRooms && this.friend);
-  }
-
-  handleMessageHostEvent(message: Message) {
-    console.log("MESSAGE TO HOST")
-    this.unviewedMessageAlert();
-    this.messages.data = this.addEmptyMessages([...this.messages.data, message]);
-    this.messages._updateChangeSubscription();
-    this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
-  }
-
-  handleMessageUserEvent(message: Message) {
-    console.log("MESSAGE TO USER")
+  handlePotentialMessage(message: Message) {
     this.unviewedMessageAlert();
     this.messages.data = this.addEmptyMessages([...this.messages.data, message]);
     this.messages._updateChangeSubscription();
@@ -88,11 +76,11 @@ export class ChatBoxComponent implements OnInit {
           this.socialService.getMessagesBetween(this.friend).subscribe({
             next: async (messages: Message[]) => {
 
-              let room: Colyseus.Room = this.onlineFriendsRooms.find(room => room.id === message.to._id);
+              let room: Colyseus.Room = this.colyseusService.onlineFriendsRooms.find(room => room.id === message.to._id);
               if (room) {
                 room.send("messageHost", message);
               } else {
-                this.hostRoom.send("messageUser", message);
+                this.colyseusService.hostRoom.send("messageUser", message);
               }
               this.unviewedMessageAlert();
               this.messages.data = this.addEmptyMessages(messages);

@@ -3,6 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/app/models/user/user';
 import { SocialService } from 'src/app/services/social/social.service';
 import * as Colyseus from 'colyseus.js';
+import { Message } from 'src/app/models/message/message';
 
 @Component({
   selector: 'app-social-cell',
@@ -11,20 +12,13 @@ import * as Colyseus from 'colyseus.js';
 })
 export class SocialCellComponent implements OnInit {
 
-  @Input() host: User;
-  @Output() hostChange: EventEmitter<User> = new EventEmitter();
-
-  @Input() hostRoom: Colyseus.Room;
-  @Output() hostRoomChange: EventEmitter<Colyseus.Room> = new EventEmitter();
-
-  @Input() onlineFriendsRooms: Colyseus.Room[];
-  @Output() onlineFriendsRoomsChange: EventEmitter<Colyseus.Room[]> = new EventEmitter();
-
   @Input() friend: User;
   @Output() friendChange: EventEmitter<User> = new EventEmitter();
 
   @Output() onRemoveFriend: EventEmitter<User> = new EventEmitter();
 
+  @Input() potentialMessage: Message;
+  
   hasUnviewedMessages: boolean = false;
   panelOpenState: boolean = false;
 
@@ -32,10 +26,6 @@ export class SocialCellComponent implements OnInit {
 
   ngOnInit(): void {
     this.unviewedMessageAlert();
-  }
-
-  asyncDataPresent() {
-    return (this.host && this.hostRoom && this.onlineFriendsRooms && this.friend);
   }
 
   unviewedMessageAlert() {
