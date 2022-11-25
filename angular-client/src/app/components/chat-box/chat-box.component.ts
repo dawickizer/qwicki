@@ -73,8 +73,6 @@ export class ChatBoxComponent implements OnInit {
 
       this.socialService.sendMessage(message).subscribe({
         next: async (message: Message) => {
-
-
           let room: Colyseus.Room = this.colyseusService.onlineFriendsRooms.find(room => room.id === message.to._id);
           if (room) {
             room.send("messageHost", message);
@@ -86,28 +84,6 @@ export class ChatBoxComponent implements OnInit {
           this.messages._updateChangeSubscription();
           this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
           this.newMessage = '';
-
-
-          // this.socialService.getMessagesBetween(this.friend).subscribe({
-          //   next: async (messages: Message[]) => {
-
-          //     let room: Colyseus.Room = this.colyseusService.onlineFriendsRooms.find(room => room.id === message.to._id);
-          //     if (room) {
-          //       room.send("messageHost", message);
-          //     } else {
-          //       this.colyseusService.hostRoom.send("messageUser", message);
-          //     }
-          //     this.unviewedMessageAlert();
-          //     this.messages.data = this.addEmptyMessages(messages);
-          //     this.messages._updateChangeSubscription();
-          //     this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
-          //     this.newMessage = '';
-          //   }, 
-          //   error: error => {
-          //     this.newMessage = '';
-          //     this.openSnackBar(error, 'Dismiss');
-          //   }
-          // });
         }, 
         error: error => {
           this.newMessage = '';
