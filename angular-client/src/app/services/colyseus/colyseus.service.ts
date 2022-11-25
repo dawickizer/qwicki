@@ -1,4 +1,4 @@
-import { Injectable, OnInit } from '@angular/core';
+import { Injectable } from '@angular/core';
 import * as Colyseus from 'colyseus.js';
 import { User } from 'src/app/models/user/user';
 import { environment } from 'src/environments/environment';
@@ -6,21 +6,32 @@ import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
-export class ColyseusService implements OnInit {
+export class ColyseusService {
 
-  public client = new Colyseus.Client(environment.COLYSEUS_CHAT);
-  public rooms: Colyseus.Room[] = [];
+  private _client = new Colyseus.Client(environment.COLYSEUS_CHAT);
+  private _host: User;
+  private _hostJWT: any;
+  private _hostRoom: Colyseus.Room;
+  private _rooms: Colyseus.Room[] = [];
 
   constructor() { }
 
-  ngOnInit() {}
+  async establishHost(host: User, hostJWT: any) {
+    this._host = new User(host);
+    this._hostJWT = hostJWT;
+    this._hostRoom = await this.createRoom(host);
+  }
 
-  async createRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
+  async establishOnlineFriendsRooms() {
+    await this.connectToRooms(this._host.onlineFriends);
+  }
+
+  async createRoom(user: User): Promise<Colyseus.Room> {
     try {
-      let room: Colyseus.Room = await this.joinExistingRoomIfPresent(user, userJWT);
+      let room: Colyseus.Room = await this.joinExistingRoomIfPresent(user);
       if (!room) {
-        room = await this.client.create("chat_room", {accessToken: userJWT});
-        this.rooms.push(room);
+        room = await this._client.create("chat_room", {accessToken: this._hostJWT});
+        this._rooms.push(room);
       }
       return room;
     } catch (e) {
@@ -29,18 +40,18 @@ export class ColyseusService implements OnInit {
     }
   }
 
-  async joinExistingRoomIfPresent(user: User, userJWT: any): Promise<Colyseus.Room> {
-    let availableRooms: Colyseus.RoomAvailable[] = await this.client.getAvailableRooms();
+  async joinExistingRoomIfPresent(user: User): Promise<Colyseus.Room> {
+    let availableRooms: Colyseus.RoomAvailable[] = await this._client.getAvailableRooms();
     let hasExistingRoom: boolean = availableRooms.some((availableRoom: any) => availableRoom.roomId === user._id);
     let room: Colyseus.Room;
-    if (hasExistingRoom) room = await this.connectToRoom(user, userJWT);
+    if (hasExistingRoom) room = await this.connectToRoom(user);
     return room;
   }
 
-  async connectToRoom(user: User, userJWT: any): Promise<Colyseus.Room> {
+  async connectToRoom(user: User): Promise<Colyseus.Room> {
     try {
-      let room: Colyseus.Room = await this.client.joinById(user._id, {accessToken: userJWT});
-      if (room) this.rooms.push(room);
+      let room: Colyseus.Room = await this._client.joinById(user._id, {accessToken: this._hostJWT});
+      if (room) this._rooms.push(room);
       return room;
     } catch (e) {
       console.error("join error", e);
@@ -48,10 +59,10 @@ export class ColyseusService implements OnInit {
     }
   }
 
-  async connectToRooms(users: User[], userJWT: any): Promise<Colyseus.Room[]> {
+  async connectToRooms(users: User[]): Promise<Colyseus.Room[]> {
     try {
       let promises: Promise<Colyseus.Room>[] = [];
-      users.forEach(user => promises.push(this.connectToRoom(user, userJWT)));
+      users.forEach(user => promises.push(this.connectToRoom(user)));
       return await Promise.all(promises);
     } catch (e) {
       console.error("join error", e);
@@ -60,7 +71,7 @@ export class ColyseusService implements OnInit {
   }
 
   removeRoomById(id: string) {
-    this.rooms = this.rooms.filter((room: Colyseus.Room) => room.id !== id);
+    this._rooms = this._rooms.filter((room: Colyseus.Room) => room.id !== id);
   }
 
   leaveRoom(room: Colyseus.Room) {
@@ -73,11 +84,31 @@ export class ColyseusService implements OnInit {
   }
 
   leaveAllRooms() {
-    this.leaveRooms(this.rooms);
+    this.leaveRooms(this._rooms);
   }
 
   debug(room: Colyseus.Room) {
     room.onStateChange(state => console.log(state));
+  }
+
+  get host(): User {
+    return this._host;
+  }
+
+  set host(host: User) {
+    this._host = host;
+  }
+
+  get hostRoom(): Colyseus.Room {
+    return this._hostRoom
+  }
+
+  get rooms(): Colyseus.Room[] {
+    return this._rooms;
+  }
+
+  get onlineFriendsRooms(): Colyseus.Room[] {
+    return this._rooms.filter(room => room.id !== this._hostRoom.id);
   }
 }
 

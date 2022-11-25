@@ -36,7 +36,6 @@ export class ChatRoom extends Room<ChatRoomState> {
       hostClient.send("removeFriend", friend);
     });
 
-    // i have a hunch that searching by sessionId might be causing it to wig out
     this.onMessage("disconnectFriend", (client, friend) => {
       this.state.users.forEach(user => {
         if (user._id === friend._id) {
@@ -47,6 +46,21 @@ export class ChatRoom extends Room<ChatRoomState> {
         }
       });
     });
+
+    this.onMessage("messageHost", (client, message) => {
+      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
+      hostClient.send("messageHost", message);
+    });
+
+    this.onMessage("messageUser", (client, message) => {
+      this.state.users.forEach(user => {
+        if (user._id === message.to._id) {
+          let userClient: Client = this.clients.find(client => client.sessionId === user.sessionId);
+          userClient.send("messageUser", message);
+        }
+      });
+    });
+
     console.log(`Room ${this.roomId} created`);
   }
 

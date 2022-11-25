@@ -2,6 +2,8 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/app/models/user/user';
 import { SocialService } from 'src/app/services/social/social.service';
+import * as Colyseus from 'colyseus.js';
+import { Message } from 'src/app/models/message/message';
 
 @Component({
   selector: 'app-social-cell',
@@ -10,10 +12,13 @@ import { SocialService } from 'src/app/services/social/social.service';
 })
 export class SocialCellComponent implements OnInit {
 
-  @Input() host: User;
   @Input() friend: User;
+  @Output() friendChange: EventEmitter<User> = new EventEmitter();
+
   @Output() onRemoveFriend: EventEmitter<User> = new EventEmitter();
 
+  @Input() potentialMessage: Message;
+  
   hasUnviewedMessages: boolean = false;
   panelOpenState: boolean = false;
 
@@ -31,17 +36,26 @@ export class SocialCellComponent implements OnInit {
         }, 
         error: error => this.openSnackBar(error, 'Dismiss')
       });
+    } else {
+      this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
+        next: async (hasUnviewedMessages: boolean) => {
+          this.hasUnviewedMessages = hasUnviewedMessages;
+        }, 
+        error: error => this.openSnackBar(error, 'Dismiss')
+      });
     }
   }
 
   onPanelOpen() {
     this.panelOpenState = true;
-    this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
-      next: async (hasUnviewedMessages: boolean) => {
-        this.hasUnviewedMessages = hasUnviewedMessages;
-      }, 
-      error: error => this.openSnackBar(error, 'Dismiss')
-    });
+    if (this.hasUnviewedMessages) {
+      this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
+        next: async (hasUnviewedMessages: boolean) => {
+          this.hasUnviewedMessages = hasUnviewedMessages;
+        }, 
+        error: error => this.openSnackBar(error, 'Dismiss')
+      });
+    }
   }
 
   onPanelClose() {
