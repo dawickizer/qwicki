@@ -40,8 +40,6 @@ export class ChatBoxComponent implements OnInit {
     private socialService: SocialService) { }
 
   ngOnInit(): void {
-    this.setHostRoomListeners();
-    this.setOnlineFriendsRoomsListeners();
     this.socialService.getMessagesBetween(this.friend).subscribe({
       next: async (messages: Message[]) => {
         this.messages.data = this.addEmptyMessages(messages);
@@ -55,16 +53,6 @@ export class ChatBoxComponent implements OnInit {
 
   asyncDataPresent() {
     return (this.host && this.hostRoom && this.onlineFriendsRooms && this.friend);
-  }
-
-  setHostRoomListeners() {
-    this.hostRoom.onMessage("messageHost", (message: Message) => this.handleMessageHostEvent(message));
-  }
-
-  setOnlineFriendsRoomsListeners() {
-    this.onlineFriendsRooms.forEach(room => {
-      room.onMessage("messageUser", (message: Message) => this.handleMessageUserEvent(message));
-    });
   }
 
   handleMessageHostEvent(message: Message) {

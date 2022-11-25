@@ -81,6 +81,7 @@ export class SocialSidenavComponent implements OnInit {
     this.hostRoom.onMessage("rejectFriendRequest", (friendRequest: FriendRequest) => this.handleRejectFriendRequestEvent(friendRequest));
     this.hostRoom.onMessage("revokeFriendRequest", (friendRequest: FriendRequest) => this.handleRevokeFriendRequestEvent(friendRequest));
     this.hostRoom.onMessage("removeFriend", (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend));
+    this.hostRoom.onMessage("messageHost", (message: Message) => this.handleMessageHostEvent(message));
     this.hostRoom.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
   }
 
@@ -94,6 +95,7 @@ export class SocialSidenavComponent implements OnInit {
       room.onMessage("offline", (user: any) => this.handleOfflineEvent(user));
       room.onMessage("dispose", (id: string) => this.handleDisposeEvent(id));
       room.onMessage("disconnectFriend", (disconnectFriend: User) => this.handleDisconnectFriendEvent(disconnectFriend));
+      room.onMessage("messageUser", (message: Message) => this.handleMessageUserEvent(message));
       room.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
     });
   }
@@ -277,6 +279,16 @@ export class SocialSidenavComponent implements OnInit {
   private handleDisposeEvent(id: string) {
     this.onlineFriendsRooms = this.onlineFriendsRooms.filter(room => room.id !== id);
     this.colyseusService.removeRoomById(id);
+  }
+
+  private handleMessageHostEvent(message: Message) {
+    console.log("MESSAGE TO HOST")
+    console.log(message)
+  }
+
+  private handleMessageUserEvent(message: Message) {
+    console.log("MESSAGE TO USER")
+    console.log(message)
   }
 
   filter(filterValue: any) {
