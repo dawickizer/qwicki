@@ -16,17 +16,17 @@ export class UserProfileComponent implements OnInit {
   constructor(private userService: UserService, private authService: AuthService, private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.authService.currentUser().subscribe(user => this.userService.get(user._id).subscribe(user => this.user = user));
+    this.authService.currentUser().subscribe(user => this.userService.get(user._id).subscribe(user => this.user = new User(user)));
   }
 
   update() {
-    this.userService.update(this.user).subscribe(
-      user => {
-        this.user = user;
+    this.userService.update(this.user).subscribe({
+      next: user => {
+        this.user = new User(user);
         this.openSnackBar('Your information has been successfully updated!', 'Dismiss')
       }, 
-      error => this.openSnackBar(error, 'Dismiss')
-    );
+      error: error => this.openSnackBar(error, 'Dismiss')
+    });
   }
 
   delete() {
