@@ -48,10 +48,7 @@ export class SocialSidenavComponent implements OnInit {
     this.authService.currentUser()
     .subscribe(user => this.userService.get(user._id)
     .subscribe(async user => {
-      await this.colyseusService.establishHost(user, this.authService.currentUserJWT());
-      this.setHostRoomListeners();
-      await this.colyseusService.establishOnlineFriendsRooms();
-      this.setOnlineFriendsRoomsListeners();
+      await this.establishConnections(user);
       this.updateFriends();
       this.updateFriendRequests();
       this.isAsyncDataPresent = true;
@@ -61,6 +58,13 @@ export class SocialSidenavComponent implements OnInit {
 
   ngOnDestroy() {
     this.keyBindService.removeKeyBinds();
+  }
+
+  async establishConnections(user: User) {
+    await this.colyseusService.establishHost(user, this.authService.currentUserJWT());
+    this.setHostRoomListeners();
+    await this.colyseusService.establishOnlineFriendsRooms();
+    this.setOnlineFriendsRoomsListeners();
   }
 
   setHostRoomListeners() {

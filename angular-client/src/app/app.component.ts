@@ -20,6 +20,6 @@ export class AppComponent implements OnInit {
   // also this logs user out on browser refresh
   @HostListener('window:beforeunload', [ '$event' ])
   beforeUnloadHandler(event: any) {
-    this.authService.logout();
+    //this.authService.logout();
   }
 }

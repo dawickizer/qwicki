@@ -17,7 +17,7 @@ table {
 }
 
 .scrollable {
-    height: 200px;
+    height: 270px;
     max-width: 100%;
     overflow: auto;
 }
@@ -32,4 +32,38 @@ table {
 th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, td.mat-cell:last-of-type {
     padding-left: 0px;
     padding-right: 0px;
+}
+
+textarea.mat-input-element {
+    overflow: hidden;
+}
+
+.card {
+   max-width: 280px;
+   padding: 7px;
+   background: rgba(103, 58, 183, 0.3) /* Purple background with 30% opacity */
+}
+
+.card-subtitle {
+    margin-bottom: 0;
+    color: rgba(255,255,255,.5);
+}
+
+.card-content {
+    color: aliceblue;
+    margin-bottom: 5px;
+}
+
+.small-font {
+    font-size: 10px;
+}
+
+.cell {
+    padding: 3px;
+}
+
+.old-message {
+    color: aliceblue;
+    font-size: 12px;
+    padding-left: 3px;
 }
