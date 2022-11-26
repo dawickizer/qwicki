@@ -568,7 +568,7 @@ export class FpsService {
   }
 
   handleSwapWeaponOnF() {
-    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyF' && !this.self.swappingWeapons && !this.self.justMeleed) this.swapWeapon() });
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyQ' && !this.self.swappingWeapons && !this.self.justMeleed) this.swapWeapon() });
   }
 
   handlePickupWeaponOnE() {
