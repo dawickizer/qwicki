@@ -12,6 +12,7 @@ import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import * as Colyseus from 'colyseus.js';
 import { Message } from 'src/app/models/message/message';
+import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -34,6 +35,8 @@ export class SocialSidenavComponent implements OnInit {
 
   potentialFriend: string = '';
   isAsyncDataPresent: boolean = false;
+  dragged: User;
+
 
   constructor(
     private router: Router, 
@@ -58,6 +61,16 @@ export class SocialSidenavComponent implements OnInit {
 
   ngOnDestroy() {
     this.keyBindService.removeKeyBinds();
+  }
+
+  dropOnlineFriends(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.onlineFriends.data, event.previousIndex, event.currentIndex);  
+    this.onlineFriends._updateChangeSubscription();
+  }
+
+  dropOfflineFriends(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.offlineFriends.data, event.previousIndex, event.currentIndex);
+    this.offlineFriends._updateChangeSubscription();
   }
 
   async establishConnections(user: User) {
