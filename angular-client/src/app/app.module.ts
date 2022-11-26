@@ -15,6 +15,9 @@ import { MatTableModule } from '@angular/material/table'
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+// CDK
+import { DragDropModule } from '@angular/cdk/drag-drop';
+
 // Components
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -74,6 +77,7 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     MatSliderModule,
     MatExpansionModule,
     MatTooltipModule,
+    DragDropModule,
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule

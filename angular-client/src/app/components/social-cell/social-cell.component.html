@@ -1,10 +1,10 @@
-<mat-expansion-panel
+<mat-expansion-panel cdkDrag
 (opened)="onPanelOpen()" 
 (closed)="onPanelClose()" 
 class="mat-elevation-z0" border 
 [bStyle]="panelOpenState ? 'solid' : 'hidden'" 
 [bPadding]="panelOpenState ? 5 : 0">
-    <mat-expansion-panel-header>
+    <mat-expansion-panel-header cdkDragHandle>
         <mat-panel-title [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'">
             {{friend.username}}
         </mat-panel-title> 
