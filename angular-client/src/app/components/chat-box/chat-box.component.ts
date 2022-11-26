@@ -15,6 +15,7 @@ import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 export class ChatBoxComponent implements OnInit {
 
   @ViewChild('scrollable') scrollable: ElementRef;
+  @ViewChild('test') test: ElementRef;
 
   @Input() friend: User;
   @Output() friendChange: EventEmitter<User> = new EventEmitter();
@@ -33,10 +34,20 @@ export class ChatBoxComponent implements OnInit {
      return this._potentialMessage;
   }
 
+  private _panelOpenState: boolean;
+  @Input() set panelOpenState(panelOpenState: boolean) {
+    this._panelOpenState = panelOpenState;
+    if (panelOpenState) this.setScrollHeight();
+  }
+ 
+  get panelOpenState(): boolean {
+     return this._panelOpenState;
+  }
+
   newMessage: string = '';
   messagesDisplayedColumns: string[] = ['message'];
   messages = new MatTableDataSource<Message>([] as Message[]);
-  
+
   constructor(
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar,
@@ -46,7 +57,7 @@ export class ChatBoxComponent implements OnInit {
     this.socialService.getMessagesBetween(this.friend).subscribe({
       next: async (messages: Message[]) => {
         this.messages.data = this.addEmptyMessages(messages);
-        this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
+        this.setScrollHeight();
       }, 
       error: error => this.openSnackBar(error, 'Dismiss')
     });
@@ -56,7 +67,31 @@ export class ChatBoxComponent implements OnInit {
     this.unviewedMessageAlert();
     this.messages.data = this.addEmptyMessages([...this.messages.data, message]);
     this.messages._updateChangeSubscription();
-    this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
+    this.setScrollHeight();
+  }
+
+  setScrollHeight() {
+    // wait 10ms to allow elementrefs to refresh..else the scroll height will be wrong
+    setTimeout(() => this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight, 10) 
+  }
+
+  isMessageOld(message: Message): boolean {
+    
+    if (message.createdAt) {
+
+      let today: Date = new Date();
+      let messageDate = new Date(message.createdAt); 
+
+      return (messageDate.getFullYear() < today.getFullYear()) || 
+      (messageDate.getFullYear() == today.getFullYear() && messageDate.getMonth() < today.getMonth()) || 
+      (messageDate.getFullYear() == today.getFullYear() && messageDate.getMonth() == today.getMonth() && messageDate.getDate() < today.getDate());
+    }
+    return false;
+  }
+
+  getParagraphs(message: Message) {
+    let result = message?.content?.split('\n') ?? [];
+    return result
   }
 
   sendMessage(event?: any) {
@@ -73,33 +108,23 @@ export class ChatBoxComponent implements OnInit {
 
       this.socialService.sendMessage(message).subscribe({
         next: async (message: Message) => {
-          this.socialService.getMessagesBetween(this.friend).subscribe({
-            next: async (messages: Message[]) => {
-
-              let room: Colyseus.Room = this.colyseusService.onlineFriendsRooms.find(room => room.id === message.to._id);
-              if (room) {
-                room.send("messageHost", message);
-              } else {
-                this.colyseusService.hostRoom.send("messageUser", message);
-              }
-              this.unviewedMessageAlert();
-              this.messages.data = this.addEmptyMessages(messages);
-              this.messages._updateChangeSubscription();
-              this.scrollable.nativeElement.scrollTop = this.scrollable.nativeElement.scrollHeight;
-              this.newMessage = '';
-            }, 
-            error: error => {
-              this.newMessage = '';
-              this.openSnackBar(error, 'Dismiss');
-            }
-          });
+          let room: Colyseus.Room = this.colyseusService.onlineFriendsRooms.find(room => room.id === message.to._id);
+          if (room) {
+            room.send("messageHost", message);
+          } else {
+            this.colyseusService.hostRoom.send("messageUser", message);
+          }
+          this.unviewedMessageAlert();
+          this.messages.data = this.addEmptyMessages([...this.messages.data, message]);
+          this.messages._updateChangeSubscription();
+          this.setScrollHeight();
+          this.newMessage = '';
         }, 
         error: error => {
           this.newMessage = '';
           this.openSnackBar(error, 'Dismiss');
         }
       });
-      
     }
   }
 
@@ -118,12 +143,18 @@ export class ChatBoxComponent implements OnInit {
       messages.unshift(emptyMessage);
       messages.unshift(emptyMessage);
       messages.unshift(emptyMessage);
+      messages.unshift(emptyMessage);
     } else if (messages.length < 2) {
+      messages.unshift(emptyMessage);
       messages.unshift(emptyMessage);
       messages.unshift(emptyMessage);
     } else if (messages.length < 3) {
       messages.unshift(emptyMessage);
+      messages.unshift(emptyMessage);
+    } else if (messages.length < 4) {
+      messages.unshift(emptyMessage);
     }
+    
     return messages;
   }
 

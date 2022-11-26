@@ -27,6 +27,9 @@ class SocialService {
             for (let fromUserOutboundFriendRequest of fromUser.outboundFriendRequests) 
                  if (toUser.inboundFriendRequests.includes(fromUserOutboundFriendRequest))
                     throw Error('You already sent a friend request to this user');
+            for (let fromUserInboundFriendRequest of fromUser.inboundFriendRequests) 
+                if (toUser.outboundFriendRequests.includes(fromUserInboundFriendRequest))
+                    throw Error('This user already sent you a friend request');
 
             // update friend request with 'to' and 'from' friends ids
             friendRequest.to = toUser._id;

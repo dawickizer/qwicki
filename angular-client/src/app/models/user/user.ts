@@ -15,18 +15,20 @@ export class User {
   outboundFriendRequests: FriendRequest[] = [];
 
   constructor(user?: User) {
-    this._id = user._id;
-    this.username = user.username;
-    this.password = user.password;
-    this.role = user.role;
-    this.email = user.email;
-    this.firstName = user.firstName;
-    this.middleName = user.middleName;
-    this.lastName = user.lastName;
-    this.online = user.online;
-    this.friends = user.friends;
-    this.inboundFriendRequests = user.inboundFriendRequests;
-    this.outboundFriendRequests = user.outboundFriendRequests;
+    if (user) {
+      this._id = user._id;
+      this.username = user.username;
+      this.password = user.password;
+      this.role = user.role;
+      this.email = user.email;
+      this.firstName = user.firstName;
+      this.middleName = user.middleName;
+      this.lastName = user.lastName;
+      this.online = user.online;
+      this.friends = user.friends;
+      this.inboundFriendRequests = user.inboundFriendRequests;
+      this.outboundFriendRequests = user.outboundFriendRequests;
+    }
   }
 
   get onlineFriends(): User[] {
