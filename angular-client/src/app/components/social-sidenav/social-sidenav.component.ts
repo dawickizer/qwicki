@@ -12,7 +12,6 @@ import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import * as Colyseus from 'colyseus.js';
 import { Message } from 'src/app/models/message/message';
-import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -23,7 +22,6 @@ export class SocialSidenavComponent implements OnInit {
 
   @ViewChild('drawer') drawer: MatSidenav;
 
-  friendsDisplayedColumns: string[] = ['username'];
   onlineFriends = new MatTableDataSource<User>([] as User[]);
   offlineFriends = new MatTableDataSource<User>([] as User[]);
 
@@ -34,9 +32,9 @@ export class SocialSidenavComponent implements OnInit {
   outboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
 
   potentialFriend: string = '';
+  potentialMessage: Message = new Message();
   isAsyncDataPresent: boolean = false;
   dragged: User;
-
 
   constructor(
     private router: Router, 
@@ -61,16 +59,6 @@ export class SocialSidenavComponent implements OnInit {
 
   ngOnDestroy() {
     this.keyBindService.removeKeyBinds();
-  }
-
-  dropOnlineFriends(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.onlineFriends.data, event.previousIndex, event.currentIndex);  
-    this.onlineFriends._updateChangeSubscription();
-  }
-
-  dropOfflineFriends(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.offlineFriends.data, event.previousIndex, event.currentIndex);
-    this.offlineFriends._updateChangeSubscription();
   }
 
   async establishConnections(user: User) {
@@ -102,7 +90,6 @@ export class SocialSidenavComponent implements OnInit {
     });
   }
 
-  potentialMessage: Message = new Message();
   private handleMessageHostEvent(message: Message) {
     this.potentialMessage = message;
   }
@@ -181,24 +168,6 @@ export class SocialSidenavComponent implements OnInit {
         this.updateFriendRequests();
         this.openSnackBar(`Revoked ${friendRequest.to.username}'s friend request` , 'Dismiss');   
       },
-      error: error => this.openSnackBar(error, 'Dismiss')
-    });
-  }
-
-  removeFriend(friend: User) {
-    this.socialService.removeFriend(friend).subscribe({
-      next: async host => {
-        this.colyseusService.host = new User(host);
-        let room: Colyseus.Room = this.colyseusService.onlineFriendsRooms.find(room => room.id === friend._id);
-        if (room) {
-          room.send("removeFriend", host);
-          this.colyseusService.leaveRoom(room);
-        } else {
-          this.colyseusService.hostRoom.send("disconnectFriend", friend);
-        }
-        this.updateFriends();
-        this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
-      }, 
       error: error => this.openSnackBar(error, 'Dismiss')
     });
   }

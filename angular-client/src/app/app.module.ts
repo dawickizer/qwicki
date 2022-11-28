@@ -32,6 +32,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
 import { ChatBoxComponent } from './components/chat-box/chat-box.component';
 import { SocialCellComponent } from './components/social-cell/social-cell.component';
+import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
 
 // Directives
 import { BorderDirective } from './directives/border.directive';
@@ -61,7 +62,8 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     SocialSidenavComponent,
     ChatBoxComponent,
     SocialCellComponent,
-    BorderDirective,
+    SocialFriendsListComponent,
+    BorderDirective
   ],
   imports: [
     BrowserModule,
