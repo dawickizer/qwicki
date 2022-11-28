@@ -7,10 +7,8 @@ import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { SocialService } from 'src/app/services/social/social.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-import * as Colyseus from 'colyseus.js';
 import { Message } from 'src/app/models/message/message';
 
 @Component({
@@ -18,20 +16,16 @@ import { Message } from 'src/app/models/message/message';
   templateUrl: './social-sidenav.component.html',
   styleUrls: ['./social-sidenav.component.css']
 })
-export class SocialSidenavComponent implements OnInit {
+export class SocialSidenavComponent implements OnInit, OnDestroy {
 
   @ViewChild('drawer') drawer: MatSidenav;
 
   onlineFriends = new MatTableDataSource<User>([] as User[]);
   offlineFriends = new MatTableDataSource<User>([] as User[]);
 
-  inboundFriendRequestsDisplayedColumns: string[] = ['username', 'action'];
   inboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
-
-  outboundFriendRequestsDisplayedColumns: string[] = ['username', 'action'];
   outboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
 
-  potentialFriend: string = '';
   potentialMessage: Message = new Message();
   isAsyncDataPresent: boolean = false;
   update: FriendRequest;
@@ -42,8 +36,7 @@ export class SocialSidenavComponent implements OnInit {
     private keyBindService: KeyBindService,
     private authService: AuthService,
     public colyseusService: ColyseusService,
-    private userService: UserService,
-    private socialService: SocialService) { }
+    private userService: UserService) { }
 
   ngOnInit() {
     this.authService.currentUser()
@@ -90,96 +83,13 @@ export class SocialSidenavComponent implements OnInit {
     });
   }
 
-  private handleMessageHostEvent(message: Message) {
-    this.potentialMessage = message;
-  }
-
-  private handleMessageUserEvent(message: Message) {
-    this.potentialMessage = message;
-  }
-
-  sendFriendRequest() {
-    this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
-      next: async host => {
-        this.colyseusService.host = new User(host);
-        let friendRequest: FriendRequest = this.findOutboundFriendRequest();
-        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.to);
-        if (room) {
-          room.send("inboundFriendRequest", friendRequest);
-          this.colyseusService.leaveRoom(room);
-        }
-        this.updateFriends();
-        this.updateFriendRequests();
-        this.openSnackBar('Friend request sent to ' + this.potentialFriend, 'Dismiss');   
-        this.potentialFriend = '';
-      }, 
-      error: error => {
-        this.openSnackBar(error, 'Dismiss');
-        this.potentialFriend = '';
-      }
-    });
-  }
-
   onSendFriendRequest(friendRequest: FriendRequest) {
-
     this.update = friendRequest;
   }
 
   onAcceptFriendRequest() {
     this.setOnlineFriendsRoomsListeners();
     this.updateFriends();
-  }
-
-  acceptFriendRequest(friendRequest: FriendRequest) {
-    this.socialService.acceptFriendRequest(friendRequest).subscribe({
-      next: async host => {
-        this.colyseusService.host = new User(host);
-        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from);
-        if (room) {
-          room.send("acceptFriendRequest", friendRequest);
-          this.colyseusService.onlineFriendsRooms.push(room);
-          this.setOnlineFriendsRoomsListeners();
-        }
-        this.updateFriends();
-        this.updateFriendRequests();
-        this.openSnackBar(`You and ${friendRequest.from.username} are now friends` , 'Dismiss');   
-      },
-      error: error => this.openSnackBar(error, 'Dismiss')
-    });
-  }
-
-  rejectFriendRequest(friendRequest: FriendRequest) {
-    this.socialService.rejectFriendRequest(friendRequest).subscribe({
-      next: async host => {
-        this.colyseusService.host = new User(host);
-        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from);
-        if (room) {
-          room.send("rejectFriendRequest", friendRequest);
-          this.colyseusService.leaveRoom(room);
-        }
-        this.updateFriends();
-        this.updateFriendRequests();
-        this.openSnackBar(`Rejected ${friendRequest.from.username}'s friend request` , 'Dismiss');   
-      },
-      error: error => this.openSnackBar(error, 'Dismiss')
-    });
-  }
-
-  revokeFriendRequest(friendRequest: FriendRequest) {
-    this.socialService.revokeFriendRequest(friendRequest).subscribe({
-      next: async host => {
-        this.colyseusService.host = new User(host);
-        let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.to);
-        if (room) {
-          room.send("revokeFriendRequest", friendRequest);
-          this.colyseusService.leaveRoom(room);
-        }
-        this.updateFriends();
-        this.updateFriendRequests();
-        this.openSnackBar(`Revoked ${friendRequest.to.username}'s friend request` , 'Dismiss');   
-      },
-      error: error => this.openSnackBar(error, 'Dismiss')
-    });
   }
 
   private updateFriends() {
@@ -194,10 +104,6 @@ export class SocialSidenavComponent implements OnInit {
     this.inboundFriendRequests._updateChangeSubscription();  
     this.outboundFriendRequests.data = this.colyseusService.host.outboundFriendRequests;
     this.outboundFriendRequests._updateChangeSubscription();  
-  }
-
-  private findOutboundFriendRequest(): FriendRequest {
-    return this.colyseusService.host.outboundFriendRequests.find(friendRequest => friendRequest.to.username.toLowerCase() === this.potentialFriend.toLowerCase());
   }
 
   private setOnlineStatusOfFriend(user: any, online: boolean) {
@@ -262,6 +168,14 @@ export class SocialSidenavComponent implements OnInit {
 
   private handleDisposeEvent(id: string) {
     this.colyseusService.removeRoomById(id);
+  }
+
+  private handleMessageHostEvent(message: Message) {
+    this.potentialMessage = message;
+  }
+
+  private handleMessageUserEvent(message: Message) {
+    this.potentialMessage = message;
   }
 
   filter(filterValue: any) {

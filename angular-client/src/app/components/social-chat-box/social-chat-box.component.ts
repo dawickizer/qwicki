@@ -8,11 +8,11 @@ import * as Colyseus from 'colyseus.js';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 
 @Component({
-  selector: 'app-chat-box',
-  templateUrl: './chat-box.component.html',
-  styleUrls: ['./chat-box.component.css']
+  selector: 'app-social-chat-box',
+  templateUrl: './social-chat-box.component.html',
+  styleUrls: ['./social-chat-box.component.css']
 })
-export class ChatBoxComponent implements OnInit {
+export class SocialChatBoxComponent implements OnInit {
 
   @ViewChild('scrollable') scrollable: ElementRef;
   @ViewChild('test') test: ElementRef;

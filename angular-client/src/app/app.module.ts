@@ -30,7 +30,7 @@ import { UserProfileComponent } from './components/user-profile/user-profile.com
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
-import { ChatBoxComponent } from './components/chat-box/chat-box.component';
+import { SocialChatBoxComponent } from './components/social-chat-box/social-chat-box.component';
 import { SocialCellComponent } from './components/social-cell/social-cell.component';
 import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
 import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
@@ -60,7 +60,7 @@ import { InactivityService } from './services/inactivity/inactivity.service';
     NotFoundComponent,
     UserProfileComponent,
     SocialSidenavComponent,
-    ChatBoxComponent,
+    SocialChatBoxComponent,
     SocialCellComponent,
     SocialFriendsListComponent,
     SocialFriendRequestsListComponent,
