@@ -71,7 +71,7 @@ export class SocialSidenavComponent implements OnInit {
   setHostRoomListeners() {
     this.colyseusService.hostRoom.onMessage("online", (user: any) => this.handleOnlineEvent(user));
     this.colyseusService.hostRoom.onMessage("offline", (user: any) => this.handleOfflineEvent(user));
-    this.colyseusService.hostRoom.onMessage("inboundFriendRequest", (friendRequest: FriendRequest) => this.handleInboundFriendRequestEvent(friendRequest));
+    this.colyseusService.hostRoom.onMessage("sendFriendRequest", (friendRequest: FriendRequest) => this.handleSendFriendRequestEvent(friendRequest));
     this.colyseusService.hostRoom.onMessage("acceptFriendRequest", (friendRequest: FriendRequest) => this.handleAcceptFriendRequestEvent(friendRequest));
     this.colyseusService.hostRoom.onMessage("rejectFriendRequest", (friendRequest: FriendRequest) => this.handleRejectFriendRequestEvent(friendRequest));
     this.colyseusService.hostRoom.onMessage("revokeFriendRequest", (friendRequest: FriendRequest) => this.handleRevokeFriendRequestEvent(friendRequest));
@@ -222,7 +222,7 @@ export class SocialSidenavComponent implements OnInit {
     this.setOnlineStatusOfFriend(user, false);
   }
 
-  private handleInboundFriendRequestEvent(friendRequest: FriendRequest) {
+  private handleSendFriendRequestEvent(friendRequest: FriendRequest) {
     this.colyseusService.host.inboundFriendRequests.push(friendRequest);
     this.updateFriendRequests();
   }

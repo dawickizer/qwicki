@@ -57,7 +57,7 @@ export class SocialFriendRequestsListComponent implements OnInit {
         let friendRequest: FriendRequest = this.findOutboundFriendRequest();
         let room: Colyseus.Room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.to);
         if (room) {
-          room.send("inboundFriendRequest", friendRequest);
+          room.send("sendFriendRequest", friendRequest);
           this.colyseusService.leaveRoom(room);
         }
         this.onSend.emit(friendRequest);
