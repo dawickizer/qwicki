@@ -34,7 +34,7 @@ export class SocialSidenavComponent implements OnInit {
   potentialFriend: string = '';
   potentialMessage: Message = new Message();
   isAsyncDataPresent: boolean = false;
-  dragged: User;
+  update: FriendRequest;
 
   constructor(
     private router: Router, 
@@ -118,6 +118,16 @@ export class SocialSidenavComponent implements OnInit {
         this.potentialFriend = '';
       }
     });
+  }
+
+  onSendFriendRequest(friendRequest: FriendRequest) {
+
+    this.update = friendRequest;
+  }
+
+  onAcceptFriendRequest() {
+    this.setOnlineFriendsRoomsListeners();
+    this.updateFriends();
   }
 
   acceptFriendRequest(friendRequest: FriendRequest) {

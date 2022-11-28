@@ -4,71 +4,18 @@
             <span routerLink="/user-profile" matTooltip="Go to User Profile" class="material-icons profile-icon">account_circle</span>
             {{colyseusService?.host?.username}}
         </h1>
-        <mat-divider></mat-divider>
+        <mat-divider></mat-divider> 
+        <app-social-friend-requests-list title="friend requests" titleColor="color:rgb(0, 162, 255)" [(friendRequests)]="inboundFriendRequests" (onSend)="onSendFriendRequest($event)" (onAccept)="onAcceptFriendRequest()"></app-social-friend-requests-list>
         <br>
-        <br>
-        <form class="home-form" (ngSubmit)="sendFriendRequest()">
-            <mat-form-field class="home-full-width">
-              <mat-label>Send Friend Request</mat-label>
-              <input matInput [(ngModel)]="potentialFriend" name="sendFriendRequest">
-            </mat-form-field>
-        </form>   
         <form class="home-form">
             <mat-form-field class="home-full-width">
               <mat-label>Friends</mat-label>
               <input matInput (keyup)="filter($event)" name="filter">
             </mat-form-field>
         </form>  
-        <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
-            <mat-expansion-panel-header>
-                <mat-panel-title>        
-                    <h1><span style="color:rgb(0, 162, 255)">friend requests</span></h1>
-                </mat-panel-title>   
-            </mat-expansion-panel-header>
-            <table mat-table [dataSource]="inboundFriendRequests" class="mat-elevation-z0">
-
-                <ng-container matColumnDef="username">
-                    <td mat-cell *matCellDef="let element"> {{element.from.username}} </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="action">
-                    <td class="right-justify" mat-cell *matCellDef="let element">
-                        <span matTooltip="Reject Friend Request" (click)="rejectFriendRequest(element)" class="material-icons-outlined">person_remove</span>
-                        <span matTooltip="Accept Friend Request" (click)="acceptFriendRequest(element)" class="material-icons-outlined">person_add_alt</span>
-                    </td>
-                </ng-container>
-                <tr mat-row *matRowDef="let row; columns: inboundFriendRequestsDisplayedColumns;"></tr>
-            </table>
-        </mat-expansion-panel>
-        <br>
-        <br>  
-        <app-social-friends-list title="online" titleColor="color:rgb(0, 255, 149)" [(friends)]="onlineFriends" [potentialMessage]="potentialMessage"></app-social-friends-list>
-        <br>
-        <br>  
+        <app-social-friends-list title="online" titleColor="color:rgb(0, 255, 149)" [(friends)]="onlineFriends" [potentialMessage]="potentialMessage"></app-social-friends-list> 
         <app-social-friends-list title="offline" titleColor="color:rgb(255, 0, 76)" [(friends)]="offlineFriends" [potentialMessage]="potentialMessage"></app-social-friends-list>
-        <br>
-        <br>  
-        <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
-            <mat-expansion-panel-header>
-                <mat-panel-title>        
-                    <h1><span style="color:rgba(236, 232, 0, 0.884)">pending</span></h1>
-                </mat-panel-title>   
-            </mat-expansion-panel-header>
-            <table mat-table [dataSource]="outboundFriendRequests" class="mat-elevation-z0">
-                <ng-container matColumnDef="username">
-                    <td mat-cell *matCellDef="let element"> {{element.to.username}} </td>
-                </ng-container>
-    
-                <ng-container matColumnDef="action">
-                    <td mat-cell *matCellDef="let element">
-                        <span matTooltip="Revoke Friend Request" (click)="revokeFriendRequest(element)" class="material-icons">close</span>
-                    </td>
-                </ng-container>
-                <tr mat-row *matRowDef="let row; columns: outboundFriendRequestsDisplayedColumns;"></tr>
-            </table>
-        </mat-expansion-panel>
-        <br>
-        <br>  
+        <app-social-friend-requests-list title="pending" titleColor="color:rgba(236, 232, 0, 0.884)" [(friendRequests)]="outboundFriendRequests" [update]="update"></app-social-friend-requests-list>  
     </mat-drawer>
     <app-home></app-home>
 </mat-drawer-container>
