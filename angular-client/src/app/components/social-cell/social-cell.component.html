@@ -12,5 +12,5 @@ class="mat-elevation-z0" border
             <span *ngIf="hasUnviewedMessages && !panelOpenState" class="material-icons">mail</span>
         </mat-panel-description>     
     </mat-expansion-panel-header>
-    <app-chat-box [panelOpenState]="panelOpenState" [potentialMessage]="potentialMessage" [(friend)]="friend" (onRemoveFriend)="removeFriend()" (onUnviewedMessage)="unviewedMessageAlert()"></app-chat-box>
+    <app-social-chat-box [panelOpenState]="panelOpenState" [potentialMessage]="potentialMessage" [(friend)]="friend" (onRemoveFriend)="removeFriend()" (onUnviewedMessage)="unviewedMessageAlert()"></app-social-chat-box>
 </mat-expansion-panel>

@@ -11,9 +11,9 @@ export class ChatRoom extends Room<ChatRoomState> {
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
 
     // set room listeners
-    this.onMessage("inboundFriendRequest", (client, friendRequest) => {
+    this.onMessage("sendFriendRequest", (client, friendRequest) => {
       let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      hostClient.send("inboundFriendRequest", friendRequest);
+      hostClient.send("sendFriendRequest", friendRequest);
     });
 
     this.onMessage("acceptFriendRequest", (client, friendRequest) => {
