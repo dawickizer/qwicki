@@ -1,4 +1,10 @@
 <div *ngIf="gamesPresent(); else noGames" class="scrollable" #scrollable>
+    <form class="join-game-filter">
+        <mat-form-field class="join-game-full-width">
+          <mat-label>Search</mat-label>
+          <input matInput (keyup)="filter($event)" name="filter">
+        </mat-form-field>
+    </form>  
     <table mat-table [dataSource]="availableGames" class="mat-elevation-z0">
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>

@@ -33,4 +33,15 @@ export class JoinGameComponent implements OnInit {
   gamesPresent(): boolean {
     return this.availableGames.data && this.availableGames.data.length > 0;
   }
+
+  filter(filterValue: any) {
+    this.availableGames.filterPredicate = (game: Colyseus.RoomAvailable, filter: string) => this.filterPredicate(game, filter);
+    this.availableGames.filter = filterValue.target.value.trim().toLowerCase();
+  }
+
+  filterPredicate(game: Colyseus.RoomAvailable, filter: string) {
+    return game.metadata.name.trim().toLowerCase().includes(filter) 
+    || game.metadata.mode.trim().toLowerCase().includes(filter) 
+    || game.metadata.map.trim().toLowerCase().includes(filter);
+  }
 }

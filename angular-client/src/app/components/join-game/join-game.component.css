@@ -1,7 +1,6 @@
   table {
     width: 100%;
     background-color: #212529;
-    margin-top: 20px;
   }
   
   .mat-cell {
@@ -24,4 +23,7 @@
     overflow: auto;
   }
   
+  .join-game-filter {
+    margin-top: 20px;
+  }
   
