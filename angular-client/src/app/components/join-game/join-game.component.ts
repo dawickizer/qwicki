@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import * as Colyseus from 'colyseus.js';
+import { Game } from 'src/app/models/game/game';
 
 @Component({
   selector: 'app-join-game',
@@ -16,7 +17,7 @@ export class JoinGameComponent implements OnInit {
 
   constructor(private router: Router, public matchMakingService: MatchMakingService) { }
 
-  ngOnInit(): void {
+  async ngOnInit() {
     this.getAvailableGames();
   }
 
@@ -29,4 +30,7 @@ export class JoinGameComponent implements OnInit {
     this.router.navigate(["/babylonjs"]);
   }
 
+  gamesPresent(): boolean {
+    return this.availableGames.data && this.availableGames.data.length > 0;
+  }
 }

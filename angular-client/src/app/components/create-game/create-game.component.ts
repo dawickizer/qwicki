@@ -14,10 +14,14 @@ export class CreateGameComponent implements OnInit {
 
   constructor(private router: Router, public matchMakingService: MatchMakingService) {}
 
-  ngOnInit() {}
+  async ngOnInit() {}
 
   async createGame() {
     await this.matchMakingService.createGame(this.game);
     this.router.navigate(["/babylonjs"]);
+  }
+
+  disableGameCreation() {
+    return (!this.game.name || this.game.name === '');
   }
 }

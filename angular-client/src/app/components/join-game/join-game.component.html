@@ -1,9 +1,4 @@
-<mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
-    <mat-expansion-panel-header>
-        <mat-panel-title>        
-            <h1><span>Available Games</span></h1>
-        </mat-panel-title>   
-    </mat-expansion-panel-header>
+<div *ngIf="gamesPresent(); else noGames" class="scrollable" #scrollable>
     <table mat-table [dataSource]="availableGames" class="mat-elevation-z0">
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>
@@ -24,5 +19,6 @@
 
         <tr mat-header-row *matHeaderRowDef="availableGamesDisplayedColumns"></tr>
         <tr mat-row *matRowDef="let row; columns: availableGamesDisplayedColumns;"></tr>
-      </table>
-</mat-expansion-panel>
+    </table>
+</div>
+<ng-template #noGames>No games found. Try creating your own.</ng-template>

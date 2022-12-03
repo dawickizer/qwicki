@@ -1,5 +1,8 @@
 .home-card {
-    max-width: 400px;
+    max-width: 600px;
+    width: 600px;
+    height: 800px;
+    max-height: 800px;
     color: aliceblue;
     background-color: #212529;
 }
