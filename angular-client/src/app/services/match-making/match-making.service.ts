@@ -31,8 +31,8 @@ export class MatchMakingService {
     return this._game;
   }
 
-  async leaveGame(room: Colyseus.Room): Promise<number> {
-    return room.leave();
+  async leaveGame(): Promise<number> {
+    return this._game.leave();
   }
 
   debug(room: Colyseus.Room) {

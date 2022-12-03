@@ -9,6 +9,7 @@ import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 import { ColyseusService } from '../colyseus/colyseus.service';
 import { InactivityService } from '../inactivity/inactivity.service';
+import { MatchMakingService } from '../match-making/match-making.service';
 @Injectable({
   providedIn: 'root'
 })
@@ -22,6 +23,7 @@ export class AuthService {
     private http: HttpClient, 
     private router: Router,
     private colyseusService: ColyseusService,
+    private matchMakingService: MatchMakingService,
     private inactivityService: InactivityService) {
 
       // need to set authService like this to avoid circular dependancy
@@ -56,6 +58,7 @@ export class AuthService {
     this.inactivityService.stopTimers();
     if (broadcast) {
       this.colyseusService.leaveAllRooms();
+      this.matchMakingService.leaveGame();
       this.broadcast.postMessage('logout');
     }
     this.router.navigate(['auth/login'], extras);
