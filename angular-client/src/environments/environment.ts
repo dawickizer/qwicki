@@ -5,7 +5,8 @@
 export const environment = {
   production: false,
   EXPRESS_SERVER: 'http://localhost:3000',
-  COLYSEUS_CHAT: 'ws://localhost:2567'
+  COLYSEUS_CHAT: 'ws://localhost:2567',
+  COLYSEUS_GAME: 'ws://localhost:2567'
 };
 
 /*

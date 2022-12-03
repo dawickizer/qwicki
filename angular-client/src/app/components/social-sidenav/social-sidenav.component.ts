@@ -34,7 +34,7 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
     private router: Router, 
     private snackBar: MatSnackBar,
     private keyBindService: KeyBindService,
-    private authService: AuthService,
+    public authService: AuthService,
     public colyseusService: ColyseusService,
     private userService: UserService) { }
 

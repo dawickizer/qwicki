@@ -17,5 +17,5 @@
         <app-social-friends-list title="offline" titleColor="color:rgb(255, 0, 76)" [(friends)]="offlineFriends" [potentialMessage]="potentialMessage"></app-social-friends-list>
         <app-social-friend-requests-list title="pending" titleColor="color:rgba(236, 232, 0, 0.884)" [(friendRequests)]="outboundFriendRequests" [update]="update"></app-social-friend-requests-list>  
     </mat-drawer>
-    <app-home></app-home>
+    <app-home [self]="colyseusService.host" [selfJWT]="this.authService.currentUserJWT()"></app-home>
 </mat-drawer-container>
