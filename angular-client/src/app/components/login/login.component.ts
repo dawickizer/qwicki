@@ -20,7 +20,7 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => this.return = params['return'] || '/home');
+    this.route.queryParams.subscribe(params => this.return = params['return'] || '/');
   }
 
   login() {

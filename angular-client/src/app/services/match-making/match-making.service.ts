@@ -22,7 +22,7 @@ export class MatchMakingService {
   }
 
   async getAvailableGames(): Promise<Colyseus.RoomAvailable[]> {
-    this._availableGames = await this._client.getAvailableRooms();
+    this._availableGames = await this._client.getAvailableRooms("game_room");
     return this._availableGames;
   }
 

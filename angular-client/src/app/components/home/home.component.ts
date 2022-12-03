@@ -32,7 +32,6 @@ export class HomeComponent implements OnInit {
 
   async getAvailableGames() {
     this.availableGames.data = await this.matchMakingService.getAvailableGames();
-    console.log(this.availableGames);
   }
 
   async createGame() {
