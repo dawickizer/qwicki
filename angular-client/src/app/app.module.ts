@@ -14,6 +14,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table'
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatTabsModule } from '@angular/material/tabs';
 
 // CDK
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -81,6 +82,7 @@ import { MatchMakingService } from './services/match-making/match-making.service
     MatSliderModule,
     MatExpansionModule,
     MatTooltipModule,
+    MatTabsModule,
     DragDropModule,
     AppRoutingModule,
     HttpClientModule,

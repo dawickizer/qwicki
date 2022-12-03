@@ -5,6 +5,7 @@ import { monitor } from "@colyseus/monitor";
  * Import your Room files
  */
 import { ChatRoom } from "./rooms/ChatRoom";
+import { GameRoom } from "./rooms/GameRoom";
 
 export default Arena({
     getId: () => "Qwicki",
@@ -14,6 +15,7 @@ export default Arena({
          * Define your room handlers:
          */
         gameServer.define('chat_room', ChatRoom);
+        gameServer.define('game_room', GameRoom)
 
     },
 
