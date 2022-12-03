@@ -4,6 +4,7 @@ import { MatchMakingService } from 'src/app/services/match-making/match-making.s
 import * as Colyseus from 'colyseus.js';
 import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
+import { Game } from 'src/app/models/game/game';
 
 @Component({
   selector: 'app-home',
@@ -15,32 +16,14 @@ export class HomeComponent implements OnInit {
   @Input() self: User;
   @Input() selfJWT: any
 
-  public availableGamesDisplayedColumns: string[] = ['name', 'action'];
-  public availableGames = new MatTableDataSource<Colyseus.RoomAvailable>([] as Colyseus.RoomAvailable[]);
-
   constructor(private router: Router, public matchMakingService: MatchMakingService) {}
 
   ngOnInit() {
     this.setSelf();
-    this.getAvailableGames();
   }
 
   setSelf() {
     this.matchMakingService.self = this.self;
     this.matchMakingService.selfJWT = this.selfJWT;
-  }
-
-  async getAvailableGames() {
-    this.availableGames.data = await this.matchMakingService.getAvailableGames();
-  }
-
-  async createGame() {
-    await this.matchMakingService.createGame();
-    this.router.navigate(["/babylonjs"]);
-  }
-
-  async joinGame(game: Colyseus.RoomAvailable) {
-    await this.matchMakingService.joinGame(game.roomId);
-    this.router.navigate(["/babylonjs"]);
   }
 }

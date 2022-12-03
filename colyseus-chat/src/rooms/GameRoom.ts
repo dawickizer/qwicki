@@ -8,6 +8,7 @@ export class GameRoom extends Room<GameRoomState> {
 
   onCreate (options: any) {
     this.setState(new GameRoomState());
+    this.setMetadata(options.game);
     console.log(`Room ${this.roomId} created`);
   }
 

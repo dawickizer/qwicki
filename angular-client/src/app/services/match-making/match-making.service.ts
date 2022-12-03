@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as Colyseus from 'colyseus.js';
+import { Game } from 'src/app/models/game/game';
 import { User } from 'src/app/models/user/user';
 import { environment } from 'src/environments/environment';
 
@@ -16,8 +17,8 @@ export class MatchMakingService {
 
   constructor() { }
 
-  async createGame(): Promise<Colyseus.Room> {
-    this._game = await this._client.create("game_room", {accessToken: this._selfJWT});
+  async createGame(game: Game): Promise<Colyseus.Room> {
+    this._game = await this._client.create("game_room", {accessToken: this._selfJWT, game: game});
     return this._game;
   }
 

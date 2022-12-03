@@ -35,6 +35,8 @@ import { SocialChatBoxComponent } from './components/social-chat-box/social-chat
 import { SocialCellComponent } from './components/social-cell/social-cell.component';
 import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
 import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
+import { CreateGameComponent } from './components/create-game/create-game.component';
+import { JoinGameComponent } from './components/join-game/join-game.component';
 
 // Directives
 import { BorderDirective } from './directives/border.directive';
@@ -51,6 +53,7 @@ import { ColyseusService } from './services/colyseus/colyseus.service';
 import { InactivityService } from './services/inactivity/inactivity.service';
 import { MatchMakingService } from './services/match-making/match-making.service';
 
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -66,6 +69,8 @@ import { MatchMakingService } from './services/match-making/match-making.service
     SocialCellComponent,
     SocialFriendsListComponent,
     SocialFriendRequestsListComponent,
+    CreateGameComponent,
+    JoinGameComponent,
     BorderDirective,
   ],
   imports: [
