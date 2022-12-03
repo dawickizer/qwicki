@@ -21,14 +21,14 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => this.return = params['return'] || '/babylonjs');
+    this.route.queryParams.subscribe(params => this.return = params['return'] || '/home');
   }
 
   login() {
-    this.authService.login(this.credentials).subscribe(
-      credentials => this.router.navigate([this.return]), 
-      error => this.openSnackBar(error, 'Dismiss')
-    );
+    this.authService.login(this.credentials).subscribe({
+      next: credentials => this.router.navigate([this.return]),
+      error: error => this.openSnackBar(error, 'Dismiss')});
+      
   }
 
   openSnackBar(message: string, action: string) {
