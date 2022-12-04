@@ -6,9 +6,10 @@ import { GameRoomState } from "../schemas/GameRoomState";
 
 export class GameRoom extends Room<GameRoomState> {
 
+  private _hostJoined: boolean = false;
+
   onCreate (options: any) {
     this.setState(new GameRoomState());
-    this.setMetadata(options.game);
     console.log(`Room ${this.roomId} created`);
   }
 
@@ -20,11 +21,29 @@ export class GameRoom extends Room<GameRoomState> {
     return isAuthenticatedJWT(options.accessToken); 
   }
 
-  onJoin (client: Client, options: any, auth: any) {
+  onJoin (client: Client, options: any, auth: any) { 
+    if (!this._hostJoined) {
+      console.log("HOST JOINED")
+      this._hostJoined = true;
+      this.setMetadata(this.initMetadata(options));
+    }
+    
     let user: User = new User(auth._id, client.sessionId, auth.username);
     this.state.users.set(user.sessionId, user);
     console.log(`${user.username} joined`);
     this.logUsers();
+  }
+
+  initMetadata(options: any): any {
+    let decodedJWT = isAuthenticatedJWT(options.accessToken); 
+    return {
+      ...options.game,
+      createdAt: new Date(),
+      createdBy: {
+        _id: decodedJWT._id,
+        username: decodedJWT.username
+      }
+    };
   }
 
   onLeave (client: Client, consented: boolean) {

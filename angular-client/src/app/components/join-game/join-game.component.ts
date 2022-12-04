@@ -12,7 +12,7 @@ import { Game } from 'src/app/models/game/game';
 })
 export class JoinGameComponent implements OnInit {
 
-  public availableGamesDisplayedColumns: string[] = ['name', 'mode', 'map', 'action'];
+  public availableGamesDisplayedColumns: string[] = ['name', 'mode', 'map', 'createdBy', 'createdAt', 'action'];
   public availableGames = new MatTableDataSource<Colyseus.RoomAvailable>([] as Colyseus.RoomAvailable[]);
 
   constructor(private router: Router, public matchMakingService: MatchMakingService) { }
