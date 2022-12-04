@@ -4,7 +4,7 @@
           <mat-label>Search</mat-label>
           <input matInput (keyup)="filter($event)" name="filter">
         </mat-form-field>
-    </form>  
+    </form>     
     <table mat-table [dataSource]="availableGames" class="mat-elevation-z0">
         <ng-container matColumnDef="name">
             <th mat-header-cell *matHeaderCellDef>Name</th>
