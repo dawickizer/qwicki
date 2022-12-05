@@ -58,7 +58,7 @@ export class AuthService {
     this.inactivityService.stopTimers();
     if (broadcast) {
       this.colyseusService.leaveAllRooms();
-      this.matchMakingService.leaveGame();
+      this.matchMakingService.leaveGameRoom();
       this.broadcast.postMessage('logout');
     }
     this.router.navigate(['auth/login'], extras);

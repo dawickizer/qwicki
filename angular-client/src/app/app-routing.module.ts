@@ -7,6 +7,7 @@ import { AuthGuardService } from './services/auth/auth.service';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
+import { GameComponent } from './components/game/game.component';
 
 const routes: Routes = [
   { path: '', component: SocialSidenavComponent, canActivate: [AuthGuardService] },
@@ -17,6 +18,7 @@ const routes: Routes = [
       { path: 'signup', component: SignupComponent }
     ]
   },
+  { path: 'game', component: GameComponent, canActivate: [AuthGuardService] },
   { path: 'babylonjs', component: BabylonjsComponent, canActivate: [AuthGuardService] },
   { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuardService] },
   { path: '**', component: NotFoundComponent, pathMatch: 'full' },

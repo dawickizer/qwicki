@@ -12,28 +12,29 @@ export class MatchMakingService {
   private _client = new Colyseus.Client(environment.COLYSEUS_GAME);
   private _self: User;
   private _selfJWT: any;
-  private _game: Colyseus.Room;
-  private _availableGames: Colyseus.RoomAvailable[] = [];
+  private _gameRoom: Colyseus.Room;
+  private _availableGameRooms: Colyseus.RoomAvailable[] = [];
 
   constructor() { }
 
-  async createGame(game: Game): Promise<Colyseus.Room> {
-    this._game = await this._client.create("game_room", {accessToken: this._selfJWT, game: game});
-    return this._game;
+  async createGameRoom(game: Game): Promise<Colyseus.Room> {
+    this._gameRoom = await this._client.create("game_room", {accessToken: this._selfJWT, game: game});
+    return this._gameRoom;
   }
 
-  async getAvailableGames(): Promise<Colyseus.RoomAvailable[]> {
-    this._availableGames = await this._client.getAvailableRooms("game_room");
-    return this._availableGames;
+  async getAvailableGameRooms(): Promise<Colyseus.RoomAvailable[]> {
+    this._availableGameRooms = await this._client.getAvailableRooms("game_room");
+    return this._availableGameRooms;
   }
 
-  async joinGame(roomId: string): Promise<Colyseus.Room> {
-    this._game = await this._client.joinById(roomId, {accessToken: this._selfJWT});
-    return this._game;
+  async joinGameRoom(roomId: string): Promise<Colyseus.Room> {
+    this._gameRoom = await this._client.joinById(roomId, {accessToken: this._selfJWT});
+    return this._gameRoom;
   }
 
-  async leaveGame(): Promise<number> {
-    return this._game.leave();
+  async leaveGameRoom(): Promise<number> {
+    if (this._gameRoom) return this._gameRoom.leave();
+    else return new Promise(() => -1);
   }
 
   debug(room: Colyseus.Room) {
@@ -56,12 +57,12 @@ export class MatchMakingService {
     this._selfJWT = selfJWT;
   }
 
-  get game(): Colyseus.Room {
-    return this._game
+  get gameRoom(): Colyseus.Room {
+    return this._gameRoom
   }
 
-  get availableGames(): Colyseus.RoomAvailable[] {
-    return this._availableGames;
+  get availableGameRooms(): Colyseus.RoomAvailable[] {
+    return this._availableGameRooms;
   }
 }
 

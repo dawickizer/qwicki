@@ -1,4 +1,4 @@
-<form class="create-game-form" (ngSubmit)="createGame()">
+<form class="create-game-form" (ngSubmit)="createGameRoom()">
     <mat-form-field class="create-game-full-width">
       <mat-label>Name</mat-label>
       <input matInput [(ngModel)]="game.name" name="name" #input maxlength="20">
@@ -12,5 +12,5 @@
       <mat-label>Map</mat-label>
       <input matInput [(ngModel)]="game.map" name="map" [disabled]="true">
     </mat-form-field>
-    <button mat-raised-button color="primary" type="submit" [disabled]="disableGameCreation()">Create</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="disableGameRoomCreation()">Create</button>
 </form>

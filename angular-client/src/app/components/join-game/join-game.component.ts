@@ -11,31 +11,31 @@ import * as Colyseus from 'colyseus.js';
 })
 export class JoinGameComponent implements OnInit {
 
-  public availableGamesDisplayedColumns: string[] = ['name', 'mode', 'map', 'createdBy', 'createdAt', 'action'];
-  public availableGames = new MatTableDataSource<Colyseus.RoomAvailable>([] as Colyseus.RoomAvailable[]);
+  public availableGameRoomsDisplayedColumns: string[] = ['name', 'mode', 'map', 'createdBy', 'createdAt', 'action'];
+  public availableGameRooms = new MatTableDataSource<Colyseus.RoomAvailable>([] as Colyseus.RoomAvailable[]);
 
   constructor(private router: Router, public matchMakingService: MatchMakingService) { }
 
   async ngOnInit() {
-    this.getAvailableGames();
+    this.getAvailableGameRooms();
   }
 
-  async getAvailableGames() {
-    this.availableGames.data = await this.matchMakingService.getAvailableGames();
+  async getAvailableGameRooms() {
+    this.availableGameRooms.data = await this.matchMakingService.getAvailableGameRooms();
   }
 
-  async joinGame(game: Colyseus.RoomAvailable) {
-    await this.matchMakingService.joinGame(game.roomId);
-    this.router.navigate(["/babylonjs"]);
+  async joinGameRoom(game: Colyseus.RoomAvailable) {
+    await this.matchMakingService.joinGameRoom(game.roomId);
+    this.router.navigate(["/game"]);
   }
 
-  gamesPresent(): boolean {
-    return this.availableGames.data && this.availableGames.data.length > 0;
+  gameRoomsPresent(): boolean {
+    return this.availableGameRooms.data && this.availableGameRooms.data.length > 0;
   }
 
   filter(filterValue: any) {
-    this.availableGames.filterPredicate = (game: Colyseus.RoomAvailable, filter: string) => this.filterPredicate(game, filter);
-    this.availableGames.filter = filterValue.target.value.trim().toLowerCase();
+    this.availableGameRooms.filterPredicate = (game: Colyseus.RoomAvailable, filter: string) => this.filterPredicate(game, filter);
+    this.availableGameRooms.filter = filterValue.target.value.trim().toLowerCase();
   }
 
   filterPredicate(game: Colyseus.RoomAvailable, filter: string) {

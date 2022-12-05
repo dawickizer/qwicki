@@ -1,7 +1,7 @@
 import { Room, Client } from "colyseus";
 import { isAuthenticatedJWT } from "../middleware/auth";
 import http from 'http';
-import { User } from "../schemas/User";
+import { Player } from "../schemas/Player";
 import { GameRoomState } from "../schemas/GameRoomState";
 
 export class GameRoom extends Room<GameRoomState> {
@@ -10,11 +10,14 @@ export class GameRoom extends Room<GameRoomState> {
 
   onCreate (options: any) {
     this.setState(new GameRoomState());
+
+    this.onMessage('move', () => { console.log('Player is moving')});
+
     console.log(`Room ${this.roomId} created`);
   }
 
   onAuth (client: Client, options: any, request: http.IncomingMessage) {
-    console.log("Authenticating user...")
+    console.log("Authenticating player...")
     // whatever is returned will be tacked onto the client object in onJoin()/onLeave() 
     // as auth: {returnValue} and it will be added as a third optional auth 
     // parameter to the onJoin() method
@@ -28,10 +31,10 @@ export class GameRoom extends Room<GameRoomState> {
       this.setMetadata(this.initMetadata(options));
     }
     
-    let user: User = new User(auth._id, client.sessionId, auth.username);
-    this.state.users.set(user.sessionId, user);
-    console.log(`${user.username} joined`);
-    this.logUsers();
+    let player: Player = new Player(auth._id, client.sessionId, auth.username);
+    this.state.players.set(player.sessionId, player);
+    console.log(`${player.username} joined`);
+    this.logPlayers();
   }
 
   initMetadata(options: any): any {
@@ -47,18 +50,18 @@ export class GameRoom extends Room<GameRoomState> {
   }
 
   onLeave (client: Client, consented: boolean) {
-    this.state.users.delete(client.sessionId);
+    this.state.players.delete(client.sessionId);
     console.log(`${client.auth.username} left`);
-    this.logUsers();
+    this.logPlayers();
   }
 
   onDispose() {
     console.log(`Room ${this.roomId} disposing`);
   }
 
-  private logUsers() {
-    console.log("Users in the game:")
-    this.state.users.forEach(user => console.log(`${user.username}`));
+  private logPlayers() {
+    console.log("Players in the game:")
+    this.state.players.forEach(player => console.log(`${player.username}`));
   }
 
 }
