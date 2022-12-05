@@ -1,4 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { User } from 'src/app/models/user/user';
+import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
+import * as Colyseus from 'colyseus.js';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { Game } from 'src/app/models/game/game';
 
 @Component({
   selector: 'app-home',
@@ -7,7 +13,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() {}
+  @Input() self: User;
+  @Input() selfJWT: any
 
-  ngOnInit() {}
+  constructor(private router: Router, public matchMakingService: MatchMakingService) {}
+
+  ngOnInit() {
+    this.setSelf();
+  }
+
+  setSelf() {
+    this.matchMakingService.self = this.self;
+    this.matchMakingService.selfJWT = this.selfJWT;
+  }
 }

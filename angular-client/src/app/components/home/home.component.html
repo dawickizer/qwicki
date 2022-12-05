@@ -2,11 +2,18 @@
     <mat-card class="home-card">
         <mat-card-header>
             <div mat-card-avatar class="home-header-image"></div>
-            <mat-card-title>Home</mat-card-title>
+            <mat-card-title>Hello, {{self.username}}</mat-card-title>
             <mat-card-subtitle>Wanna play a qwicki?</mat-card-subtitle>
         </mat-card-header>
-        <img mat-card-image src="/assets/chillin.png" alt="Wick logo">
         <mat-card-content>
+            <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="center">
+                <mat-tab label="Join">
+                    <app-join-game></app-join-game>
+                </mat-tab>
+                <mat-tab label="Create">
+                    <app-create-game></app-create-game>
+                </mat-tab>
+            </mat-tab-group>
         </mat-card-content>
         </mat-card>
 </div>

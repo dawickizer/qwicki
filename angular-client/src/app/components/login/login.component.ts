@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
-
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { AuthService } from 'src/app/services/auth/auth.service';
 
@@ -21,14 +20,14 @@ export class LoginComponent implements OnInit {
     private snackBar: MatSnackBar) { }
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => this.return = params['return'] || '/babylonjs');
+    this.route.queryParams.subscribe(params => this.return = params['return'] || '/');
   }
 
   login() {
-    this.authService.login(this.credentials).subscribe(
-      credentials => this.router.navigate([this.return]), 
-      error => this.openSnackBar(error, 'Dismiss')
-    );
+    this.authService.login(this.credentials).subscribe({
+      next: credentials => this.router.navigate([this.return]),
+      error: error => this.openSnackBar(error, 'Dismiss')});
+      
   }
 
   openSnackBar(message: string, action: string) {
