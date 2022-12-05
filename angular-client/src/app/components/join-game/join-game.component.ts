@@ -3,7 +3,6 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import * as Colyseus from 'colyseus.js';
-import { Game } from 'src/app/models/game/game';
 
 @Component({
   selector: 'app-join-game',
@@ -40,8 +39,12 @@ export class JoinGameComponent implements OnInit {
   }
 
   filterPredicate(game: Colyseus.RoomAvailable, filter: string) {
+    let createdAt: Date = new Date(game.metadata.createdAt);
+    let timestamp: string = createdAt.toDateString() + ', ' + createdAt.toLocaleTimeString();
     return game.metadata.name.trim().toLowerCase().includes(filter) 
     || game.metadata.mode.trim().toLowerCase().includes(filter) 
-    || game.metadata.map.trim().toLowerCase().includes(filter);
+    || game.metadata.map.trim().toLowerCase().includes(filter)
+    || game.metadata.createdBy.username.trim().toLowerCase().includes(filter)
+    || timestamp.trim().toLowerCase().includes(filter);
   }
 }
