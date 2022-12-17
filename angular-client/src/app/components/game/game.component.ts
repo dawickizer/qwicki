@@ -4,14 +4,19 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { Engine, UniversalCamera, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
 import "@babylonjs/core/Debug/debugLayer";
 import '@babylonjs/inspector';
+import * as Colyseus from 'colyseus.js';
+import { ActivatedRoute } from '@angular/router';
 
-// Services/Models
+
+// Services
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { GameService } from 'src/app/services/game/game.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
+import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 
+// Models
 import { Player } from 'src/app/models/player/player';
 import { PlayerService } from 'src/app/services/player/player.service';
+
 
 @Component({
   selector: 'app-game',
@@ -31,6 +36,7 @@ export class GameComponent implements OnInit {
   ground: Mesh;
   username: string = '';
   self: Player;
+  enemies: Map<string, Player> = new Map();
   gunSightCamera: UniversalCamera;
   gunSight: Mesh;
   isSceneLocked: boolean = false;
@@ -38,7 +44,7 @@ export class GameComponent implements OnInit {
   walkSpeed: number = 80;
   crouchSpeed: number = 40;
 
-  constructor(private gameService: GameService, private playerService: PlayerService, private authService: AuthService, private keyBindService: KeyBindService) { }
+  constructor(private route: ActivatedRoute, private matchMakingService: MatchMakingService, private playerService: PlayerService, private authService: AuthService, private keyBindService: KeyBindService) { }
 
   async ngOnInit() {}
 
@@ -47,13 +53,21 @@ export class GameComponent implements OnInit {
 
     this.authService.currentUser().subscribe({
       next: async user => {
-        this.username = user.username;
-        this.createScene();
-        this.handleWindowResize();
-        await this.addFpsMechanics()
-        this.skybox = this.createSkyBox();
-        this.ground = this.createGround(4000, 0, 'grass.jpg');
-        this.render();
+        this.route.queryParams.subscribe(async params => {
+          this.createScene();
+          this.skybox = this.createSkyBox();
+          this.ground = this.createGround(4000, 0, 'grass.jpg');
+          this.handleWindowResize();
+          this.createFpsCamera();
+          this.self = new Player(user._id, null, user.username, 'self');
+          this.handlePointerEvents();
+          this.handlePlayerPosition();
+          this.render();
+
+          await this.createOrJoinGameRoom(params);
+          this.playersOnAdd();
+          this.playerOnRemove();
+        });
       }, 
       error: error => this.authService.logout()
     });
@@ -63,6 +77,67 @@ export class GameComponent implements OnInit {
     console.log('Disposing scene')
     this.scene?.dispose();
     this.keyBindService.removeKeyBinds();
+  }
+
+  async createOrJoinGameRoom(params: any) {
+    if (params['connection'] === 'create') await this.matchMakingService.createGameRoom();
+    else if (params['connection'] === 'join') await this.matchMakingService.joinGameRoom();
+  }
+
+  playersOnAdd() {
+    this.matchMakingService.game.room.state.players.onAdd = async (player: any, key: any) => {
+      if (this.self._id === player._id) {
+        this.self = await this.createPlayer(player, 'self');
+        this.playerPositionOnChange(player, this.self);
+        this.playerRotationOnChange(player, this.self)
+      } else {
+        this.enemies.set(player._id, await this.createPlayer(player, 'enemy'));
+        this.playerPositionOnChange(player, this.enemies.get(player._id));
+        this.playerRotationOnChange(player, this.enemies.get(player._id))
+      }
+    }
+  };
+
+  playerPositionOnChange(playerState: any, player: Player) {
+    playerState.position.onChange = (changes: any) => {
+      player.nextPosition = new Vector3(playerState.position.x, playerState.position.y - 64.32, playerState.position.z);
+    };
+    playerState.position.triggerAll();
+  }
+
+  playerRotationOnChange(playerState: any, player: Player) {
+    playerState.rotation.onChange = (changes: any) => {
+      player.nextRotation = new Vector3(playerState.rotation.x, playerState.rotation.y, playerState.rotation.z);
+    };
+    playerState.rotation.triggerAll();
+  }
+
+  playerOnRemove() {
+    this.matchMakingService.game.room.state.players.onRemove = async (player: any, key: any) => 
+    this.disposePlayer(this.self._id === player._id ? this.self : this.enemies.get(player._id));
+  }
+
+  async createPlayer(joinedPlayer: any, name: string) {
+    let player: Player
+    player = new Player(joinedPlayer._id, joinedPlayer.sessionId, joinedPlayer.username, name);
+    player.playerMeshURL = 'assets/babylonjs/models/dude/dude.babylon';
+    player.moveSpeed = this.universalCamera.speed;
+    player.cameraAngularSensibility = this.universalCamera.angularSensibility; 
+    player.cameraInertia = this.universalCamera.inertia; 
+    await player.importPlayerMesh(this.scene);
+    player.position = new Vector3(0, 0, -5); // offset dude forward in the Z direction
+    player.nextPosition = player.position;
+    player.nextRotation = player.rotation;
+    player.playerMesh.bakeCurrentTransformIntoVertices(); // make new default 0,0,0 position
+    return player;
+  }
+
+  async disposePlayer(player: Player) {
+    player.dispose();
+    if (this.self._id === player._id) this.self = null;
+    else (this.enemies.delete(player._id));
+    console.log(this.self);
+    console.log(this.enemies);
   }
 
   createScene() {
@@ -99,35 +174,19 @@ export class GameComponent implements OnInit {
     return ground;
   }
 
-  async addFpsMechanics() {
-    this.createFpsCamera();
-    this.createFpsKeyBinds();
-    this.handlePointerEvents();
-    await this.createPlayer();
-    this.handlePlayerPosition();
-  }
-
-  async createPlayer() {
-    this.self = new Player(this.username, 'self');
-    this.self.playerMeshURL = 'assets/babylonjs/models/dude/dude.babylon';
-    this.self.meleeSoundURL = 'assets/babylonjs/sounds/melee/stab.mp3';
-    this.self.moveSpeed = this.universalCamera.speed;
-    this.self.cameraAngularSensibility = this.universalCamera.angularSensibility; 
-    this.self.cameraInertia = this.universalCamera.inertia; 
-
-    await this.playerService.create(this.self, this.scene);
-
-    this.self.createSelectingMesh(this.scene, this.universalCamera);
-    this.self.createMeleeWeapon(this.scene);
-    
-    this.self.playerMesh.position = new Vector3(0, -64, -5); // offset dude back in the Z direction and down in the Y direction by the height of the camera elipsoid
-    this.self.playerMesh.bakeCurrentTransformIntoVertices(); // make new default 0,0,0 position
-  }
-
   handlePlayerPosition() {
     this.scene.beforeCameraRender = () => {
-      this.self.playerMesh.position = this.universalCamera.position;
-      this.self.playerMesh.rotation = this.universalCamera.rotation;
+      if (this.self && this.self.position && this.self.playerMesh) {
+        this.self.position = Vector3.Lerp(this.self.position, this.self.nextPosition, 0.05);
+        this.self.position = new Vector3(this.universalCamera.position.x, this.universalCamera.position.y - 64.32, this.universalCamera.position.z); 
+        this.self.playerMesh.rotation = this.universalCamera.rotation;
+      }
+      if (this.enemies.size > 0) this.enemies.forEach(enemy => {
+        enemy.position = Vector3.Lerp(enemy.position, enemy.nextPosition, 0.05);
+        enemy.rotation = Vector3.Lerp(enemy.rotation, enemy.nextRotation, 0.05);
+      })
+      // this.self.playerMesh.position = this.universalCamera.position;
+      // this.self.playerMesh.rotation = this.universalCamera.rotation;
     };
   }
 
@@ -139,84 +198,44 @@ export class GameComponent implements OnInit {
     this.universalCamera.keysUp = [];
     this.universalCamera.keysUp.push('w'.charCodeAt(0));
     this.universalCamera.keysUp.push('W'.charCodeAt(0));
-
-    this.universalCamera.keysUpward.push(' '.charCodeAt(0)); // registers an input to apply gravity 
-    this.universalCamera.keysDownward.push('c'.charCodeAt(0)); // registers an input to applay crouch
-    this.universalCamera.keysDownward.push('C'.charCodeAt(0)); // registers an input to applay crouch
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyW') this.move() });
 
     this.universalCamera.keysLeft = [];
     this.universalCamera.keysLeft.push('a'.charCodeAt(0));
     this.universalCamera.keysLeft.push('A'.charCodeAt(0));
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyA') this.move() });
 
     this.universalCamera.keysDown = [];
     this.universalCamera.keysDown.push('s'.charCodeAt(0));
     this.universalCamera.keysDown.push('S'.charCodeAt(0));
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyS') this.move() });
 
     this.universalCamera.keysRight = [];
     this.universalCamera.keysRight.push('d'.charCodeAt(0));
     this.universalCamera.keysRight.push('D'.charCodeAt(0));
+    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyD') this.move() });
+
+    this.keyBindService.setKeyBind('mousemove', event => { if (this.isSceneLocked) this.rotate() });
 
     this.universalCamera.speed = this.walkSpeed; // controls WASD speed
     this.universalCamera.angularSensibility = 5000; // controls mouse speed
     this.universalCamera.inertia = .2; // controls 'smoothness'
-
   }
 
-  createFpsKeyBinds() {
-    this.handleRunOnShift();
-    this.handleCrouchOnC();
-    this.handleFlyOnSpace();
+  move() {
+    // as of now this is the only way i can figure to wait to send the camera position until after its updated due to
+    // document listeners firing off before babylon updates its stuff
+    setTimeout(() => this.matchMakingService.game.room.send('move', this.universalCamera.position), 50);
   }
 
-  handleRunOnShift() {
-    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.sprint() });
-    this.keyBindService.setKeyBind('keyup', event => { if (this.isSceneLocked && event.code == 'ShiftLeft') this.walk() });
-  }
-
-  // due to system settings and how they control shortcut keys...ctrl+ shortcuts cannot fully be disabled. Putting crouch on C
-  handleCrouchOnC() {
-    this.keyBindService.setKeyBind('keydown', event => { if (this.isSceneLocked && event.code == 'KeyC') this.crouched() });
-  }
-  
-  sprint() {
-    this.universalCamera.speed = this.sprintSpeed;
-    if (this.self.crouched) this.stand();
-    this.self.sprinting = true;
-  }
-
-  stand() {
-    this.universalCamera.speed = this.walkSpeed;
-    this.universalCamera.position = this.universalCamera.position.add(new Vector3(0, 24, 0));
-    this.universalCamera.ellipsoid = new Vector3(5, 32, 5);
-    this.self.crouched = false;
-  }
-
-  crouch() {
-    this.universalCamera.speed = this.crouchSpeed;
-    this.universalCamera.position = this.universalCamera.position.add(new Vector3(0, -10, 0));
-    this.universalCamera.ellipsoid = new Vector3(5, 20, 5);
-    this.self.crouched = true;
-  }
-
-  crouched() {
-    if (this.self.crouched) this.stand();
-    else this.crouch();
-    this.self.sprinting = false;
+  rotate() {
+    // as of now this is the only way i can figure to wait to send the camera position until after its updated due to
+    // document listeners firing off before babylon updates its stuff
+    setTimeout(() => this.matchMakingService.game.room.send('rotate', this.universalCamera.rotation), 50);
   }
 
   walk() {
-    if (this.self.crouched) this.universalCamera.speed = this.crouchSpeed;
-    else this.universalCamera.speed = this.walkSpeed
-    this.self.sprinting = false;
-  }
-
-  handleFlyOnSpace() {
-    this.keyBindService.setKeyBind('keydown', event => { 
-      if (this.isSceneLocked && event.code == 'Space') {
-        if (this.self.crouched) this.stand();
-        else this.universalCamera.applyGravity = !this.universalCamera.applyGravity;
-      }
-  });
+    this.universalCamera.speed = this.walkSpeed
   }
 
   handlePointerEvents() {

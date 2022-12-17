@@ -3,6 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Router } from '@angular/router';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import * as Colyseus from 'colyseus.js';
+import { Game } from 'src/app/models/game/game';
 
 @Component({
   selector: 'app-join-game',
@@ -25,8 +26,8 @@ export class JoinGameComponent implements OnInit {
   }
 
   async joinGameRoom(game: Colyseus.RoomAvailable) {
-    await this.matchMakingService.joinGameRoom(game.roomId);
-    this.router.navigate(["/game"]);
+    this.matchMakingService.gameRoomId = game.roomId;
+    this.router.navigate(["/game"], {queryParams: {connection: 'join'}});
   }
 
   gameRoomsPresent(): boolean {

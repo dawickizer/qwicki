@@ -1,6 +1,6 @@
 import { Schema, type } from '@colyseus/schema';
 
-export class Position extends Schema {
+export class Rotation extends Schema {
 
   @type('number')
   x: number;

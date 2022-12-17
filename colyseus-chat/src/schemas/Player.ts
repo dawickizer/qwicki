@@ -1,5 +1,6 @@
 import { Schema, type } from "@colyseus/schema";
 import { Position } from "./Position";
+import { Rotation } from "./Rotation";
 
 export class Player extends Schema {
 
@@ -14,6 +15,9 @@ export class Player extends Schema {
 
     @type(Position)
     position: Position = new Position();
+
+    @type(Rotation)
+    rotation: Rotation = new Rotation();
   
     constructor(_id: string, sessionId: string, username: string) {
        super(); 

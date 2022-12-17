@@ -11,7 +11,23 @@ export class GameRoom extends Room<GameRoomState> {
   onCreate (options: any) {
     this.setState(new GameRoomState());
 
-    this.onMessage('move', () => { console.log('Player is moving')});
+    this.onMessage('move', (client: Client, message: any) => {
+      let player: Player = this.state.players.get(client.sessionId);
+      console.log(player.username + ' position');
+      console.log(message);
+      player.position.x = message._x;
+      player.position.y = message._y;
+      player.position.z = message._z;
+    });
+
+    this.onMessage('rotate', (client: Client, message: any) => {
+      let player: Player = this.state.players.get(client.sessionId);
+      console.log(player.username + ' rotation');
+      console.log(message);
+      player.rotation.x = message._x;
+      player.rotation.y = message._y;
+      player.rotation.z = message._z;
+    });
 
     console.log(`Room ${this.roomId} created`);
   }

@@ -12,29 +12,35 @@ export class MatchMakingService {
   private _client = new Colyseus.Client(environment.COLYSEUS_GAME);
   private _self: User;
   private _selfJWT: any;
-  private _gameRoom: Colyseus.Room;
+  private _game: Game = new Game();
+  private _gameRoomId: string;
   private _availableGameRooms: Colyseus.RoomAvailable[] = [];
 
   constructor() { }
-
-  async createGameRoom(game: Game): Promise<Colyseus.Room> {
-    this._gameRoom = await this._client.create("game_room", {accessToken: this._selfJWT, game: game});
-    return this._gameRoom;
-  }
 
   async getAvailableGameRooms(): Promise<Colyseus.RoomAvailable[]> {
     this._availableGameRooms = await this._client.getAvailableRooms("game_room");
     return this._availableGameRooms;
   }
+  
+  async createGameRoom(): Promise<Colyseus.Room> {
+    this._game.room = await this._client.create("game_room", {accessToken: this._selfJWT, game: this.game});
+    this._gameRoomId = this._game.room.id;
+    return this._game.room;
+  }
 
-  async joinGameRoom(roomId: string): Promise<Colyseus.Room> {
-    this._gameRoom = await this._client.joinById(roomId, {accessToken: this._selfJWT});
-    return this._gameRoom;
+  async joinGameRoom(): Promise<Colyseus.Room> {
+    this._game.room = await this._client.joinById(this._gameRoomId, {accessToken: this._selfJWT});
+    this._gameRoomId = this._game.room.id;
+    return this._game.room;
   }
 
   async leaveGameRoom(): Promise<number> {
-    if (this._gameRoom) return this._gameRoom.leave();
-    else return new Promise(() => -1);
+    let promise: Promise<number> = new Promise(() => -1);
+    if (this._game && this._game.room) promise = this._game.room.leave();
+    this.game.room = null;
+    this.gameRoomId = null;
+    return promise;
   }
 
   debug(room: Colyseus.Room) {
@@ -49,7 +55,7 @@ export class MatchMakingService {
     this._self = self;
   }
 
-  get selfJWT(): User {
+  get selfJWT(): any {
     return this._selfJWT;
   }
 
@@ -57,8 +63,20 @@ export class MatchMakingService {
     this._selfJWT = selfJWT;
   }
 
-  get gameRoom(): Colyseus.Room {
-    return this._gameRoom
+  get game(): Game {
+    return this._game;
+  }
+
+  set game(game: Game) {
+    this._game = game;
+  }
+
+  get gameRoomId(): string {
+    return this._gameRoomId;
+  }
+
+  set gameRoomId(gameRoomId: string) {
+    this._gameRoomId = gameRoomId;
   }
 
   get availableGameRooms(): Colyseus.RoomAvailable[] {

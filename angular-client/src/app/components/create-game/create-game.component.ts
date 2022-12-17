@@ -17,8 +17,8 @@ export class CreateGameComponent implements OnInit {
   async ngOnInit() {}
 
   async createGameRoom() {
-    await this.matchMakingService.createGameRoom(this.game);
-    this.router.navigate(["/game"]);
+    this.matchMakingService.game = this.game;
+    this.router.navigate(["/game"], {queryParams: {connection: 'create'}});
   }
 
   disableGameRoomCreation() {
