@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ColyseusService {
 
-  private _client = new Colyseus.Client(environment.COLYSEUS_CHAT);
+  private _client = new Colyseus.Client(environment.COLYSEUS_SOCIAL);
   private _host: User;
   private _hostJWT: any;
   private _hostRoom: Colyseus.Room;

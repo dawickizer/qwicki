@@ -30,14 +30,14 @@ services:
       - mongo-db
     command: bash -c "/usr/wait-for-it.sh --timeout=0 mongo-db:27017 && npm start" # wait for the database to finish initializing
 
-  colyseus-chat: #name of the second service
+  colyseus-social: #name of the second service
     build:
-      context: ./colyseus-chat
+      context: ./colyseus-social
       dockerfile: Dockerfile
     ports:
       - "2567:2567" #specify ports forewarding
     volumes:
-      - ./colyseus-chat/src:/usr/src/app/src # this will enable changes made to the express app reflect in the container
+      - ./colyseus-social/src:/usr/src/app/src # this will enable changes made to the express app reflect in the container
     networks:
       - front-end
       - back-end
