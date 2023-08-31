@@ -4,6 +4,7 @@ import { Gun } from 'src/app/models/gun/gun'
 export class Player {
 
   _id?: string;
+  sessionId?: string;
   username: string;
   name: string;
   playerMesh: Mesh = null;
@@ -27,11 +28,50 @@ export class Player {
   cameraAngularSensibility: number; // controls mouse speed
   cameraInertia: number; // controls mouse 'smoothness'
   selectingMesh: Mesh = null;
+  private _nextPosition: Vector3;
+  private _nextRotation: Vector3;
 
-  constructor(username?: string, name?: string) {
+  constructor(_id?: string, sessionId?: string, username?: string, name?: string) {
+    this._id = _id;
+    this.sessionId = sessionId;
     this.username = username;
     this.name = name;
-    this._id = name + '-' + username;
+  }
+
+  get position(): Vector3 {
+    return this.playerMesh?.position;
+  }
+
+  set position(vector3: Vector3) {
+    if (this.playerMesh.position) this.playerMesh.position.set(vector3.x, vector3.y, vector3.z);
+    else this.playerMesh.position = vector3;
+  }
+
+  get nextPosition(): Vector3 {
+    return this._nextPosition;
+  }
+
+  set nextPosition(vector3: Vector3) {
+    if (this._nextPosition) this._nextPosition.set(vector3.x, vector3.y, vector3.z);
+    else this._nextPosition = vector3;
+  }
+
+  get rotation(): Vector3 {
+    return this.playerMesh?.rotation;
+  }
+
+  set rotation(vector3: Vector3) {
+    if (this.playerMesh.rotation) this.playerMesh.rotation.set(vector3.x, vector3.y, vector3.z);
+    else this.playerMesh.rotation = vector3;
+  }
+
+  get nextRotation(): Vector3 {
+    return this._nextRotation;
+  }
+
+  set nextRotation(vector3: Vector3) {
+    if (this._nextRotation) this._nextRotation.set(vector3.x, vector3.y, vector3.z);
+    else this._nextRotation = vector3;
   }
 
   async importPlayerMesh(scene: Scene): Promise<Mesh> {
@@ -90,7 +130,11 @@ export class Player {
     cube.bakeCurrentTransformIntoVertices(); 
 
     this.meleeWeapon = cube;
+  }
 
+  dispose() {
+    this.playerMesh?.dispose();
+    this.meleeSound?.dispose();
   }
 
 }

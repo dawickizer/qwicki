@@ -37,6 +37,7 @@ import { SocialFriendsListComponent } from './components/social-friends-list/soc
 import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
 import { CreateGameComponent } from './components/create-game/create-game.component';
 import { JoinGameComponent } from './components/join-game/join-game.component';
+import { GameComponent } from './components/game/game.component';
 
 // Directives
 import { BorderDirective } from './directives/border.directive';
@@ -52,7 +53,7 @@ import { SocialService } from './services/social/social.service';
 import { ColyseusService } from './services/colyseus/colyseus.service';
 import { InactivityService } from './services/inactivity/inactivity.service';
 import { MatchMakingService } from './services/match-making/match-making.service';
-
+import { GameService } from './services/game/game.service';
 
 @NgModule({
   declarations: [
@@ -71,6 +72,7 @@ import { MatchMakingService } from './services/match-making/match-making.service
     SocialFriendRequestsListComponent,
     CreateGameComponent,
     JoinGameComponent,
+    GameComponent,
     BorderDirective,
   ],
   imports: [
@@ -102,6 +104,7 @@ import { MatchMakingService } from './services/match-making/match-making.service
               PlayerService,
               GunService,
               FpsService,
+              GameService,
               KeyBindService,
               SocialService,
               MatchMakingService,

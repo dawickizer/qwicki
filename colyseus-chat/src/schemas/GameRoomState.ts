@@ -1,7 +1,7 @@
 import { Schema, type, MapSchema } from "@colyseus/schema";
-import { User } from "./User";
+import { Player } from "./Player";
 
 export class GameRoomState extends Schema {
-  @type({ map: User })
-  users = new MapSchema<User>();
+  @type({ map: Player })
+  players = new MapSchema<Player>();
 }

@@ -16,12 +16,12 @@ export class CreateGameComponent implements OnInit {
 
   async ngOnInit() {}
 
-  async createGame() {
-    await this.matchMakingService.createGame(this.game);
-    this.router.navigate(["/babylonjs"]);
+  async createGameRoom() {
+    this.matchMakingService.game = this.game;
+    this.router.navigate(["/game"], {queryParams: {connection: 'create'}});
   }
 
-  disableGameCreation() {
+  disableGameRoomCreation() {
     return (!this.game.name || this.game.name === '');
   }
 }
