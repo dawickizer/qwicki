@@ -6,61 +6,12 @@ import { User } from "../schemas/User";
 
 export class ChatRoom extends Room<ChatRoomState> {
 
+  hostClient: Client;
+
   onCreate (options: any) {
     this.setState(new ChatRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
-
-    // set room listeners
-    this.onMessage("sendFriendRequest", (client, friendRequest) => {
-      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      hostClient.send("sendFriendRequest", friendRequest);
-    });
-
-    this.onMessage("acceptFriendRequest", (client, friendRequest) => {
-      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      hostClient.send("acceptFriendRequest", friendRequest);
-    });
-
-    this.onMessage("rejectFriendRequest", (client, friendRequest) => {
-      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      hostClient.send("rejectFriendRequest", friendRequest);
-    });
-
-    this.onMessage("revokeFriendRequest", (client, friendRequest) => {
-      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      hostClient.send("revokeFriendRequest", friendRequest);
-    });
-
-    this.onMessage("removeFriend", (client, friend) => {
-      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      hostClient.send("removeFriend", friend);
-    });
-
-    this.onMessage("disconnectFriend", (client, friend) => {
-      this.state.users.forEach(user => {
-        if (user._id === friend._id) {
-          let userClient: Client = this.clients.find(client => client.sessionId === user.sessionId);
-          userClient.send("disconnectFriend", this.state.host);
-          this.state.users.delete(userClient.sessionId);
-          userClient.leave();
-        }
-      });
-    });
-
-    this.onMessage("messageHost", (client, message) => {
-      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      hostClient.send("messageHost", message);
-    });
-
-    this.onMessage("messageUser", (client, message) => {
-      this.state.users.forEach(user => {
-        if (user._id === message.to._id) {
-          let userClient: Client = this.clients.find(client => client.sessionId === user.sessionId);
-          userClient.send("messageUser", message);
-        }
-      });
-    });
-
+    this.setOnMessageListeners();
     console.log(`Room ${this.roomId} created`);
   }
 
@@ -74,50 +25,116 @@ export class ChatRoom extends Room<ChatRoomState> {
 
   onJoin (client: Client, options: any, auth: any) {
     let user: User = new User(auth._id, client.sessionId, auth.username);
-
-    // determine host
-    if (auth._id === this.roomId) {
-      this.state.host = user;
-      console.log(`${this.state.host.username} is the host`);
-    }
-
-    // add host/user to users
-    this.state.users.set(user.sessionId, user);
-    console.log(`${user.username} joined`);
-    
-    // show users in room
-    console.log("Users in the chat:")
-    this.state.users.forEach(user => console.log(`${user.username}`));
-
-    // Send message to host client that someone (including self) joined
-    let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-    hostClient.send("online", user);
+    this.determineHost(user);
+    this.addUser(user);
+    this.logUsers();
+    this.hostClient.send("online", user);
   }
 
   onLeave (client: Client, consented: boolean) {
-
-    // disconnect room totally if host leaves
-    if (this.state.host.sessionId === client.sessionId) {
-      console.log("HOST IS LEAVING...disconnecting room")
-      this.broadcast("offline", this.state.host);
-      this.broadcast("dispose", this.roomId);
-      this.disconnect();
-    }
-    else {
-      // Send message to host client that someone (including self) left
-      let user: User = this.state.users.get(client.sessionId);
-      let hostClient: Client = this.clients.find(client => client.sessionId === this.state.host.sessionId);
-      if (hostClient && user) hostClient.send("offline", user);
-
-      this.state.users.delete(client.sessionId);
-      console.log(`${client.auth.username} left`);
-      console.log("Users in the chat:")
-      this.state.users.forEach(user => console.log(`${user.username}`));
-    }
+    if (this.isHost(client)) this.disconnectRoom();
+    else this.removeClient(client);
   }
 
   onDispose() {
     console.log(`Room ${this.roomId} disposing`);
   }
 
+  private setOnMessageListeners() {
+    // set room listeners
+    this.onMessage("sendFriendRequest", (client, friendRequest) => {
+        this.hostClient.send("sendFriendRequest", friendRequest);
+    });
+
+    this.onMessage("acceptFriendRequest", (client, friendRequest) => {
+        this.hostClient.send("acceptFriendRequest", friendRequest);
+    });
+
+    this.onMessage("rejectFriendRequest", (client, friendRequest) => {
+        this.hostClient.send("rejectFriendRequest", friendRequest);
+    });
+
+    this.onMessage("revokeFriendRequest", (client, friendRequest) => {
+        this.hostClient.send("revokeFriendRequest", friendRequest);
+    });
+
+    this.onMessage("removeFriend", (client, friend) => {
+        this.hostClient.send("removeFriend", friend);
+    });
+
+    this.onMessage("disconnectFriend", (client, friend) => {
+        let user = this.getUserById(friend._id);
+        let userClient: Client = this.getClient(user);
+        userClient.send("disconnectFriend", this.state.host);
+        userClient.leave();
+    });
+
+    this.onMessage("messageHost", (client, message) => {
+        this.hostClient.send("messageHost", message);
+    });
+
+    this.onMessage("messageUser", (client, message) => {
+        let user = this.getUserById(message.to._id);
+        let userClient: Client = this.getClient(user);
+        userClient.send("messageUser", message);
+    });
+  }
+
+  private getClient(user: User): Client {
+    return this.clients.find(client => client.sessionId === user.sessionId)
+  }
+
+  private removeClient(client: Client) {
+    let user: User = this.getUser(client);
+    if (this.hostClient && user) this.hostClient.send("offline", user);
+    this.deleteUser(user);
+    this.logUsers();
+  }
+
+  private determineHost(user: User) {
+    if (user._id === this.roomId) {
+      this.state.host = user;
+      this.hostClient = this.getClient(this.state.host);
+      console.log(`${this.state.host.username} is the host`);
+    } 
+  }
+
+  private addUser(user: User) {
+    this.state.users.set(user.sessionId, user);
+    console.log(`${user.username} joined`);
+  }
+
+  private deleteUser(user: User) {
+    this.state.users.delete(user.sessionId);
+    console.log(`${user.username} left`);
+  }
+
+  private getUser(client: Client): User {
+    return this.state.users.get(client.sessionId);
+  }
+
+  private getUserById(id: string) {
+    for (const user of this.state.users.values()) {
+        if (user._id === id) {
+            return user;
+        }
+    }
+    return null;
+}
+
+  private logUsers() {
+      console.log("Users in the chat:")
+      this.state.users.forEach(user => console.log(`${user.username}`));
+  }
+
+  private disconnectRoom() {
+    console.log("HOST IS LEAVING...disconnecting room")
+    this.broadcast("offline", this.state.host);
+    this.broadcast("dispose", this.roomId);
+    this.disconnect();
+  }
+
+  private isHost(client: Client): boolean {
+    return this.hostClient.sessionId === client.sessionId;
+  }
 }
