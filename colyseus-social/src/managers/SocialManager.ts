@@ -1,10 +1,9 @@
-import { SocialRoom } from "../rooms/SocialRoom";
+import { SocialRoom } from '../rooms/SocialRoom';
 
 export class SocialManager {
+  socialRoom: SocialRoom;
 
-    socialRoom: SocialRoom;
-
-    constructor(socialRoom: SocialRoom) {
-        this.socialRoom = socialRoom;
-    }
+  constructor(socialRoom: SocialRoom) {
+    this.socialRoom = socialRoom;
+  }
 }
