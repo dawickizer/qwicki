@@ -1,9 +1,6 @@
 name: Colyseus Social CI
 
 on:
-  push:
-    paths:
-      - 'colyseus-social/**'
   pull_request:
     paths:
       - 'colyseus-social/**'
@@ -13,6 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      
-    # Additional steps for Colyseus Social can go here
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.12.1'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('colyseus-social/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install NPM dependencies
+        run: npm ci --prefix colyseus-social
+
+      - name: Run formatter
+        run: npm run format:check --prefix colyseus-social

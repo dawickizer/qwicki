@@ -1,9 +1,6 @@
 name: Express Server CI
 
 on:
-  push:
-    paths:
-      - 'express-server/**'
   pull_request:
     paths:
       - 'express-server/**'
@@ -13,6 +10,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
-      
-    # Additional steps for Express Server can go here
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18.12.1'
+
+      - name: Cache NPM dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('express-server/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install NPM dependencies
+        run: npm ci --prefix express-server
+
+      - name: Run formatter
+        run: npm run format:check --prefix express-server
