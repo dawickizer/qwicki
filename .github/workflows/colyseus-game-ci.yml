@@ -1,0 +1,19 @@
+name: Colyseus Game CI
+
+on:
+  push:
+    paths:
+      - 'colyseus-game/**'
+  pull_request:
+    paths:
+      - 'colyseus-game/**'
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    # Additional steps for Colyseus Game can go here

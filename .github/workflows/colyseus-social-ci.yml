@@ -1,0 +1,19 @@
+name: Colyseus Social CI
+
+on:
+  push:
+    paths:
+      - 'colyseus-social/**'
+  pull_request:
+    paths:
+      - 'colyseus-social/**'
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    # Additional steps for Colyseus Social can go here

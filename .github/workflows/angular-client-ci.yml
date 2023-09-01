@@ -1,0 +1,19 @@
+name: Angular Client CI
+
+on:
+  push:
+    paths:
+      - 'angular-client/**'
+  pull_request:
+    paths:
+      - 'angular-client/**'
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    # Additional steps for Angular client can go here
