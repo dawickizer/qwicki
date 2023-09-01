@@ -12,6 +12,7 @@
     "lint:fix": "npm run lint -- --fix",
     "prettier:check": "prettier ./server --check",
     "prettier:write": "prettier ./server --write",
+    "format:check": "npm run prettier:check && npm run lint",
     "format": "npm run prettier:write && npm run lint:fix"
   },
   "author": "",
