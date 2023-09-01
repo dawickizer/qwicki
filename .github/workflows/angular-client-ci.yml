@@ -30,4 +30,4 @@ jobs:
         run: npm ci --prefix angular-client
 
       - name: Run formatter
-        run: npm run format --prefix angular-client
+        run: npm run format:check --prefix angular-client

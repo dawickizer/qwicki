@@ -1,7 +1,7 @@
 import { Directive, HostBinding, Input } from '@angular/core';
 
 @Directive({
-  selector: '[appBorder]',
+  selector: '[heheBorder]',
 })
 export class BorderDirective {
   @Input() bStyle = 'solid';
