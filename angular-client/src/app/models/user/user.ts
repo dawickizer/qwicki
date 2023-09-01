@@ -1,4 +1,4 @@
-import { FriendRequest } from "../friend-request/friend-request";
+import { FriendRequest } from '../friend-request/friend-request';
 
 export class User {
   _id?: string;

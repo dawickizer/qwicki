@@ -1,12 +1,32 @@
 // Core
-import { Component, ElementRef, OnInit, Output, ViewChild } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  ElementRef,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { IInspectorOptions, DebugLayerTab, Engine, UniversalCamera, Viewport, HemisphericLight, Mesh, MeshBuilder, Scene, Vector3, StandardMaterial, Texture, CubeTexture, Color3 } from '@babylonjs/core';
-import "@babylonjs/core/Debug/debugLayer";
+import {
+  IInspectorOptions,
+  DebugLayerTab,
+  Engine,
+  UniversalCamera,
+  Viewport,
+  HemisphericLight,
+  Mesh,
+  MeshBuilder,
+  Scene,
+  Vector3,
+  StandardMaterial,
+  Texture,
+  CubeTexture,
+  Color3,
+} from '@babylonjs/core';
+import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
 
 // Services/Models
-import { Gun } from 'src/app/models/gun/gun';
 import { FpsService } from 'src/app/services/fps/fps.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
@@ -14,42 +34,46 @@ import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 @Component({
   selector: 'app-babylonjs',
   templateUrl: './babylonjs.component.html',
-  styleUrls: ['./babylonjs.component.css']
+  styleUrls: ['./babylonjs.component.css'],
 })
-export class BabylonjsComponent implements OnInit {
-
-  @ViewChild('canvas', {static: true}) canvas: ElementRef<HTMLCanvasElement>;
+export class BabylonjsComponent implements AfterViewInit, OnDestroy {
+  @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('drawer') drawer: MatSidenav;
 
   engine: Engine;
   scene: Scene;
   universalCamera: UniversalCamera;
   debugCamera: UniversalCamera;
-  debugCameraIsActive: boolean = false;
+  debugCameraIsActive = false;
   light: HemisphericLight;
   skybox: Mesh;
   ground: Mesh;
   platform: Mesh;
-  cameraSensitivity: number = 0;
-  username: string = '';
+  cameraSensitivity = 0;
+  username = '';
 
-  constructor(private fpsService: FpsService, private authService: AuthService, private keyBindService: KeyBindService) { }
-
-  async ngOnInit() {}
+  constructor(
+    private fpsService: FpsService,
+    private authService: AuthService,
+    private keyBindService: KeyBindService
+  ) {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
-
-    this.authService.currentUser().subscribe(
-      async user => {
+    this.authService.currentUser().subscribe({
+      next: async user => {
         this.username = user.username;
 
         this.createScene();
         this.handleWindowResize();
         this.handleBoundingBoxes();
 
-        await this.fpsService.addFpsMechanics(this.scene, this.canvas, this.username);
-        
+        await this.fpsService.addFpsMechanics(
+          this.scene,
+          this.canvas,
+          this.username
+        );
+
         this.skybox = this.createSkyBox();
         //this.ground = this.createGround(4000, 0, 'grass.jpg');
         //this.platform = this.createGround(5000, -200, 'lava.jpg');
@@ -62,13 +86,13 @@ export class BabylonjsComponent implements OnInit {
 
         // running babylonJS
         this.render();
-      }, 
-      error => this.authService.logout()
-    );
+      },
+      error: () => this.authService.logout(),
+    });
   }
 
   ngOnDestroy() {
-    console.log('Disposing scene')
+    console.log('Disposing scene');
     this.scene?.dispose();
     this.keyBindService.removeKeyBinds();
   }
@@ -78,18 +102,33 @@ export class BabylonjsComponent implements OnInit {
     this.scene = new Scene(this.engine);
     this.scene.gravity = new Vector3(0, -5, 0);
     this.scene.collisionsEnabled = true;
-    this.light = new HemisphericLight('light', new Vector3(0, 1, 0), this.scene);
-    this.universalCamera = new UniversalCamera('universalCamera', new Vector3(0, 64, 0), this.scene);
+    this.light = new HemisphericLight(
+      'light',
+      new Vector3(0, 1, 0),
+      this.scene
+    );
+    this.universalCamera = new UniversalCamera(
+      'universalCamera',
+      new Vector3(0, 64, 0),
+      this.scene
+    );
     this.universalCamera.attachControl(this.canvas.nativeElement, true);
     this.scene.activeCamera = this.universalCamera;
-    this.debugCamera = new UniversalCamera('debugCamera', new Vector3(0, 5, 0), this.scene);
+    this.debugCamera = new UniversalCamera(
+      'debugCamera',
+      new Vector3(0, 5, 0),
+      this.scene
+    );
   }
 
   createSkyBox(): Mesh {
-    let skybox = MeshBuilder.CreateBox('skybox', { size: 5000 }, this.scene);
-    let skyboxMaterial = new StandardMaterial('skybox', this.scene);
+    const skybox = MeshBuilder.CreateBox('skybox', { size: 5000 }, this.scene);
+    const skyboxMaterial = new StandardMaterial('skybox', this.scene);
     skyboxMaterial.backFaceCulling = false;
-    skyboxMaterial.reflectionTexture = new CubeTexture('assets/babylonjs/textures/night-sky/night-sky', this.scene);
+    skyboxMaterial.reflectionTexture = new CubeTexture(
+      'assets/babylonjs/textures/night-sky/night-sky',
+      this.scene
+    );
     skyboxMaterial.reflectionTexture.coordinatesMode = Texture.SKYBOX_MODE;
     skyboxMaterial.diffuseColor = new Color3(0, 0, 0);
     skyboxMaterial.specularColor = new Color3(0, 0, 0);
@@ -98,26 +137,33 @@ export class BabylonjsComponent implements OnInit {
   }
 
   createGround(size: number, y_position: number, texture: string): Mesh {
-    let ground = MeshBuilder.CreateGround('ground', { width: size, height: size }, this.scene);
+    const ground = MeshBuilder.CreateGround(
+      'ground',
+      { width: size, height: size },
+      this.scene
+    );
     ground.position.y = y_position;
-    let groundMat = new StandardMaterial('groundMat', this.scene);
+    const groundMat = new StandardMaterial('groundMat', this.scene);
     groundMat.backFaceCulling = false;
-    groundMat.diffuseTexture = new Texture('assets/babylonjs/textures/' + texture, this.scene);
+    groundMat.diffuseTexture = new Texture(
+      'assets/babylonjs/textures/' + texture,
+      this.scene
+    );
     ground.material = groundMat;
     ground.checkCollisions = true;
 
-        // let terrainMaterial = new StandardMaterial("terrain", this.scene);
+    // let terrainMaterial = new StandardMaterial("terrain", this.scene);
     // terrainMaterial.diffuseTexture = new Texture("assets/babylonjs/textures/grass.jpg", this.scene);
 
     // let terrain: GroundMesh;
     // Mesh.CreateGroundFromHeightMap("terrain", "assets/babylonjs/textures/heightmap.jpg", 5000, 5000, 50, 0, 200, this.scene, false, (mesh) => {
     //   terrain = mesh;
     //   terrain.position = new Vector3(0, 0, 0);
-    //   terrain.material = terrainMaterial; 
+    //   terrain.material = terrainMaterial;
     //   terrain.checkCollisions = true;
     //   terrain.physicsImpostor = new PhysicsImpostor(terrain, PhysicsImpostor.HeightmapImpostor, { mass: 0, restitution: 0.9 }, this.scene);
     // });
-    
+
     return ground;
   }
 
@@ -130,11 +176,11 @@ export class BabylonjsComponent implements OnInit {
   }
 
   handleWindowResize() {
-    window.addEventListener('resize', () => this.engine.resize());   
+    window.addEventListener('resize', () => this.engine.resize());
   }
 
   handleSideNavKeyBind() {
-    this.keyBindService.setKeyBind('keydown', event => { 
+    this.keyBindService.setKeyBind('keydown', event => {
       if (event.code == 'Tab') {
         event.preventDefault();
         if (this.drawer.opened) this.canvas.nativeElement.requestPointerLock();
@@ -142,7 +188,7 @@ export class BabylonjsComponent implements OnInit {
         if (document.fullscreenElement) document.exitFullscreen();
         this.drawer.toggle();
       }
-    })
+    });
   }
 
   handleFullScreen() {
@@ -152,14 +198,16 @@ export class BabylonjsComponent implements OnInit {
           this.canvas.nativeElement.requestFullscreen();
           this.canvas.nativeElement.requestPointerLock();
           this.drawer.close();
-        }
-        else document.exitFullscreen();
+        } else document.exitFullscreen();
     });
   }
 
   handleDebugLayer() {
-    let config: IInspectorOptions = {initialTab: DebugLayerTab.Statistics, embedMode: true}
-    this.keyBindService.setKeyBind('keydown', event => { 
+    const config: IInspectorOptions = {
+      initialTab: DebugLayerTab.Statistics,
+      embedMode: true,
+    };
+    this.keyBindService.setKeyBind('keydown', event => {
       if (event.code == 'NumpadAdd') {
         if (this.scene.debugLayer.isVisible()) this.scene.debugLayer.hide();
         else this.scene.debugLayer.show(config);
@@ -168,28 +216,29 @@ export class BabylonjsComponent implements OnInit {
   }
 
   handleDebugCamera() {
-    this.keyBindService.setKeyBind('keydown', event => { 
-      if (event.code == 'NumpadSubtract' ) {
+    this.keyBindService.setKeyBind('keydown', event => {
+      if (event.code == 'NumpadSubtract') {
         this.debugCameraIsActive = !this.debugCameraIsActive;
         if (this.debugCameraIsActive) {
-
           this.debugCamera.layerMask = 0x10000001; // makes dude visible to debug camera and everything else renders for debug assuming its 0x0FFFFFFF
 
           // Attach camera to canvas
           this.debugCamera.attachControl(this.canvas.nativeElement, true);
-          
+
           // Push the debug camera to the list of active cameras for the scene
           this.scene.activeCameras.push(this.debugCamera);
 
           // Adjust the viewports
           this.scene.activeCameras[0].viewport = new Viewport(0.5, 0, 0.5, 1.0); // FPS Camera
-          this.scene.activeCameras[1].viewport = this.scene.activeCameras[0].viewport // Gunsight Camera
-          this.scene.activeCameras[2].viewport = this.debugCamera.viewport = new Viewport(0, 0, 0.5, 1.0); // Debug Camera
+          this.scene.activeCameras[1].viewport =
+            this.scene.activeCameras[0].viewport; // Gunsight Camera
+          this.scene.activeCameras[2].viewport = this.debugCamera.viewport =
+            new Viewport(0, 0, 0.5, 1.0); // Debug Camera
         } else {
-
           // Revert back to normal camera state
           this.scene.activeCameras[0].viewport = new Viewport(0, 0, 1, 1); // FPS Camera
-          this.scene.activeCameras[1].viewport = this.scene.activeCameras[0].viewport // Gunsight Camera
+          this.scene.activeCameras[1].viewport =
+            this.scene.activeCameras[0].viewport; // Gunsight Camera
 
           // Revert back to normal active cameras
           this.debugCamera.detachControl();
@@ -200,7 +249,12 @@ export class BabylonjsComponent implements OnInit {
   }
 
   handleBoundingBoxes() {
-    this.keyBindService.setKeyBind('keydown', event => { if (event.code == 'NumpadEnter') for (let i = 0; i < this.scene.meshes.length; i++) this.scene.meshes[i].showBoundingBox = !this.scene.meshes[i].showBoundingBox });
+    this.keyBindService.setKeyBind('keydown', event => {
+      if (event.code == 'NumpadEnter')
+        for (let i = 0; i < this.scene.meshes.length; i++)
+          this.scene.meshes[i].showBoundingBox =
+            !this.scene.meshes[i].showBoundingBox;
+    });
   }
 
   render() {

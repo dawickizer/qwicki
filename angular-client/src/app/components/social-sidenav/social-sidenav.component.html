@@ -1,21 +1,48 @@
-<mat-drawer-container *ngIf="isAsyncDataPresent" class="example-container" autosize>
-    <mat-drawer #drawer class="example-sidenav" mode="over">
-        <h1>
-            <span routerLink="/user-profile" matTooltip="Go to User Profile" class="material-icons profile-icon">account_circle</span>
-            {{colyseusService?.host?.username}}
-        </h1>
-        <mat-divider></mat-divider> 
-        <app-social-friend-requests-list title="friend requests" titleColor="color:rgb(0, 162, 255)" [(friendRequests)]="inboundFriendRequests" (onSend)="onSendFriendRequest($event)" (onAccept)="onAcceptFriendRequest()"></app-social-friend-requests-list>
-        <br>
-        <form class="home-form">
-            <mat-form-field class="home-full-width">
-              <mat-label>Friends</mat-label>
-              <input matInput (keyup)="filter($event)" name="filter">
-            </mat-form-field>
-        </form>  
-        <app-social-friends-list title="online" titleColor="color:rgb(0, 255, 149)" [(friends)]="onlineFriends" [potentialMessage]="potentialMessage"></app-social-friends-list> 
-        <app-social-friends-list title="offline" titleColor="color:rgb(255, 0, 76)" [(friends)]="offlineFriends" [potentialMessage]="potentialMessage"></app-social-friends-list>
-        <app-social-friend-requests-list title="pending" titleColor="color:rgba(236, 232, 0, 0.884)" [(friendRequests)]="outboundFriendRequests" [update]="update"></app-social-friend-requests-list>  
-    </mat-drawer>
-    <app-home [self]="colyseusService.host" [selfJWT]="this.authService.currentUserJWT()"></app-home>
+<mat-drawer-container
+  *ngIf="isAsyncDataPresent"
+  class="example-container"
+  autosize>
+  <mat-drawer #drawer class="example-sidenav" mode="over">
+    <h1>
+      <span
+        routerLink="/user-profile"
+        matTooltip="Go to User Profile"
+        class="material-icons profile-icon"
+        >account_circle</span
+      >
+      {{ colyseusService?.host?.username }}
+    </h1>
+    <mat-divider></mat-divider>
+    <app-social-friend-requests-list
+      title="friend requests"
+      titleColor="color:rgb(0, 162, 255)"
+      [(friendRequests)]="inboundFriendRequests"
+      (send)="onSendFriendRequest($event)"
+      (accept)="onAcceptFriendRequest()"></app-social-friend-requests-list>
+    <br />
+    <form class="home-form">
+      <mat-form-field class="home-full-width">
+        <mat-label>Friends</mat-label>
+        <input matInput (keyup)="filter($event)" name="filter" />
+      </mat-form-field>
+    </form>
+    <app-social-friends-list
+      title="online"
+      titleColor="color:rgb(0, 255, 149)"
+      [(friends)]="onlineFriends"
+      [potentialMessage]="potentialMessage"></app-social-friends-list>
+    <app-social-friends-list
+      title="offline"
+      titleColor="color:rgb(255, 0, 76)"
+      [(friends)]="offlineFriends"
+      [potentialMessage]="potentialMessage"></app-social-friends-list>
+    <app-social-friend-requests-list
+      title="pending"
+      titleColor="color:rgba(236, 232, 0, 0.884)"
+      [(friendRequests)]="outboundFriendRequests"
+      [update]="update"></app-social-friend-requests-list>
+  </mat-drawer>
+  <app-home
+    [self]="colyseusService.host"
+    [selfJWT]="this.authService.currentUserJWT()"></app-home>
 </mat-drawer-container>

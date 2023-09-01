@@ -3,15 +3,12 @@ import { Gun } from 'src/app/models/gun/gun';
 import { Scene } from '@babylonjs/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GunService {
-
   guns: Gun[] = [];
 
-  constructor() {}
-
-  get(name: String): Gun {
+  get(name: string): Gun {
     return this.guns.find(gun => gun.name == name);
   }
 
@@ -35,6 +32,4 @@ export class GunService {
     this.guns.push(gun);
     return gun;
   }
-
-
 }

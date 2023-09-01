@@ -24,7 +24,7 @@ canvas {
 */
 ::ng-deep .mat-drawer-inner-container {
   overflow: visible !important;
-} 
+}
 
 /* 
    If i want to get rid of both scroll bars comment this css in and the above css out

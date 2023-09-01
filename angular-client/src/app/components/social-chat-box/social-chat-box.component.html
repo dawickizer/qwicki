@@ -1,29 +1,55 @@
 <div>
   <div class="scrollable" #scrollable>
-  <table mat-table [dataSource]="messages" class="mat-elevation-z0">
+    <table mat-table [dataSource]="messages" class="mat-elevation-z0">
       <ng-container matColumnDef="message">
-        <td [style.visibility]="element.createdAt ? 'visible': 'hidden'" class="cell" mat-cell *matCellDef="let element">
-          <div *ngIf="isMessageOld(element)" class="old-message">{{element.createdAt | date : 'mediumDate'}}</div>
+        <td
+          [style.visibility]="element.createdAt ? 'visible' : 'hidden'"
+          class="cell"
+          mat-cell
+          *matCellDef="let element">
+          <div *ngIf="isMessageOld(element)" class="old-message">
+            {{ element.createdAt | date: 'mediumDate' }}
+          </div>
           <mat-card class="card">
-            <mat-card-subtitle class="card-subtitle small-font">{{element.from?.username}} - {{element.createdAt | date : 'shortTime'}}</mat-card-subtitle>
+            <mat-card-subtitle class="card-subtitle small-font"
+              >{{ element.from?.username }} -
+              {{ element.createdAt | date: 'shortTime' }}</mat-card-subtitle
+            >
             <mat-card-content class="card-content">
-              <mat-list *ngFor="let paragraph of getParagraphs(element)" role="list">
+              <mat-list
+                *ngFor="let paragraph of getParagraphs(element)"
+                role="list">
                 <mat-list-item role="listitem">
-                  <div [innerHTML]=paragraph></div>
+                  <div [innerHTML]="paragraph"></div>
                 </mat-list-item>
               </mat-list>
             </mat-card-content>
           </mat-card>
         </td>
       </ng-container>
-      <tr mat-row *matRowDef="let row; columns: messagesDisplayedColumns;"></tr>
-  </table>
+      <tr mat-row *matRowDef="let row; columns: messagesDisplayedColumns"></tr>
+    </table>
   </div>
   <mat-form-field class="input">
-      <mat-label>Chat</mat-label>
-      <textarea [(ngModel)]="newMessage" (keydown.enter)="sendMessage($event)" cdkTextareaAutosize matInput maxlength="250" #input></textarea>
-      <mat-hint class="hint" align="end">{{input.value.length || 0}}/250</mat-hint>
+    <mat-label>Chat</mat-label>
+    <textarea
+      [(ngModel)]="newMessage"
+      (keydown.enter)="sendMessage($event)"
+      cdkTextareaAutosize
+      matInput
+      maxlength="250"
+      #input></textarea>
+    <mat-hint class="hint" align="end"
+      >{{ input.value.length || 0 }}/250</mat-hint
+    >
   </mat-form-field>
-  <span matTooltip="Send Message" (click)="sendMessage()" class="material-icons">send</span>
-  <span matTooltip="Remove Friend" (click)="removeFriend()" class="material-icons-outlined">person_remove</span>
+  <span matTooltip="Send Message" (click)="sendMessage()" class="material-icons"
+    >send</span
+  >
+  <span
+    matTooltip="Remove Friend"
+    (click)="onRemoveFriend()"
+    class="material-icons-outlined"
+    >person_remove</span
+  >
 </div>

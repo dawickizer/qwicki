@@ -7,32 +7,34 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.css']
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent implements OnInit {
-
   credentials: Credentials = new Credentials();
-  return: string = '';
+  return = '';
   constructor(
-    private router: Router, 
-    private route: ActivatedRoute, 
-    private authService: AuthService, 
-    private snackBar: MatSnackBar) { }
+    private router: Router,
+    private route: ActivatedRoute,
+    private authService: AuthService,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe(params => this.return = params['return'] || '/');
+    this.route.queryParams.subscribe(
+      params => (this.return = params['return'] || '/')
+    );
   }
 
   login() {
     this.authService.login(this.credentials).subscribe({
-      next: credentials => this.router.navigate([this.return]),
-      error: error => this.openSnackBar(error, 'Dismiss')});
-      
+      next: () => this.router.navigate([this.return]),
+      error: error => this.openSnackBar(error, 'Dismiss'),
+    });
   }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 5000
+      duration: 5000,
     });
   }
 }

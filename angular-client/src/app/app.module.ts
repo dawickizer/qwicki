@@ -11,7 +11,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableModule } from '@angular/material/table'
+import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
@@ -44,7 +44,11 @@ import { BorderDirective } from './directives/border.directive';
 
 // Services
 import { UserService } from './services/user/user.service';
-import { AuthGuardService, AuthInterceptor, AuthService } from './services/auth/auth.service';
+import {
+  AuthGuardService,
+  AuthInterceptor,
+  AuthService,
+} from './services/auth/auth.service';
 import { PlayerService } from './services/player/player.service';
 import { GunService } from './services/gun/gun.service';
 import { FpsService } from './services/fps/fps.service';
@@ -93,24 +97,24 @@ import { GameService } from './services/game/game.service';
     DragDropModule,
     AppRoutingModule,
     HttpClientModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
   ],
   providers: [
-              UserService,
-              AuthService,
-              AuthGuardService,
-              InactivityService,
-              ColyseusService,
-              PlayerService,
-              GunService,
-              FpsService,
-              GameService,
-              KeyBindService,
-              SocialService,
-              MatchMakingService,
-              { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }
-            ],
+    UserService,
+    AuthService,
+    AuthGuardService,
+    InactivityService,
+    ColyseusService,
+    PlayerService,
+    GunService,
+    FpsService,
+    GameService,
+    KeyBindService,
+    SocialService,
+    MatchMakingService,
+    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  ],
   bootstrap: [AppComponent],
-  schemas: [ NO_ERRORS_SCHEMA ]
+  schemas: [NO_ERRORS_SCHEMA],
 })
-export class AppModule { }
+export class AppModule {}

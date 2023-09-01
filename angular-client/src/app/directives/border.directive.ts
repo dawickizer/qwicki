@@ -1,15 +1,15 @@
 import { Directive, HostBinding, Input } from '@angular/core';
 
 @Directive({
-  selector: '[border]'
+  selector: '[appBorder]',
 })
 export class BorderDirective {
-  @Input() bStyle: string = 'solid';
-  @Input() bRadius: number = 0;
-  @Input() bPadding: number = 0;
-  @Input() bMargin: number = 0;
-  @Input() bColor: string = '#673ab7';
-  @Input() bWidth: number = 1;
+  @Input() bStyle = 'solid';
+  @Input() bRadius = 0;
+  @Input() bPadding = 0;
+  @Input() bMargin = 0;
+  @Input() bColor = '#673ab7';
+  @Input() bWidth = 1;
 
   @HostBinding('style.borderStyle')
   get style() {

@@ -8,9 +8,8 @@ describe('SocialChatBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ SocialChatBoxComponent ]
-    })
-    .compileComponents();
+      declarations: [SocialChatBoxComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(SocialChatBoxComponent);
     component = fixture.componentInstance;

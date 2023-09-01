@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Credentials } from 'src/app/models/credentials/credentials';
@@ -8,27 +8,28 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  styleUrls: ['./signup.component.css']
+  styleUrls: ['./signup.component.css'],
 })
-export class SignupComponent implements OnInit {
-
+export class SignupComponent {
   credentials: Credentials = new Credentials();
   user: User = new User();
 
-  constructor(private router: Router, private authService: AuthService, private snackBar: MatSnackBar) { }
-
-  ngOnInit(): void {}
+  constructor(
+    private router: Router,
+    private authService: AuthService,
+    private snackBar: MatSnackBar
+  ) {}
 
   signup() {
-    this.authService.signup(this.user).subscribe(
-      credentials => this.router.navigate(['/babylonjs']), 
-      error => this.openSnackBar(error, 'Dismiss')
-    );
+    this.authService.signup(this.user).subscribe({
+      next: () => this.router.navigate(['/babylonjs']),
+      error: error => this.openSnackBar(error, 'Dismiss'),
+    });
   }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 5000
+      duration: 5000,
     });
   }
 }

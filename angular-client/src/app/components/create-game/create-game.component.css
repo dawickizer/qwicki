@@ -1,13 +1,13 @@
 .create-game-form {
-    margin-top: 20px;
-    min-width: 150px;
-    width: 100%;
+  margin-top: 20px;
+  min-width: 150px;
+  width: 100%;
 }
-  
+
 .create-game-full-width {
-    width: 100%;
+  width: 100%;
 }
 
 .create-game-hint {
-    color: aliceblue;
+  color: aliceblue;
 }

@@ -10,22 +10,34 @@ import { SocialSidenavComponent } from './components/social-sidenav/social-siden
 import { GameComponent } from './components/game/game.component';
 
 const routes: Routes = [
-  { path: '', component: SocialSidenavComponent, canActivate: [AuthGuardService] },
-  { 
+  {
+    path: '',
+    component: SocialSidenavComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
     path: 'auth',
     children: [
       { path: 'login', component: LoginComponent },
-      { path: 'signup', component: SignupComponent }
-    ]
+      { path: 'signup', component: SignupComponent },
+    ],
   },
   { path: 'game', component: GameComponent, canActivate: [AuthGuardService] },
-  { path: 'babylonjs', component: BabylonjsComponent, canActivate: [AuthGuardService] },
-  { path: 'user-profile', component: UserProfileComponent, canActivate: [AuthGuardService] },
+  {
+    path: 'babylonjs',
+    component: BabylonjsComponent,
+    canActivate: [AuthGuardService],
+  },
+  {
+    path: 'user-profile',
+    component: UserProfileComponent,
+    canActivate: [AuthGuardService],
+  },
   { path: '**', component: NotFoundComponent, pathMatch: 'full' },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' })],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}
