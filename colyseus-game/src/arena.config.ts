@@ -4,7 +4,7 @@ import { monitor } from "@colyseus/monitor";
 /**
  * Import your Room files
  */
-import { SocialRoom } from "./rooms/SocialRoom";
+import { GameRoom } from "./rooms/GameRoom";
 
 export default Arena({
     getId: () => "Qwicki",
@@ -13,7 +13,7 @@ export default Arena({
         /**
          * Define your room handlers:
          */
-        gameServer.define('social_room', SocialRoom);
+        gameServer.define('game_room', GameRoom);
 
     },
 
@@ -32,7 +32,6 @@ export default Arena({
          */
         app.use("/colyseus", monitor());
     },
-
 
     beforeListen: () => {
         /**

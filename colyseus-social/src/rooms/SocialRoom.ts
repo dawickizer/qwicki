@@ -1,5 +1,5 @@
 import { Room, Client } from "colyseus";
-import { ChatRoomState } from "../schemas/ChatRoomState";
+import { SocialRoomState } from "../schemas/SocialRoomState";
 import { isAuthenticatedJWT } from "../middleware/auth";
 import http from 'http';
 import { User } from "../schemas/User";
@@ -7,7 +7,7 @@ import { FriendManager } from "../managers/FriendManager";
 import { ChatManager } from "../managers/ChatManager";
 import { PresenceManager } from "../managers/PresenceManager";
 
-export class SocialRoom extends Room<ChatRoomState> {
+export class SocialRoom extends Room<SocialRoomState> {
 
   hostClient: Client;
 
@@ -16,7 +16,7 @@ export class SocialRoom extends Room<ChatRoomState> {
   private presenceManager: PresenceManager;
 
   onCreate (options: any) {
-    this.setState(new ChatRoomState());
+    this.setState(new SocialRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
     this.setManagers();
     this.setOnMessageListeners();
