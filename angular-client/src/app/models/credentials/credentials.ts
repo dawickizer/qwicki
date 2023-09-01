@@ -1,5 +1,8 @@
 export class Credentials {
-  username?: string = '';
+
+  constructor() {}
+
+      username?: string = '';
   password?: string = '';
   token?: string = '';
 }
