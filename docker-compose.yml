@@ -2,12 +2,12 @@ version: '2' # specify docker-compose version
 
 # Define the services/containers to be run
 services:
-  angular-client: # name of the first service
+  angular-client:
     build:
       context: ./angular-client
       dockerfile: Dockerfile
     ports:
-      - "4200:4200" # specify port forewarding
+      - "4200:4200"
     environment:
       NODE_OPTIONS: "--max-old-space-size=4000" # SOLVED: FATAL ERROR: Ineffective mark-compacts near heap limit Allocation failed - JavaScript heap out of memory
     volumes:
@@ -15,12 +15,12 @@ services:
     networks:
       - front-end
 
-  express-server: #name of the second service
+  express-server:
     build:
       context: ./express-server
       dockerfile: Dockerfile
     ports:
-      - "3000:3000" #specify ports forewarding
+      - "3000:3000"
     volumes:
       - ./express-server/server:/usr/src/app/server # this will enable changes made to the express app reflect in the container
     networks:
@@ -30,12 +30,12 @@ services:
       - mongo-db
     command: bash -c "/usr/wait-for-it.sh --timeout=0 mongo-db:27017 && npm start" # wait for the database to finish initializing
 
-  colyseus-social: #name of the second service
+  colyseus-social:
     build:
       context: ./colyseus-social
       dockerfile: Dockerfile
     ports:
-      - "2567:2567" #specify ports forewarding
+      - "2567:2567"
     volumes:
       - ./colyseus-social/src:/usr/src/app/src # this will enable changes made to the express app reflect in the container
     networks:
@@ -45,11 +45,26 @@ services:
       - mongo-db
     command: bash -c "/usr/wait-for-it.sh --timeout=0 mongo-db:27017 && npm start" # wait for the database to finish initializing
 
-  mongo-express: # name of the third service
+  colyseus-game:
+    build:
+      context: ./colyseus-game
+      dockerfile: Dockerfile
+    ports:
+      - "2568:2568"
+    volumes:
+      - ./colyseus-game/src:/usr/src/app/src # this will enable changes made to the express app reflect in the container
+    networks:
+      - front-end
+      - back-end
+    depends_on:
+      - mongo-db
+    command: bash -c "/usr/wait-for-it.sh --timeout=0 mongo-db:27017 && npm start" # wait for the database to finish initializing
+
+  mongo-express:
     image: mongo-express # specify image to build container from
     restart: always # needed in case MongoDb connection is not ready
     ports:
-      - "8081:8081" # specify port forewarding
+      - "8081:8081"
     environment: 
       - ME_CONFIG_MONGODB_SERVER=mongo-db # name of service to connect to
       - ME_CONFIG_BASICAUTH_USERNAME=username # username for logging into mongo-express UI 
@@ -61,10 +76,10 @@ services:
     depends_on:
       - mongo-db
 
-  mongo-db: # name of the fourth service
+  mongo-db:
     image: mongo # specify image to build container from
     ports:
-      - "27017:27017" # specify port forewarding
+      - "27017:27017"
     environment:
       - MONGO_INITDB_ROOT_USERNAME=username
       - MONGO_INITDB_ROOT_PASSWORD=password

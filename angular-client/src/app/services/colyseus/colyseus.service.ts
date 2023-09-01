@@ -30,7 +30,7 @@ export class ColyseusService {
     try {
       let room: Colyseus.Room = await this.joinExistingRoomIfPresent(user);
       if (!room) {
-        room = await this._client.create("chat_room", {accessToken: this._hostJWT});
+        room = await this._client.create("social_room", {accessToken: this._hostJWT});
         this._rooms.push(room);
       }
       return room;
