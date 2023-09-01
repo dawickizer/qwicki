@@ -1,5 +1,5 @@
 name: Colyseus Game CI
-
+run-name: Colyseus Game CI Run by ${{ github.actor }}
 on:
   pull_request:
     paths:
