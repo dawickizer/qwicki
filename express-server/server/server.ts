@@ -15,7 +15,7 @@ const app = express();
 const server = http.createServer(app);
 
 // Parsers for POST data
-            app.use(json());
+app.use(json());
 app.use(urlencoded({ extended: false }));
 
 // Cross Origin middleware
