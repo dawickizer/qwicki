@@ -9,8 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "lint:fix": "npm run lint -- --fix",
-    "prettier:check": "npx prettier ./src/app --check",
-    "prettier:write": "npx prettier ./src/app --write",
+    "prettier:check": "prettier ./src/app --check",
+    "prettier:write": "prettier ./src/app --write",
     "format": "npm run prettier:write && npm run lint:fix"
   },
   "private": true,
