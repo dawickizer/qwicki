@@ -5,15 +5,14 @@ import { connect, Schema } from 'mongoose';
 import config from '../config/config';
 import { User } from '../models/user';
 
-// determine environment 
+// determine environment
 const env = process.env.NODE_ENV || 'development';
 
 // Connect to mongodb
 connect(config[env].db);
 
-// This class is responsible for handling the CRUD database operations for Users 
+// This class is responsible for handling the CRUD database operations for Users
 class UserService {
-
   // GET all the users
   async getAll(): Promise<User[] | null> {
     return await User.find({});
@@ -32,26 +31,29 @@ class UserService {
   // GET a user by id and populate its friend requests
   async getAndPopulateFriendRequests(id: string): Promise<User | null> {
     return await User.findById(id)
-    .populate(this.friendRequest('inboundFriendRequests'))
-    .populate(this.friendRequest('outboundFriendRequests'));
+      .populate(this.friendRequest('inboundFriendRequests'))
+      .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // GET a user by id and populate children
   async getAndPopulateChildren(id: string): Promise<User | null> {
     return await User.findById(id)
-    .populate('friends', ['username', 'online'])
-    .populate(this.friendRequest('inboundFriendRequests'))
-    .populate(this.friendRequest('outboundFriendRequests'));
+      .populate('friends', ['username', 'online'])
+      .populate(this.friendRequest('inboundFriendRequests'))
+      .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // GET a user by username (case insensitve) AND password (case sensitive)
   async getByCredentials(credentials: any): Promise<User | null> {
-    return await User.findOne({usernameLower: credentials.username, password: credentials.password});
+    return await User.findOne({
+      usernameLower: credentials.username,
+      password: credentials.password,
+    });
   }
 
   // GET a user by username (case insensitve)
   async getByUsername(username: string): Promise<User | null> {
-    return await User.findOne({usernameLower: username});
+    return await User.findOne({ usernameLower: username });
   }
 
   // POST one user
@@ -62,66 +64,84 @@ class UserService {
 
   // POST many users.
   async postMany(users: User[]): Promise<User[]> {
-    return await User.insertMany(users.map(user => ({...user, usernameLower: user.username})));
+    return await User.insertMany(
+      users.map(user => ({ ...user, usernameLower: user.username }))
+    );
   }
 
   // PUT a user
-  async put(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
+  async put(
+    id: string | Schema.Types.ObjectId,
+    user: User
+  ): Promise<User | null> {
     user.usernameLower = user.username;
-    return await User.findOneAndUpdate({_id: id}, user, {new: true});
+    return await User.findOneAndUpdate({ _id: id }, user, { new: true });
   }
 
   // PUT a user
-  async putAndPopulateFriends(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
+  async putAndPopulateFriends(
+    id: string | Schema.Types.ObjectId,
+    user: User
+  ): Promise<User | null> {
     user.usernameLower = user.username;
-    return await User.findOneAndUpdate({_id: id}, user, {new: true}).populate('friends', ['username', 'online']);
+    return await User.findOneAndUpdate({ _id: id }, user, {
+      new: true,
+    }).populate('friends', ['username', 'online']);
   }
 
   // PUT a user
-  async putAndPopulateFriendRequests(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
+  async putAndPopulateFriendRequests(
+    id: string | Schema.Types.ObjectId,
+    user: User
+  ): Promise<User | null> {
     user.usernameLower = user.username;
-    return await User.findOneAndUpdate({_id: id}, user, {new: true})
-    .populate(this.friendRequest('inboundFriendRequests'))
-    .populate(this.friendRequest('outboundFriendRequests'));
+    return await User.findOneAndUpdate({ _id: id }, user, { new: true })
+      .populate(this.friendRequest('inboundFriendRequests'))
+      .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // PUT a user
-  async putAndPopulateChildren(id: string | Schema.Types.ObjectId, user: User): Promise<User | null> {
+  async putAndPopulateChildren(
+    id: string | Schema.Types.ObjectId,
+    user: User
+  ): Promise<User | null> {
     user.usernameLower = user.username;
-    return await User.findOneAndUpdate({_id: id}, user, {new: true})
-    .populate('friends', ['username', 'online'])
-    .populate(this.friendRequest('inboundFriendRequests'))
-    .populate(this.friendRequest('outboundFriendRequests'));
+    return await User.findOneAndUpdate({ _id: id }, user, { new: true })
+      .populate('friends', ['username', 'online'])
+      .populate(this.friendRequest('inboundFriendRequests'))
+      .populate(this.friendRequest('outboundFriendRequests'));
   }
 
   // DELETE many users
   async deleteMany(ids: string[]): Promise<any> {
-    return await User.deleteMany({_id: {$in: ids}});
+    return await User.deleteMany({ _id: { $in: ids } });
   }
 
   // DELETE one user
   async delete(id: string[]): Promise<any> {
-    return await User.deleteOne({_id: id});
+    return await User.deleteOne({ _id: id });
   }
 
   private friendRequest(path: string) {
-    return [ // reference
+    return [
+      // reference
       {
         path: path,
         model: 'FriendRequest',
-        populate: [ // reference
+        populate: [
+          // reference
           {
             path: 'from',
             model: 'User',
-            select: 'username'
+            select: 'username',
           },
           {
             path: 'to',
             model: 'User',
-            select: 'username'
+            select: 'username',
           },
-        ]
-      }
+        ],
+      },
     ];
   }
 }

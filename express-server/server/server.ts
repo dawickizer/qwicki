@@ -1,6 +1,6 @@
 // Get dependencies
 import express from 'express';
-import http from 'http'
+import http from 'http';
 import cors from 'cors';
 import { json, urlencoded } from 'body-parser';
 
@@ -8,7 +8,7 @@ import { json, urlencoded } from 'body-parser';
 import api from './routes/api';
 import auth from './routes/auth';
 import users from './routes/users';
-import social from './routes/social'
+import social from './routes/social';
 import { requestTime } from './middleware/log';
 
 const app = express();
@@ -34,5 +34,5 @@ app.use('/social', social);
 const port = process.env.PORT || '3000';
 app.set('port', port);
 
- // Listen on provided port, on all network interfaces.
+// Listen on provided port, on all network interfaces.
 server.listen(port, () => console.log(`API running on localhost:${port}`));
