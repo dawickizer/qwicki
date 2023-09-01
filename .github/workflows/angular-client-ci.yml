@@ -1,9 +1,6 @@
 name: Angular Client CI
 
 on:
-  push:
-    paths:
-      - 'angular-client/**'
   pull_request:
     paths:
       - 'angular-client/**'
