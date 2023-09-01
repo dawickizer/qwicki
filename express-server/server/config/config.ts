@@ -1,12 +1,12 @@
 const config: any = {
-    development: {
-        db: 'mongodb://username:password@mongo-db/qwicki', // MongoDB URL from the docker-compose file
-        secret: '5kDF5ZH2W6fWFH2CaIHlByEqkqEQhnM7'
-    },
-    production: {
-        db: process.env.MONGO_DB_ENDPOINT,
-        secret: process.env.SECRET
-    }
+  development: {
+    db: 'mongodb://username:password@mongo-db/qwicki', // MongoDB URL from the docker-compose file
+    secret: '5kDF5ZH2W6fWFH2CaIHlByEqkqEQhnM7',
+  },
+  production: {
+    db: process.env.MONGO_DB_ENDPOINT,
+    secret: process.env.SECRET,
+  },
 };
 export default config;
 

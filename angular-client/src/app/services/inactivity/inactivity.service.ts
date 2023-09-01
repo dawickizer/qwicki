@@ -4,10 +4,9 @@ import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class InactivityService {
-
   private inactivityThreshold: number = 1000 * 60 * 15; // 15 minutes
   private logoutThreshold: number = this.inactivityThreshold + 1000 * 30; // inactivityThreshold + 30 seconds
   private inactiveTimer: Observable<number> = timer(this.inactivityThreshold);
@@ -18,7 +17,10 @@ export class InactivityService {
   private snackBarRef: MatSnackBarRef<any>;
   private authService: AuthService;
 
-  constructor(private snackBar: MatSnackBar, private ngZone: NgZone) {}
+  constructor(
+    private snackBar: MatSnackBar,
+    private ngZone: NgZone
+  ) {}
 
   broadcastEvents = (event: any) => {
     if (event.data === 'logout') {
@@ -72,7 +74,9 @@ export class InactivityService {
   startInactivityTimer() {
     this.inactiveTimerSubscription.unsubscribe();
     this.inactiveTimerSubscription = this.inactiveTimer.subscribe(() => {
-      this.snackBarRef = this.snackBar.open('Your session is about to expire due to inactivity');
+      this.snackBarRef = this.snackBar.open(
+        'Your session is about to expire due to inactivity'
+      );
     });
   }
 
@@ -80,7 +84,11 @@ export class InactivityService {
     this.logoutTimerSubscription.unsubscribe();
     this.logoutTimerSubscription = this.logoutTimer.subscribe(() => {
       this.authService.logout();
-      this.snackBarRef = this.snackBar.open('You were logged out due to inactivity', '', { duration: 5000 });
+      this.snackBarRef = this.snackBar.open(
+        'You were logged out due to inactivity',
+        '',
+        { duration: 5000 }
+      );
     });
   }
 }

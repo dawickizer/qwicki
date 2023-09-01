@@ -8,9 +8,8 @@ describe('BabylonjsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ BabylonjsComponent ]
-    })
-    .compileComponents();
+      declarations: [BabylonjsComponent],
+    }).compileComponents();
   }));
 
   beforeEach(() => {

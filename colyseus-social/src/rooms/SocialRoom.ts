@@ -1,21 +1,19 @@
-import { Room, Client } from "colyseus";
-import { SocialRoomState } from "../schemas/SocialRoomState";
-import { isAuthenticatedJWT } from "../middleware/auth";
-import http from 'http';
-import { User } from "../schemas/User";
-import { FriendManager } from "../managers/FriendManager";
-import { ChatManager } from "../managers/ChatManager";
-import { PresenceManager } from "../managers/PresenceManager";
+import { Room, Client } from 'colyseus';
+import { SocialRoomState } from '../schemas/SocialRoomState';
+import { isAuthenticatedJWT } from '../middleware/auth';
+import { User } from '../schemas/User';
+import { FriendManager } from '../managers/FriendManager';
+import { ChatManager } from '../managers/ChatManager';
+import { PresenceManager } from '../managers/PresenceManager';
 
 export class SocialRoom extends Room<SocialRoomState> {
-
   hostClient: Client;
 
   private friendManager: FriendManager;
   private chatManager: ChatManager;
   private presenceManager: PresenceManager;
 
-  onCreate (options: any) {
+  onCreate(options: any) {
     this.setState(new SocialRoomState());
     this.roomId = isAuthenticatedJWT(options.accessToken)._id;
     this.setManagers();
@@ -23,23 +21,23 @@ export class SocialRoom extends Room<SocialRoomState> {
     console.log(`Room ${this.roomId} created`);
   }
 
-  onAuth (client: Client, options: any, request: http.IncomingMessage) {
-    console.log("Authenticating user...")
-    // whatever is returned will be tacked onto the client object in onJoin()/onLeave() 
-    // as auth: {returnValue} and it will be added as a third optional auth 
+  onAuth(client: Client, options: any) {
+    console.log('Authenticating user...');
+    // whatever is returned will be tacked onto the client object in onJoin()/onLeave()
+    // as auth: {returnValue} and it will be added as a third optional auth
     // parameter to the onJoin() method
-    return isAuthenticatedJWT(options.accessToken); 
+    return isAuthenticatedJWT(options.accessToken);
   }
 
-  onJoin (client: Client, options: any, auth: any) {
-    let user: User = new User(auth._id, client.sessionId, auth.username);
+  onJoin(client: Client, options: any, auth: any) {
+    const user: User = new User(auth._id, client.sessionId, auth.username);
     this.determineHost(user);
     this.addUser(user);
     this.logUsers();
     this.presenceManager.notifyHostUserIsOnline(user);
   }
 
-  onLeave (client: Client, consented: boolean) {
+  onLeave(client: Client) {
     if (this.isHost(client)) this.disconnectRoom();
     else this.removeClient(client);
   }
@@ -49,12 +47,13 @@ export class SocialRoom extends Room<SocialRoomState> {
   }
 
   getClient(user: User): Client {
-    return this.clients.find(client => client.sessionId === user.sessionId)
+    return this.clients.find(client => client.sessionId === user.sessionId);
   }
 
   removeClient(client: Client) {
-    let user: User = this.getUser(client);
-    if (this.hostClient && user) this.presenceManager.notifyHostUserIsOffline(user);
+    const user: User = this.getUser(client);
+    if (this.hostClient && user)
+      this.presenceManager.notifyHostUserIsOffline(user);
     this.deleteUser(user);
     this.logUsers();
   }
@@ -64,7 +63,7 @@ export class SocialRoom extends Room<SocialRoomState> {
       this.state.host = user;
       this.hostClient = this.getClient(this.state.host);
       console.log(`${this.state.host.username} is the host`);
-    } 
+    }
   }
 
   addUser(user: User) {
@@ -83,20 +82,20 @@ export class SocialRoom extends Room<SocialRoomState> {
 
   getUserById(id: string) {
     for (const user of this.state.users.values()) {
-        if (user._id === id) {
-            return user;
-        }
+      if (user._id === id) {
+        return user;
+      }
     }
     return null;
-}
+  }
 
   logUsers() {
-      console.log("Users in the chat:")
-      this.state.users.forEach(user => console.log(`${user.username}`));
+    console.log('Users in the chat:');
+    this.state.users.forEach(user => console.log(`${user.username}`));
   }
 
   disconnectRoom() {
-    console.log("HOST IS LEAVING...disconnecting room");
+    console.log('HOST IS LEAVING...disconnecting room');
     this.presenceManager.broadcastHostOffline();
     this.presenceManager.broadcastDisposeRoom();
     this.disconnect();

@@ -1,6 +1,5 @@
 export class Credentials {
-    username?: string = '';
-    password?: string = '';
-    token?: string = '';
-  }
-  
+  username?: string = '';
+  password?: string = '';
+  token?: string = '';
+}

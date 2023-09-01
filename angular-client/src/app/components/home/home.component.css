@@ -1,39 +1,39 @@
 .home-card {
-    max-width: 700px;
-    width: 700px;
-    height: 800px;
-    max-height: 800px;
-    color: aliceblue;
-    background-color: #212529;
+  max-width: 700px;
+  width: 700px;
+  height: 800px;
+  max-height: 800px;
+  color: aliceblue;
+  background-color: #212529;
 }
 
 .mat-card-subtitle {
-    color:rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .home-header-image {
-    background-image: url('/assets/wick.png');
-    background-size: cover;
+  background-image: url('/assets/wick.png');
+  background-size: cover;
 }
 
 .home-form {
-    min-width: 150px;
-    max-width: 500px;
-    width: 100%;
-}
-  
-.home-full-width {
-    width: 100%;
+  min-width: 150px;
+  max-width: 500px;
+  width: 100%;
 }
 
-.main-div{
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-image: url('/assets/home.png');
+.home-full-width {
+  width: 100%;
+}
+
+.main-div {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/assets/home.png');
 }
 
 ::ng-deep .mat-tab-label {
-    color: aliceblue;
+  color: aliceblue;
 }

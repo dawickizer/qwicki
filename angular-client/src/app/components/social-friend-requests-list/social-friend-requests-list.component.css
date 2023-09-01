@@ -1,69 +1,71 @@
 .example-sidenav {
-    width: 350px;
-    padding: 20px;
-    color: aliceblue;
-    background-color: #212529;
-  }
-  
-  /* 
+  width: 350px;
+  padding: 20px;
+  color: aliceblue;
+  background-color: #212529;
+}
+
+/* 
      Need to use ::ng-deep to get access to angular material applied class...use !important to override the last laye of css being applied.
      This will override the overflow property to get rid of the double scroll bars...while still allowing for one
   */
-  ::ng-deep .mat-drawer-inner-container {
-    overflow: visible !important;
-  } 
-  
-  /* 
+::ng-deep .mat-drawer-inner-container {
+  overflow: visible !important;
+}
+
+/* 
      If i want to get rid of both scroll bars comment this css in and the above css out
   */
-  /* .mat-drawer-inner-container::-webkit-scrollbar {
+/* .mat-drawer-inner-container::-webkit-scrollbar {
     display: none;
   } */
-  
-  table {
-    width: 100%;
-    background-color: #212529;
-  }
-  
-  .mat-cell {
-    color: aliceblue;
-  }
-  
-  /* get rid of padding left for the table */
-  th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, td.mat-cell:last-of-type {
-    padding-left: 0px;
-    padding-right: 0px;
-  }
-  
-  .right-justify {
-    text-align: right;
-  }
-  
-  .profile-icon {
-    padding-bottom: 5px;
-  }
-  
-  .mat-expansion-panel {
-    background-color: #212529;
-    color: aliceblue;
-  }
-  
-  .mat-expansion-panel-header {
-    padding: 0px;
-    padding-right: 7px;
-  }
-  
-  .mat-expansion-panel-header-description {
-    flex-grow: 0;
-    color: rgb(204, 33, 33)
-  }
-  
-  ::ng-deep .mat-expansion-panel-body {
-    padding: 0px !important;
-    padding-bottom: 7px !important;
-  }
-  
-  ::ng-deep .mat-expansion-indicator:after {
-    color: rgba(255,255,255,.5);
-  }
-  
+
+table {
+  width: 100%;
+  background-color: #212529;
+}
+
+.mat-cell {
+  color: aliceblue;
+}
+
+/* get rid of padding left for the table */
+th.mat-header-cell:first-of-type,
+td.mat-cell:first-of-type,
+td.mat-footer-cell:first-of-type,
+td.mat-cell:last-of-type {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.right-justify {
+  text-align: right;
+}
+
+.profile-icon {
+  padding-bottom: 5px;
+}
+
+.mat-expansion-panel {
+  background-color: #212529;
+  color: aliceblue;
+}
+
+.mat-expansion-panel-header {
+  padding: 0px;
+  padding-right: 7px;
+}
+
+.mat-expansion-panel-header-description {
+  flex-grow: 0;
+  color: rgb(204, 33, 33);
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0px !important;
+  padding-bottom: 7px !important;
+}
+
+::ng-deep .mat-expansion-indicator:after {
+  color: rgba(255, 255, 255, 0.5);
+}

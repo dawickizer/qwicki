@@ -7,13 +7,10 @@ const AddressSchema = new Schema({
   city: { type: String, default: null },
   state: { type: String, default: null },
   zip: { type: String, default: null },
-  country: { type: String, default: null }
+  country: { type: String, default: null },
 });
 
 // create mongoose model
 const Address = model('Address', AddressSchema);
 
-export {
-  Address,
-  AddressSchema
-}
+export { Address, AddressSchema };

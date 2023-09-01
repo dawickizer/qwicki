@@ -5,10 +5,9 @@ import { User } from 'src/app/models/user/user';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MatchMakingService {
-
   private _client = new Colyseus.Client(environment.COLYSEUS_GAME);
   private _self: User;
   private _selfJWT: any;
@@ -16,21 +15,25 @@ export class MatchMakingService {
   private _gameRoomId: string;
   private _availableGameRooms: Colyseus.RoomAvailable[] = [];
 
-  constructor() { }
-
   async getAvailableGameRooms(): Promise<Colyseus.RoomAvailable[]> {
-    this._availableGameRooms = await this._client.getAvailableRooms("game_room");
+    this._availableGameRooms =
+      await this._client.getAvailableRooms('game_room');
     return this._availableGameRooms;
   }
-  
+
   async createGameRoom(): Promise<Colyseus.Room> {
-    this._game.room = await this._client.create("game_room", {accessToken: this._selfJWT, game: this.game});
+    this._game.room = await this._client.create('game_room', {
+      accessToken: this._selfJWT,
+      game: this.game,
+    });
     this._gameRoomId = this._game.room.id;
     return this._game.room;
   }
 
   async joinGameRoom(): Promise<Colyseus.Room> {
-    this._game.room = await this._client.joinById(this._gameRoomId, {accessToken: this._selfJWT});
+    this._game.room = await this._client.joinById(this._gameRoomId, {
+      accessToken: this._selfJWT,
+    });
     this._gameRoomId = this._game.room.id;
     return this._game.room;
   }
@@ -83,8 +86,3 @@ export class MatchMakingService {
     return this._availableGameRooms;
   }
 }
-
-
-
-
-

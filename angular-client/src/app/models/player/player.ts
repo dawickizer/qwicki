@@ -1,8 +1,17 @@
-import { Mesh, Sound, Scene, SceneLoader, UniversalCamera, MeshBuilder, Vector3, StandardMaterial, Color3 } from '@babylonjs/core';
-import { Gun } from 'src/app/models/gun/gun'
+import {
+  Mesh,
+  Sound,
+  Scene,
+  SceneLoader,
+  UniversalCamera,
+  MeshBuilder,
+  Vector3,
+  StandardMaterial,
+  Color3,
+} from '@babylonjs/core';
+import { Gun } from 'src/app/models/gun/gun';
 
 export class Player {
-
   _id?: string;
   sessionId?: string;
   username: string;
@@ -15,15 +24,15 @@ export class Player {
   secondaryWeapon: Gun = null;
   activeWeaponName: string;
   meleeWeapon: Mesh = null;
-  health: number = 100;
-  wasHitRecently: boolean = false;
+  health = 100;
+  wasHitRecently = false;
   lastDamagedBy: string;
-  swappingWeapons: boolean = false;
-  justFired: boolean = false;
-  justMeleed: boolean = false;
-  canShoot: boolean = true;
-  crouched: boolean = false;
-  sprinting: boolean = false;
+  swappingWeapons = false;
+  justFired = false;
+  justMeleed = false;
+  canShoot = true;
+  crouched = false;
+  sprinting = false;
   moveSpeed: number; // WASD
   cameraAngularSensibility: number; // controls mouse speed
   cameraInertia: number; // controls mouse 'smoothness'
@@ -31,7 +40,12 @@ export class Player {
   private _nextPosition: Vector3;
   private _nextRotation: Vector3;
 
-  constructor(_id?: string, sessionId?: string, username?: string, name?: string) {
+  constructor(
+    _id?: string,
+    sessionId?: string,
+    username?: string,
+    name?: string
+  ) {
     this._id = _id;
     this.sessionId = sessionId;
     this.username = username;
@@ -43,7 +57,8 @@ export class Player {
   }
 
   set position(vector3: Vector3) {
-    if (this.playerMesh.position) this.playerMesh.position.set(vector3.x, vector3.y, vector3.z);
+    if (this.playerMesh.position)
+      this.playerMesh.position.set(vector3.x, vector3.y, vector3.z);
     else this.playerMesh.position = vector3;
   }
 
@@ -52,7 +67,8 @@ export class Player {
   }
 
   set nextPosition(vector3: Vector3) {
-    if (this._nextPosition) this._nextPosition.set(vector3.x, vector3.y, vector3.z);
+    if (this._nextPosition)
+      this._nextPosition.set(vector3.x, vector3.y, vector3.z);
     else this._nextPosition = vector3;
   }
 
@@ -61,7 +77,8 @@ export class Player {
   }
 
   set rotation(vector3: Vector3) {
-    if (this.playerMesh.rotation) this.playerMesh.rotation.set(vector3.x, vector3.y, vector3.z);
+    if (this.playerMesh.rotation)
+      this.playerMesh.rotation.set(vector3.x, vector3.y, vector3.z);
     else this.playerMesh.rotation = vector3;
   }
 
@@ -70,16 +87,18 @@ export class Player {
   }
 
   set nextRotation(vector3: Vector3) {
-    if (this._nextRotation) this._nextRotation.set(vector3.x, vector3.y, vector3.z);
+    if (this._nextRotation)
+      this._nextRotation.set(vector3.x, vector3.y, vector3.z);
     else this._nextRotation = vector3;
   }
 
   async importPlayerMesh(scene: Scene): Promise<Mesh> {
-    this.playerMesh = (await SceneLoader.ImportMeshAsync('', this.playerMeshURL, '', scene)).meshes[0] as Mesh;
+    this.playerMesh = (
+      await SceneLoader.ImportMeshAsync('', this.playerMeshURL, '', scene)
+    ).meshes[0] as Mesh;
     this.playerMesh.id = this._id;
     this.playerMesh.name = this.name;
     return this.playerMesh;
-
   }
 
   async importMeleeSound(scene: Scene): Promise<Sound> {
@@ -89,18 +108,15 @@ export class Player {
   }
 
   getActiveWeapon(): Gun {
-    if (this.activeWeaponName == this.primaryWeapon.name) return this.primaryWeapon;
-    else if (this.activeWeaponName == this.secondaryWeapon.name) return this.secondaryWeapon;
+    if (this.activeWeaponName == this.primaryWeapon.name)
+      return this.primaryWeapon;
+    else if (this.activeWeaponName == this.secondaryWeapon.name)
+      return this.secondaryWeapon;
     return null;
   }
 
-  setActiveWeapon(gun: Gun) {
-    let temp = this.getActiveWeapon();
-    temp = gun;
-  }
-
   createSelectingMesh(scene: Scene, camera: UniversalCamera): Mesh {
-    let cube = MeshBuilder.CreateBox('cube', {size: 10}, scene);
+    const cube = MeshBuilder.CreateBox('cube', { size: 10 }, scene);
 
     // get the gun in a world position that is good for baking the verticies
     cube.position = new Vector3(0, -35, 10);
@@ -113,8 +129,8 @@ export class Player {
   }
 
   createMeleeWeapon(scene: Scene) {
-    let cube = MeshBuilder.CreateBox('cube', {size: 3}, scene);
-    let mat = new StandardMaterial('primary', scene);
+    const cube = MeshBuilder.CreateBox('cube', { size: 3 }, scene);
+    const mat = new StandardMaterial('primary', scene);
     mat.diffuseColor = Color3.Red();
 
     // get the gun in a world position that is good for baking the verticies
@@ -124,10 +140,11 @@ export class Player {
     cube.material = mat;
     cube.isPickable = false;
     cube.visibility = 0;
-    for (let i = 0; i < cube.getChildMeshes().length; i++) cube.getChildMeshes()[i].isPickable = false;
+    for (let i = 0; i < cube.getChildMeshes().length; i++)
+      cube.getChildMeshes()[i].isPickable = false;
 
     // make new default 0,0,0 settings so that the gun can rotate 'properly' relative to the camera
-    cube.bakeCurrentTransformIntoVertices(); 
+    cube.bakeCurrentTransformIntoVertices();
 
     this.meleeWeapon = cube;
   }
@@ -136,5 +153,4 @@ export class Player {
     this.playerMesh?.dispose();
     this.meleeSound?.dispose();
   }
-
 }

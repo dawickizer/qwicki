@@ -11,7 +11,7 @@
 */
 ::ng-deep .mat-drawer-inner-container {
   overflow: visible !important;
-} 
+}
 
 /* 
    If i want to get rid of both scroll bars comment this css in and the above css out
@@ -30,7 +30,10 @@ table {
 }
 
 /* get rid of padding left for the table */
-th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:first-of-type, td.mat-cell:last-of-type {
+th.mat-header-cell:first-of-type,
+td.mat-cell:first-of-type,
+td.mat-footer-cell:first-of-type,
+td.mat-cell:last-of-type {
   padding-left: 0px;
   padding-right: 0px;
 }
@@ -55,7 +58,7 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 
 .mat-expansion-panel-header-description {
   flex-grow: 0;
-  color: rgb(204, 33, 33)
+  color: rgb(204, 33, 33);
 }
 
 ::ng-deep .mat-expansion-panel-body {
@@ -64,5 +67,5 @@ th.mat-header-cell:first-of-type, td.mat-cell:first-of-type, td.mat-footer-cell:
 }
 
 ::ng-deep .mat-expansion-indicator:after {
-  color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }

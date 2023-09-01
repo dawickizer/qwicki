@@ -1,16 +1,28 @@
-<mat-expansion-panel cdkDrag
-(opened)="onPanelOpen()" 
-(closed)="onPanelClose()" 
-class="mat-elevation-z0" border 
-[bStyle]="panelOpenState ? 'solid' : 'hidden'" 
-[bPadding]="panelOpenState ? 5 : 0">
-    <mat-expansion-panel-header cdkDragHandle>
-        <mat-panel-title [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'">
-            {{friend.username}}
-        </mat-panel-title> 
-        <mat-panel-description>
-            <span *ngIf="hasUnviewedMessages && !panelOpenState" class="material-icons">mail</span>
-        </mat-panel-description>     
-    </mat-expansion-panel-header>
-    <app-social-chat-box [panelOpenState]="panelOpenState" [potentialMessage]="potentialMessage" [(friend)]="friend" (onRemoveFriend)="removeFriend()" (onUnviewedMessage)="unviewedMessageAlert()"></app-social-chat-box>
+<mat-expansion-panel
+  cdkDrag
+  (opened)="onPanelOpen()"
+  (closed)="onPanelClose()"
+  class="mat-elevation-z0"
+  border
+  [bStyle]="panelOpenState ? 'solid' : 'hidden'"
+  [bPadding]="panelOpenState ? 5 : 0">
+  <mat-expansion-panel-header cdkDragHandle>
+    <mat-panel-title
+      [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'">
+      {{ friend.username }}
+    </mat-panel-title>
+    <mat-panel-description>
+      <span
+        *ngIf="hasUnviewedMessages && !panelOpenState"
+        class="material-icons"
+        >mail</span
+      >
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <app-social-chat-box
+    [panelOpenState]="panelOpenState"
+    [potentialMessage]="potentialMessage"
+    [(friend)]="friend"
+    (removeFriend)="onRemoveFriend()"
+    (unviewedMessage)="onUnviewedMessage()"></app-social-chat-box>
 </mat-expansion-panel>

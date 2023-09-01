@@ -14,39 +14,43 @@ import { Message } from 'src/app/models/message/message';
 @Component({
   selector: 'app-social-sidenav',
   templateUrl: './social-sidenav.component.html',
-  styleUrls: ['./social-sidenav.component.css']
+  styleUrls: ['./social-sidenav.component.css'],
 })
 export class SocialSidenavComponent implements OnInit, OnDestroy {
-
   @ViewChild('drawer') drawer: MatSidenav;
 
   onlineFriends = new MatTableDataSource<User>([] as User[]);
   offlineFriends = new MatTableDataSource<User>([] as User[]);
 
-  inboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
-  outboundFriendRequests = new MatTableDataSource<FriendRequest>([] as FriendRequest[]);
+  inboundFriendRequests = new MatTableDataSource<FriendRequest>(
+    [] as FriendRequest[]
+  );
+  outboundFriendRequests = new MatTableDataSource<FriendRequest>(
+    [] as FriendRequest[]
+  );
 
   potentialMessage: Message = new Message();
-  isAsyncDataPresent: boolean = false;
+  isAsyncDataPresent = false;
   update: FriendRequest;
 
   constructor(
-    private router: Router, 
+    private router: Router,
     private snackBar: MatSnackBar,
     private keyBindService: KeyBindService,
     public authService: AuthService,
     public colyseusService: ColyseusService,
-    private userService: UserService) { }
+    private userService: UserService
+  ) {}
 
   ngOnInit() {
-    this.authService.currentUser()
-    .subscribe(user => this.userService.get(user._id)
-    .subscribe(async user => {
-      await this.establishConnections(user);
-      this.updateFriends();
-      this.updateFriendRequests();
-      this.isAsyncDataPresent = true;
-    }));
+    this.authService.currentUser().subscribe(user =>
+      this.userService.get(user._id).subscribe(async user => {
+        await this.establishConnections(user);
+        this.updateFriends();
+        this.updateFriendRequests();
+        this.isAsyncDataPresent = true;
+      })
+    );
     this.handleSideNavKeyBind();
   }
 
@@ -55,31 +59,71 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   }
 
   async establishConnections(user: User) {
-    await this.colyseusService.establishHost(user, this.authService.currentUserJWT());
+    await this.colyseusService.establishHost(
+      user,
+      this.authService.currentUserJWT()
+    );
     this.setHostRoomListeners();
     await this.colyseusService.establishOnlineFriendsRooms();
     this.setOnlineFriendsRoomsListeners();
   }
 
   setHostRoomListeners() {
-    this.colyseusService.hostRoom.onMessage("online", (user: any) => this.handleOnlineEvent(user));
-    this.colyseusService.hostRoom.onMessage("offline", (user: any) => this.handleOfflineEvent(user));
-    this.colyseusService.hostRoom.onMessage("sendFriendRequest", (friendRequest: FriendRequest) => this.handleSendFriendRequestEvent(friendRequest));
-    this.colyseusService.hostRoom.onMessage("acceptFriendRequest", (friendRequest: FriendRequest) => this.handleAcceptFriendRequestEvent(friendRequest));
-    this.colyseusService.hostRoom.onMessage("rejectFriendRequest", (friendRequest: FriendRequest) => this.handleRejectFriendRequestEvent(friendRequest));
-    this.colyseusService.hostRoom.onMessage("revokeFriendRequest", (friendRequest: FriendRequest) => this.handleRevokeFriendRequestEvent(friendRequest));
-    this.colyseusService.hostRoom.onMessage("removeFriend", (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend));
-    this.colyseusService.hostRoom.onMessage("messageHost", (message: Message) => this.handleMessageHostEvent(message));
-    this.colyseusService.hostRoom.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
+    this.colyseusService.hostRoom.onMessage('online', (user: any) =>
+      this.handleOnlineEvent(user)
+    );
+    this.colyseusService.hostRoom.onMessage('offline', (user: any) =>
+      this.handleOfflineEvent(user)
+    );
+    this.colyseusService.hostRoom.onMessage(
+      'sendFriendRequest',
+      (friendRequest: FriendRequest) =>
+        this.handleSendFriendRequestEvent(friendRequest)
+    );
+    this.colyseusService.hostRoom.onMessage(
+      'acceptFriendRequest',
+      (friendRequest: FriendRequest) =>
+        this.handleAcceptFriendRequestEvent(friendRequest)
+    );
+    this.colyseusService.hostRoom.onMessage(
+      'rejectFriendRequest',
+      (friendRequest: FriendRequest) =>
+        this.handleRejectFriendRequestEvent(friendRequest)
+    );
+    this.colyseusService.hostRoom.onMessage(
+      'revokeFriendRequest',
+      (friendRequest: FriendRequest) =>
+        this.handleRevokeFriendRequestEvent(friendRequest)
+    );
+    this.colyseusService.hostRoom.onMessage(
+      'removeFriend',
+      (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend)
+    );
+    this.colyseusService.hostRoom.onMessage('messageHost', (message: Message) =>
+      this.handleMessageHostEvent(message)
+    );
+    this.colyseusService.hostRoom.onError((code, message) =>
+      console.log(
+        `An error occurred with the room. Error Code: ${code} | Message: ${message}`
+      )
+    );
   }
 
   setOnlineFriendsRoomsListeners() {
     this.colyseusService.onlineFriendsRooms.forEach(room => {
-      room.onMessage("offline", (user: any) => this.handleOfflineEvent(user));
-      room.onMessage("dispose", (id: string) => this.handleDisposeEvent(id));
-      room.onMessage("disconnectFriend", (disconnectFriend: User) => this.handleDisconnectFriendEvent(disconnectFriend));
-      room.onMessage("messageUser", (message: Message) => this.handleMessageUserEvent(message));
-      room.onError((code, message) => console.log(`An error occurred with the room. Error Code: ${code} | Message: ${message}`));
+      room.onMessage('offline', (user: any) => this.handleOfflineEvent(user));
+      room.onMessage('dispose', (id: string) => this.handleDisposeEvent(id));
+      room.onMessage('disconnectFriend', (disconnectFriend: User) =>
+        this.handleDisconnectFriendEvent(disconnectFriend)
+      );
+      room.onMessage('messageUser', (message: Message) =>
+        this.handleMessageUserEvent(message)
+      );
+      room.onError((code, message) =>
+        console.log(
+          `An error occurred with the room. Error Code: ${code} | Message: ${message}`
+        )
+      );
     });
   }
 
@@ -100,15 +144,17 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   }
 
   private updateFriendRequests() {
-    this.inboundFriendRequests.data = this.colyseusService.host.inboundFriendRequests;
-    this.inboundFriendRequests._updateChangeSubscription();  
-    this.outboundFriendRequests.data = this.colyseusService.host.outboundFriendRequests;
-    this.outboundFriendRequests._updateChangeSubscription();  
+    this.inboundFriendRequests.data =
+      this.colyseusService.host.inboundFriendRequests;
+    this.inboundFriendRequests._updateChangeSubscription();
+    this.outboundFriendRequests.data =
+      this.colyseusService.host.outboundFriendRequests;
+    this.outboundFriendRequests._updateChangeSubscription();
   }
 
   private setOnlineStatusOfFriend(user: any, online: boolean) {
     if (this.colyseusService.host._id !== user._id) {
-      let friend: User = this.findFriend(user._id);
+      const friend: User = this.findFriend(user._id);
       if (friend) {
         friend.online = online;
         this.updateFriends();
@@ -136,32 +182,56 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   private handleAcceptFriendRequestEvent(friendRequest: FriendRequest) {
     friendRequest.to.online = true;
     this.colyseusService.host.friends.push(friendRequest.to);
-    this.colyseusService.host.outboundFriendRequests = this.colyseusService.host.outboundFriendRequests.filter(outboundFriendRequest => outboundFriendRequest.to._id !== friendRequest.to._id);
+    this.colyseusService.host.outboundFriendRequests =
+      this.colyseusService.host.outboundFriendRequests.filter(
+        outboundFriendRequest =>
+          outboundFriendRequest.to._id !== friendRequest.to._id
+      );
     this.updateFriends();
     this.updateFriendRequests();
   }
 
   private handleRejectFriendRequestEvent(friendRequest: FriendRequest) {
-    this.colyseusService.host.friends = this.colyseusService.host.friends.filter(friend => friend._id !== friendRequest.to._id);
-    this.colyseusService.host.outboundFriendRequests = this.colyseusService.host.outboundFriendRequests.filter(outboundFriendRequest => outboundFriendRequest.to._id !== friendRequest.to._id);
+    this.colyseusService.host.friends =
+      this.colyseusService.host.friends.filter(
+        friend => friend._id !== friendRequest.to._id
+      );
+    this.colyseusService.host.outboundFriendRequests =
+      this.colyseusService.host.outboundFriendRequests.filter(
+        outboundFriendRequest =>
+          outboundFriendRequest.to._id !== friendRequest.to._id
+      );
     this.updateFriends();
     this.updateFriendRequests();
   }
 
   private handleRevokeFriendRequestEvent(friendRequest: FriendRequest) {
-    this.colyseusService.host.friends = this.colyseusService.host.friends.filter(friend => friend._id !== friendRequest.from._id);
-    this.colyseusService.host.inboundFriendRequests = this.colyseusService.host.inboundFriendRequests.filter(inboundFriendRequest => inboundFriendRequest.from._id !== friendRequest.from._id);
+    this.colyseusService.host.friends =
+      this.colyseusService.host.friends.filter(
+        friend => friend._id !== friendRequest.from._id
+      );
+    this.colyseusService.host.inboundFriendRequests =
+      this.colyseusService.host.inboundFriendRequests.filter(
+        inboundFriendRequest =>
+          inboundFriendRequest.from._id !== friendRequest.from._id
+      );
     this.updateFriends();
     this.updateFriendRequests();
   }
 
   private handleRemoveFriendEvent(removeFriend: User) {
-    this.colyseusService.host.friends = this.colyseusService.host.friends.filter(friend => friend._id !== removeFriend._id);
+    this.colyseusService.host.friends =
+      this.colyseusService.host.friends.filter(
+        friend => friend._id !== removeFriend._id
+      );
     this.updateFriends();
   }
 
   private handleDisconnectFriendEvent(disconnectFriend: User) {
-    this.colyseusService.host.friends = this.colyseusService.host.friends.filter(friend => friend._id !== disconnectFriend._id);
+    this.colyseusService.host.friends =
+      this.colyseusService.host.friends.filter(
+        friend => friend._id !== disconnectFriend._id
+      );
     this.updateFriends();
     this.colyseusService.removeRoomById(disconnectFriend._id);
   }
@@ -179,32 +249,40 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   }
 
   filter(filterValue: any) {
-    this.onlineFriends.filterPredicate = (friend, filter) => friend.username.trim().toLowerCase().includes(filter);
+    this.onlineFriends.filterPredicate = (friend, filter) =>
+      friend.username.trim().toLowerCase().includes(filter);
     this.onlineFriends.filter = filterValue.target.value.trim().toLowerCase();
 
-    this.offlineFriends.filterPredicate = (friend, filter) => friend.username.trim().toLowerCase().includes(filter);
+    this.offlineFriends.filterPredicate = (friend, filter) =>
+      friend.username.trim().toLowerCase().includes(filter);
     this.offlineFriends.filter = filterValue.target.value.trim().toLowerCase();
 
-    this.inboundFriendRequests.filterPredicate = (friendRequest, filter) => friendRequest.from.username.trim().toLowerCase().includes(filter);
-    this.inboundFriendRequests.filter = filterValue.target.value.trim().toLowerCase();
+    this.inboundFriendRequests.filterPredicate = (friendRequest, filter) =>
+      friendRequest.from.username.trim().toLowerCase().includes(filter);
+    this.inboundFriendRequests.filter = filterValue.target.value
+      .trim()
+      .toLowerCase();
 
-    this.outboundFriendRequests.filterPredicate = (friendRequest, filter) => friendRequest.to.username.trim().toLowerCase().includes(filter);
-    this.outboundFriendRequests.filter = filterValue.target.value.trim().toLowerCase();
+    this.outboundFriendRequests.filterPredicate = (friendRequest, filter) =>
+      friendRequest.to.username.trim().toLowerCase().includes(filter);
+    this.outboundFriendRequests.filter = filterValue.target.value
+      .trim()
+      .toLowerCase();
   }
 
   handleSideNavKeyBind() {
-    this.keyBindService.setKeyBind('keydown', event => { 
+    this.keyBindService.setKeyBind('keydown', event => {
       if (event.code == 'Tab') {
         event.preventDefault();
         if (document.fullscreenElement) document.exitFullscreen();
         this.drawer.toggle();
       }
-    });  
+    });
   }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 5000
+      duration: 5000,
     });
   }
 }

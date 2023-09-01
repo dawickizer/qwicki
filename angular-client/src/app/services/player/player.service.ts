@@ -1,28 +1,24 @@
 import { Injectable } from '@angular/core';
-import { Player } from 'src/app/models/player/player'
-import { Gun } from 'src/app/models/gun/gun'
+import { Player } from 'src/app/models/player/player';
 import { Scene } from '@babylonjs/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PlayerService {
-
   players: Player[] = [];
 
-  constructor() {}
-
-  get(_id: String): Player {
+  get(_id: string): Player {
     return this.players.find(player => player._id == _id);
   }
 
   getAll(): Player[] {
-    return this.players
+    return this.players;
   }
 
   async create(player: Player, scene: Scene): Promise<Player> {
     await player.importPlayerMesh(scene);
-    await player.importMeleeSound(scene)
+    await player.importMeleeSound(scene);
     this.players.push(player);
     return player;
   }

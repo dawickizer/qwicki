@@ -7,7 +7,12 @@
     "build": "tsc",
     "start": "ts-node-dev --respawn --transpile-only --poll server/server.ts",
     "deploy": "tsc && node build/server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ./server/**/*.ts",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier:check": "prettier ./server --check",
+    "prettier:write": "prettier ./server --write",
+    "format": "npm run prettier:write && npm run lint:fix"
   },
   "author": "",
   "license": "ISC",
@@ -27,6 +32,11 @@
     "@types/lodash": "^4.14.188",
     "@types/mongoose": "^5.11.97",
     "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/parser": "^6.5.0",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.3",
     "ts-node": "^10.9.1",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.8.4"

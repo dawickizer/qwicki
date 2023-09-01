@@ -1,23 +1,23 @@
 .mat-expansion-panel {
-    background-color: #212529;
-    color: aliceblue;
+  background-color: #212529;
+  color: aliceblue;
 }
-  
+
 .mat-expansion-panel-header {
-    padding: 0px;
-    padding-right: 7px;
+  padding: 0px;
+  padding-right: 7px;
 }
 
 .mat-expansion-panel-header-description {
-    flex-grow: 0;
-    color: rgb(204, 33, 33)
+  flex-grow: 0;
+  color: rgb(204, 33, 33);
 }
 
 ::ng-deep .mat-expansion-panel-body {
-    padding: 0px !important;
-    padding-bottom: 7px !important;
+  padding: 0px !important;
+  padding-bottom: 7px !important;
 }
-  
+
 ::ng-deep .mat-expansion-indicator:after {
-    color: rgba(255,255,255,.5);
+  color: rgba(255, 255, 255, 0.5);
 }

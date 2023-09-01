@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { User } from 'src/app/models/user/user';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
@@ -11,55 +11,62 @@ import { Message } from 'src/app/models/message/message';
 @Component({
   selector: 'app-social-friends-list',
   templateUrl: './social-friends-list.component.html',
-  styleUrls: ['./social-friends-list.component.css']
+  styleUrls: ['./social-friends-list.component.css'],
 })
-export class SocialFriendsListComponent implements OnInit {
-
-  @Input() title: string
+export class SocialFriendsListComponent {
+  @Input() title: string;
   @Input() titleColor: string;
   @Input() potentialMessage: Message;
 
   @Input() friends: MatTableDataSource<User>;
-  @Output() friendsChange: EventEmitter<MatTableDataSource<User>> = new EventEmitter();
+  @Output() friendsChange: EventEmitter<MatTableDataSource<User>> =
+    new EventEmitter();
 
   friendsDisplayedColumns: string[] = ['username'];
 
-  constructor(private socialService: SocialService, private colyseusService: ColyseusService, private snackBar: MatSnackBar) { }
-
-  ngOnInit(): void {}
+  constructor(
+    private socialService: SocialService,
+    private colyseusService: ColyseusService,
+    private snackBar: MatSnackBar
+  ) {}
 
   dropFriends(event: CdkDragDrop<string[]>) {
-    moveItemInArray(this.friends.data, event.previousIndex, event.currentIndex);  
+    moveItemInArray(this.friends.data, event.previousIndex, event.currentIndex);
     this.friends._updateChangeSubscription();
   }
 
-  removeFriend(friend: User) {
+  onRemoveFriend(friend: User) {
     this.socialService.removeFriend(friend).subscribe({
       next: async host => {
         this.colyseusService.host = new User(host);
-        let room: Colyseus.Room = this.colyseusService.onlineFriendsRooms.find(room => room.id === friend._id);
+        const room: Colyseus.Room =
+          this.colyseusService.onlineFriendsRooms.find(
+            room => room.id === friend._id
+          );
         if (room) {
-          room.send("removeFriend", host);
+          room.send('removeFriend', host);
           this.colyseusService.leaveRoom(room);
         } else {
-          this.colyseusService.hostRoom.send("disconnectFriend", friend);
+          this.colyseusService.hostRoom.send('disconnectFriend', friend);
         }
         this.updateFriends();
-        this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');   
-      }, 
-      error: error => this.openSnackBar(error, 'Dismiss')
+        this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');
+      },
+      error: error => this.openSnackBar(error, 'Dismiss'),
     });
   }
 
   private updateFriends() {
-    this.friends.data = this.title === 'online' ? this.colyseusService.host.onlineFriends : this.colyseusService.host.offlineFriends;
+    this.friends.data =
+      this.title === 'online'
+        ? this.colyseusService.host.onlineFriends
+        : this.colyseusService.host.offlineFriends;
     this.friends._updateChangeSubscription();
   }
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 5000
+      duration: 5000,
     });
   }
-
 }

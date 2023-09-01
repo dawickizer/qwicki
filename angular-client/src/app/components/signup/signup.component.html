@@ -1,4 +1,4 @@
-<div class='main-div'>
+<div class="main-div">
   <mat-card class="signup-card">
     <mat-card-header>
       <div mat-card-avatar class="signup-header-image"></div>
@@ -9,27 +9,31 @@
       <form class="signup-form" (ngSubmit)="signup()">
         <mat-form-field class="signup-full-width">
           <mat-label>First Name</mat-label>
-          <input matInput [(ngModel)]="user.firstName" name="firstName">
+          <input matInput [(ngModel)]="user.firstName" name="firstName" />
         </mat-form-field>
         <mat-form-field class="signup-full-width">
           <mat-label>Middle Name</mat-label>
-          <input matInput [(ngModel)]="user.middleName" name="middleName">
+          <input matInput [(ngModel)]="user.middleName" name="middleName" />
         </mat-form-field>
         <mat-form-field class="signup-full-width">
           <mat-label>Last Name</mat-label>
-          <input matInput [(ngModel)]="user.lastName" name="lastName">
+          <input matInput [(ngModel)]="user.lastName" name="lastName" />
         </mat-form-field>
         <mat-form-field class="signup-full-width">
           <mat-label>Email</mat-label>
-          <input matInput [(ngModel)]="user.email" type="email" name="email">
+          <input matInput [(ngModel)]="user.email" type="email" name="email" />
         </mat-form-field>
         <mat-form-field class="signup-full-width">
           <mat-label>username</mat-label>
-          <input matInput [(ngModel)]="user.username" name="username">
+          <input matInput [(ngModel)]="user.username" name="username" />
         </mat-form-field>
         <mat-form-field class="signup-full-width">
           <mat-label>password</mat-label>
-          <input matInput [(ngModel)]="user.password" type="password" name="password">
+          <input
+            matInput
+            [(ngModel)]="user.password"
+            type="password"
+            name="password" />
         </mat-form-field>
         <button mat-raised-button color="primary" type="submit">Sign Up</button>
         or <a routerLink="/auth/login">Login</a>
