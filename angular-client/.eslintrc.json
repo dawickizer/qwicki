@@ -28,7 +28,8 @@
             "prefix": "app",
             "style": "kebab-case"
           }
-        ]
+        ],
+        "linebreak-style": ["error", "unix"]
       }
     },
     {
@@ -44,7 +45,8 @@
           {
             "parser": "angular"
           }
-        ]
+        ],
+        "linebreak-style": ["error", "unix"]
       }
     }
   ]

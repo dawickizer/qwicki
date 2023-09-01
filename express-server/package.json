@@ -8,10 +8,11 @@
     "start": "ts-node-dev --respawn --transpile-only --poll server/server.ts",
     "deploy": "tsc && node build/server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint ./server/**/*.ts",
+    "lint": "eslint ./server/**/*.ts --max-warnings=0",
     "lint:fix": "npm run lint -- --fix",
     "prettier:check": "prettier ./server --check",
     "prettier:write": "prettier ./server --write",
+    "format:check": "npm run prettier:check && npm run lint",
     "format": "npm run prettier:write && npm run lint:fix"
   },
   "author": "",

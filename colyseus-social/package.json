@@ -10,10 +10,11 @@
     "build": "npm run clean && tsc && node node_modules/copyfiles/copyfiles package.json ./lib && node node_modules/copyfiles/copyfiles arena.env ./lib",
     "clean": "node node_modules/rimraf/bin lib",
     "test": "mocha --require ts-node/register test/**_test.ts --exit --timeout 15000",
-    "lint": "eslint ./src/**/*.ts",
+    "lint": "eslint ./src/**/*.ts --max-warnings=0",
     "lint:fix": "npm run lint -- --fix",
     "prettier:check": "prettier ./src --check",
     "prettier:write": "prettier ./src --write",
+    "format:check": "npm run prettier:check && npm run lint",
     "format": "npm run prettier:write && npm run lint:fix"
   },
   "author": "",
