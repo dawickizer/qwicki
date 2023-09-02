@@ -10,7 +10,6 @@
 
 .mat-expansion-panel-header-description {
   flex-grow: 0;
-  color: rgb(204, 33, 33);
 }
 
 ::ng-deep .mat-expansion-panel-body {

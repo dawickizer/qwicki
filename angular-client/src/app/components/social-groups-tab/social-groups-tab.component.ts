@@ -10,6 +10,8 @@ export class SocialGroupsTabComponent implements OnInit {
   @Input() self: User;
   @Input() selfJWT: any;
 
+  titleColor: string = "color:rgb(0, 162, 255)";
+
   isAsyncDataPresent = false;
 
   ngOnInit(): void {
