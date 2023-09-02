@@ -35,6 +35,7 @@ import { SocialChatBoxComponent } from './components/social-chat-box/social-chat
 import { SocialCellComponent } from './components/social-cell/social-cell.component';
 import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
 import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
+import { SocialFriendsTabComponent } from './components/social-friends-tab/social-friends-tab.component';
 import { CreateGameComponent } from './components/create-game/create-game.component';
 import { JoinGameComponent } from './components/join-game/join-game.component';
 import { GameComponent } from './components/game/game.component';
@@ -78,6 +79,7 @@ import { GameService } from './services/game/game.service';
     JoinGameComponent,
     GameComponent,
     BorderDirective,
+    SocialFriendsTabComponent,
   ],
   imports: [
     BrowserModule,
