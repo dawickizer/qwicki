@@ -19,11 +19,15 @@
       <mat-tab label="Friends">
         <app-social-friends-tab
           [self]="self"
-          [selfJWT]="
-            this.authService.currentUserJWT()
-          "></app-social-friends-tab>
+          [selfJWT]="this.authService.currentUserJWT()">
+        </app-social-friends-tab>
       </mat-tab>
-      <mat-tab label="Groups"> </mat-tab>
+      <mat-tab label="Groups">
+        <app-social-groups-tab
+          [self]="self"
+          [selfJWT]="this.authService.currentUserJWT()">
+        </app-social-groups-tab>
+      </mat-tab>
     </mat-tab-group>
   </mat-drawer>
   <app-home
