@@ -7,6 +7,26 @@
         </h1>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    Hello
+    <form class="social-group-create-form" (ngSubmit)="createGroup()">
+      <mat-form-field class="social-group-create-full-width">
+        <mat-label>Name</mat-label>
+        <input
+          matInput
+          [(ngModel)]="group.name"
+          name="name"
+          #input
+          maxlength="20" />
+        <mat-hint class="social-group-create-hint" align="end"
+          >{{ input.value?.length || 0 }}/20</mat-hint
+        >
+      </mat-form-field>
+      <button
+        mat-raised-button
+        color="primary"
+        type="submit"
+        [disabled]="disableGroupCreation()">
+        Create
+      </button>
+    </form>
   </mat-expansion-panel>
 </div>

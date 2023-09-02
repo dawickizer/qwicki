@@ -10,11 +10,19 @@ export class SocialGroupsTabComponent implements OnInit {
   @Input() self: User;
   @Input() selfJWT: any;
 
-  titleColor = 'color:rgb(0, 162, 255)';
+  titleColor = 'color:aliceblue';
+
+  group: { name: string } = { name: '' };
 
   isAsyncDataPresent = false;
 
   ngOnInit(): void {
     this.isAsyncDataPresent = true;
+  }
+
+  createGroup() {}
+
+  disableGroupCreation() {
+    return false;
   }
 }

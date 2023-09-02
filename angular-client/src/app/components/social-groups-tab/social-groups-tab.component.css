@@ -50,3 +50,17 @@ td.mat-cell:last-of-type {
 ::ng-deep .mat-expansion-indicator:after {
   color: rgba(255, 255, 255, 0.5);
 }
+
+.social-group-create-form {
+  margin-top: 20px;
+  min-width: 150px;
+  width: 100%;
+}
+
+.social-group-create-full-width {
+  width: 100%;
+}
+
+.social-group-create-hint {
+  color: aliceblue;
+}
