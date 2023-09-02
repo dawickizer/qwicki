@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from 'src/app/models/user/user';
+import { of, Observable } from 'rxjs';
 
 @Component({
   selector: 'app-social-groups-tab',
@@ -14,15 +15,26 @@ export class SocialGroupsTabComponent implements OnInit {
 
   group: { name: string } = { name: '' };
 
+  friends$: Observable<User[]> = new Observable<User[]>();
+
+  selectedFriend: User;
+
   isAsyncDataPresent = false;
 
   ngOnInit(): void {
+    this.friends$ = of(this.self.friends);
     this.isAsyncDataPresent = true;
   }
 
-  createGroup() {}
+  createGroup() {
+    console.log('create group');
+  }
 
   disableGroupCreation() {
     return false;
+  }
+
+  onFriendsSelectionChange(friend: User) {
+    console.log(friend);
   }
 }

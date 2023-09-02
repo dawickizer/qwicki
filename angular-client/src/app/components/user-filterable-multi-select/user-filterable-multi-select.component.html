@@ -1,0 +1,25 @@
+<mat-form-field color="white" appearance="legacy">
+  <mat-label>{{ label }}</mat-label>
+  <mat-select
+    [(ngModel)]="selection"
+    [compareWith]="compare"
+    (selectionChange)="onSelectionChange()"
+    (closed)="onClose()"
+    name="selection"
+    [disabled]="disabled">
+    <mat-option disabled
+      ><input
+        (keydown)="$event.stopPropagation()"
+        matInput
+        [(ngModel)]="filterValue"
+        (keyup)="filter()"
+        placeholder="Search"
+        name="filter"
+    /></mat-option>
+    <mat-divider></mat-divider>
+    <mat-option *ngIf="none" [value]="null">None</mat-option>
+    <mat-option *ngFor="let item of selectable" [value]="item">
+      {{ item.username }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
