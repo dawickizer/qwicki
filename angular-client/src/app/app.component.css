@@ -3,6 +3,11 @@
   color: aliceblue;
 }
 
+/* All placeholder for inputs will take this style */
+::ng-deep .mat-input-element::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
 /* disabled text color for input */
 ::ng-deep .mat-input-element:disabled,
 .mat-form-field-type-mat-native-select.mat-form-field-disabled
@@ -61,4 +66,29 @@
 /* All icons apply these rules */
 ::ng-deep .material-icons-outlined:hover {
   cursor: pointer;
+}
+
+/* All select arrows apply these rules */
+::ng-deep .mat-select-arrow {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* All select arrows when focused apply these rules */
+::ng-deep .mat-focused .mat-select-arrow {
+  color: #673ab7;
+}
+
+/* All option text apply these rules */
+::ng-deep .mat-option-text {
+  color: aliceblue;
+}
+
+/* All select panels apply these rules */
+::ng-deep .mat-select-panel {
+  background-color: #212529;
+}
+
+/* All select values apply these rules */
+::ng-deep .mat-select-value {
+  color: aliceblue;
 }
