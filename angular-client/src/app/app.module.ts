@@ -88,6 +88,7 @@ import { GameService } from './services/game/game.service';
     MatDividerModule,
     MatSnackBarModule,
     MatTableModule,
+    MatTabsModule,
     MatButtonModule,
     MatSidenavModule,
     MatSliderModule,

@@ -69,3 +69,11 @@ td.mat-cell:last-of-type {
 ::ng-deep .mat-expansion-indicator:after {
   color: rgba(255, 255, 255, 0.5);
 }
+
+.social-sidenav-tab-group ::ng-deep .mat-tab-label {
+  color: aliceblue;
+}
+
+.social-sidenav-no-pagination ::ng-deep .mat-tab-header-pagination {
+  display: none;
+}
