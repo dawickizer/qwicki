@@ -22,8 +22,7 @@
       </mat-form-field>
 
       <app-user-filterable-multi-select
-        (selectionChange)="onFriendsSelectionChange($event)"
-        [(selection)]="selectedFriend"
+        [(selection)]="selectedFriends"
         [selectable]="friends$ | async"
         label="Friends"
         [none]="false"></app-user-filterable-multi-select>

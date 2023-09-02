@@ -6,8 +6,9 @@
     (selectionChange)="onSelectionChange()"
     (closed)="onClose()"
     name="selection"
-    [disabled]="disabled">
-    <mat-option disabled
+    [disabled]="disabled"
+    multiple>
+    <mat-option disabled class="user-filterable-multi-select"
       ><input
         (keydown)="$event.stopPropagation()"
         matInput

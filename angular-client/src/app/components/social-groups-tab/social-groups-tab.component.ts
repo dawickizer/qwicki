@@ -17,7 +17,7 @@ export class SocialGroupsTabComponent implements OnInit {
 
   friends$: Observable<User[]> = new Observable<User[]>();
 
-  selectedFriend: User;
+  selectedFriends: User[] = [];
 
   isAsyncDataPresent = false;
 
@@ -27,14 +27,10 @@ export class SocialGroupsTabComponent implements OnInit {
   }
 
   createGroup() {
-    console.log('create group');
+    console.log(this.selectedFriends);
   }
 
   disableGroupCreation() {
-    return false;
-  }
-
-  onFriendsSelectionChange(friend: User) {
-    console.log(friend);
+    return this.selectedFriends.length == 0 || !this.group.name;
   }
 }

@@ -15,9 +15,9 @@ import { User } from 'src/app/models/user/user';
 export class UserFilterableMultiSelectComponent implements OnChanges {
   @Input() label = '';
 
-  @Input() selection: User = null;
+  @Input() selection: User[] = [];
 
-  @Output() selectionChange = new EventEmitter<User>();
+  @Output() selectionChange = new EventEmitter<User[]>();
 
   @Input() selectable: User[] | null | undefined = [];
 
