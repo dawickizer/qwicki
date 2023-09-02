@@ -27,7 +27,10 @@ export class SocialGroupsTabComponent implements OnInit {
   }
 
   createGroup() {
+    console.log(this.group.name);
     console.log(this.selectedFriends);
+    this.group.name = '';
+    this.selectedFriends = [];
   }
 
   disableGroupCreation() {
