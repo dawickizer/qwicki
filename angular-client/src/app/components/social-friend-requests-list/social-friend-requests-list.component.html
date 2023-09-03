@@ -13,6 +13,13 @@
       <mat-label>Send Friend Request</mat-label>
       <input matInput [(ngModel)]="potentialFriend" name="sendFriendRequest" />
     </mat-form-field>
+    <button
+      mat-raised-button
+      color="primary"
+      type="submit"
+      [disabled]="!potentialFriend">
+      Send
+    </button>
   </form>
   <table mat-table [dataSource]="friendRequests" class="mat-elevation-z0">
     <ng-container matColumnDef="username">
