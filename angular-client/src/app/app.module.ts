@@ -33,12 +33,13 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
 import { SocialChatBoxComponent } from './components/social-chat-box/social-chat-box.component';
 import { SocialCellComponent } from './components/social-cell/social-cell.component';
-import { SocialCreateGroupComponent } from './components/social-create-group/social-create-group.component';
 import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
 import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
 import { SocialFriendsTabComponent } from './components/social-friends-tab/social-friends-tab.component';
 import { SocialGroupsTabComponent } from './components/social-groups-tab/social-groups-tab.component';
 import { CreateGameComponent } from './components/create-game/create-game.component';
+import { SocialGroupsListComponent } from './components/social-groups-list/social-groups-list.component';
+import { SocialCreateGroupComponent } from './components/social-create-group/social-create-group.component';
 import { JoinGameComponent } from './components/join-game/join-game.component';
 import { GameComponent } from './components/game/game.component';
 import { UserFilterableMultiSelectComponent } from './components/user-filterable-multi-select/user-filterable-multi-select.component';
@@ -87,6 +88,7 @@ import { MatSelectModule } from '@angular/material/select';
     SocialGroupsTabComponent,
     UserFilterableMultiSelectComponent,
     SocialCreateGroupComponent,
+    SocialGroupsListComponent,
   ],
   imports: [
     BrowserModule,
