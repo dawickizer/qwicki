@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { User } from 'src/app/models/user/user';
 import { of, Observable } from 'rxjs';
+import { Group } from 'src/app/models/group/group';
 
 @Component({
   selector: 'app-social-groups-tab',
@@ -13,7 +14,7 @@ export class SocialGroupsTabComponent implements OnInit {
 
   titleColor = 'color:aliceblue';
 
-  group: { name: string } = { name: '' };
+  group: Group = new Group();
 
   friends$: Observable<User[]> = new Observable<User[]>();
 
