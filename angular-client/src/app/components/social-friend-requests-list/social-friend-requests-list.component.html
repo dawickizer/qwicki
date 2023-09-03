@@ -1,8 +1,7 @@
 <form
   *ngIf="isInboundFriendRequestsComponent()"
-  class="home-form"
   (ngSubmit)="sendFriendRequest()">
-  <mat-form-field class="home-full-width">
+  <mat-form-field>
     <mat-label>Send Friend Request</mat-label>
     <input matInput [(ngModel)]="potentialFriend" name="sendFriendRequest" />
   </mat-form-field>
