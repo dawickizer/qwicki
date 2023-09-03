@@ -1,27 +1,5 @@
-table {
-  width: 100%;
-  background-color: #212529;
-}
-
-.mat-cell {
-  color: aliceblue;
-}
-
 .social-friends-tab {
   padding-top: 10px;
-}
-
-/* get rid of padding left for the table */
-th.mat-header-cell:first-of-type,
-td.mat-cell:first-of-type,
-td.mat-footer-cell:first-of-type,
-td.mat-cell:last-of-type {
-  padding-left: 0px;
-  padding-right: 0px;
-}
-
-.right-justify {
-  text-align: right;
 }
 
 .mat-expansion-panel {
@@ -36,7 +14,6 @@ td.mat-cell:last-of-type {
 
 .mat-expansion-panel-header-description {
   flex-grow: 0;
-  color: rgb(204, 33, 33);
 }
 
 ::ng-deep .mat-expansion-panel-body {
@@ -46,4 +23,8 @@ td.mat-cell:last-of-type {
 
 ::ng-deep .mat-expansion-indicator:after {
   color: rgba(255, 255, 255, 0.5);
+}
+
+.social-friends-full-width {
+  width: 100%;
 }

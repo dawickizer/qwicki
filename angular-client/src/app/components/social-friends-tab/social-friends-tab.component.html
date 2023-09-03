@@ -1,30 +1,39 @@
 <div class="social-friends-tab" *ngIf="isAsyncDataPresent">
   <app-social-friend-requests-list
     title="friend requests"
-    titleColor="color:rgb(0, 162, 255)"
+    titleColor="color:aliceblue"
     [(friendRequests)]="inboundFriendRequests"
     (send)="onSendFriendRequest($event)"
     (accept)="onAcceptFriendRequest()"></app-social-friend-requests-list>
   <br />
-  <form class="home-form">
-    <mat-form-field class="home-full-width">
-      <mat-label>Search</mat-label>
-      <input matInput (keyup)="filter($event)" name="filter" />
-    </mat-form-field>
-  </form>
-  <app-social-friends-list
-    title="online"
-    titleColor="color:rgb(0, 255, 149)"
-    [(friends)]="onlineFriends"
-    [potentialMessage]="potentialMessage"></app-social-friends-list>
-  <app-social-friends-list
-    title="offline"
-    titleColor="color:rgb(255, 0, 76)"
-    [(friends)]="offlineFriends"
-    [potentialMessage]="potentialMessage"></app-social-friends-list>
-  <app-social-friend-requests-list
-    title="pending"
-    titleColor="color:rgba(236, 232, 0, 0.884)"
-    [(friendRequests)]="outboundFriendRequests"
-    [update]="update"></app-social-friend-requests-list>
+  <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <h1>
+          <span style="color: rgb(0, 162, 255)">friends</span>
+        </h1>
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+    <form>
+      <mat-form-field class="social-friends-full-width">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="filter($event)" name="filter" />
+      </mat-form-field>
+    </form>
+    <app-social-friends-list
+      title="online"
+      titleColor="color:rgb(0, 255, 149)"
+      [(friends)]="onlineFriends"
+      [potentialMessage]="potentialMessage"></app-social-friends-list>
+    <app-social-friends-list
+      title="offline"
+      titleColor="color:rgb(255, 0, 76)"
+      [(friends)]="offlineFriends"
+      [potentialMessage]="potentialMessage"></app-social-friends-list>
+    <app-social-friend-requests-list
+      title="pending"
+      titleColor="color:rgba(236, 232, 0, 0.884)"
+      [(friendRequests)]="outboundFriendRequests"
+      [update]="update"></app-social-friend-requests-list>
+  </mat-expansion-panel>
 </div>
