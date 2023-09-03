@@ -1,38 +1,36 @@
 <div class="social-groups-tab" *ngIf="isAsyncDataPresent">
-  <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
+  <app-social-create-group
+    [self]="self"
+    [selfJWT]="selfJWT"></app-social-create-group>
+
+  <!-- <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
         <h1>
-          <span [style]="titleColor">create group</span>
+          <span style="color: rgb(0, 162, 255)">groups</span>
         </h1>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <form class="social-group-create-form" (ngSubmit)="createGroup()">
-      <mat-form-field class="social-group-create-full-width">
-        <mat-label>Name</mat-label>
-        <input
-          matInput
-          [(ngModel)]="group.name"
-          name="name"
-          #input
-          maxlength="20" />
-        <mat-hint class="social-group-create-hint" align="end"
-          >{{ input.value?.length || 0 }}/20</mat-hint
-        >
+    <form>
+      <mat-form-field class="social-friends-full-width">
+        <mat-label>Search</mat-label>
+        <input matInput (keyup)="filter($event)" name="filter" />
       </mat-form-field>
-
-      <app-user-filterable-multi-select
-        [(selection)]="selectedFriends"
-        [selectable]="friends$ | async"
-        label="Friends"
-        [none]="false"></app-user-filterable-multi-select>
-      <button
-        mat-raised-button
-        color="primary"
-        type="submit"
-        [disabled]="disableGroupCreation()">
-        Create
-      </button>
     </form>
-  </mat-expansion-panel>
+    <app-social-friends-list
+      title="online"
+      titleColor="color:rgb(0, 255, 149)"
+      [(friends)]="onlineFriends"
+      [potentialMessage]="potentialMessage"></app-social-friends-list>
+    <app-social-friends-list
+      title="offline"
+      titleColor="color:rgb(255, 0, 76)"
+      [(friends)]="offlineFriends"
+      [potentialMessage]="potentialMessage"></app-social-friends-list>
+    <app-social-friend-requests-list
+      title="pending"
+      titleColor="color:rgba(236, 232, 0, 0.884)"
+      [(friendRequests)]="outboundFriendRequests"
+      [update]="update"></app-social-friend-requests-list>
+  </mat-expansion-panel> -->
 </div>
