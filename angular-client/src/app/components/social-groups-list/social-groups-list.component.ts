@@ -17,7 +17,7 @@ export class SocialGroupsListComponent implements OnInit {
   }
 
   filter(filterValue: any) {
-    console.log(filterValue)
+    console.log(filterValue);
     // this.onlineFriends.filterPredicate = (friend, filter) =>
     //   friend.username.trim().toLowerCase().includes(filter);
     // this.onlineFriends.filter = filterValue.target.value.trim().toLowerCase();
