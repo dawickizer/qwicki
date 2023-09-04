@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { Store } from '@ngrx/store';
 import { login } from 'src/app/state/user/user.actions';
-import { selectUser, selectUserError } from 'src/app/state/user/user.selectors';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
@@ -18,7 +17,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   unsubscribe$ = new Subject<void>();
 
   constructor(
-    private router: Router,
     private route: ActivatedRoute,
     private store: Store
   ) {}
@@ -27,24 +25,6 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.route.queryParams
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(params => (this.return = params['return'] || '/'));
-
-    this.store
-      .select(selectUser)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(user => {
-        if (user) {
-          this.router.navigate([this.return]);
-        }
-      });
-
-    this.store
-      .select(selectUserError)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(error => {
-        if (error) {
-          // handle error
-        }
-      });
   }
 
   ngOnDestroy() {
@@ -53,7 +33,9 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    this.store.dispatch(login({ credentials: this.credentials }));
+    this.store.dispatch(
+      login({ credentials: this.credentials, route: this.return })
+    );
     this.credentials = { username: '', password: '' };
   }
 }

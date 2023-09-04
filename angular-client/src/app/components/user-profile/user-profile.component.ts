@@ -4,10 +4,7 @@ import { User } from 'src/app/models/user/user';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { selectUser, selectUserError } from 'src/app/state/user/user.selectors';
-import {
-  deleteUser,
-  updateUser,
-} from 'src/app/state/user/user.actions';
+import { deleteUser, updateUser } from 'src/app/state/user/user.actions';
 
 @Component({
   selector: 'app-user-profile',

@@ -16,6 +16,7 @@ import {
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Injectable()
 export class UserEffects {
@@ -26,12 +27,24 @@ export class UserEffects {
         this.authService.login(action.credentials).pipe(
           switchMap(() => this.authService.currentUser()),
           switchMap(decodedJWT => this.userService.get(decodedJWT._id)),
-          map(user => loginSuccess({ user })),
+          map(user => loginSuccess({ user, route: action.route })),
           catchError(error => of(loginFailure({ error })))
         )
       )
     );
   });
+
+  handleLoginSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(loginSuccess),
+        tap(({ route }) => {
+          this.router.navigate([route]);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   handleLoginError$ = createEffect(
     () => {
@@ -130,6 +143,7 @@ export class UserEffects {
     private actions$: Actions,
     private authService: AuthService,
     private userService: UserService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {}
 }

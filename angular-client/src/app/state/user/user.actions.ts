@@ -4,12 +4,12 @@ import { User } from 'src/app/models/user/user';
 
 export const login = createAction(
   '[User] Login',
-  props<{ credentials: Credentials }>()
+  props<{ credentials: Credentials; route: any }>()
 );
 
 export const loginSuccess = createAction(
   '[User] Login Success',
-  props<{ user: User }>()
+  props<{ user: User; route: any }>()
 );
 
 export const loginFailure = createAction(
