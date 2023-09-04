@@ -1,5 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { User } from 'src/app/models/user/user';
+import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-social-groups-list',
@@ -7,9 +6,6 @@ import { User } from 'src/app/models/user/user';
   styleUrls: ['./social-groups-list.component.css'],
 })
 export class SocialGroupsListComponent implements OnInit {
-  @Input() self: User;
-  @Input() selfJWT: any;
-
   isAsyncDataPresent = false;
 
   ngOnInit(): void {

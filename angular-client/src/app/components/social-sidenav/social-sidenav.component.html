@@ -17,20 +17,12 @@
     <mat-tab-group
       class="social-sidenav-tab-group social-sidenav-no-pagination">
       <mat-tab label="Friends">
-        <app-social-friends-tab
-          [self]="self"
-          [selfJWT]="this.authService.currentUserJWT()">
-        </app-social-friends-tab>
+        <app-social-friends-tab></app-social-friends-tab>
       </mat-tab>
       <mat-tab label="Groups">
-        <app-social-groups-tab
-          [self]="self"
-          [selfJWT]="this.authService.currentUserJWT()">
-        </app-social-groups-tab>
+        <app-social-groups-tab> </app-social-groups-tab>
       </mat-tab>
     </mat-tab-group>
   </mat-drawer>
-  <app-home
-    [self]="self"
-    [selfJWT]="this.authService.currentUserJWT()"></app-home>
+  <app-home [self]="self" [selfJWT]="selfJWT"></app-home>
 </mat-drawer-container>

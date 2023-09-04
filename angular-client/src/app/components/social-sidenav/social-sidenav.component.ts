@@ -15,6 +15,7 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') drawer: MatSidenav;
 
   self: User;
+  selfJWT: any;
   isAsyncDataPresent = false;
 
   constructor(
@@ -26,12 +27,18 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.authService.currentUser().subscribe(self =>
-      this.userService.get(self._id).subscribe(self => {
-        this.self = self;
+      this.userService.get(self._id).subscribe(async self => {
+        this.setSelf(self);
+        await this.colyseusService.establishHost(this.self, this.selfJWT);
         this.isAsyncDataPresent = true;
       })
     );
     this.handleSideNavKeyBind();
+  }
+
+  setSelf(self: User) {
+    this.self = self;
+    this.selfJWT = this.authService.currentUserJWT();
   }
 
   ngOnDestroy() {

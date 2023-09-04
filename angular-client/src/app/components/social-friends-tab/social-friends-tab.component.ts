@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
@@ -15,9 +15,6 @@ import { Message } from 'src/app/models/message/message';
 })
 export class SocialFriendsTabComponent implements OnInit {
   @ViewChild('drawer') drawer: MatSidenav;
-
-  @Input() self: User;
-  @Input() selfJWT: any;
 
   onlineFriends = new MatTableDataSource<User>([] as User[]);
   offlineFriends = new MatTableDataSource<User>([] as User[]);
@@ -47,7 +44,6 @@ export class SocialFriendsTabComponent implements OnInit {
   }
 
   async establishConnections() {
-    await this.colyseusService.establishHost(this.self, this.selfJWT);
     this.setHostRoomListeners();
     await this.colyseusService.establishOnlineFriendsRooms();
     this.setOnlineFriendsRoomsListeners();

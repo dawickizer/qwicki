@@ -103,6 +103,14 @@ export class ColyseusService {
     this._host = host;
   }
 
+  get hostJWT(): any {
+    return this._hostJWT;
+  }
+
+  set hostJWT(hostJWT: any) {
+    this._hostJWT = hostJWT;
+  }
+
   get hostRoom(): Colyseus.Room {
     return this._hostRoom;
   }

@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { User } from 'src/app/models/user/user';
 import { of, Observable } from 'rxjs';
 import { Group } from 'src/app/models/group/group';
+import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 
 @Component({
   selector: 'app-social-create-group',
@@ -9,9 +10,6 @@ import { Group } from 'src/app/models/group/group';
   styleUrls: ['./social-create-group.component.css'],
 })
 export class SocialCreateGroupComponent implements OnInit {
-  @Input() self: User;
-  @Input() selfJWT: any;
-
   titleColor = 'color:aliceblue';
 
   group: Group = new Group();
@@ -22,8 +20,10 @@ export class SocialCreateGroupComponent implements OnInit {
 
   isAsyncDataPresent = false;
 
+  constructor(private colyseusService: ColyseusService) {}
+
   ngOnInit(): void {
-    this.friends$ = of(this.self.friends);
+    this.friends$ = of(this.colyseusService.host.friends);
     this.isAsyncDataPresent = true;
   }
 
