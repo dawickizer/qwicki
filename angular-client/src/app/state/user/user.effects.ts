@@ -1,10 +1,21 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, exhaustMap, map, switchMap } from 'rxjs/operators';
-import { login, loginSuccess, loginFailure } from './user.actions';
+import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
+import {
+  login,
+  loginSuccess,
+  loginFailure,
+  updateUser,
+  updateUserSuccess,
+  updateUserFailure,
+  deleteUserSuccess,
+  deleteUserFailure,
+  deleteUser,
+} from './user.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class UserEffects {
@@ -22,9 +33,103 @@ export class UserEffects {
     );
   });
 
+  handleLoginError$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(loginFailure),
+        tap(({ error }) => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  updateUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(updateUser),
+      exhaustMap(action =>
+        this.userService.update(action.user).pipe(
+          map(user => updateUserSuccess({ user })),
+          catchError(error => of(updateUserFailure({ error })))
+        )
+      )
+    );
+  });
+
+  handleUpdateUserSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(updateUserSuccess),
+        tap(() => {
+          this.snackBar.open(
+            'Your information has been successfully updated!',
+            'Dismiss',
+            { duration: 5000 }
+          );
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  handleUpdateUserError$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(updateUserFailure),
+        tap(({ error }) => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  deleteUser$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(deleteUser),
+      exhaustMap(action =>
+        this.userService.delete(action.user).pipe(
+          map(data => deleteUserSuccess({ data })),
+          catchError(error => of(deleteUserFailure({ error })))
+        )
+      )
+    );
+  });
+
+  handleDeleteUserSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(deleteUserSuccess),
+        tap(() => {
+          this.authService.logout();
+          this.snackBar.open(
+            'Your account has been successfully deleted!',
+            'Dismiss',
+            { duration: 5000 }
+          );
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  handleDeleteUserError$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(deleteUserFailure),
+        tap(({ error }) => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   constructor(
     private actions$: Actions,
     private authService: AuthService,
-    private userService: UserService
+    private userService: UserService,
+    private snackBar: MatSnackBar
   ) {}
 }

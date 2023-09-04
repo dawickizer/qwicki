@@ -79,6 +79,8 @@ export class AuthService {
       this.matchMakingService.leaveGameRoom();
       this.broadcast.postMessage('logout');
     }
+
+    // maybe later flip this logic so the global state gets called to logout which then calls authService.logout()
     this.store.dispatch(logout());
     this.router.navigate(['auth/login'], extras);
   }

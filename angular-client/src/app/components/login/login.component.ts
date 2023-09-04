@@ -1,6 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { Store } from '@ngrx/store';
 import { login } from 'src/app/state/user/user.actions';
@@ -21,7 +20,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private snackBar: MatSnackBar,
     private store: Store
   ) {}
 
@@ -44,7 +42,7 @@ export class LoginComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(error => {
         if (error) {
-          this.openSnackBar(error, 'Dismiss');
+          // handle error
         }
       });
   }
@@ -57,11 +55,5 @@ export class LoginComponent implements OnInit, OnDestroy {
   login() {
     this.store.dispatch(login({ credentials: this.credentials }));
     this.credentials = { username: '', password: '' };
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000,
-    });
   }
 }

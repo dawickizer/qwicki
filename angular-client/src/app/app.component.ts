@@ -21,6 +21,6 @@ export class AppComponent {
   // also this logs user out on browser refresh
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler() {
-    //this.authService.logout();
+    this.authService.logout();
   }
 }
