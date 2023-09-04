@@ -64,6 +64,8 @@ import { InactivityService } from './services/inactivity/inactivity.service';
 import { MatchMakingService } from './services/match-making/match-making.service';
 import { GameService } from './services/game/game.service';
 import { MatSelectModule } from '@angular/material/select';
+import { StoreModule } from '@ngrx/store';
+import { EffectsModule } from '@ngrx/effects';
 
 @NgModule({
   declarations: [
@@ -111,6 +113,8 @@ import { MatSelectModule } from '@angular/material/select';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    StoreModule.forRoot({}, {}),
+    EffectsModule.forRoot([]),
   ],
   providers: [
     UserService,
