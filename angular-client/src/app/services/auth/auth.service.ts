@@ -19,6 +19,8 @@ import { User } from 'src/app/models/user/user';
 import { ColyseusService } from '../colyseus/colyseus.service';
 import { InactivityService } from '../inactivity/inactivity.service';
 import { MatchMakingService } from '../match-making/match-making.service';
+import { logout } from 'src/app/state/user/user.actions';
+import { Store } from '@ngrx/store';
 @Injectable({
   providedIn: 'root',
 })
@@ -32,7 +34,8 @@ export class AuthService {
     private router: Router,
     private colyseusService: ColyseusService,
     private matchMakingService: MatchMakingService,
-    private inactivityService: InactivityService
+    private inactivityService: InactivityService,
+    private store: Store
   ) {
     // need to set authService like this to avoid circular dependancy
     this.inactivityService.setAuthService(this);
@@ -76,6 +79,7 @@ export class AuthService {
       this.matchMakingService.leaveGameRoom();
       this.broadcast.postMessage('logout');
     }
+    this.store.dispatch(logout());
     this.router.navigate(['auth/login'], extras);
   }
 
@@ -114,7 +118,7 @@ export class AuthService {
       );
     }
     // Return an observable with a user-facing error message.
-    return throwError(error.error);
+    return throwError(() => error.error);
   }
 }
 

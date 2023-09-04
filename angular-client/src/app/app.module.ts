@@ -15,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
+import { MatSelectModule } from '@angular/material/select';
 
 // CDK
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -63,7 +64,12 @@ import { ColyseusService } from './services/colyseus/colyseus.service';
 import { InactivityService } from './services/inactivity/inactivity.service';
 import { MatchMakingService } from './services/match-making/match-making.service';
 import { GameService } from './services/game/game.service';
-import { MatSelectModule } from '@angular/material/select';
+
+// State
+import { StoreModule } from '@ngrx/store';
+import { userReducer } from './state/user/user.reducer';
+import { EffectsModule } from '@ngrx/effects';
+import { UserEffects } from './state/user/user.effects';
 
 @NgModule({
   declarations: [
@@ -111,6 +117,8 @@ import { MatSelectModule } from '@angular/material/select';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
+    StoreModule.forRoot({ user: userReducer }),
+    EffectsModule.forRoot(UserEffects),
   ],
   providers: [
     UserService,
