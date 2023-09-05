@@ -1,7 +1,6 @@
 import { Injectable, NgZone } from '@angular/core';
 import { Observable, timer, Subscription } from 'rxjs';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { AuthService } from '../auth/auth.service';
 import { Store } from '@ngrx/store';
 import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
 
@@ -9,15 +8,14 @@ import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
   providedIn: 'root',
 })
 export class InactivityService {
-  private inactivityThreshold: number = 1000 * 60 * 15; // 15 minutes
-  private logoutThreshold: number = this.inactivityThreshold + 1000 * 30; // inactivityThreshold + 30 seconds
+  private inactivityThreshold: number = 10000; // 15 minutes
+  private logoutThreshold: number = this.inactivityThreshold + 1000 * 5; // inactivityThreshold + 30 seconds
   private inactiveTimer: Observable<number> = timer(this.inactivityThreshold);
   private logoutTimer: Observable<number> = timer(this.logoutThreshold);
   private inactiveTimerSubscription: Subscription = new Subscription();
   private logoutTimerSubscription: Subscription = new Subscription();
-  private broadcast: BroadcastChannel = new BroadcastChannel('igima');
+  private broadcast: BroadcastChannel = new BroadcastChannel('qwicki');
   private snackBarRef: MatSnackBarRef<any>;
-  private authService: AuthService;
 
   constructor(
     private snackBar: MatSnackBar,
@@ -35,11 +33,6 @@ export class InactivityService {
 
   setBroadcastEvents() {
     this.broadcast.onmessage = this.broadcastEvents;
-  }
-
-  // need to set authService like this to avoid circular dependancy
-  setAuthService(authService: AuthService) {
-    this.authService = authService;
   }
 
   handleActiveEvent = () => {
@@ -86,7 +79,7 @@ export class InactivityService {
   startLogoutTimer() {
     this.logoutTimerSubscription.unsubscribe();
     this.logoutTimerSubscription = this.logoutTimer.subscribe(() => {
-      this.authService.logout();
+      this.store.dispatch(logout(createLogoutAction()));
       this.snackBarRef = this.snackBar.open(
         'You were logged out due to inactivity',
         '',

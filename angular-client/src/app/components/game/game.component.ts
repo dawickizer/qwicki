@@ -32,6 +32,8 @@ import { MatchMakingService } from 'src/app/services/match-making/match-making.s
 // Models
 import { Player } from 'src/app/models/player/player';
 import { PlayerService } from 'src/app/services/player/player.service';
+import { Store } from '@ngrx/store';
+import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
 
 @Component({
   selector: 'app-game',
@@ -63,7 +65,8 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     private matchMakingService: MatchMakingService,
     private playerService: PlayerService,
     private authService: AuthService,
-    private keyBindService: KeyBindService
+    private keyBindService: KeyBindService,
+    private store: Store
   ) {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
@@ -86,7 +89,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
           this.playerOnRemove();
         });
       },
-      error: () => this.authService.logout(),
+      error: () => this.store.dispatch(logout(createLogoutAction())),
     });
   }
 

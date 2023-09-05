@@ -16,11 +16,15 @@ import {
   signupSuccess,
   signupFailure,
   logout,
+  createLogoutAction,
 } from './user.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
+import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
+import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
+import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 
 @Injectable()
 export class UserEffects {
@@ -107,7 +111,7 @@ export class UserEffects {
       ofType(logout),
       tap(action => {
         if (action.makeBackendCall) {
-          this.authService.logoutBackendCall().subscribe();  // Consider moving this to a mergeMap if you want to handle success/failure
+          this.authService.logout().subscribe();  // Consider moving this to a mergeMap if you want to handle success/failure
         }
   
         localStorage.removeItem('id_token');
@@ -117,14 +121,13 @@ export class UserEffects {
         if (action.broadcast) {
           this.colyseusService.leaveAllRooms();
           this.matchMakingService.leaveGameRoom();
-          this.broadcast.postMessage('logout');
+          this.authService.broadcast.postMessage('logout');
         }
   
         this.router.navigate(['auth/login'], action.extras);
       })
     );
   }, { dispatch: false });
-
 
   updateUser$ = createEffect(() => {
     return this.actions$.pipe(
@@ -183,16 +186,15 @@ export class UserEffects {
       return this.actions$.pipe(
         ofType(deleteUserSuccess),
         tap(() => {
-          this.authService.logout();
           this.snackBar.open(
             'Your account has been successfully deleted!',
             'Dismiss',
             { duration: 5000 }
           );
-        })
+        }),
+        map(() => logout(createLogoutAction()))
       );
-    },
-    { dispatch: false }
+    }
   );
 
   handleDeleteUserFailure$ = createEffect(
@@ -210,6 +212,9 @@ export class UserEffects {
   constructor(
     private actions$: Actions,
     private authService: AuthService,
+    private colyseusService: ColyseusService,
+    private inactivityService: InactivityService,
+    private matchMakingService: MatchMakingService,
     private userService: UserService,
     private snackBar: MatSnackBar,
     private router: Router

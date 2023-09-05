@@ -3,7 +3,6 @@ import {
   Router,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
-  NavigationExtras,
 } from '@angular/router';
 import {
   HttpInterceptor,
@@ -16,9 +15,7 @@ import { catchError, tap } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
-import { ColyseusService } from '../colyseus/colyseus.service';
 import { InactivityService } from '../inactivity/inactivity.service';
-import { MatchMakingService } from '../match-making/match-making.service';
 import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
 import { Store } from '@ngrx/store';
 @Injectable({
@@ -27,19 +24,12 @@ import { Store } from '@ngrx/store';
 export class AuthService {
   readonly API = `${environment.EXPRESS_SERVER}/auth`;
 
-  private broadcast: BroadcastChannel = new BroadcastChannel('igima');
+  broadcast: BroadcastChannel = new BroadcastChannel('qwicki');
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-    private colyseusService: ColyseusService,
-    private matchMakingService: MatchMakingService,
-    private inactivityService: InactivityService,
-    private store: Store
-  ) {
-    // need to set authService like this to avoid circular dependancy
-    this.inactivityService.setAuthService(this);
-  }
+    private inactivityService: InactivityService
+  ) {}
 
   login(credentials: Credentials): Observable<Credentials> {
     return this.http
