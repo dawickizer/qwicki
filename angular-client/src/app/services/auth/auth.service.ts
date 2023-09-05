@@ -11,7 +11,6 @@ import { catchError, take } from 'rxjs/operators';
 import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
-import { InactivityService } from '../inactivity/inactivity.service';
 import {
   checkIsLoggedIn,
   checkIsLoggedInFailure,
@@ -30,10 +29,7 @@ export class AuthService {
 
   broadcast: BroadcastChannel = new BroadcastChannel('qwicki');
 
-  constructor(
-    private http: HttpClient,
-    private inactivityService: InactivityService
-  ) {}
+  constructor(private http: HttpClient) {}
 
   login(credentials: Credentials): Observable<Credentials> {
     return this.http
