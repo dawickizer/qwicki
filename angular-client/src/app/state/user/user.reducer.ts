@@ -10,6 +10,7 @@ import {
   loginFailure,
   loginSuccess,
   logout,
+  saveJWT,
   signup,
   signupFailure,
   signupSuccess,
@@ -21,6 +22,8 @@ import { UserState } from './user.state';
 
 export const initialState: UserState = {
   user: null,
+  JWT: null,
+  decodedJWT: null,
   isLoading: false,
   isLoggedIn: false,
   error: null,
@@ -28,14 +31,20 @@ export const initialState: UserState = {
 
 export const userReducer = createReducer(
   initialState,
+  on(saveJWT, (state, { JWT }) => ({
+    ...state,
+    JWT,
+  })),
   on(signup, state => ({
     ...state,
     isLoading: true,
     error: null,
   })),
-  on(signupSuccess, (state, { user }) => ({
+  on(signupSuccess, (state, { user, decodedJWT }) => ({
     ...state,
     user,
+    decodedJWT,
+    isLoggedIn: true,
     isLoading: false,
   })),
   on(signupFailure, (state, { error }) => ({
@@ -48,9 +57,11 @@ export const userReducer = createReducer(
     isLoading: true,
     error: null,
   })),
-  on(loginSuccess, (state, { user }) => ({
+  on(loginSuccess, (state, { user, decodedJWT }) => ({
     ...state,
     user,
+    decodedJWT,
+    isLoggedIn: true,
     isLoading: false,
   })),
   on(loginFailure, (state, { error }) => ({

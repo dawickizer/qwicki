@@ -1,13 +1,21 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { UserState } from './user.state';
 
-// Step 1: Create a feature selector
 const selectUserState = createFeatureSelector<UserState>('user');
 
-// Step 2: Create selectors for each piece of the state
 export const selectUser = createSelector(
   selectUserState,
   (state: UserState) => state.user
+);
+
+export const selectJWT = createSelector(
+  selectUserState,
+  (state: UserState) => state.JWT
+);
+
+export const selectDecodedJWT = createSelector(
+  selectUserState,
+  (state: UserState) => state.decodedJWT
 );
 
 export const selectUserLoading = createSelector(

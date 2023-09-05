@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
+import { merge, of } from 'rxjs';
 import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
 import {
   login,
@@ -20,6 +20,7 @@ import {
   checkIsLoggedIn,
   checkIsLoggedInFailure,
   checkIsLoggedInSuccess,
+  saveJWT,
 } from './user.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -36,10 +37,25 @@ export class UserEffects {
       ofType(signup),
       exhaustMap(action =>
         this.authService.signup(action.user).pipe(
-          tap(credentials => this.setSession(credentials.token)),
-          switchMap(() => this.authService.currentUser()),
-          switchMap(decodedJWT => this.userService.get(decodedJWT._id)),
-          map(user => signupSuccess({ user, route: action.route })),
+          switchMap(credentials => {
+            // Merge the saving of JWT and fetching of current user
+            return merge(
+              of(saveJWT({ JWT: credentials.token })), // Save the JWT to state
+              this.authService.currentUser().pipe(
+                switchMap(decodedJWT =>
+                  this.userService.get(decodedJWT._id).pipe(
+                    map(user =>
+                      signupSuccess({
+                        user,
+                        decodedJWT,
+                        route: action.route,
+                      })
+                    )
+                  )
+                )
+              )
+            );
+          }),
           catchError(error => of(signupFailure({ error })))
         )
       )
@@ -75,10 +91,25 @@ export class UserEffects {
       ofType(login),
       exhaustMap(action =>
         this.authService.login(action.credentials).pipe(
-          tap(credentials => this.setSession(credentials.token)),
-          switchMap(() => this.authService.currentUser()),
-          switchMap(decodedJWT => this.userService.get(decodedJWT._id)),
-          map(user => loginSuccess({ user, route: action.route })),
+          switchMap(credentials => {
+            // Merge the saving of JWT and fetching of current user
+            return merge(
+              of(saveJWT({ JWT: credentials.token })), // Save the JWT to state
+              this.authService.currentUser().pipe(
+                switchMap(decodedJWT =>
+                  this.userService.get(decodedJWT._id).pipe(
+                    map(user =>
+                      loginSuccess({
+                        user,
+                        decodedJWT,
+                        route: action.route,
+                      })
+                    )
+                  )
+                )
+              )
+            );
+          }),
           catchError(error => of(loginFailure({ error })))
         )
       )
@@ -157,8 +188,6 @@ export class UserEffects {
           if (action.makeBackendCall) {
             this.authService.logout().subscribe(); // Consider moving this to a mergeMap if you want to handle success/failure
           }
-
-          localStorage.removeItem('id_token');
           this.inactivityService.removeActiveEvents();
           this.inactivityService.stopTimers();
 
@@ -263,8 +292,4 @@ export class UserEffects {
     private snackBar: MatSnackBar,
     private router: Router
   ) {}
-
-  private setSession(token: string) {
-    localStorage.setItem('id_token', token as string);
-  }
 }

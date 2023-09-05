@@ -4,10 +4,11 @@ import {
   HttpInterceptor,
   HttpRequest,
   HttpHandler,
+  HttpEvent,
 } from '@angular/common/http';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { catchError, take } from 'rxjs/operators';
+import { catchError, first, switchMap, take } from 'rxjs/operators';
 import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
@@ -19,7 +20,7 @@ import {
   logout,
 } from 'src/app/state/user/user.actions';
 import { Store } from '@ngrx/store';
-import { selectIsLoggedIn } from 'src/app/state/user/user.selectors';
+import { selectIsLoggedIn, selectJWT } from 'src/app/state/user/user.selectors';
 import { Actions, ofType } from '@ngrx/effects';
 @Injectable({
   providedIn: 'root',
@@ -47,10 +48,6 @@ export class AuthService {
     return this.http
       .get<any>(`${this.API}/current-user`)
       .pipe(catchError(this.handleError));
-  }
-
-  currentUserJWT() {
-    return localStorage.getItem('id_token');
   }
 
   logout(): Observable<any> {
@@ -126,12 +123,24 @@ export class AuthGuardService {
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  intercept(req: HttpRequest<any>, next: HttpHandler) {
-    let token: string = localStorage.getItem('id_token');
-    if (token) {
-      token = `Bearer ${token}`;
-      const authReq = req.clone({ setHeaders: { Authorization: token } });
-      return next.handle(authReq);
-    } else return next.handle(req);
+  constructor(private store: Store) {}
+
+  intercept(
+    req: HttpRequest<any>,
+    next: HttpHandler
+  ): Observable<HttpEvent<any>> {
+    return this.store.select(selectJWT).pipe(
+      first(),
+      switchMap(token => {
+        if (token) {
+          const authReq = req.clone({
+            setHeaders: { Authorization: `Bearer ${token}` },
+          });
+          return next.handle(authReq);
+        } else {
+          return next.handle(req);
+        }
+      })
+    );
   }
 }

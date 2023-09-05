@@ -5,6 +5,9 @@ import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
+import { Store } from '@ngrx/store';
+import { combineLatest, takeUntil, Subject } from 'rxjs';
+import { selectJWT, selectUser } from 'src/app/state/user/user.selectors';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -17,31 +20,32 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   self: User;
   selfJWT: any;
   isAsyncDataPresent = false;
+  unsubscribe$ = new Subject<void>();
 
   constructor(
     private keyBindService: KeyBindService,
     public authService: AuthService,
     public colyseusService: ColyseusService,
-    private userService: UserService
+    private userService: UserService,
+    private store: Store
   ) {}
 
   ngOnInit() {
-    this.authService.currentUser().subscribe(self =>
-      this.userService.get(self._id).subscribe(async self => {
-        this.setSelf(self);
+    combineLatest([this.store.select(selectUser), this.store.select(selectJWT)])
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(async ([self, jwt]) => {
+        this.self = self;
+        this.selfJWT = jwt;
         await this.colyseusService.establishHost(this.self, this.selfJWT);
         this.isAsyncDataPresent = true;
-      })
-    );
+      });
+
     this.handleSideNavKeyBind();
   }
 
-  setSelf(self: User) {
-    this.self = self;
-    this.selfJWT = this.authService.currentUserJWT();
-  }
-
   ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
     this.keyBindService.removeKeyBinds();
   }
 

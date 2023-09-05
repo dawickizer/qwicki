@@ -3,6 +3,11 @@ import { createAction, props } from '@ngrx/store';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 
+export const saveJWT = createAction(
+  '[User] Save JWT',
+  props<{ JWT: string }>()
+);
+
 export const signup = createAction(
   '[User] Signup',
   props<{ user: User; route: string }>()
@@ -10,7 +15,7 @@ export const signup = createAction(
 
 export const signupSuccess = createAction(
   '[User] Signup Success',
-  props<{ user: User; route: string }>()
+  props<{ user: User; decodedJWT: any; route: string }>()
 );
 
 export const signupFailure = createAction(
@@ -25,7 +30,7 @@ export const login = createAction(
 
 export const loginSuccess = createAction(
   '[User] Login Success',
-  props<{ user: User; route: string }>()
+  props<{ user: User; decodedJWT: any; route: string }>()
 );
 
 export const loginFailure = createAction(
