@@ -2,6 +2,21 @@ import { createAction, props } from '@ngrx/store';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 
+export const signup = createAction(
+  '[User] Signup',
+  props<{ user: User; route: any }>()
+);
+
+export const signupSuccess = createAction(
+  '[User] Signup Success',
+  props<{ user: User; route: any }>()
+);
+
+export const signupFailure = createAction(
+  '[User] Signup Failure',
+  props<{ error: any }>()
+);
+
 export const login = createAction(
   '[User] Login',
   props<{ credentials: Credentials; route: any }>()

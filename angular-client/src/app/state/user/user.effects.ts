@@ -12,6 +12,9 @@ import {
   deleteUserSuccess,
   deleteUserFailure,
   deleteUser,
+  signup,
+  signupSuccess,
+  signupFailure,
 } from './user.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -20,6 +23,44 @@ import { Router } from '@angular/router';
 
 @Injectable()
 export class UserEffects {
+  signup$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(signup),
+      exhaustMap(action =>
+        this.authService.signup(action.user).pipe(
+          switchMap(() => this.authService.currentUser()),
+          switchMap(decodedJWT => this.userService.get(decodedJWT._id)),
+          map(user => signupSuccess({ user, route: action.route })),
+          catchError(error => of(signupFailure({ error })))
+        )
+      )
+    );
+  });
+
+  handleSignupSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(signupSuccess),
+        tap(({ route }) => {
+          this.router.navigate([route]);
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  handleSignupError$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(signupFailure),
+        tap(({ error }) => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
   login$ = createEffect(() => {
     return this.actions$.pipe(
       ofType(login),

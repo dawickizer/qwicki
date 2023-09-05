@@ -7,6 +7,9 @@ import {
   loginFailure,
   loginSuccess,
   logout,
+  signup,
+  signupFailure,
+  signupSuccess,
   updateUser,
   updateUserFailure,
   updateUserSuccess,
@@ -21,6 +24,21 @@ export const initialState: UserState = {
 
 export const userReducer = createReducer(
   initialState,
+  on(signup, state => ({
+    ...state,
+    isLoading: true,
+    error: null,
+  })),
+  on(signupSuccess, (state, { user }) => ({
+    ...state,
+    user,
+    isLoading: false,
+  })),
+  on(signupFailure, (state, { error }) => ({
+    ...state,
+    error,
+    isLoading: false,
+  })),
   on(login, state => ({
     ...state,
     isLoading: true,
