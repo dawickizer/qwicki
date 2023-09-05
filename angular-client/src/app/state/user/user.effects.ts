@@ -106,28 +106,31 @@ export class UserEffects {
     { dispatch: false }
   );
 
-  logout$ = createEffect(() => {
-    return this.actions$.pipe(
-      ofType(logout),
-      tap(action => {
-        if (action.makeBackendCall) {
-          this.authService.logout().subscribe();  // Consider moving this to a mergeMap if you want to handle success/failure
-        }
-  
-        localStorage.removeItem('id_token');
-        this.inactivityService.removeActiveEvents();
-        this.inactivityService.stopTimers();
-  
-        if (action.broadcast) {
-          this.colyseusService.leaveAllRooms();
-          this.matchMakingService.leaveGameRoom();
-          this.authService.broadcast.postMessage('logout');
-        }
-  
-        this.router.navigate(['auth/login'], action.extras);
-      })
-    );
-  }, { dispatch: false });
+  logout$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(logout),
+        tap(action => {
+          if (action.makeBackendCall) {
+            this.authService.logout().subscribe(); // Consider moving this to a mergeMap if you want to handle success/failure
+          }
+
+          localStorage.removeItem('id_token');
+          this.inactivityService.removeActiveEvents();
+          this.inactivityService.stopTimers();
+
+          if (action.broadcast) {
+            this.colyseusService.leaveAllRooms();
+            this.matchMakingService.leaveGameRoom();
+            this.authService.broadcast.postMessage('logout');
+          }
+
+          this.router.navigate(['auth/login'], action.extras);
+        })
+      );
+    },
+    { dispatch: false }
+  );
 
   updateUser$ = createEffect(() => {
     return this.actions$.pipe(
@@ -181,21 +184,19 @@ export class UserEffects {
     );
   });
 
-  handleDeleteUserSuccess$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(deleteUserSuccess),
-        tap(() => {
-          this.snackBar.open(
-            'Your account has been successfully deleted!',
-            'Dismiss',
-            { duration: 5000 }
-          );
-        }),
-        map(() => logout(createLogoutAction()))
-      );
-    }
-  );
+  handleDeleteUserSuccess$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(deleteUserSuccess),
+      tap(() => {
+        this.snackBar.open(
+          'Your account has been successfully deleted!',
+          'Dismiss',
+          { duration: 5000 }
+        );
+      }),
+      map(() => logout(createLogoutAction()))
+    );
+  });
 
   handleDeleteUserFailure$ = createEffect(
     () => {

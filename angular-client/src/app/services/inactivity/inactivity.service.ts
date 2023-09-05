@@ -8,7 +8,7 @@ import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
   providedIn: 'root',
 })
 export class InactivityService {
-  private inactivityThreshold: number = 10000; // 15 minutes
+  private inactivityThreshold = 10000; // 15 minutes
   private logoutThreshold: number = this.inactivityThreshold + 1000 * 5; // inactivityThreshold + 30 seconds
   private inactiveTimer: Observable<number> = timer(this.inactivityThreshold);
   private logoutTimer: Observable<number> = timer(this.logoutThreshold);
@@ -25,7 +25,13 @@ export class InactivityService {
 
   broadcastEvents = (event: any) => {
     if (event.data === 'logout') {
-      this.ngZone.run(() => this.store.dispatch(logout(createLogoutAction({makeBackendCall: false, broadcast: false }))));
+      this.ngZone.run(() =>
+        this.store.dispatch(
+          logout(
+            createLogoutAction({ makeBackendCall: false, broadcast: false })
+          )
+        )
+      );
     } else if (event.data === 'active') {
       this.ngZone.run(() => this.startTimers());
     }

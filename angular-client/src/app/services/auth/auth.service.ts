@@ -106,7 +106,14 @@ export class AuthGuardService {
     if (await this.authService.isLoggedInBackendCheck().toPromise()) {
       return true;
     } else {
-      this.store.dispatch(logout(createLogoutAction({extras: {queryParams: { return: state.url }}, makeBackendCall: false })));
+      this.store.dispatch(
+        logout(
+          createLogoutAction({
+            extras: { queryParams: { return: state.url } },
+            makeBackendCall: false,
+          })
+        )
+      );
       return false;
     }
   }

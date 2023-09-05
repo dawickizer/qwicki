@@ -8,7 +8,10 @@ import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
   styleUrls: ['./navbar.component.css'],
 })
 export class NavbarComponent {
-  constructor(private authService: AuthService, private store: Store) {}
+  constructor(
+    private authService: AuthService,
+    private store: Store
+  ) {}
 
   logout() {
     this.store.dispatch(logout(createLogoutAction()));

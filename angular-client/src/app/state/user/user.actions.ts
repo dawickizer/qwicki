@@ -33,17 +33,25 @@ export const loginFailure = createAction(
   props<{ error: any }>()
 );
 
-export function createLogoutAction(options?: { extras?: NavigationExtras, makeBackendCall?: boolean, broadcast?: boolean }) {
+export function createLogoutAction(options?: {
+  extras?: NavigationExtras;
+  makeBackendCall?: boolean;
+  broadcast?: boolean;
+}) {
   return {
     extras: options?.extras,
     makeBackendCall: options?.makeBackendCall ?? true,
-    broadcast: options?.broadcast ?? true
+    broadcast: options?.broadcast ?? true,
   };
 }
 
 export const logout = createAction(
   '[User] Logout',
-  props<{ extras?: NavigationExtras; makeBackendCall?: boolean; broadcast?: boolean }>()
+  props<{
+    extras?: NavigationExtras;
+    makeBackendCall?: boolean;
+    broadcast?: boolean;
+  }>()
 );
 
 export const updateUser = createAction(
