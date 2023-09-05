@@ -1,3 +1,4 @@
+import { NavigationExtras } from '@angular/router';
 import { createAction, props } from '@ngrx/store';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
@@ -32,7 +33,18 @@ export const loginFailure = createAction(
   props<{ error: any }>()
 );
 
-export const logout = createAction('[User] Logout');
+export function createLogoutAction(options?: { extras?: NavigationExtras, makeBackendCall?: boolean, broadcast?: boolean }) {
+  return {
+    extras: options?.extras,
+    makeBackendCall: options?.makeBackendCall ?? true,
+    broadcast: options?.broadcast ?? true
+  };
+}
+
+export const logout = createAction(
+  '[User] Logout',
+  props<{ extras?: NavigationExtras; makeBackendCall?: boolean; broadcast?: boolean }>()
+);
 
 export const updateUser = createAction(
   '[User] Update',

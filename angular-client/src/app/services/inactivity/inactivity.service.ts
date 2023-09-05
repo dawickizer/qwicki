@@ -2,6 +2,8 @@ import { Injectable, NgZone } from '@angular/core';
 import { Observable, timer, Subscription } from 'rxjs';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { AuthService } from '../auth/auth.service';
+import { Store } from '@ngrx/store';
+import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -19,12 +21,13 @@ export class InactivityService {
 
   constructor(
     private snackBar: MatSnackBar,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private store: Store
   ) {}
 
   broadcastEvents = (event: any) => {
     if (event.data === 'logout') {
-      this.ngZone.run(() => this.authService.logout(undefined, false, false));
+      this.ngZone.run(() => this.store.dispatch(logout(createLogoutAction({makeBackendCall: false, broadcast: false }))));
     } else if (event.data === 'active') {
       this.ngZone.run(() => this.startTimers());
     }

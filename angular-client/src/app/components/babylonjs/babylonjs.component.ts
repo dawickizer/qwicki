@@ -30,6 +30,8 @@ import '@babylonjs/inspector';
 import { FpsService } from 'src/app/services/fps/fps.service';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
+import { Store } from '@ngrx/store';
+import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
 
 @Component({
   selector: 'app-babylonjs',
@@ -55,6 +57,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
   constructor(
     private fpsService: FpsService,
     private authService: AuthService,
+    private store: Store,
     private keyBindService: KeyBindService
   ) {}
 
@@ -87,7 +90,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
         // running babylonJS
         this.render();
       },
-      error: () => this.authService.logout(),
+      error: () => this.store.dispatch(logout(createLogoutAction())),
     });
   }
 

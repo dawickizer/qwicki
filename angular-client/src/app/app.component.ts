@@ -1,5 +1,6 @@
 import { Component, HostListener } from '@angular/core';
-import { AuthService } from './services/auth/auth.service';
+import { logout } from './state/user/user.actions';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,7 @@ import { AuthService } from './services/auth/auth.service';
 export class AppComponent {
   title = 'Qwicki';
 
-  constructor(private authService: AuthService) {}
+  constructor(private store: Store) {}
 
   // this will call on any browser close...prob need to use
   // broadcast channels to handle if multiple browser tabs
@@ -17,6 +18,6 @@ export class AppComponent {
   // also this logs user out on browser refresh
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler() {
-    this.authService.logout();
+    this.store.dispatch(logout({}));
   }
 }
