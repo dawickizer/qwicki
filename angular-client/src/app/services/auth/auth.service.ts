@@ -44,14 +44,12 @@ export class AuthService {
   login(credentials: Credentials): Observable<Credentials> {
     return this.http
       .post<Credentials>(`${this.API}/login`, credentials)
-      .pipe(tap(credentials => this.setSession(credentials.token)))
       .pipe(catchError(this.handleError));
   }
 
   signup(user: User): Observable<Credentials> {
     return this.http
       .post<Credentials>(`${this.API}/signup`, user)
-      .pipe(tap(credentials => this.setSession(credentials.token)))
       .pipe(catchError(this.handleError));
   }
 
@@ -102,10 +100,6 @@ export class AuthService {
         })
       )
       .pipe(catchError(this.handleError));
-  }
-
-  private setSession(token: string) {
-    localStorage.setItem('id_token', token as string);
   }
 
   private handleError(error: HttpErrorResponse) {

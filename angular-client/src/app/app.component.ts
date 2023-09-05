@@ -1,5 +1,4 @@
 import { Component, HostListener } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { AuthService } from './services/auth/auth.service';
 
 @Component({
@@ -10,10 +9,7 @@ import { AuthService } from './services/auth/auth.service';
 export class AppComponent {
   title = 'Qwicki';
 
-  constructor(
-    private http: HttpClient,
-    private authService: AuthService
-  ) {}
+  constructor(private authService: AuthService) {}
 
   // this will call on any browser close...prob need to use
   // broadcast channels to handle if multiple browser tabs

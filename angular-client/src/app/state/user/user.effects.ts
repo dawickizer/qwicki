@@ -28,6 +28,7 @@ export class UserEffects {
       ofType(signup),
       exhaustMap(action =>
         this.authService.signup(action.user).pipe(
+          tap(credentials => this.setSession(credentials.token)),
           switchMap(() => this.authService.currentUser()),
           switchMap(decodedJWT => this.userService.get(decodedJWT._id)),
           map(user => signupSuccess({ user, route: action.route })),
@@ -49,7 +50,7 @@ export class UserEffects {
     { dispatch: false }
   );
 
-  handleSignupError$ = createEffect(
+  handleSignupFailure$ = createEffect(
     () => {
       return this.actions$.pipe(
         ofType(signupFailure),
@@ -66,6 +67,7 @@ export class UserEffects {
       ofType(login),
       exhaustMap(action =>
         this.authService.login(action.credentials).pipe(
+          tap(credentials => this.setSession(credentials.token)),
           switchMap(() => this.authService.currentUser()),
           switchMap(decodedJWT => this.userService.get(decodedJWT._id)),
           map(user => loginSuccess({ user, route: action.route })),
@@ -87,7 +89,7 @@ export class UserEffects {
     { dispatch: false }
   );
 
-  handleLoginError$ = createEffect(
+  handleLoginFailure$ = createEffect(
     () => {
       return this.actions$.pipe(
         ofType(loginFailure),
@@ -127,7 +129,7 @@ export class UserEffects {
     { dispatch: false }
   );
 
-  handleUpdateUserError$ = createEffect(
+  handleUpdateUserFailure$ = createEffect(
     () => {
       return this.actions$.pipe(
         ofType(updateUserFailure),
@@ -168,7 +170,7 @@ export class UserEffects {
     { dispatch: false }
   );
 
-  handleDeleteUserError$ = createEffect(
+  handleDeleteUserFailure$ = createEffect(
     () => {
       return this.actions$.pipe(
         ofType(deleteUserFailure),
@@ -187,4 +189,8 @@ export class UserEffects {
     private snackBar: MatSnackBar,
     private router: Router
   ) {}
+
+  private setSession(token: string) {
+    localStorage.setItem('id_token', token as string);
+  }
 }
