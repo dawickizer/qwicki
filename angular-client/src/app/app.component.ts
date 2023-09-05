@@ -1,5 +1,5 @@
 import { Component, HostListener } from '@angular/core';
-import { logout } from './state/user/user.actions';
+import { createLogoutAction, logout } from './state/user/user.actions';
 import { Store } from '@ngrx/store';
 
 @Component({
@@ -18,6 +18,6 @@ export class AppComponent {
   // also this logs user out on browser refresh
   @HostListener('window:beforeunload', ['$event'])
   beforeUnloadHandler() {
-    this.store.dispatch(logout({}));
+    this.store.dispatch(logout(createLogoutAction()));
   }
 }
