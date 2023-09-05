@@ -1,7 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { merge, of } from 'rxjs';
-import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
+import {
+  catchError,
+  exhaustMap,
+  map,
+  mergeMap,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import {
   login,
   loginSuccess,
@@ -21,6 +28,8 @@ import {
   checkIsLoggedInFailure,
   checkIsLoggedInSuccess,
   saveJWT,
+  logoutSuccess,
+  logoutFailure,
 } from './user.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -180,29 +189,35 @@ export class UserEffects {
     { dispatch: false }
   );
 
-  logout$ = createEffect(
-    () => {
-      return this.actions$.pipe(
-        ofType(logout),
-        tap(action => {
-          if (action.makeBackendCall) {
-            this.authService.logout().subscribe(); // Consider moving this to a mergeMap if you want to handle success/failure
-          }
-          this.inactivityService.removeActiveEvents();
-          this.inactivityService.stopTimers();
+  logout$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(logout),
+      mergeMap(action => {
+        let logoutObservable = of({}); // Default to an empty observable
 
-          if (action.broadcast) {
-            this.colyseusService.leaveAllRooms();
-            this.matchMakingService.leaveGameRoom();
-            this.authService.broadcast.postMessage('logout');
-          }
+        if (action.makeBackendCall) {
+          logoutObservable = this.authService.logout();
+        }
 
-          this.router.navigate(['auth/login'], action.extras);
-        })
-      );
-    },
-    { dispatch: false }
-  );
+        return logoutObservable.pipe(
+          tap(() => {
+            this.inactivityService.removeActiveEvents();
+            this.inactivityService.stopTimers();
+
+            if (action.broadcast) {
+              this.colyseusService.leaveAllRooms();
+              this.matchMakingService.leaveGameRoom();
+              this.authService.broadcast.postMessage('logout');
+            }
+
+            this.router.navigate(['auth/login'], action.extras);
+          }),
+          map(() => logoutSuccess()),
+          catchError(error => of(logoutFailure({ error })))
+        );
+      })
+    );
+  });
 
   updateUser$ = createEffect(() => {
     return this.actions$.pipe(

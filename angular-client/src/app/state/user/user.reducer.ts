@@ -10,6 +10,8 @@ import {
   loginFailure,
   loginSuccess,
   logout,
+  logoutFailure,
+  logoutSuccess,
   saveJWT,
   signup,
   signupFailure,
@@ -83,7 +85,16 @@ export const userReducer = createReducer(
     error,
     isLoading: false,
   })),
-  on(logout, state => initialState),
+  on(logout, state => ({
+    ...state,
+    isLoading: true,
+  })),
+  on(logoutSuccess, state => initialState),
+  on(logoutFailure, (state, { error }) => ({
+    ...state,
+    error,
+    isLoading: false,
+  })),
   on(updateUser, state => ({
     ...state,
     isLoading: true,

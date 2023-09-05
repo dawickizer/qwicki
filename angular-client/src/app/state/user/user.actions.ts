@@ -71,6 +71,13 @@ export const logout = createAction(
   }>()
 );
 
+export const logoutSuccess = createAction('[User] Logout Success');
+
+export const logoutFailure = createAction(
+  '[User] Logout Failure',
+  props<{ error: any }>()
+);
+
 export const updateUser = createAction(
   '[User] Update',
   props<{ user: User }>()
