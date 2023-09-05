@@ -15,6 +15,11 @@ export const selectUserLoading = createSelector(
   (state: UserState) => state.isLoading
 );
 
+export const selectIsLoggedIn = createSelector(
+  selectUserState,
+  (state: UserState) => state.isLoggedIn
+);
+
 export const selectUserError = createSelector(
   selectUserState,
   (state: UserState) => state.error

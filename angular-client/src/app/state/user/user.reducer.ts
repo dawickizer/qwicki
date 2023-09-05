@@ -1,5 +1,8 @@
 import { createReducer, on } from '@ngrx/store';
 import {
+  checkIsLoggedIn,
+  checkIsLoggedInFailure,
+  checkIsLoggedInSuccess,
   deleteUser,
   deleteUserFailure,
   deleteUserSuccess,
@@ -19,6 +22,7 @@ import { UserState } from './user.state';
 export const initialState: UserState = {
   user: null,
   isLoading: false,
+  isLoggedIn: false,
   error: null,
 };
 
@@ -50,6 +54,20 @@ export const userReducer = createReducer(
     isLoading: false,
   })),
   on(loginFailure, (state, { error }) => ({
+    ...state,
+    error,
+    isLoading: false,
+  })),
+  on(checkIsLoggedIn, state => ({
+    ...state,
+    isLoading: true,
+  })),
+  on(checkIsLoggedInSuccess, (state, { isLoggedIn }) => ({
+    ...state,
+    isLoggedIn,
+    isLoading: false,
+  })),
+  on(checkIsLoggedInFailure, (state, { error }) => ({
     ...state,
     error,
     isLoading: false,

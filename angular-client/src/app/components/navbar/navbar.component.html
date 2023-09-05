@@ -11,7 +11,7 @@
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="navbarSupportedContent">
-    <ul *ngIf="isLoggedIn()" class="navbar-nav mr-auto">
+    <ul *ngIf="isLoggedIn$ | async" class="navbar-nav mr-auto">
       <li class="nav-item">
         <a class="nav-link" routerLink="/babylonjs">Babylon.js</a>
       </li>

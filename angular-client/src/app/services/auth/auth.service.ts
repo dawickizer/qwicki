@@ -1,9 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  Router,
-  ActivatedRouteSnapshot,
-  RouterStateSnapshot,
-} from '@angular/router';
+import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -11,13 +7,21 @@ import {
 } from '@angular/common/http';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { catchError, tap } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { catchError, take } from 'rxjs/operators';
+import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 import { InactivityService } from '../inactivity/inactivity.service';
-import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
+import {
+  checkIsLoggedIn,
+  checkIsLoggedInFailure,
+  checkIsLoggedInSuccess,
+  createLogoutAction,
+  logout,
+} from 'src/app/state/user/user.actions';
 import { Store } from '@ngrx/store';
+import { selectIsLoggedIn } from 'src/app/state/user/user.selectors';
+import { Actions, ofType } from '@ngrx/effects';
 @Injectable({
   providedIn: 'root',
 })
@@ -59,22 +63,9 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
-  isLoggedInFrontendCheck() {
-    return this.currentUserJWT(); // keep in mind user can set a fake id_token to simulate login
-  }
-
-  isLoggedInBackendCheck(): Observable<boolean> {
+  isLoggedIn(): Observable<boolean> {
     return this.http
       .get<boolean>(`${this.API}/is-logged-in`)
-      .pipe(
-        tap(result => {
-          if (result) {
-            this.inactivityService.setBroadcastEvents();
-            this.inactivityService.setActiveEvents();
-            this.inactivityService.handleActiveEvent(); // fire off an active event in case user doesnt perform 'active' actions
-          }
-        })
-      )
       .pipe(catchError(this.handleError));
   }
 
@@ -97,13 +88,31 @@ export class AuthService {
 @Injectable()
 export class AuthGuardService {
   constructor(
-    private router: Router,
-    private authService: AuthService,
-    private store: Store
+    private store: Store,
+    private actions$: Actions
   ) {}
 
-  async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
-    if (await this.authService.isLoggedInBackendCheck().toPromise()) {
+  // do NOT remove route param as it affects angular dep injection and will cause bugs with router logic
+  async canActivate(
+    route: ActivatedRouteSnapshot,
+    state: RouterStateSnapshot
+  ): Promise<boolean> {
+    this.store.dispatch(checkIsLoggedIn());
+
+    // Wait for the success or failure action to be dispatched
+    await firstValueFrom(
+      this.actions$.pipe(
+        ofType(checkIsLoggedInSuccess, checkIsLoggedInFailure),
+        take(1)
+      )
+    );
+
+    // Now read the latest value from the store
+    const isLoggedIn = await firstValueFrom(
+      this.store.select(selectIsLoggedIn)
+    );
+
+    if (isLoggedIn) {
       return true;
     } else {
       this.store.dispatch(
@@ -118,6 +127,7 @@ export class AuthGuardService {
     }
   }
 }
+
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler) {

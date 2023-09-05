@@ -8,8 +8,8 @@ import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
   providedIn: 'root',
 })
 export class InactivityService {
-  private inactivityThreshold = 10000; // 15 minutes
-  private logoutThreshold: number = this.inactivityThreshold + 1000 * 5; // inactivityThreshold + 30 seconds
+  private inactivityThreshold = 900000; // 15 minutes in milliseconds
+  private logoutThreshold = this.inactivityThreshold + 30000; // inactivityThreshold + 30 seconds
   private inactiveTimer: Observable<number> = timer(this.inactivityThreshold);
   private logoutTimer: Observable<number> = timer(this.logoutThreshold);
   private inactiveTimerSubscription: Subscription = new Subscription();

@@ -17,6 +17,9 @@ import {
   signupFailure,
   logout,
   createLogoutAction,
+  checkIsLoggedIn,
+  checkIsLoggedInFailure,
+  checkIsLoggedInSuccess,
 } from './user.actions';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { UserService } from 'src/app/services/user/user.service';
@@ -98,6 +101,46 @@ export class UserEffects {
     () => {
       return this.actions$.pipe(
         ofType(loginFailure),
+        tap(({ error }) => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  checkIsLoggedIn$ = createEffect(() => {
+    return this.actions$.pipe(
+      ofType(checkIsLoggedIn),
+      switchMap(() =>
+        this.authService.isLoggedIn().pipe(
+          map(isLoggedIn => checkIsLoggedInSuccess({ isLoggedIn })),
+          catchError(error => of(checkIsLoggedInFailure({ error })))
+        )
+      )
+    );
+  });
+
+  handleCheckIsLoggedInSuccess$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(checkIsLoggedInSuccess),
+        tap(({ isLoggedIn }) => {
+          if (isLoggedIn) {
+            this.inactivityService.setBroadcastEvents();
+            this.inactivityService.setActiveEvents();
+            this.inactivityService.handleActiveEvent();
+          }
+        })
+      );
+    },
+    { dispatch: false }
+  );
+
+  handleCheckIsLoggedInFailure$ = createEffect(
+    () => {
+      return this.actions$.pipe(
+        ofType(checkIsLoggedInFailure),
         tap(({ error }) => {
           this.snackBar.open(error, 'Dismiss', { duration: 5000 });
         })
