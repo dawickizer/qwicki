@@ -8,3 +8,12 @@ export interface UserState {
   isLoggedIn: boolean;
   error: any;
 }
+
+export const initialState: UserState = {
+  user: null,
+  JWT: null,
+  decodedJWT: null,
+  isLoading: false,
+  isLoggedIn: false,
+  error: null,
+};

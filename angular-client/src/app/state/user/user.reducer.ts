@@ -20,16 +20,7 @@ import {
   updateUserFailure,
   updateUserSuccess,
 } from './user.actions';
-import { UserState } from './user.state';
-
-export const initialState: UserState = {
-  user: null,
-  JWT: null,
-  decodedJWT: null,
-  isLoading: false,
-  isLoggedIn: false,
-  error: null,
-};
+import { initialState } from './user.state';
 
 export const userReducer = createReducer(
   initialState,
