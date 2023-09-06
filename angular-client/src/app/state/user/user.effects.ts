@@ -281,7 +281,7 @@ export class UserEffects {
           { duration: 5000 }
         );
       }),
-      map(() => logout(createLogoutAction()))
+      map(() => logout(createLogoutAction({ makeBackendCall: false })))
     );
   });
 
