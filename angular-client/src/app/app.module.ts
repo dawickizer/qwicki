@@ -70,8 +70,8 @@ import { StoreModule } from '@ngrx/store';
 import { userReducer } from './state/user/user.reducer';
 import { EffectsModule } from '@ngrx/effects';
 import { UserEffects } from './state/user/user.effects';
-import { SocialRoomEffects } from './state/social/social-rooms.effects';
-import { socialRoomsReducer } from './state/social/social-rooms.reducer';
+import { SocialRoomEffects } from './state/social-rooms/social-rooms.effects';
+import { socialRoomsReducer } from './state/social-rooms/social-rooms.reducer';
 
 @NgModule({
   declarations: [
