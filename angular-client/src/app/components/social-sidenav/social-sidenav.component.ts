@@ -6,7 +6,7 @@ import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { UserService } from 'src/app/services/user/user.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { Store } from '@ngrx/store';
-import { combineLatest, takeUntil, Subject } from 'rxjs';
+import { combineLatest, takeUntil, Subject, Observable } from 'rxjs';
 import { selectJWT, selectUser } from 'src/app/state/user/user.selectors';
 
 @Component({
@@ -19,6 +19,8 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
 
   self: User;
   selfJWT: any;
+  user$: Observable<User>;
+
   isAsyncDataPresent = false;
   unsubscribe$ = new Subject<void>();
 
@@ -26,9 +28,10 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
     private keyBindService: KeyBindService,
     public authService: AuthService,
     public colyseusService: ColyseusService,
-    private userService: UserService,
     private store: Store
-  ) {}
+  ) {
+    this.user$ = this.store.select(selectUser);
+  }
 
   ngOnInit() {
     combineLatest([this.store.select(selectUser), this.store.select(selectJWT)])
