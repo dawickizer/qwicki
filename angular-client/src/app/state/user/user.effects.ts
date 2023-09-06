@@ -167,7 +167,6 @@ export class UserEffects {
         ofType(checkIsLoggedInSuccess),
         tap(({ isLoggedIn }) => {
           if (isLoggedIn) {
-            this.inactivityService.setBroadcastEvents();
             this.inactivityService.setActiveEvents();
             this.inactivityService.handleActiveEvent();
           }
@@ -203,13 +202,8 @@ export class UserEffects {
           tap(() => {
             this.inactivityService.removeActiveEvents();
             this.inactivityService.stopTimers();
-
-            if (action.broadcast) {
-              this.colyseusService.leaveAllRooms();
-              this.matchMakingService.leaveGameRoom();
-              this.authService.broadcast.postMessage('logout');
-            }
-
+            this.colyseusService.leaveAllRooms();
+            this.matchMakingService.leaveGameRoom();
             this.router.navigate(['auth/login'], action.extras);
           }),
           map(() => logoutSuccess()),

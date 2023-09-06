@@ -28,8 +28,6 @@ import { Actions, ofType } from '@ngrx/effects';
 export class AuthService {
   readonly API = `${environment.EXPRESS_SERVER}/auth`;
 
-  broadcast: BroadcastChannel = new BroadcastChannel('qwicki');
-
   constructor(private http: HttpClient) {}
 
   login(credentials: Credentials): Observable<Credentials> {

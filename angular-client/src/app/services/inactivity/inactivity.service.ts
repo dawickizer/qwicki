@@ -1,4 +1,4 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Observable, timer, Subscription } from 'rxjs';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
 import { Store } from '@ngrx/store';
@@ -14,35 +14,14 @@ export class InactivityService {
   private logoutTimer: Observable<number> = timer(this.logoutThreshold);
   private inactiveTimerSubscription: Subscription = new Subscription();
   private logoutTimerSubscription: Subscription = new Subscription();
-  private broadcast: BroadcastChannel = new BroadcastChannel('qwicki');
   private snackBarRef: MatSnackBarRef<any>;
 
   constructor(
     private snackBar: MatSnackBar,
-    private ngZone: NgZone,
     private store: Store
   ) {}
 
-  broadcastEvents = (event: any) => {
-    if (event.data === 'logout') {
-      this.ngZone.run(() =>
-        this.store.dispatch(
-          logout(
-            createLogoutAction({ makeBackendCall: false, broadcast: false })
-          )
-        )
-      );
-    } else if (event.data === 'active') {
-      this.ngZone.run(() => this.startTimers());
-    }
-  };
-
-  setBroadcastEvents() {
-    this.broadcast.onmessage = this.broadcastEvents;
-  }
-
   handleActiveEvent = () => {
-    this.broadcast.postMessage('active');
     this.startTimers();
   };
 

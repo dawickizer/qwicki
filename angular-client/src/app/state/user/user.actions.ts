@@ -53,12 +53,10 @@ export const checkIsLoggedInFailure = createAction(
 export function createLogoutAction(options?: {
   extras?: NavigationExtras;
   makeBackendCall?: boolean;
-  broadcast?: boolean;
 }) {
   return {
     extras: options?.extras,
     makeBackendCall: options?.makeBackendCall ?? true,
-    broadcast: options?.broadcast ?? true,
   };
 }
 
@@ -67,7 +65,6 @@ export const logout = createAction(
   props<{
     extras?: NavigationExtras;
     makeBackendCall?: boolean;
-    broadcast?: boolean;
   }>()
 );
 
