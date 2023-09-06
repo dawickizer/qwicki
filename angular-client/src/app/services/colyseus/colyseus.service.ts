@@ -13,17 +13,11 @@ export class ColyseusService {
   private _hostRoom: Colyseus.Room;
   private _rooms: Colyseus.Room[] = [];
 
-  async establishHost(host: User, hostJWT: any) {
-    this._host = new User(host);
-    this._hostJWT = hostJWT;
-    this._hostRoom = await this.createRoom(host);
-  }
-
   async establishOnlineFriendsRooms() {
     await this.connectToRooms(this._host.onlineFriends);
   }
 
-  async createRoom(user: User): Promise<Colyseus.Room> {
+  async createRoom(user: User, JWT: string): Promise<Colyseus.Room> {
     try {
       let room: Colyseus.Room = await this.joinExistingRoomIfPresent(user);
       if (!room) {
@@ -121,5 +115,63 @@ export class ColyseusService {
 
   get onlineFriendsRooms(): Colyseus.Room[] {
     return this._rooms.filter(room => room.id !== this._hostRoom.id);
+  }
+
+
+
+
+
+
+
+
+
+
+  async createRoomXXX(roomId: string, JWT: string): Promise<Colyseus.Room> {
+    try {
+      let room: Colyseus.Room = await this.joinExistingRoomIfPresentXXX(roomId, JWT);
+      if (!room) {
+        room = await this._client.create('social_room', {
+          accessToken: JWT,
+        });
+      }
+      return room;
+    } catch (e) {
+      console.error('join error', e);
+      return null;
+    }
+  }
+
+  async joinExistingRoomIfPresentXXX(roomId: string, JWT: string): Promise<Colyseus.Room> {
+    const availableRooms: Colyseus.RoomAvailable[] =
+      await this._client.getAvailableRooms();
+    const hasExistingRoom: boolean = availableRooms.some(
+      (availableRoom: any) => availableRoom.roomId === roomId
+    );
+    let room: Colyseus.Room;
+    if (hasExistingRoom) room = await this.connectToRoomXXX(roomId, JWT);
+    return room;
+  }
+
+  async connectToRoomXXX(roomId: string, JWT: string): Promise<Colyseus.Room> {
+    try {
+      const room: Colyseus.Room = await this._client.joinById(roomId, {
+        accessToken: JWT,
+      });
+      return room;
+    } catch (e) {
+      console.error('join error', e);
+      return null;
+    }
+  }
+
+  async connectToRoomsXXX(roomIds: string[], JWT: string): Promise<Colyseus.Room[]> {
+    try {
+      const promises: Promise<Colyseus.Room>[] = [];
+      roomIds.forEach(roomId => promises.push(this.connectToRoomXXX(roomId, JWT)));
+      return await Promise.all(promises);
+    } catch (e) {
+      console.error('join error', e);
+      return null;
+    }
   }
 }

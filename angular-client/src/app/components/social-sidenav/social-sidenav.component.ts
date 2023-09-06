@@ -8,6 +8,7 @@ import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { Store } from '@ngrx/store';
 import { combineLatest, takeUntil, Subject, Observable } from 'rxjs';
 import { selectJWT, selectUser } from 'src/app/state/user/user.selectors';
+import { createPersonalRoom } from 'src/app/state/social-rooms/social-rooms.actions';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -34,12 +35,15 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+
+    this.store.dispatch(createPersonalRoom());
+
     combineLatest([this.store.select(selectUser), this.store.select(selectJWT)])
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(async ([self, jwt]) => {
         this.self = self;
         this.selfJWT = jwt;
-        await this.colyseusService.establishHost(this.self, this.selfJWT);
+        //await this.colyseusService.establishHost(this.self, this.selfJWT);
         this.isAsyncDataPresent = true;
       });
 

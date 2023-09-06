@@ -1,21 +1,17 @@
 import { createAction, props } from '@ngrx/store';
 import * as Colyseus from 'colyseus.js';
 
-export const establishHost = createAction(
-  '[SocialRooms] Establish Host',
-  props<{ hostJWT: any }>()
+// social-rooms.actions.ts
+export const createPersonalRoom = createAction(
+  '[Social Rooms] Create Personal Room'
 );
 
-export const establishOnlineFriendsRooms = createAction(
-  '[SocialRooms] Establish Online Friends Rooms'
-);
-
-export const roomCreated = createAction(
-  '[SocialRooms] Room Created',
+export const createPersonalRoomSuccess = createAction(
+  '[Social Rooms] Create Personal Room Success',
   props<{ room: Colyseus.Room }>()
 );
 
-export const roomJoined = createAction(
-  '[SocialRooms] Room Joined',
-  props<{ room: Colyseus.Room }>()
+export const createPersonalRoomFailure = createAction(
+  '[Social Rooms] Create Personal Room Failure',
+  props<{ error: any }>()
 );
