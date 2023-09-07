@@ -117,15 +117,15 @@ export class ColyseusService {
     return this._rooms.filter(room => room.id !== this._hostRoom.id);
   }
 
-  async createRoomXXX(roomId: string, JWT: string): Promise<Colyseus.Room> {
+  async createRoomXXX(roomId: string, jwt: string): Promise<Colyseus.Room> {
     try {
       let room: Colyseus.Room = await this.joinExistingRoomIfPresentXXX(
         roomId,
-        JWT
+        jwt
       );
       if (!room) {
         room = await this._client.create('social_room', {
-          accessToken: JWT,
+          accessToken: jwt,
         });
       }
       return room;
@@ -137,7 +137,7 @@ export class ColyseusService {
 
   async joinExistingRoomIfPresentXXX(
     roomId: string,
-    JWT: string
+    jwt: string
   ): Promise<Colyseus.Room> {
     const availableRooms: Colyseus.RoomAvailable[] =
       await this._client.getAvailableRooms();
@@ -145,14 +145,14 @@ export class ColyseusService {
       (availableRoom: any) => availableRoom.roomId === roomId
     );
     let room: Colyseus.Room;
-    if (hasExistingRoom) room = await this.connectToRoomXXX(roomId, JWT);
+    if (hasExistingRoom) room = await this.connectToRoomXXX(roomId, jwt);
     return room;
   }
 
-  async connectToRoomXXX(roomId: string, JWT: string): Promise<Colyseus.Room> {
+  async connectToRoomXXX(roomId: string, jwt: string): Promise<Colyseus.Room> {
     try {
       const room: Colyseus.Room = await this._client.joinById(roomId, {
-        accessToken: JWT,
+        accessToken: jwt,
       });
       return room;
     } catch (e) {
@@ -163,12 +163,12 @@ export class ColyseusService {
 
   async connectToRoomsXXX(
     roomIds: string[],
-    JWT: string
+    jwt: string
   ): Promise<Colyseus.Room[]> {
     try {
       const promises: Promise<Colyseus.Room>[] = [];
       roomIds.forEach(roomId =>
-        promises.push(this.connectToRoomXXX(roomId, JWT))
+        promises.push(this.connectToRoomXXX(roomId, jwt))
       );
       return await Promise.all(promises);
     } catch (e) {
