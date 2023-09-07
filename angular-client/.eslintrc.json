@@ -1,13 +1,9 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
+  "ignorePatterns": ["projects/**/*"],
   "overrides": [
     {
-      "files": [
-        "*.ts"
-      ],
+      "files": ["*.ts"],
       "extends": [
         "eslint:recommended",
         "plugin:@typescript-eslint/recommended",
@@ -33,19 +29,12 @@
             "style": "kebab-case"
           }
         ],
-        "linebreak-style": [
-          "error",
-          "unix"
-        ]
+        "linebreak-style": ["error", "unix"]
       }
     },
     {
-      "files": [
-        "*.html"
-      ],
-      "excludedFiles": [
-        "*inline-template-*.component.html"
-      ],
+      "files": ["*.html"],
+      "excludedFiles": ["*inline-template-*.component.html"],
       "extends": [
         "plugin:@angular-eslint/template/recommended",
         "plugin:prettier/recommended"
@@ -57,19 +46,8 @@
             "parser": "angular"
           }
         ],
-        "linebreak-style": [
-          "error",
-          "unix"
-        ]
+        "linebreak-style": ["error", "unix"]
       }
-    },
-    {
-      "files": [
-        "*.ts"
-      ],
-      "extends": [
-        "plugin:@ngrx/recommended"
-      ]
     }
   ]
 }
