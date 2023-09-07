@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap, of, catchError, from } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-import { SocialRoomsState, initialState } from './soical-rooms.state';
+import { SocialRoomsState, initialState } from './social-rooms.state';
 import {
+  connectedRoomsSelector,
   isLoadingSelector,
   personalRoomSelector,
 } from './social-rooms.selectors';
@@ -24,6 +25,7 @@ export class SocialRoomsStateService {
     this._socialRoomsState.asObservable();
   public isLoading$ = isLoadingSelector(this.socialRoomsState$);
   public personalRoom$ = personalRoomSelector(this.socialRoomsState$);
+  public connectedRooms$ = connectedRoomsSelector(this.socialRoomsState$);
 
   constructor(
     private userStateService: UserStateService,
@@ -44,6 +46,132 @@ export class SocialRoomsStateService {
       .pipe(
         tap(room => {
           this.setPersonalRoom(room);
+          this.addConnectedRoom(room);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  createRoom(roomId: string): void {
+    this.setIsLoading(true);
+    from(this.colyseusService.createRoomXXX(roomId, this.jwt))
+      .pipe(
+        tap(room => {
+          this.addConnectedRoom(room);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  connectToRoom(roomId: string): void {
+    this.setIsLoading(true);
+    from(this.colyseusService.connectToRoomXXX(roomId, this.jwt))
+      .pipe(
+        tap(room => {
+          this.addConnectedRoom(room);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  connectToRooms(roomIds: string[]): void {
+    this.setIsLoading(true);
+    from(this.colyseusService.connectToRoomsXXX(roomIds, this.jwt))
+      .pipe(
+        tap(rooms => {
+          this.addConnectedRooms(rooms);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  joinExistingRoomIfPresent(roomId: string): void {
+    this.setIsLoading(true);
+    from(this.colyseusService.joinExistingRoomIfPresentXXX(roomId, this.jwt))
+      .pipe(
+        tap(room => {
+          if (room) this.addConnectedRoom(room);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  leaveRoom(room: Room): void {
+    this.setIsLoading(true);
+    from(this.colyseusService.leaveRoomXXX(room))
+      .pipe(
+        tap(() => {
+          this.removeConnectedRoom(room);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  leaveRooms(rooms: Room[]): void {
+    this.setIsLoading(true);
+    from(this.colyseusService.leaveRoomsXXX(rooms))
+      .pipe(
+        tap(() => {
+          this.removeConnectedRooms(rooms);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  leaveAllRooms(): void {
+    this.setIsLoading(true);
+    const currentState = this._socialRoomsState.value;
+    const rooms = [...currentState.connectedRooms];
+    if (currentState.personalRoom) {
+      rooms.push(currentState.personalRoom);
+    }
+
+    from(this.colyseusService.leaveRoomsXXX(rooms))
+      .pipe(
+        tap(() => {
+          this.setInitialState();
           this.setIsLoading(false);
         }),
         catchError(error => {
@@ -62,6 +190,58 @@ export class SocialRoomsStateService {
   setPersonalRoom(personalRoom: Room): void {
     const currentState = this._socialRoomsState.value;
     this._socialRoomsState.next({ ...currentState, personalRoom });
+  }
+
+  addConnectedRoom(room: Room): void {
+    const currentState = this._socialRoomsState.value;
+    const updatedConnectedRooms = [...currentState.connectedRooms, room];
+    this._socialRoomsState.next({
+      ...currentState,
+      connectedRooms: updatedConnectedRooms,
+    });
+  }
+
+  addConnectedRooms(rooms: Room[]): void {
+    const currentState = this._socialRoomsState.value;
+    const updatedConnectedRooms = [...currentState.connectedRooms, ...rooms];
+    this._socialRoomsState.next({
+      ...currentState,
+      connectedRooms: updatedConnectedRooms,
+    });
+  }
+
+  removeConnectedRoomById(roomId: string): void {
+    const currentState = this._socialRoomsState.value;
+    const updatedConnectedRooms = currentState.connectedRooms.filter(
+      r => r.id !== roomId
+    );
+    this._socialRoomsState.next({
+      ...currentState,
+      connectedRooms: updatedConnectedRooms,
+    });
+  }
+
+  removeConnectedRoom(room: Room): void {
+    const currentState = this._socialRoomsState.value;
+    const updatedConnectedRooms = currentState.connectedRooms.filter(
+      r => r.id !== room.id
+    );
+    this._socialRoomsState.next({
+      ...currentState,
+      connectedRooms: updatedConnectedRooms,
+    });
+  }
+
+  removeConnectedRooms(roomsToRemove: Room[]): void {
+    const currentState = this._socialRoomsState.value;
+    const roomIdsToRemove = roomsToRemove.map(room => room.id);
+    const updatedConnectedRooms = currentState.connectedRooms.filter(
+      room => !roomIdsToRemove.includes(room.id)
+    );
+    this._socialRoomsState.next({
+      ...currentState,
+      connectedRooms: updatedConnectedRooms,
+    });
   }
 
   setIsLoading(isLoading: boolean): void {

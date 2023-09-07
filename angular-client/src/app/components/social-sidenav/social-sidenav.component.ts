@@ -7,6 +7,7 @@ import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { Subject, Observable } from 'rxjs';
 import { UserStateService } from 'src/app/state/user/user.state.service';
 import { SocialRoomsStateService } from 'src/app/state/social-rooms/social-rooms.state.service';
+import { Room } from 'colyseus.js';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -17,8 +18,10 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') drawer: MatSidenav;
 
   user$: Observable<User>;
-  isLoading$: Observable<boolean>;
+  userStateIsLoading$: Observable<boolean>;
   unsubscribe$ = new Subject<void>();
+
+  room: Room;
 
   constructor(
     private keyBindService: KeyBindService,
@@ -30,8 +33,15 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.user$ = this.userStateService.user$;
-    this.isLoading$ = this.userStateService.isLoading$;
+    this.userStateIsLoading$ = this.userStateService.isLoading$;
+
+    this.socialRoomsStateService.socialRoomsState$.subscribe(state => {
+      console.log(state);
+      this.room = state.personalRoom;
+    });
+
     this.socialRoomsStateService.createPersonalRoom();
+
     this.handleSideNavKeyBind();
   }
 
@@ -44,6 +54,7 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   handleSideNavKeyBind() {
     this.keyBindService.setKeyBind('keydown', event => {
       if (event.code == 'Tab') {
+        this.socialRoomsStateService.leaveRoom(this.room);
         event.preventDefault();
         if (document.fullscreenElement) document.exitFullscreen();
         this.drawer.toggle();

@@ -176,4 +176,19 @@ export class ColyseusService {
       return null;
     }
   }
+
+  leaveRoomXXX(room: Colyseus.Room): Promise<number> {
+    return room.leave();
+  }
+
+  leaveRoomsXXX(rooms: Colyseus.Room[]): Promise<number[]> {
+    const leavePromises = rooms.map((room: Colyseus.Room) =>
+      this.leaveRoomXXX(room)
+    );
+    return Promise.all(leavePromises);
+  }
+
+  leaveAllRoomsXXX(): Promise<number[]> {
+    return this.leaveRoomsXXX(this._rooms);
+  }
 }

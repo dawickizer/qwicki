@@ -1,5 +1,5 @@
 <mat-drawer-container
-  *ngIf="(isLoading$ | async) === false"
+  *ngIf="(userStateIsLoading$ | async) === false"
   class="example-container"
   autosize>
   <mat-drawer #drawer class="example-sidenav" mode="over">
