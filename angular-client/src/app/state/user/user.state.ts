@@ -1,3 +1,4 @@
+import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { User } from 'src/app/models/user/user';
 
 export interface UserState {
@@ -5,7 +6,7 @@ export interface UserState {
   isLoggedIn: boolean;
   isLoading: boolean;
   jwt: string;
-  decodedJwt: string | null;
+  decodedJwt: DecodedJwt | null;
 }
 
 export const initialState: UserState = {

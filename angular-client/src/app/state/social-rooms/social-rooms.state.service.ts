@@ -10,12 +10,13 @@ import {
 } from './social-rooms.selectors';
 import { Room } from 'colyseus.js';
 import { UserStateService } from '../user/user.state.service';
+import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocialRoomsStateService {
-  private decodedJwt: any;
+  private decodedJwt: DecodedJwt;
   private jwt: string;
   private _socialRoomsState = new BehaviorSubject<SocialRoomsState>(
     initialState
@@ -32,7 +33,7 @@ export class SocialRoomsStateService {
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
-    this.userStateService.user$.subscribe(decodedJwt => {
+    this.userStateService.decodedJwt$.subscribe(decodedJwt => {
       this.decodedJwt = decodedJwt;
     });
     this.userStateService.jwt$.subscribe(jwt => {
@@ -41,6 +42,7 @@ export class SocialRoomsStateService {
   }
 
   createPersonalRoom(): void {
+    console.log(this.decodedJwt);
     this.setIsLoading(true);
     from(this.colyseusService.createRoomXXX(this.decodedJwt._id, this.jwt))
       .pipe(
@@ -132,6 +134,7 @@ export class SocialRoomsStateService {
       .pipe(
         tap(() => {
           this.removeConnectedRoom(room);
+          if (room.id === this.decodedJwt._id) this.setPersonalRoom(null);
           this.setIsLoading(false);
         }),
         catchError(error => {
@@ -149,6 +152,8 @@ export class SocialRoomsStateService {
       .pipe(
         tap(() => {
           this.removeConnectedRooms(rooms);
+          if (rooms.some(room => room.id === this.decodedJwt._id))
+            this.setPersonalRoom(null);
           this.setIsLoading(false);
         }),
         catchError(error => {

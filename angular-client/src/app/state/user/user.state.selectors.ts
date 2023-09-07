@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { UserState } from './user.state';
 import { User } from 'src/app/models/user/user';
+import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 
 export const jwtSelector = (
   userState$: Observable<UserState>
@@ -21,7 +22,7 @@ export const userSelector = (
 
 export const decodedJwtSelector = (
   userState$: Observable<UserState>
-): Observable<any> =>
+): Observable<DecodedJwt> =>
   userState$.pipe(
     map(state => state.decodedJwt),
     distinctUntilChanged()

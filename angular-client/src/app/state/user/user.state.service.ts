@@ -24,6 +24,7 @@ import {
 import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
+import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 
 @Injectable({
   providedIn: 'root',
@@ -67,7 +68,7 @@ export class UserStateService {
         switchMap(() => {
           return this.authService.currentUser();
         }),
-        tap((decodedJwt: any) => {
+        tap((decodedJwt: DecodedJwt) => {
           this.setDecodedJwt(decodedJwt);
         }),
         switchMap(decodedJwt => {
@@ -99,7 +100,7 @@ export class UserStateService {
         switchMap(() => {
           return this.authService.currentUser();
         }),
-        tap((decodedJwt: any) => {
+        tap((decodedJwt: DecodedJwt) => {
           this.setDecodedJwt(decodedJwt);
         }),
         switchMap(decodedJwt => {
@@ -236,7 +237,7 @@ export class UserStateService {
     this._userState.next({ ...currentState, jwt });
   }
 
-  setDecodedJwt(decodedJwt: string): void {
+  setDecodedJwt(decodedJwt: DecodedJwt): void {
     const currentState = this._userState.value;
     this._userState.next({ ...currentState, decodedJwt });
   }
