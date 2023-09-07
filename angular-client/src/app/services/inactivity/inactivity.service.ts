@@ -1,8 +1,6 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Observable, timer, Subscription } from 'rxjs';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { Store } from '@ngrx/store';
-import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
 
 @Injectable({
   providedIn: 'root',
@@ -16,10 +14,9 @@ export class InactivityService {
   private logoutTimerSubscription: Subscription = new Subscription();
   private snackBarRef: MatSnackBarRef<any>;
 
-  constructor(
-    private snackBar: MatSnackBar,
-    private store: Store
-  ) {}
+  userInactive: EventEmitter<void> = new EventEmitter();
+
+  constructor(private snackBar: MatSnackBar) {}
 
   handleActiveEvent = () => {
     this.startTimers();
@@ -64,7 +61,7 @@ export class InactivityService {
   startLogoutTimer() {
     this.logoutTimerSubscription.unsubscribe();
     this.logoutTimerSubscription = this.logoutTimer.subscribe(() => {
-      this.store.dispatch(logout(createLogoutAction()));
+      this.userInactive.emit();
       this.snackBarRef = this.snackBar.open(
         'You were logged out due to inactivity',
         '',

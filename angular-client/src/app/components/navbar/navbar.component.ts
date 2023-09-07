@@ -1,21 +1,21 @@
-import { Component } from '@angular/core';
-import { Store } from '@ngrx/store';
+import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { createLogoutAction, logout } from 'src/app/state/user/user.actions';
-import { selectIsLoggedIn } from 'src/app/state/user/user.selectors';
+import { UserStateService } from 'src/app/state/user/user.state.service';
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.css'],
 })
-export class NavbarComponent {
+export class NavbarComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
 
-  constructor(private store: Store) {
-    this.isLoggedIn$ = this.store.select(selectIsLoggedIn);
+  constructor(private userStateService: UserStateService) {}
+
+  ngOnInit(): void {
+    this.isLoggedIn$ = this.userStateService.isLoggedIn$;
   }
 
   logout() {
-    this.store.dispatch(logout(createLogoutAction()));
+    this.userStateService.logout();
   }
 }

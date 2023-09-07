@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { User } from 'src/app/models/user/user';
-import { Store } from '@ngrx/store';
-import { signup } from 'src/app/state/user/user.actions';
+import { UserStateService } from 'src/app/state/user/user.state.service';
 
 @Component({
   selector: 'app-signup',
@@ -11,9 +10,9 @@ import { signup } from 'src/app/state/user/user.actions';
 export class SignupComponent {
   user: User = new User();
 
-  constructor(private store: Store) {}
+  constructor(private userStateService: UserStateService) {}
 
   signup() {
-    this.store.dispatch(signup({ user: new User(this.user), route: '/' }));
+    this.userStateService.signup(new User(this.user), '/');
   }
 }

@@ -66,12 +66,7 @@ import { MatchMakingService } from './services/match-making/match-making.service
 import { GameService } from './services/game/game.service';
 
 // State
-import { StoreModule } from '@ngrx/store';
-import { userReducer } from './state/user/user.reducer';
-import { EffectsModule } from '@ngrx/effects';
-import { UserEffects } from './state/user/user.effects';
-import { SocialRoomEffects } from './state/social-rooms/social-rooms.effects';
-import { socialRoomsReducer } from './state/social-rooms/social-rooms.reducer';
+import { UserStateService } from './state/user/user.state.service';
 
 @NgModule({
   declarations: [
@@ -119,8 +114,6 @@ import { socialRoomsReducer } from './state/social-rooms/social-rooms.reducer';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    StoreModule.forRoot({ user: userReducer, socialRooms: socialRoomsReducer }),
-    EffectsModule.forRoot(UserEffects, SocialRoomEffects),
   ],
   providers: [
     UserService,
@@ -135,6 +128,7 @@ import { socialRoomsReducer } from './state/social-rooms/social-rooms.reducer';
     KeyBindService,
     SocialService,
     MatchMakingService,
+    UserStateService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],

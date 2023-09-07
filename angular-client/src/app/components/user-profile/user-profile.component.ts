@@ -1,10 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Store } from '@ngrx/store';
 import { User } from 'src/app/models/user/user';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { selectUser, selectUserError } from 'src/app/state/user/user.selectors';
-import { deleteUser, updateUser } from 'src/app/state/user/user.actions';
+import { UserStateService } from 'src/app/state/user/user.state.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -15,25 +13,13 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   user: User = new User();
   unsubscribe$ = new Subject<void>();
 
-  constructor(private store: Store) {}
+  constructor(private userStateService: UserStateService) {}
 
   ngOnInit(): void {
-    this.store
-      .select(selectUser)
+    this.userStateService.user$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(user => {
-        if (user) {
-          this.user = new User(user);
-        }
-      });
-
-    this.store
-      .select(selectUserError)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(error => {
-        if (error) {
-          //handle error
-        }
+        this.user = new User(user);
       });
   }
 
@@ -43,10 +29,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   update() {
-    this.store.dispatch(updateUser({ user: new User(this.user) }));
+    this.userStateService.updateUser(this.user);
   }
 
   delete() {
-    this.store.dispatch(deleteUser({ user: new User(this.user) }));
+    this.userStateService.deleteUser(this.user);
+    this.userStateService.logout({ makeBackendCall: false });
   }
 }

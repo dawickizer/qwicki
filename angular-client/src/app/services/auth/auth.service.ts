@@ -8,20 +8,11 @@ import {
 } from '@angular/common/http';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { catchError, first, switchMap, take } from 'rxjs/operators';
+import { catchError } from 'rxjs/operators';
 import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
-import {
-  checkIsLoggedIn,
-  checkIsLoggedInFailure,
-  checkIsLoggedInSuccess,
-  createLogoutAction,
-  logout,
-} from 'src/app/state/user/user.actions';
-import { Store } from '@ngrx/store';
-import { selectIsLoggedIn, selectJWT } from 'src/app/state/user/user.selectors';
-import { Actions, ofType } from '@ngrx/effects';
+import { UserStateService } from 'src/app/state/user/user.state.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -78,42 +69,22 @@ export class AuthService {
 
 @Injectable()
 export class AuthGuardService {
-  constructor(
-    private store: Store,
-    private actions$: Actions
-  ) {}
+  constructor(private userStateService: UserStateService) {}
 
   // do NOT remove route param as it affects angular dep injection and will cause bugs with router logic
   async canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean> {
-    this.store.dispatch(checkIsLoggedIn());
-
-    // Wait for the success or failure action to be dispatched
-    await firstValueFrom(
-      this.actions$.pipe(
-        ofType(checkIsLoggedInSuccess, checkIsLoggedInFailure),
-        take(1)
-      )
-    );
-
-    // Now read the latest value from the store
-    const isLoggedIn = await firstValueFrom(
-      this.store.select(selectIsLoggedIn)
-    );
+    const isLoggedIn = await firstValueFrom(this.userStateService.isLoggedIn());
 
     if (isLoggedIn) {
       return true;
     } else {
-      this.store.dispatch(
-        logout(
-          createLogoutAction({
-            extras: { queryParams: { return: state.url } },
-            makeBackendCall: false,
-          })
-        )
-      );
+      this.userStateService.logout({
+        extras: { queryParams: { return: state.url } },
+        makeBackendCall: false,
+      });
       return false;
     }
   }
@@ -121,24 +92,25 @@ export class AuthGuardService {
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private store: Store) {}
+  jwt: string;
+
+  constructor(private userStateService: UserStateService) {
+    this.userStateService.jwt$.subscribe(jwt => {
+      this.jwt = jwt;
+    });
+  }
 
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
-    return this.store.select(selectJWT).pipe(
-      first(),
-      switchMap(token => {
-        if (token) {
-          const authReq = req.clone({
-            setHeaders: { Authorization: `Bearer ${token}` },
-          });
-          return next.handle(authReq);
-        } else {
-          return next.handle(req);
-        }
-      })
-    );
+    if (this.jwt) {
+      const authReq = req.clone({
+        setHeaders: { Authorization: `Bearer ${this.jwt}` },
+      });
+      return next.handle(authReq);
+    } else {
+      return next.handle(req);
+    }
   }
 }
