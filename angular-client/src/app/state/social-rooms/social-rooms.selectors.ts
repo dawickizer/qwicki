@@ -26,3 +26,15 @@ export const connectedRoomsSelector = (
     map(state => state.connectedRooms),
     distinctUntilChanged()
   );
+
+export const onlineFriendsRoomsSelector = (
+  socialRoomsState$: Observable<SocialRoomsState>
+): Observable<Room[]> =>
+  socialRoomsState$.pipe(
+    map(state =>
+      state.connectedRooms.filter(
+        connectedRoom => connectedRoom.id !== state.personalRoom?.id
+      )
+    ),
+    distinctUntilChanged()
+  );
