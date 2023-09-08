@@ -20,7 +20,7 @@ export class HomeComponent implements OnInit {
   }
 
   setSelf() {
-    this.matchMakingService.self = this.colyseusService.host;
-    this.matchMakingService.selfJWT = this.colyseusService.hostJWT;
+    // this.matchMakingService.self = this.colyseusService.host;
+    // this.matchMakingService.selfJWT = this.colyseusService.hostJWT;
   }
 }

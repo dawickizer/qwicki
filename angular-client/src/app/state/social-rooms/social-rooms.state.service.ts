@@ -51,42 +51,42 @@ export class SocialRoomsStateService {
 
   createRoom(roomId: string): void {
     this.setIsLoading(true);
-    from(this.colyseusService.createRoomXXX(roomId, this.jwt))
+    from(this.colyseusService.createRoom(roomId, this.jwt))
       .pipe(tap(this.handleConnectedRoomSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   connectToRoom(roomId: string): void {
     this.setIsLoading(true);
-    from(this.colyseusService.connectToRoomXXX(roomId, this.jwt))
+    from(this.colyseusService.connectToRoom(roomId, this.jwt))
       .pipe(tap(this.handleConnectedRoomSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   connectToRooms(roomIds: string[]): void {
     this.setIsLoading(true);
-    from(this.colyseusService.connectToRoomsXXX(roomIds, this.jwt))
+    from(this.colyseusService.connectToRooms(roomIds, this.jwt))
       .pipe(tap(this.handleConnectedRoomsSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   joinExistingRoomIfPresent(roomId: string): void {
     this.setIsLoading(true);
-    from(this.colyseusService.joinExistingRoomIfPresentXXX(roomId, this.jwt))
+    from(this.colyseusService.joinExistingRoomIfPresent(roomId, this.jwt))
       .pipe(tap(this.handleConnectedRoomSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   joinExistingRoomsIfPresent(roomIds: string[]): void {
     this.setIsLoading(true);
-    from(this.colyseusService.joinExistingRoomsIfPresentXXX(roomIds, this.jwt))
+    from(this.colyseusService.joinExistingRoomsIfPresent(roomIds, this.jwt))
       .pipe(tap(this.handleConnectedRoomsSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   leaveRoom(room: Room): void {
     this.setIsLoading(true);
-    from(this.colyseusService.leaveRoomXXX(room))
+    from(this.colyseusService.leaveRoom(room))
       .pipe(
         tap(() => {
           this.removeConnectedRoom(room);
@@ -100,7 +100,7 @@ export class SocialRoomsStateService {
 
   leaveRooms(rooms: Room[]): void {
     this.setIsLoading(true);
-    from(this.colyseusService.leaveRoomsXXX(rooms))
+    from(this.colyseusService.leaveRooms(rooms))
       .pipe(
         tap(() => {
           this.removeConnectedRooms(rooms);
@@ -121,7 +121,7 @@ export class SocialRoomsStateService {
       rooms.push(currentState.personalRoom);
     }
 
-    from(this.colyseusService.leaveRoomsXXX(rooms))
+    from(this.colyseusService.leaveRooms(rooms))
       .pipe(
         tap(() => {
           this.setInitialState();
