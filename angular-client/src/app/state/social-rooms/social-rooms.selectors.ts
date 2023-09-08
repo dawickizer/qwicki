@@ -27,7 +27,7 @@ export const connectedRoomsSelector = (
     distinctUntilChanged()
   );
 
-export const onlineFriendsRoomsSelector = (
+export const friendsRoomsSelector = (
   socialRoomsState$: Observable<SocialRoomsState>
 ): Observable<Room[]> =>
   socialRoomsState$.pipe(

@@ -6,7 +6,7 @@ import { SocialRoomsState, initialState } from './social-rooms.state';
 import {
   connectedRoomsSelector,
   isLoadingSelector,
-  onlineFriendsRoomsSelector,
+  friendsRoomsSelector,
   personalRoomSelector,
 } from './social-rooms.selectors';
 import { Room } from 'colyseus.js';
@@ -30,9 +30,7 @@ export class SocialRoomsStateService {
   public isLoading$ = isLoadingSelector(this.socialRoomsState$);
   public personalRoom$ = personalRoomSelector(this.socialRoomsState$);
   public connectedRooms$ = connectedRoomsSelector(this.socialRoomsState$);
-  public onlineFriendsRooms$ = onlineFriendsRoomsSelector(
-    this.socialRoomsState$
-  );
+  public friendsRooms$ = friendsRoomsSelector(this.socialRoomsState$);
 
   constructor(
     private userStateService: UserStateService,
