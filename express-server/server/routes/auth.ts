@@ -20,7 +20,6 @@ router.post('/login', requestBody, async (req, res) => {
   const user: User | null = await userService.getByCredentials(req.body);
 
   if (user) {
-    user.online = true;
     userService.put(user.id, user);
     res.status(200).json({
       token: jwt.sign(
@@ -40,8 +39,7 @@ router.post('/signup', requestBody, async (req, res) => {
     const user: User | null = await userService.post({
       ...req.body,
       role: 'user',
-      online: true,
-    }); // prevent user from changing role and set online status
+    });
     if (user)
       res.status(201).json({
         token: jwt.sign(
@@ -55,7 +53,7 @@ router.post('/signup', requestBody, async (req, res) => {
   }
 });
 
-// PUT to logout a user (set online status to false)
+// PUT to logout a user
 router.put(
   '/logout',
   [isAuthenticatedJWT, requestBody],
@@ -64,7 +62,6 @@ router.put(
       let user: User | null = await userService.get(req.body.decodedJWT._id);
 
       if (user) {
-        user.online = false;
         user = await userService.put(user.id, user);
         res.status(200).send();
       } else res.status(500).send('Problem logging out user');

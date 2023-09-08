@@ -10,7 +10,6 @@ interface User extends Document {
   firstName: string;
   middleName: string;
   lastName: string;
-  online: boolean;
   friends: Schema.Types.ObjectId[];
   inboundFriendRequests: Schema.Types.ObjectId[];
   outboundFriendRequests: Schema.Types.ObjectId[];
@@ -26,7 +25,6 @@ const UserSchema = new Schema<User>({
   firstName: { type: String, default: null },
   middleName: { type: String, default: null },
   lastName: { type: String, default: null },
-  online: { type: Boolean, default: false },
   friends: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
   inboundFriendRequests: [
     { type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' },

@@ -25,7 +25,7 @@ class UserService {
 
   // GET a user by id and populate its friends
   async getAndPopulateFriends(id: string): Promise<User | null> {
-    return await User.findById(id).populate('friends', ['username', 'online']);
+    return await User.findById(id).populate('friends', ['username']);
   }
 
   // GET a user by id and populate its friend requests
@@ -38,7 +38,7 @@ class UserService {
   // GET a user by id and populate children
   async getAndPopulateChildren(id: string): Promise<User | null> {
     return await User.findById(id)
-      .populate('friends', ['username', 'online'])
+      .populate('friends', ['username'])
       .populate(this.friendRequest('inboundFriendRequests'))
       .populate(this.friendRequest('outboundFriendRequests'));
   }
@@ -86,7 +86,7 @@ class UserService {
     user.usernameLower = user.username;
     return await User.findOneAndUpdate({ _id: id }, user, {
       new: true,
-    }).populate('friends', ['username', 'online']);
+    }).populate('friends', ['username']);
   }
 
   // PUT a user
@@ -107,7 +107,7 @@ class UserService {
   ): Promise<User | null> {
     user.usernameLower = user.username;
     return await User.findOneAndUpdate({ _id: id }, user, { new: true })
-      .populate('friends', ['username', 'online'])
+      .populate('friends', ['username'])
       .populate(this.friendRequest('inboundFriendRequests'))
       .populate(this.friendRequest('outboundFriendRequests'));
   }
