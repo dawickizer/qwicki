@@ -90,7 +90,7 @@ export class SocialRoomsStateService {
       .pipe(
         tap(() => {
           this.removeConnectedRoom(room);
-          if (room.id === this.decodedJwt._id) this.setPersonalRoom(null);
+          if (this.isPersonalRoom(room.id)) this.setPersonalRoom(null);
           this.setIsLoading(false);
         }),
         catchError(this.handleError)
@@ -104,7 +104,7 @@ export class SocialRoomsStateService {
       .pipe(
         tap(() => {
           this.removeConnectedRooms(rooms);
-          if (rooms.some(room => room.id === this.decodedJwt._id))
+          if (rooms.some(room => this.isPersonalRoom(room.id)))
             this.setPersonalRoom(null);
           this.setIsLoading(false);
         }),
