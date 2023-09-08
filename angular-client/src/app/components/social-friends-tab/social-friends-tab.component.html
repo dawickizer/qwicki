@@ -1,11 +1,11 @@
-<!-- <div class="social-friends-tab" *ngIf="isAsyncDataPresent">
-  <app-social-friend-requests-list
+<div class="social-friends-tab" *ngIf="isAsyncDataPresent">
+  <!-- <app-social-friend-requests-list
     title="friend requests"
     titleColor="color:aliceblue"
     [(friendRequests)]="inboundFriendRequests"
     (send)="onSendFriendRequest($event)"
     (accept)="onAcceptFriendRequest()"></app-social-friend-requests-list>
-  <br />
+  <br /> -->
   <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -14,7 +14,7 @@
         </h1>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <form>
+    <!-- <form>
       <mat-form-field class="social-friends-full-width">
         <mat-label>Search</mat-label>
         <input matInput (keyup)="filter($event)" name="filter" />
@@ -34,6 +34,6 @@
       title="pending"
       titleColor="color:rgba(236, 232, 0, 0.884)"
       [(friendRequests)]="outboundFriendRequests"
-      [update]="update"></app-social-friend-requests-list>
+      [update]="update"></app-social-friend-requests-list> -->
   </mat-expansion-panel>
-</div> -->
+</div>

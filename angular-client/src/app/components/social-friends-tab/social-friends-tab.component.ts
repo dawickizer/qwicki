@@ -1,47 +1,47 @@
-// import { Component, OnInit, ViewChild } from '@angular/core';
-// import { MatSidenav } from '@angular/material/sidenav';
-// import { MatSnackBar } from '@angular/material/snack-bar';
-// import { MatTableDataSource } from '@angular/material/table';
-// import { Router } from '@angular/router';
-// import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-// import { User } from 'src/app/models/user/user';
-// import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-// import { Message } from 'src/app/models/message/message';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
+import { Router } from '@angular/router';
+import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { User } from 'src/app/models/user/user';
+import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
+import { Message } from 'src/app/models/message/message';
 
-// @Component({
-//   selector: 'app-social-friends-tab',
-//   templateUrl: './social-friends-tab.component.html',
-//   styleUrls: ['./social-friends-tab.component.css'],
-// })
-// export class SocialFriendsTabComponent implements OnInit {
-//   @ViewChild('drawer') drawer: MatSidenav;
+@Component({
+  selector: 'app-social-friends-tab',
+  templateUrl: './social-friends-tab.component.html',
+  styleUrls: ['./social-friends-tab.component.css'],
+})
+export class SocialFriendsTabComponent implements OnInit {
+  @ViewChild('drawer') drawer: MatSidenav;
 
-//   onlineFriends = new MatTableDataSource<User>([] as User[]);
-//   offlineFriends = new MatTableDataSource<User>([] as User[]);
+  onlineFriends = new MatTableDataSource<User>([] as User[]);
+  offlineFriends = new MatTableDataSource<User>([] as User[]);
 
-//   inboundFriendRequests = new MatTableDataSource<FriendRequest>(
-//     [] as FriendRequest[]
-//   );
-//   outboundFriendRequests = new MatTableDataSource<FriendRequest>(
-//     [] as FriendRequest[]
-//   );
+  inboundFriendRequests = new MatTableDataSource<FriendRequest>(
+    [] as FriendRequest[]
+  );
+  outboundFriendRequests = new MatTableDataSource<FriendRequest>(
+    [] as FriendRequest[]
+  );
 
-//   potentialMessage: Message = new Message();
-//   isAsyncDataPresent = false;
-//   update: FriendRequest;
+  potentialMessage: Message = new Message();
+  isAsyncDataPresent = false;
+  update: FriendRequest;
 
-//   constructor(
-//     private router: Router,
-//     private snackBar: MatSnackBar,
-//     public colyseusService: ColyseusService
-//   ) {}
+  constructor(
+    private router: Router,
+    private snackBar: MatSnackBar,
+    public colyseusService: ColyseusService
+  ) {}
 
-//   async ngOnInit() {
-//     await this.establishConnections();
-//     this.updateFriends();
-//     this.updateFriendRequests();
-//     this.isAsyncDataPresent = true;
-//   }
+  async ngOnInit() {
+    // await this.establishConnections();
+    // this.updateFriends();
+    // this.updateFriendRequests();
+    // this.isAsyncDataPresent = true;
+  }
 
 //   async establishConnections() {
 //     this.setHostRoomListeners();
@@ -256,4 +256,4 @@
 //       duration: 5000,
 //     });
 //   }
-// }
+}
