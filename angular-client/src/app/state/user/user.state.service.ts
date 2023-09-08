@@ -78,11 +78,7 @@ export class UserStateService {
           this.setIsLoading(false);
           this.router.navigate([route]);
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -110,11 +106,7 @@ export class UserStateService {
           this.setIsLoading(false);
           this.router.navigate([route]);
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -155,11 +147,7 @@ export class UserStateService {
           this.setInitialState();
           this.router.navigate(['auth/login'], extras);
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -178,11 +166,7 @@ export class UserStateService {
             { duration: 5000 }
           );
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -201,11 +185,7 @@ export class UserStateService {
             { duration: 5000 }
           );
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -238,4 +218,10 @@ export class UserStateService {
     const currentState = this._userState.value;
     this._userState.next({ ...currentState, decodedJwt });
   }
+
+  private handleError = (error: any): Observable<null> => {
+    this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+    this.setIsLoading(false);
+    return of(null);
+  };
 }

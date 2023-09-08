@@ -40,26 +40,11 @@ export class SocialRoomsStateService {
     this.subscribeToUserState();
   }
 
-  private subscribeToUserState() {
-    this.userStateService.user$.subscribe(user => {
-      this.user = user;
-    });
-    this.userStateService.decodedJwt$.subscribe(decodedJwt => {
-      this.decodedJwt = decodedJwt;
-    });
-    this.userStateService.jwt$.subscribe(jwt => {
-      this.jwt = jwt;
-    });
-    this.userStateService.isLoggedIn$.subscribe(isLoggedIn => {
-      if (!isLoggedIn) this.leaveAllRooms();
-    });
-  }
-
   createPersonalRoom(): void {
     this.createRoom(this.decodedJwt._id);
   }
 
-  connectToFriendsRooms() {
+  joinFriendsRoomsIfPresent() {
     const roomIds = this.user.friends.map(friend => friend._id);
     this.joinExistingRoomsIfPresent(roomIds);
   }
@@ -67,100 +52,35 @@ export class SocialRoomsStateService {
   createRoom(roomId: string): void {
     this.setIsLoading(true);
     from(this.colyseusService.createRoomXXX(roomId, this.jwt))
-      .pipe(
-        tap(room => {
-          if (room.id === this.decodedJwt._id) this.setPersonalRoom(room);
-          this.addConnectedRoom(room);
-          this.setIsLoading(false);
-        }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
-      )
+      .pipe(tap(this.handleConnectedRoomSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   connectToRoom(roomId: string): void {
     this.setIsLoading(true);
     from(this.colyseusService.connectToRoomXXX(roomId, this.jwt))
-      .pipe(
-        tap(room => {
-          this.addConnectedRoom(room);
-          if (room.id === this.decodedJwt._id) this.setPersonalRoom(room);
-          this.setIsLoading(false);
-        }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
-      )
+      .pipe(tap(this.handleConnectedRoomSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   connectToRooms(roomIds: string[]): void {
     this.setIsLoading(true);
     from(this.colyseusService.connectToRoomsXXX(roomIds, this.jwt))
-      .pipe(
-        tap(rooms => {
-          this.addConnectedRooms(rooms);
-          const personalRoom = rooms.find(
-            room => room.id === this.decodedJwt._id
-          );
-          if (personalRoom) {
-            this.setPersonalRoom(personalRoom);
-          }
-          this.setIsLoading(false);
-        }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
-      )
+      .pipe(tap(this.handleConnectedRoomsSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   joinExistingRoomIfPresent(roomId: string): void {
     this.setIsLoading(true);
     from(this.colyseusService.joinExistingRoomIfPresentXXX(roomId, this.jwt))
-      .pipe(
-        tap(room => {
-          if (room) this.addConnectedRoom(room);
-          if (room.id === this.decodedJwt._id) this.setPersonalRoom(room);
-          this.setIsLoading(false);
-        }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
-      )
+      .pipe(tap(this.handleConnectedRoomSuccess), catchError(this.handleError))
       .subscribe();
   }
 
   joinExistingRoomsIfPresent(roomIds: string[]): void {
     this.setIsLoading(true);
     from(this.colyseusService.joinExistingRoomsIfPresentXXX(roomIds, this.jwt))
-      .pipe(
-        tap(rooms => {
-          if (rooms) this.addConnectedRooms(rooms);
-          const personalRoom = rooms.find(
-            room => room.id === this.decodedJwt._id
-          );
-          if (personalRoom) {
-            this.setPersonalRoom(personalRoom);
-          }
-          this.setIsLoading(false);
-        }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
-      )
+      .pipe(tap(this.handleConnectedRoomsSuccess), catchError(this.handleError))
       .subscribe();
   }
 
@@ -173,11 +93,7 @@ export class SocialRoomsStateService {
           if (room.id === this.decodedJwt._id) this.setPersonalRoom(null);
           this.setIsLoading(false);
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -192,11 +108,7 @@ export class SocialRoomsStateService {
             this.setPersonalRoom(null);
           this.setIsLoading(false);
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -215,11 +127,7 @@ export class SocialRoomsStateService {
           this.setInitialState();
           this.setIsLoading(false);
         }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
+        catchError(this.handleError)
       )
       .subscribe();
   }
@@ -289,4 +197,74 @@ export class SocialRoomsStateService {
     const currentState = this._socialRoomsState.value;
     this._socialRoomsState.next({ ...currentState, isLoading });
   }
+
+  private subscribeToUserState() {
+    this.userStateService.user$.subscribe(user => {
+      this.user = user;
+    });
+    this.userStateService.decodedJwt$.subscribe(decodedJwt => {
+      this.decodedJwt = decodedJwt;
+    });
+    this.userStateService.jwt$.subscribe(jwt => {
+      this.jwt = jwt;
+    });
+    this.userStateService.isLoggedIn$.subscribe(isLoggedIn => {
+      if (!isLoggedIn) this.leaveAllRooms();
+    });
+  }
+
+  private isPersonalRoom(roomId: string): boolean {
+    return roomId === this.decodedJwt._id;
+  }
+
+  private setPersonalRoomListeners(room: Room): Room {
+    return room;
+  }
+
+  private setFriendRoomListeners(room: Room): Room {
+    room.onMessage('dispose', (roomId: string) =>
+      this.removeConnectedRoomById(roomId)
+    );
+    room.onError((code, message) =>
+      console.log(
+        `An error occurred with the room. Error Code: ${code} | Message: ${message}`
+      )
+    );
+    return room;
+  }
+
+  private handleError = (error: any): Observable<null> => {
+    this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+    this.setIsLoading(false);
+    return of(null);
+  };
+
+  private handleConnectedRoomSuccess = (room: Room) => {
+    if (room) {
+      if (this.isPersonalRoom(room.id)) {
+        room = this.setPersonalRoomListeners(room);
+        this.setPersonalRoom(room);
+      } else {
+        room = this.setFriendRoomListeners(room);
+      }
+      this.addConnectedRoom(room);
+    }
+    this.setIsLoading(false);
+  };
+
+  private handleConnectedRoomsSuccess = (rooms: Room[]) => {
+    if (rooms.length > 0) {
+      const updatedRooms = rooms.map(room => {
+        if (this.isPersonalRoom(room.id)) {
+          room = this.setPersonalRoomListeners(room);
+          this.setPersonalRoom(room);
+        } else {
+          room = this.setFriendRoomListeners(room);
+        }
+        return room;
+      });
+      this.addConnectedRooms(updatedRooms);
+    }
+    this.setIsLoading(false);
+  };
 }
