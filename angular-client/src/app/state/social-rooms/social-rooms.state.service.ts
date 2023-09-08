@@ -11,11 +11,13 @@ import {
 import { Room } from 'colyseus.js';
 import { UserStateService } from '../user/user.state.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
+import { User } from 'src/app/models/user/user';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocialRoomsStateService {
+  private user: User;
   private decodedJwt: DecodedJwt;
   private jwt: string;
   private _socialRoomsState = new BehaviorSubject<SocialRoomsState>(
@@ -33,6 +35,9 @@ export class SocialRoomsStateService {
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
+    this.userStateService.user$.subscribe(user => {
+      this.user = user;
+    });
     this.userStateService.decodedJwt$.subscribe(decodedJwt => {
       this.decodedJwt = decodedJwt;
     });
@@ -42,22 +47,14 @@ export class SocialRoomsStateService {
   }
 
   createPersonalRoom(): void {
-    console.log(this.decodedJwt);
-    this.setIsLoading(true);
-    from(this.colyseusService.createRoomXXX(this.decodedJwt._id, this.jwt))
-      .pipe(
-        tap(room => {
-          this.setPersonalRoom(room);
-          this.addConnectedRoom(room);
-          this.setIsLoading(false);
-        }),
-        catchError(error => {
-          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-          this.setIsLoading(false);
-          return of(null);
-        })
-      )
-      .subscribe();
+    this.createRoom(this.decodedJwt._id);
+  }
+
+  connectToOnlineFriendsRooms() {
+    const roomIds = this.user.onlineFriends.map(
+      onlineFriend => onlineFriend._id
+    );
+    this.connectToRooms(roomIds);
   }
 
   createRoom(roomId: string): void {
@@ -65,6 +62,7 @@ export class SocialRoomsStateService {
     from(this.colyseusService.createRoomXXX(roomId, this.jwt))
       .pipe(
         tap(room => {
+          if (room.id === this.decodedJwt._id) this.setPersonalRoom(room);
           this.addConnectedRoom(room);
           this.setIsLoading(false);
         }),
@@ -83,6 +81,7 @@ export class SocialRoomsStateService {
       .pipe(
         tap(room => {
           this.addConnectedRoom(room);
+          if (room.id === this.decodedJwt._id) this.setPersonalRoom(room);
           this.setIsLoading(false);
         }),
         catchError(error => {
@@ -100,6 +99,12 @@ export class SocialRoomsStateService {
       .pipe(
         tap(rooms => {
           this.addConnectedRooms(rooms);
+          const personalRoom = rooms.find(
+            room => room.id === this.decodedJwt._id
+          );
+          if (personalRoom) {
+            this.setPersonalRoom(personalRoom);
+          }
           this.setIsLoading(false);
         }),
         catchError(error => {
@@ -117,6 +122,7 @@ export class SocialRoomsStateService {
       .pipe(
         tap(room => {
           if (room) this.addConnectedRoom(room);
+          if (room.id === this.decodedJwt._id) this.setPersonalRoom(room);
           this.setIsLoading(false);
         }),
         catchError(error => {
