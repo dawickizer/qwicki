@@ -39,6 +39,10 @@ export class SocialRoomsStateService {
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
+    this.subscribeToUserState();
+  }
+
+  private subscribeToUserState() {
     this.userStateService.user$.subscribe(user => {
       this.user = user;
     });
@@ -47,6 +51,9 @@ export class SocialRoomsStateService {
     });
     this.userStateService.jwt$.subscribe(jwt => {
       this.jwt = jwt;
+    });
+    this.userStateService.isLoggedIn$.subscribe(isLoggedIn => {
+      if (!isLoggedIn) this.leaveAllRooms();
     });
   }
 

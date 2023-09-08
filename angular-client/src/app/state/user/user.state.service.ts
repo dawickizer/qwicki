@@ -22,7 +22,6 @@ import {
   userSelector,
 } from './user.state.selectors';
 import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
-import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 
@@ -43,7 +42,6 @@ export class UserStateService {
     private authService: AuthService,
     private userService: UserService,
     private inactivityService: InactivityService,
-    private colyseusService: ColyseusService,
     private matchMakingService: MatchMakingService,
     private router: Router,
     private snackBar: MatSnackBar
@@ -153,7 +151,6 @@ export class UserStateService {
         tap(() => {
           this.inactivityService.removeActiveEvents();
           this.inactivityService.stopTimers();
-          this.colyseusService.leaveAllRooms();
           this.matchMakingService.leaveGameRoom();
           this.setInitialState();
           this.router.navigate(['auth/login'], extras);
@@ -219,7 +216,7 @@ export class UserStateService {
 
   setUser(user: User): void {
     const currentState = this._userState.value;
-    this._userState.next({ ...currentState, user });
+    this._userState.next({ ...currentState, user: new User(user) });
   }
 
   setIsLoading(isLoading: boolean): void {
