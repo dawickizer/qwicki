@@ -41,7 +41,7 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
     });
 
     this.socialRoomsStateService.createPersonalRoom();
-    this.socialRoomsStateService.connectToOnlineFriendsRooms();
+    this.socialRoomsStateService.connectToFriendsRooms();
 
     this.handleSideNavKeyBind();
   }

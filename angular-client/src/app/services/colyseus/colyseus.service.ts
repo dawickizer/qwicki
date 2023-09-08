@@ -149,6 +149,30 @@ export class ColyseusService {
     return room;
   }
 
+  async joinExistingRoomsIfPresentXXX(
+    roomIds: string[],
+    jwt: string
+  ): Promise<Colyseus.Room[]> {
+    // Fetch available rooms
+    const availableRooms: Colyseus.RoomAvailable[] =
+      await this._client.getAvailableRooms();
+
+    // Filter out roomIds from the provided array that match the available rooms.
+    const roomIdsToJoin: string[] = roomIds.filter(roomId =>
+      availableRooms.some(availableRoom => availableRoom.roomId === roomId)
+    );
+
+    if (roomIdsToJoin.length === 0) return [];
+
+    // Connect to the identified rooms.
+    const connectedRooms: Colyseus.Room[] = await this.connectToRoomsXXX(
+      roomIdsToJoin,
+      jwt
+    );
+
+    return connectedRooms;
+  }
+
   async connectToRoomXXX(roomId: string, jwt: string): Promise<Colyseus.Room> {
     try {
       const room: Colyseus.Room = await this._client.joinById(roomId, {
@@ -170,7 +194,9 @@ export class ColyseusService {
       roomIds.forEach(roomId =>
         promises.push(this.connectToRoomXXX(roomId, jwt))
       );
-      return await Promise.all(promises);
+
+      const connectedRooms: Colyseus.Room[] = await Promise.all(promises);
+      return connectedRooms.filter(room => room !== null);
     } catch (e) {
       console.error('join error', e);
       return null;

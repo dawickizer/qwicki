@@ -61,11 +61,9 @@ export class SocialRoomsStateService {
     this.createRoom(this.decodedJwt._id);
   }
 
-  connectToOnlineFriendsRooms() {
-    const roomIds = this.user.onlineFriends.map(
-      onlineFriend => onlineFriend._id
-    );
-    this.connectToRooms(roomIds);
+  connectToFriendsRooms() {
+    const roomIds = this.user.friends.map(friend => friend._id);
+    this.joinExistingRoomsIfPresent(roomIds);
   }
 
   createRoom(roomId: string): void {
@@ -134,6 +132,29 @@ export class SocialRoomsStateService {
         tap(room => {
           if (room) this.addConnectedRoom(room);
           if (room.id === this.decodedJwt._id) this.setPersonalRoom(room);
+          this.setIsLoading(false);
+        }),
+        catchError(error => {
+          this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+          this.setIsLoading(false);
+          return of(null);
+        })
+      )
+      .subscribe();
+  }
+
+  joinExistingRoomsIfPresent(roomIds: string[]): void {
+    this.setIsLoading(true);
+    from(this.colyseusService.joinExistingRoomsIfPresentXXX(roomIds, this.jwt))
+      .pipe(
+        tap(rooms => {
+          if (rooms) this.addConnectedRooms(rooms);
+          const personalRoom = rooms.find(
+            room => room.id === this.decodedJwt._id
+          );
+          if (personalRoom) {
+            this.setPersonalRoom(personalRoom);
+          }
           this.setIsLoading(false);
         }),
         catchError(error => {
