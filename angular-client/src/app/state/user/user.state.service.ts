@@ -20,6 +20,8 @@ import {
   isLoggedInSelector,
   jwtSelector,
   userFriendsSelector,
+  userOfflineFriendsSelector,
+  userOnlineFriendsSelector,
   userOnlineSelector,
   userSelector,
 } from './user.state.selectors';
@@ -41,6 +43,9 @@ export class UserStateService {
   public user$ = userSelector(this.userState$);
   public userOnline$ = userOnlineSelector(this.user$);
   public userFriends$ = userFriendsSelector(this.user$);
+
+  public userOnlineFriends$ = userOnlineFriendsSelector(this.user$);
+  public userOfflineFriends$ = userOfflineFriendsSelector(this.user$);
 
   constructor(
     private authService: AuthService,

@@ -61,3 +61,19 @@ export const userFriendsSelector = (
     map(user => (user ? user.friends : null)),
     distinctUntilChanged(isEqual)
   );
+
+export const userOnlineFriendsSelector = (
+  user$: Observable<User | null>
+): Observable<Friend[] | null> =>
+  user$.pipe(
+    map(user => (user ? user.onlineFriends : null)),
+    distinctUntilChanged(isEqual)
+  );
+
+export const userOfflineFriendsSelector = (
+  user$: Observable<User | null>
+): Observable<Friend[] | null> =>
+  user$.pipe(
+    map(user => (user ? user.offlineFriends : null)),
+    distinctUntilChanged(isEqual)
+  );
