@@ -34,7 +34,7 @@ export class SocialRoom extends Room<SocialRoomState> {
     this.determineHost(user);
     this.addUser(user);
     this.logUsers();
-    this.presenceManager.notifyHostUserIsOnline(user);
+    if (!this.isHost(client)) this.presenceManager.notifyHostUserIsOnline(user);
   }
 
   onLeave(client: Client) {
