@@ -96,7 +96,6 @@ export class SocialRoom extends Room<SocialRoomState> {
 
   disconnectRoom() {
     console.log('HOST IS LEAVING...disconnecting room');
-    this.presenceManager.broadcastHostOffline();
     this.presenceManager.broadcastDisposeRoom();
     this.disconnect();
   }

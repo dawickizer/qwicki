@@ -15,10 +15,6 @@ export class PresenceManager extends SocialManager {
     this.socialRoom.hostClient.send('offline', user);
   }
 
-  broadcastHostOffline() {
-    this.socialRoom.broadcast('offline', this.socialRoom.state.host);
-  }
-
   broadcastDisposeRoom() {
     this.socialRoom.broadcast('dispose', this.socialRoom.roomId);
   }
