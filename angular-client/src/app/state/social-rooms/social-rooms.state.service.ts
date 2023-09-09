@@ -217,43 +217,24 @@ export class SocialRoomsStateService {
     return roomId === this.decodedJwt._id;
   }
 
-  //   private setOnlineStatusOfFriend(user: any, online: boolean) {
-  //     if (this.colyseusService.host._id !== user._id) {
-  //       const friend: User = this.findFriend(user._id);
-  //       if (friend) {
-  //         friend.online = online;
-  //         this.updateFriends();
-  //       }
-  //     }
-  //   }
-
-  //   private findFriend(id: string): User {
-  //     return this.colyseusService.host.friends.find(friend => friend._id === id);
-  //   }
-
-  //   private updateFriends() {
-  //     this.onlineFriends.data = this.colyseusService.host.onlineFriends;
-  //     this.onlineFriends._updateChangeSubscription();
-  //     this.offlineFriends.data = this.colyseusService.host.offlineFriends;
-  //     this.offlineFriends._updateChangeSubscription();
-  //   }
-
   private setPersonalRoomListeners(room: Room): Room {
-    //     this.colyseusService.hostRoom.onMessage('online', (user: any) =>
-    //       this.handleOnlineEvent(user)
-    //     );
-    //     this.colyseusService.hostRoom.onMessage('offline', (user: any) =>
-    //       this.handleOfflineEvent(user)
-    //     );
+    room.onMessage('online', (roomId: string) => {
+      this.userStateService.setUserFriendOnline(roomId, true);
+    });
+    room.onMessage('offline', (roomId: string) => {
+      this.userStateService.setUserFriendOnline(roomId, false);
+    });
+    room.onError((code, message) =>
+      console.log(
+        `An error occurred with the room. Error Code: ${code} | Message: ${message}`
+      )
+    );
     return room;
   }
 
   private setFriendRoomListeners(room: Room): Room {
-    //       room.onMessage('offline', (user: any) => this.handleOfflineEvent(user));
-
     room.onMessage('dispose', (roomId: string) => {
       this.userStateService.setUserFriendOnline(roomId, false);
-      console.log(roomId);
       this.removeConnectedRoomById(roomId);
     });
     room.onError((code, message) =>
