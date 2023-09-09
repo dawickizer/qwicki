@@ -217,14 +217,45 @@ export class SocialRoomsStateService {
     return roomId === this.decodedJwt._id;
   }
 
+  //   private setOnlineStatusOfFriend(user: any, online: boolean) {
+  //     if (this.colyseusService.host._id !== user._id) {
+  //       const friend: User = this.findFriend(user._id);
+  //       if (friend) {
+  //         friend.online = online;
+  //         this.updateFriends();
+  //       }
+  //     }
+  //   }
+
+  //   private findFriend(id: string): User {
+  //     return this.colyseusService.host.friends.find(friend => friend._id === id);
+  //   }
+
+  //   private updateFriends() {
+  //     this.onlineFriends.data = this.colyseusService.host.onlineFriends;
+  //     this.onlineFriends._updateChangeSubscription();
+  //     this.offlineFriends.data = this.colyseusService.host.offlineFriends;
+  //     this.offlineFriends._updateChangeSubscription();
+  //   }
+
   private setPersonalRoomListeners(room: Room): Room {
+    //     this.colyseusService.hostRoom.onMessage('online', (user: any) =>
+    //       this.handleOnlineEvent(user)
+    //     );
+    //     this.colyseusService.hostRoom.onMessage('offline', (user: any) =>
+    //       this.handleOfflineEvent(user)
+    //     );
     return room;
   }
 
   private setFriendRoomListeners(room: Room): Room {
-    room.onMessage('dispose', (roomId: string) =>
-      this.removeConnectedRoomById(roomId)
-    );
+    //       room.onMessage('offline', (user: any) => this.handleOfflineEvent(user));
+
+    room.onMessage('dispose', (roomId: string) => {
+      this.userStateService.setUserFriendOnline(roomId, false);
+      console.log(roomId);
+      this.removeConnectedRoomById(roomId);
+    });
     room.onError((code, message) =>
       console.log(
         `An error occurred with the room. Error Code: ${code} | Message: ${message}`
@@ -242,9 +273,11 @@ export class SocialRoomsStateService {
   private handleConnectedRoomSuccess = (room: Room) => {
     if (room) {
       if (this.isPersonalRoom(room.id)) {
+        this.userStateService.setUserOnline(true);
         room = this.setPersonalRoomListeners(room);
         this.setPersonalRoom(room);
       } else {
+        this.userStateService.setUserFriendOnline(room.id, true);
         room = this.setFriendRoomListeners(room);
       }
       this.addConnectedRoom(room);
@@ -254,16 +287,26 @@ export class SocialRoomsStateService {
 
   private handleConnectedRoomsSuccess = (rooms: Room[]) => {
     if (rooms.length > 0) {
-      const updatedRooms = rooms.map(room => {
+      let personalRoom: Room | null = null;
+      const friendRooms: Room[] = [];
+      const friendRoomIds: string[] = [];
+
+      rooms.forEach(room => {
         if (this.isPersonalRoom(room.id)) {
-          room = this.setPersonalRoomListeners(room);
-          this.setPersonalRoom(room);
+          this.userStateService.setUserOnline(true);
+          personalRoom = this.setPersonalRoomListeners(room);
+          this.setPersonalRoom(personalRoom);
         } else {
-          room = this.setFriendRoomListeners(room);
+          const friendRoom = this.setFriendRoomListeners(room);
+          friendRooms.push(friendRoom);
+          friendRoomIds.push(room.id);
         }
-        return room;
       });
-      this.addConnectedRooms(updatedRooms);
+      this.userStateService.setUserFriendsOnline(friendRoomIds, true);
+      this.addConnectedRooms([
+        ...(personalRoom ? [personalRoom] : []),
+        ...friendRooms,
+      ]);
     }
     this.setIsLoading(false);
   };

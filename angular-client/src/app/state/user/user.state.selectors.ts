@@ -3,6 +3,8 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { UserState } from './user.state';
 import { User } from 'src/app/models/user/user';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
+import { Friend } from 'src/app/models/friend/friend';
+import { isEqual } from 'lodash';
 
 export const jwtSelector = (
   userState$: Observable<UserState>
@@ -17,7 +19,7 @@ export const userSelector = (
 ): Observable<User> =>
   userState$.pipe(
     map(state => state.user),
-    distinctUntilChanged()
+    distinctUntilChanged(isEqual)
   );
 
 export const decodedJwtSelector = (
@@ -25,7 +27,7 @@ export const decodedJwtSelector = (
 ): Observable<DecodedJwt> =>
   userState$.pipe(
     map(state => state.decodedJwt),
-    distinctUntilChanged()
+    distinctUntilChanged(isEqual)
   );
 
 export const isLoggedInSelector = (
@@ -42,4 +44,20 @@ export const isLoadingSelector = (
   userState$.pipe(
     map(state => state.isLoading),
     distinctUntilChanged()
+  );
+
+export const userOnlineSelector = (
+  user$: Observable<User | null>
+): Observable<boolean | null> =>
+  user$.pipe(
+    map(user => (user ? user.online : null)),
+    distinctUntilChanged()
+  );
+
+export const userFriendsSelector = (
+  user$: Observable<User | null>
+): Observable<Friend[] | null> =>
+  user$.pipe(
+    map(user => (user ? user.friends : null)),
+    distinctUntilChanged(isEqual)
   );

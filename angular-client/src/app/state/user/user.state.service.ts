@@ -19,6 +19,8 @@ import {
   isLoadingSelector,
   isLoggedInSelector,
   jwtSelector,
+  userFriendsSelector,
+  userOnlineSelector,
   userSelector,
 } from './user.state.selectors';
 import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
@@ -32,11 +34,13 @@ export class UserStateService {
   private _userState = new BehaviorSubject<UserState>(initialState);
 
   public userState$: Observable<UserState> = this._userState.asObservable();
-  public user$ = userSelector(this.userState$);
   public jwt$ = jwtSelector(this.userState$);
   public decodedJwt$ = decodedJwtSelector(this.userState$);
   public isLoggedIn$ = isLoggedInSelector(this.userState$);
   public isLoading$ = isLoadingSelector(this.userState$);
+  public user$ = userSelector(this.userState$);
+  public userOnline$ = userOnlineSelector(this.user$);
+  public userFriends$ = userFriendsSelector(this.user$);
 
   constructor(
     private authService: AuthService,
@@ -197,6 +201,39 @@ export class UserStateService {
   setUser(user: User): void {
     const currentState = this._userState.value;
     this._userState.next({ ...currentState, user: new User(user) });
+  }
+
+  setUserOnline(online: boolean): void {
+    const currentState = this._userState.value;
+    if (!currentState.user) return;
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, online } as User),
+    });
+  }
+
+  setUserFriendOnline(friendId: string, online: boolean): void {
+    const currentState = this._userState.value;
+    if (!currentState.user) return;
+    const updatedFriends = currentState.user.friends.map(friend =>
+      friend._id === friendId ? { ...friend, online } : friend
+    );
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, friends: updatedFriends } as User),
+    });
+  }
+
+  setUserFriendsOnline(friendIds: string[], online: boolean): void {
+    const currentState = this._userState.value;
+    if (!currentState.user) return;
+    const updatedFriends = currentState.user.friends.map(friend =>
+      friendIds.includes(friend._id) ? { ...friend, online } : friend
+    );
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, friends: updatedFriends } as User),
+    });
   }
 
   setIsLoading(isLoading: boolean): void {

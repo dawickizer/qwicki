@@ -1,4 +1,5 @@
 import { FriendRequest } from '../friend-request/friend-request';
+import { Friend } from '../friend/friend';
 
 export class User {
   _id?: string;
@@ -9,11 +10,12 @@ export class User {
   firstName: string;
   middleName?: string;
   lastName: string;
-  friends: User[] = [];
+  online = false;
+  friends: Friend[] = [];
   inboundFriendRequests: FriendRequest[] = [];
   outboundFriendRequests: FriendRequest[] = [];
 
-  constructor(user?: User) {
+  constructor(user?: Partial<User>) {
     if (user) {
       this._id = user._id;
       this.username = user.username;
@@ -23,9 +25,22 @@ export class User {
       this.firstName = user.firstName;
       this.middleName = user.middleName;
       this.lastName = user.lastName;
-      this.friends = user.friends;
-      this.inboundFriendRequests = user.inboundFriendRequests;
-      this.outboundFriendRequests = user.outboundFriendRequests;
+      this.online = user.online ?? false;
+      this.friends = user.friends.map(friend => new Friend(friend));
+      this.inboundFriendRequests = user.inboundFriendRequests.map(
+        inboundFriendRequest => new FriendRequest(inboundFriendRequest)
+      );
+      this.outboundFriendRequests = user.outboundFriendRequests.map(
+        outboundFriendRequest => new FriendRequest(outboundFriendRequest)
+      );
     }
+  }
+
+  get onlineFriends(): Friend[] {
+    return this.friends.filter(friend => friend.online);
+  }
+
+  get offlineFriends(): Friend[] {
+    return this.friends.filter(friend => !friend.online);
   }
 }

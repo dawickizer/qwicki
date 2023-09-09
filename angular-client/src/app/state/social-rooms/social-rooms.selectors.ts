@@ -2,6 +2,7 @@ import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { SocialRoomsState } from './social-rooms.state';
 import { Room } from 'colyseus.js';
+import { isEqual } from 'lodash';
 
 export const isLoadingSelector = (
   socialRoomsState$: Observable<SocialRoomsState>
@@ -16,7 +17,7 @@ export const personalRoomSelector = (
 ): Observable<Room> =>
   socialRoomsState$.pipe(
     map(state => state.personalRoom),
-    distinctUntilChanged()
+    distinctUntilChanged(isEqual)
   );
 
 export const connectedRoomsSelector = (
@@ -24,7 +25,7 @@ export const connectedRoomsSelector = (
 ): Observable<Room[]> =>
   socialRoomsState$.pipe(
     map(state => state.connectedRooms),
-    distinctUntilChanged()
+    distinctUntilChanged(isEqual)
   );
 
 export const friendsRoomsSelector = (
@@ -36,5 +37,5 @@ export const friendsRoomsSelector = (
         connectedRoom => connectedRoom.id !== state.personalRoom?.id
       )
     ),
-    distinctUntilChanged()
+    distinctUntilChanged(isEqual)
   );

@@ -29,9 +29,11 @@
     "@babylonjs/core": "^5.33.2",
     "@babylonjs/gui": "^5.33.2",
     "@babylonjs/inspector": "^5.33.2",
+    "@types/lodash": "^4.14.198",
     "cannon": "^0.6.2",
     "cannon-es": "^0.20.0",
     "colyseus.js": "^0.14.13",
+    "lodash": "^4.17.21",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.13.1"

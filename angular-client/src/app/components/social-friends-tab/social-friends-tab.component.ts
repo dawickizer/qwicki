@@ -86,7 +86,6 @@ export class SocialFriendsTabComponent implements OnInit {
   //   setOnlineFriendsRoomsListeners() {
   //     this.colyseusService.onlineFriendsRooms.forEach(room => {
   //       room.onMessage('offline', (user: any) => this.handleOfflineEvent(user));
-  //       room.onMessage('dispose', (id: string) => this.handleDisposeEvent(id));
   //       room.onMessage('disconnectFriend', (disconnectFriend: User) =>
   //         this.handleDisconnectFriendEvent(disconnectFriend)
   //       );
@@ -169,10 +168,6 @@ export class SocialFriendsTabComponent implements OnInit {
   //       );
   //     this.updateFriends();
   //     this.colyseusService.removeRoomById(disconnectFriend._id);
-  //   }
-
-  //   private handleDisposeEvent(id: string) {
-  //     this.colyseusService.removeRoomById(id);
   //   }
 
   //   private handleMessageHostEvent(message: Message) {
