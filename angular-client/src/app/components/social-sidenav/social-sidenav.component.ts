@@ -44,18 +44,6 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
     //     console.log(user);
     //   });
 
-    this.userStateService.userOnlineFriends$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(friends => {
-        console.log(friends);
-      });
-
-    this.userStateService.userOfflineFriends$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(friends => {
-        console.log(friends);
-      });
-
     this.socialRoomsStateService.createPersonalRoom();
     this.socialRoomsStateService.joinFriendsRoomsIfPresent();
 

@@ -1,4 +1,4 @@
-<div class="social-friends-tab" *ngIf="isAsyncDataPresent">
+<div class="social-friends-tab">
   <!-- <app-social-friend-requests-list
     title="friend requests"
     titleColor="color:aliceblue"
@@ -14,13 +14,32 @@
         </h1>
       </mat-panel-title>
     </mat-expansion-panel-header>
-    <!-- <form>
+    <form>
       <mat-form-field class="social-friends-full-width">
         <mat-label>Search</mat-label>
         <input matInput (keyup)="filter($event)" name="filter" />
       </mat-form-field>
     </form>
-    <app-social-friends-list
+
+    <mat-table [dataSource]="onlineFriends">
+      <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
+        <mat-cell *matCellDef="let friend">{{ friend.username }}</mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <mat-table [dataSource]="offlineFriends">
+      <ng-container matColumnDef="username">
+        <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
+        <mat-cell *matCellDef="let friend">{{ friend.username }}</mat-cell>
+      </ng-container>
+      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
+    </mat-table>
+
+    <!-- <app-social-friends-list
       title="online"
       titleColor="color:rgb(0, 255, 149)"
       [(friends)]="onlineFriends"

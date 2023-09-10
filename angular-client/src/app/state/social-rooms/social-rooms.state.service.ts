@@ -218,6 +218,34 @@ export class SocialRoomsStateService {
   }
 
   private setPersonalRoomListeners(room: Room): Room {
+    //     this.colyseusService.hostRoom.onMessage(
+    //       'sendFriendRequest',
+    //       (friendRequest: FriendRequest) =>
+    //         this.handleSendFriendRequestEvent(friendRequest)
+    //     );
+    //     this.colyseusService.hostRoom.onMessage(
+    //       'acceptFriendRequest',
+    //       (friendRequest: FriendRequest) =>
+    //         this.handleAcceptFriendRequestEvent(friendRequest)
+    //     );
+    //     this.colyseusService.hostRoom.onMessage(
+    //       'rejectFriendRequest',
+    //       (friendRequest: FriendRequest) =>
+    //         this.handleRejectFriendRequestEvent(friendRequest)
+    //     );
+    //     this.colyseusService.hostRoom.onMessage(
+    //       'revokeFriendRequest',
+    //       (friendRequest: FriendRequest) =>
+    //         this.handleRevokeFriendRequestEvent(friendRequest)
+    //     );
+    //     this.colyseusService.hostRoom.onMessage(
+    //       'removeFriend',
+    //       (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend)
+    //     );
+    //     this.colyseusService.hostRoom.onMessage('messageHost', (message: Message) =>
+    //       this.handleMessageHostEvent(message)
+    //     );
+
     room.onMessage('online', (roomId: string) => {
       this.userStateService.setUserFriendOnline(roomId, true);
     });
@@ -233,6 +261,13 @@ export class SocialRoomsStateService {
   }
 
   private setFriendRoomListeners(room: Room): Room {
+    //       room.onMessage('disconnectFriend', (disconnectFriend: User) =>
+    //         this.handleDisconnectFriendEvent(disconnectFriend)
+    //       );
+    //       room.onMessage('messageUser', (message: Message) =>
+    //         this.handleMessageUserEvent(message)
+    //       );
+
     room.onMessage('dispose', (roomId: string) => {
       this.userStateService.setUserFriendOnline(roomId, false);
       this.removeConnectedRoomById(roomId);
@@ -292,3 +327,73 @@ export class SocialRoomsStateService {
     this.setIsLoading(false);
   };
 }
+
+//   private handleSendFriendRequestEvent(friendRequest: FriendRequest) {
+//     this.colyseusService.host.inboundFriendRequests.push(friendRequest);
+//     this.updateFriendRequests();
+//   }
+
+//   private handleAcceptFriendRequestEvent(friendRequest: FriendRequest) {
+//     friendRequest.to.online = true;
+//     this.colyseusService.host.friends.push(friendRequest.to);
+//     this.colyseusService.host.outboundFriendRequests =
+//       this.colyseusService.host.outboundFriendRequests.filter(
+//         outboundFriendRequest =>
+//           outboundFriendRequest.to._id !== friendRequest.to._id
+//       );
+//     this.updateFriends();
+//     this.updateFriendRequests();
+//   }
+
+//   private handleRejectFriendRequestEvent(friendRequest: FriendRequest) {
+//     this.colyseusService.host.friends =
+//       this.colyseusService.host.friends.filter(
+//         friend => friend._id !== friendRequest.to._id
+//       );
+//     this.colyseusService.host.outboundFriendRequests =
+//       this.colyseusService.host.outboundFriendRequests.filter(
+//         outboundFriendRequest =>
+//           outboundFriendRequest.to._id !== friendRequest.to._id
+//       );
+//     this.updateFriends();
+//     this.updateFriendRequests();
+//   }
+
+//   private handleRevokeFriendRequestEvent(friendRequest: FriendRequest) {
+//     this.colyseusService.host.friends =
+//       this.colyseusService.host.friends.filter(
+//         friend => friend._id !== friendRequest.from._id
+//       );
+//     this.colyseusService.host.inboundFriendRequests =
+//       this.colyseusService.host.inboundFriendRequests.filter(
+//         inboundFriendRequest =>
+//           inboundFriendRequest.from._id !== friendRequest.from._id
+//       );
+//     this.updateFriends();
+//     this.updateFriendRequests();
+//   }
+
+//   private handleRemoveFriendEvent(removeFriend: User) {
+//     this.colyseusService.host.friends =
+//       this.colyseusService.host.friends.filter(
+//         friend => friend._id !== removeFriend._id
+//       );
+//     this.updateFriends();
+//   }
+
+//   private handleDisconnectFriendEvent(disconnectFriend: User) {
+//     this.colyseusService.host.friends =
+//       this.colyseusService.host.friends.filter(
+//         friend => friend._id !== disconnectFriend._id
+//       );
+//     this.updateFriends();
+//     this.colyseusService.removeRoomById(disconnectFriend._id);
+//   }
+
+//   private handleMessageHostEvent(message: Message) {
+//     this.potentialMessage = message;
+//   }
+
+//   private handleMessageUserEvent(message: Message) {
+//     this.potentialMessage = message;
+//   }
