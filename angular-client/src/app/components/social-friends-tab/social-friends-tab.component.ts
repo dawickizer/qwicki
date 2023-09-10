@@ -1,7 +1,6 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { Friend } from 'src/app/models/friend/friend';
 import { Subject, takeUntil } from 'rxjs';
@@ -25,15 +24,10 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
     [] as FriendRequest[]
   );
 
-  isAsyncDataPresent = false;
-
   unsubscribe$ = new Subject<void>();
 
   displayedColumns: string[] = ['username'];
-  constructor(
-    private router: Router,
-    private userStateService: UserStateService
-  ) {}
+  constructor(private userStateService: UserStateService) {}
 
   ngOnInit() {
     this.userStateService.userOnlineFriends$
