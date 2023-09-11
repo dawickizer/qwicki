@@ -152,7 +152,25 @@
 //   }
 
 //   onRemoveFriend() {
-//     this.removeFriend.emit(this.friend);
+// console.log(friend)
+// this.socialService.removeFriend(friend).subscribe({
+//   next: async host => {
+//     this.colyseusService.host = new User(host);
+//     const room: Colyseus.Room =
+//       this.colyseusService.onlineFriendsRooms.find(
+//         room => room.id === friend._id
+//       );
+//     if (room) {
+//       room.send('removeFriend', host);
+//       this.colyseusService.leaveRoom(room);
+//     } else {
+//       this.colyseusService.hostRoom.send('disconnectFriend', friend);
+//     }
+//     this.updateFriends();
+//     this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');
+//   },
+//   error: error => this.openSnackBar(error, 'Dismiss'),
+// });
 //   }
 
 //   onUnviewedMessage() {

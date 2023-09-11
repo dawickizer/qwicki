@@ -1,75 +1,60 @@
-// import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-// import { MatSnackBar } from '@angular/material/snack-bar';
-// import { User } from 'src/app/models/user/user';
-// import { SocialService } from 'src/app/services/social/social.service';
-// import { Message } from 'src/app/models/message/message';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Friend } from 'src/app/models/friend/friend';
+import { SocialService } from 'src/app/services/social/social.service';
 
-// @Component({
-//   selector: 'app-social-cell',
-//   templateUrl: './social-cell.component.html',
-//   styleUrls: ['./social-cell.component.css'],
-// })
-// export class SocialCellComponent implements OnInit {
-//   @Input() friend: User;
-//   @Output() friendChange: EventEmitter<User> = new EventEmitter();
+@Component({
+  selector: 'app-social-cell',
+  templateUrl: './social-cell.component.html',
+  styleUrls: ['./social-cell.component.css'],
+})
+export class SocialCellComponent implements OnInit {
+  @Input() friend: Friend;
+  @Output() friendChange: EventEmitter<Friend> = new EventEmitter();
 
-//   @Output() removeFriend: EventEmitter<User> = new EventEmitter();
+  hasUnviewedMessages = false;
+  panelOpenState = false;
 
-//   @Input() potentialMessage: Message;
+  constructor(
+    private socialService: SocialService,
+    private snackBar: MatSnackBar
+  ) {}
 
-//   hasUnviewedMessages = false;
-//   panelOpenState = false;
+  ngOnInit(): void {
+    this.onUnviewedMessage();
+  }
 
-//   constructor(
-//     private socialService: SocialService,
-//     private snackBar: MatSnackBar
-//   ) {}
+  onUnviewedMessage() {
+    // if (!this.panelOpenState) {
+    //   this.socialService.hasUnviewedMessages(this.friend).subscribe({
+    //     next: async (hasUnviewedMessages: boolean) => {
+    //       this.hasUnviewedMessages = hasUnviewedMessages;
+    //     },
+    //     error: error => this.openSnackBar(error, 'Dismiss'),
+    //   });
+    // } else {
+    //   this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
+    //     next: async (hasUnviewedMessages: boolean) => {
+    //       this.hasUnviewedMessages = hasUnviewedMessages;
+    //     },
+    //     error: error => this.openSnackBar(error, 'Dismiss'),
+    //   });
+    // }
+  }
 
-//   ngOnInit(): void {
-//     this.onUnviewedMessage();
-//   }
+  onPanelOpen() {
+    this.panelOpenState = true;
+    // if (this.hasUnviewedMessages) {
+    //   this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
+    //     next: async (hasUnviewedMessages: boolean) => {
+    //       this.hasUnviewedMessages = hasUnviewedMessages;
+    //     },
+    //     error: error => this.openSnackBar(error, 'Dismiss'),
+    //   });
+    // }
+  }
 
-//   onUnviewedMessage() {
-//     if (!this.panelOpenState) {
-//       this.socialService.hasUnviewedMessages(this.friend).subscribe({
-//         next: async (hasUnviewedMessages: boolean) => {
-//           this.hasUnviewedMessages = hasUnviewedMessages;
-//         },
-//         error: error => this.openSnackBar(error, 'Dismiss'),
-//       });
-//     } else {
-//       this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
-//         next: async (hasUnviewedMessages: boolean) => {
-//           this.hasUnviewedMessages = hasUnviewedMessages;
-//         },
-//         error: error => this.openSnackBar(error, 'Dismiss'),
-//       });
-//     }
-//   }
-
-//   onPanelOpen() {
-//     this.panelOpenState = true;
-//     if (this.hasUnviewedMessages) {
-//       this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
-//         next: async (hasUnviewedMessages: boolean) => {
-//           this.hasUnviewedMessages = hasUnviewedMessages;
-//         },
-//         error: error => this.openSnackBar(error, 'Dismiss'),
-//       });
-//     }
-//   }
-
-//   onPanelClose() {
-//     this.panelOpenState = false;
-//   }
-
-//   onRemoveFriend() {
-//     this.removeFriend.emit(this.friend);
-//   }
-
-//   openSnackBar(message: string, action: string) {
-//     this.snackBar.open(message, action, {
-//       duration: 5000,
-//     });
-//   }
-// }
+  onPanelClose() {
+    this.panelOpenState = false;
+  }
+}

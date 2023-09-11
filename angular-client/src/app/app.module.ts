@@ -33,8 +33,8 @@ import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
 // import { SocialChatBoxComponent } from './components/social-chat-box/social-chat-box.component';
-// import { SocialCellComponent } from './components/social-cell/social-cell.component';
-// import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
+import { SocialCellComponent } from './components/social-cell/social-cell.component';
+import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
 // import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
 import { SocialFriendsTabComponent } from './components/social-friends-tab/social-friends-tab.component';
 import { SocialGroupsTabComponent } from './components/social-groups-tab/social-groups-tab.component';
@@ -80,8 +80,8 @@ import { UserStateService } from './state/user/user.state.service';
     UserProfileComponent,
     SocialSidenavComponent,
     // SocialChatBoxComponent,
-    // SocialCellComponent,
-    // SocialFriendsListComponent,
+    SocialCellComponent,
+    SocialFriendsListComponent,
     // SocialFriendRequestsListComponent,
     CreateGameComponent,
     JoinGameComponent,

@@ -20,36 +20,15 @@
         <input matInput (keyup)="filter($event)" name="filter" />
       </mat-form-field>
     </form>
-
-    <mat-table [dataSource]="onlineFriends">
-      <ng-container matColumnDef="username">
-        <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
-        <mat-cell *matCellDef="let friend">{{ friend.username }}</mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-    </mat-table>
-
-    <mat-table [dataSource]="offlineFriends">
-      <ng-container matColumnDef="username">
-        <mat-header-cell *matHeaderCellDef>Username</mat-header-cell>
-        <mat-cell *matCellDef="let friend">{{ friend.username }}</mat-cell>
-      </ng-container>
-      <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-      <mat-row *matRowDef="let row; columns: displayedColumns"></mat-row>
-    </mat-table>
-
-    <!-- <app-social-friends-list
+    <app-social-friends-list
       title="online"
       titleColor="color:rgb(0, 255, 149)"
-      [(friends)]="onlineFriends"
-      [potentialMessage]="potentialMessage"></app-social-friends-list>
+      [(friends)]="onlineFriends"></app-social-friends-list>
     <app-social-friends-list
       title="offline"
       titleColor="color:rgb(255, 0, 76)"
-      [(friends)]="offlineFriends"
-      [potentialMessage]="potentialMessage"></app-social-friends-list>
-    <app-social-friend-requests-list
+      [(friends)]="offlineFriends"></app-social-friends-list>
+    <!-- <app-social-friend-requests-list
       title="pending"
       titleColor="color:rgba(236, 232, 0, 0.884)"
       [(friendRequests)]="outboundFriendRequests"
