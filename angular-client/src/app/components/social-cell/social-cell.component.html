@@ -8,7 +8,7 @@
   <mat-expansion-panel-header>
     <mat-panel-title
       [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'">
-      {{ friend.username }}
+      {{ friend.username }} - {{ friend.online ? 'online' : 'offline' }}
     </mat-panel-title>
     <mat-panel-description>
       <span
