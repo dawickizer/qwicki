@@ -7,6 +7,7 @@ import { Observable, throwError } from 'rxjs';
 import { User } from '../../models/user/user';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { Message } from 'src/app/models/message/message';
+import { Friend } from 'src/app/models/friend/friend';
 
 @Injectable({
   providedIn: 'root',
@@ -61,7 +62,7 @@ export class SocialService {
       .pipe(catchError(this.handleError));
   }
 
-  getMessagesBetween(friend: User): Observable<Message[]> {
+  getMessagesBetween(friend: Friend): Observable<Message[]> {
     return this.http
       .get<Message[]>(`${this.API}/social/get-messages-between/${friend._id}`)
       .pipe(catchError(this.handleError));

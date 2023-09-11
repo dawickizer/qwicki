@@ -20,7 +20,7 @@ export class SocialFriendsListComponent {
 
   constructor() {}
 
-  dropFriends(event: CdkDragDrop<string[]>) {
+  dropFriend(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.friends.data, event.previousIndex, event.currentIndex);
     this.friends._updateChangeSubscription();
   }

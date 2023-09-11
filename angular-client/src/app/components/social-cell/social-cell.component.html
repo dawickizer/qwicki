@@ -1,12 +1,11 @@
 <mat-expansion-panel
-  cdkDrag
   (opened)="onPanelOpen()"
   (closed)="onPanelClose()"
   class="mat-elevation-z0"
   appBorder
   [bStyle]="panelOpenState ? 'solid' : 'hidden'"
   [bPadding]="panelOpenState ? 5 : 0">
-  <mat-expansion-panel-header cdkDragHandle>
+  <mat-expansion-panel-header>
     <mat-panel-title
       [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'">
       {{ friend.username }}
@@ -19,10 +18,8 @@
       >
     </mat-panel-description>
   </mat-expansion-panel-header>
-  <!-- <app-social-chat-box
+  <app-social-chat-box
     [panelOpenState]="panelOpenState"
-    [potentialMessage]="potentialMessage"
     [(friend)]="friend"
-    (removeFriend)="onRemoveFriend()"
-    (unviewedMessage)="onUnviewedMessage()"></app-social-chat-box> -->
+    (unviewedMessage)="onUnviewedMessage()"></app-social-chat-box>
 </mat-expansion-panel>
