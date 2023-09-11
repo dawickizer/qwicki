@@ -5,6 +5,7 @@ import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { Friend } from 'src/app/models/friend/friend';
 import { Subject, takeUntil } from 'rxjs';
 import { UserStateService } from 'src/app/state/user/user.state.service';
+import { SocialRoomsStateService } from 'src/app/state/social-rooms/social-rooms.state.service';
 
 @Component({
   selector: 'app-social-friends-tab',
@@ -27,20 +28,33 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   unsubscribe$ = new Subject<void>();
 
   displayedColumns: string[] = ['username'];
-  constructor(private userStateService: UserStateService) {}
+  constructor(
+    private userStateService: UserStateService,
+    private socialRoomsStateService: SocialRoomsStateService
+  ) {}
 
   ngOnInit() {
     this.userStateService.userOnlineFriends$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(onlineFriends => {
-        this.onlineFriends.data = onlineFriends;
+        // merge results to preserve old mem addresses which will make it so angular doesnt re render the entire list which can be
+        // disruptive if you are interacting with the list
+        this.onlineFriends.data = onlineFriends.map(
+          friend =>
+            this.onlineFriends.data.find(f => f._id === friend._id) || friend
+        );
         console.log(this.onlineFriends.data);
       });
 
     this.userStateService.userOfflineFriends$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(offlineFriends => {
-        this.offlineFriends.data = offlineFriends;
+        // merge results to preserve old mem addresses which will make it so angular doesnt re render the entire list which can be
+        // disruptive if you are interacting with the list
+        this.offlineFriends.data = offlineFriends.map(
+          friend =>
+            this.offlineFriends.data.find(f => f._id === friend._id) || friend
+        );
         console.log(this.offlineFriends.data);
       });
   }
