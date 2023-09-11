@@ -5,7 +5,6 @@ import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { Friend } from 'src/app/models/friend/friend';
 import { Subject, takeUntil } from 'rxjs';
 import { UserStateService } from 'src/app/state/user/user.state.service';
-import { SocialRoomsStateService } from 'src/app/state/social-rooms/social-rooms.state.service';
 
 @Component({
   selector: 'app-social-friends-tab',
@@ -29,8 +28,7 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
 
   displayedColumns: string[] = ['username'];
   constructor(
-    private userStateService: UserStateService,
-    private socialRoomsStateService: SocialRoomsStateService
+    private userStateService: UserStateService
   ) {}
 
   ngOnInit() {
