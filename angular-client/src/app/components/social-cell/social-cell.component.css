@@ -20,3 +20,19 @@
 ::ng-deep .mat-expansion-indicator:after {
   color: rgba(255, 255, 255, 0.5);
 }
+
+::ng-deep .material-icons.online,
+.material-icons-outlined {
+  vertical-align: middle;
+  color: #3cb371;
+  font-size: 12px;
+  padding-right: 4px;
+}
+
+::ng-deep .material-icons.offline,
+.material-icons-outlined {
+  vertical-align: middle;
+  color: #cd5c5c;
+  font-size: 12px;
+  padding-right: 4px;
+}

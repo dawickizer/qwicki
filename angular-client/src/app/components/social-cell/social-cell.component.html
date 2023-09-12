@@ -8,7 +8,13 @@
   <mat-expansion-panel-header>
     <mat-panel-title
       [style]="panelOpenState ? 'color:#673ab7' : 'color:aliceblue'">
-      {{ friend.username }} - {{ friend.online ? 'online' : 'offline' }}
+      <span
+        [matTooltip]="friend.online ? 'online' : 'offline'"
+        class="material-icons"
+        [ngClass]="friend.online ? 'online' : 'offline'"
+        >circle</span
+      >
+      {{ friend.username }}
     </mat-panel-title>
     <mat-panel-description>
       <span
