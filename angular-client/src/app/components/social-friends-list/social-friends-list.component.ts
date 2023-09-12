@@ -10,9 +10,6 @@ import { UserStateService } from 'src/app/state/user/user.state.service';
   styleUrls: ['./social-friends-list.component.css'],
 })
 export class SocialFriendsListComponent {
-  @Input() title: string;
-  @Input() titleColor: string;
-
   @Input() friends: MatTableDataSource<Friend>;
 
   friendsDisplayedColumns: string[] = ['username'];
