@@ -247,10 +247,10 @@ export class SocialRoomsStateService {
     //     );
 
     room.onMessage('online', (roomId: string) => {
-      this.userStateService.setUserFriendOnline(roomId, true);
+      this.userStateService.setUserFriendOnline(roomId);
     });
     room.onMessage('offline', (roomId: string) => {
-      this.userStateService.setUserFriendOnline(roomId, false);
+      this.userStateService.setUserFriendOffline(roomId);
     });
     room.onError((code, message) =>
       console.log(
@@ -269,7 +269,7 @@ export class SocialRoomsStateService {
     //       );
 
     room.onMessage('dispose', (roomId: string) => {
-      this.userStateService.setUserFriendOnline(roomId, false);
+      this.userStateService.setUserFriendOffline(roomId);
       this.removeConnectedRoomById(roomId);
     });
     room.onError((code, message) =>
@@ -293,7 +293,7 @@ export class SocialRoomsStateService {
         room = this.setPersonalRoomListeners(room);
         this.setPersonalRoom(room);
       } else {
-        this.userStateService.setUserFriendOnline(room.id, true);
+        this.userStateService.setUserFriendOnline(room.id);
         room = this.setFriendRoomListeners(room);
       }
       this.addConnectedRoom(room);
@@ -318,7 +318,7 @@ export class SocialRoomsStateService {
           friendRoomIds.push(room.id);
         }
       });
-      this.userStateService.setUserFriendsOnline(friendRoomIds, true);
+      this.userStateService.setUserFriendsOnline(friendRoomIds);
       this.addConnectedRooms([
         ...(personalRoom ? [personalRoom] : []),
         ...friendRooms,

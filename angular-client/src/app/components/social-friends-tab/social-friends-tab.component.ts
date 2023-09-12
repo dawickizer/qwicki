@@ -13,47 +13,39 @@ import { UserStateService } from 'src/app/state/user/user.state.service';
 })
 export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') drawer: MatSidenav;
-
-  onlineFriends = new MatTableDataSource<Friend>([] as Friend[]);
-  offlineFriends = new MatTableDataSource<Friend>([] as Friend[]);
-
+  friends = new MatTableDataSource<Friend>([] as Friend[]);
   inboundFriendRequests = new MatTableDataSource<FriendRequest>(
     [] as FriendRequest[]
   );
   outboundFriendRequests = new MatTableDataSource<FriendRequest>(
     [] as FriendRequest[]
   );
-
   unsubscribe$ = new Subject<void>();
-
   displayedColumns: string[] = ['username'];
-  constructor(
-    private userStateService: UserStateService
-  ) {}
+
+  constructor(private userStateService: UserStateService) {}
 
   ngOnInit() {
-    this.userStateService.userOnlineFriends$
+    this.userStateService.userFriends$
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(onlineFriends => {
-        // merge results to preserve old mem addresses which will make it so angular doesnt re render the entire list which can be
-        // disruptive if you are interacting with the list
-        this.onlineFriends.data = onlineFriends.map(
-          friend =>
-            this.onlineFriends.data.find(f => f._id === friend._id) || friend
-        );
-        console.log(this.onlineFriends.data);
-      });
-
-    this.userStateService.userOfflineFriends$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(offlineFriends => {
-        // merge results to preserve old mem addresses which will make it so angular doesnt re render the entire list which can be
-        // disruptive if you are interacting with the list
-        this.offlineFriends.data = offlineFriends.map(
-          friend =>
-            this.offlineFriends.data.find(f => f._id === friend._id) || friend
-        );
-        console.log(this.offlineFriends.data);
+      .subscribe(friends => {
+        // merge results to preserve old mem addresses which will make it so angular doesn't re-render the entire list, which can be
+        // disruptive if you are interacting with the list. Ensure that the online field is updated on the current object as well
+        this.friends.data = friends.map(friend => {
+          const existingFriend = this.friends.data.find(
+            f => f._id === friend._id
+          );
+          if (existingFriend) {
+            // Check if onlineIndex or offlineIndex have changed
+            if (existingFriend.online !== friend.online) {
+              existingFriend.online = friend.online;
+            }
+            return existingFriend;
+          } else {
+            return friend;
+          }
+        });
+        console.log(this.friends.data);
       });
   }
 
@@ -73,13 +65,9 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   }
 
   filter(filterValue: any) {
-    this.onlineFriends.filterPredicate = (friend, filter) =>
+    this.friends.filterPredicate = (friend, filter) =>
       friend.username.trim().toLowerCase().includes(filter);
-    this.onlineFriends.filter = filterValue.target.value.trim().toLowerCase();
-
-    this.offlineFriends.filterPredicate = (friend, filter) =>
-      friend.username.trim().toLowerCase().includes(filter);
-    this.offlineFriends.filter = filterValue.target.value.trim().toLowerCase();
+    this.friends.filter = filterValue.target.value.trim().toLowerCase();
 
     this.inboundFriendRequests.filterPredicate = (friendRequest, filter) =>
       friendRequest.from.username.trim().toLowerCase().includes(filter);

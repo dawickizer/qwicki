@@ -4,7 +4,7 @@ import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-import { Subject, Observable, takeUntil } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { UserStateService } from 'src/app/state/user/user.state.service';
 import { SocialRoomsStateService } from 'src/app/state/social-rooms/social-rooms.state.service';
 
@@ -31,22 +31,8 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.user$ = this.userStateService.user$;
     this.userStateIsLoading$ = this.userStateService.isLoading$;
-
-    // this.socialRoomsStateService.socialRoomsState$
-    //   .pipe(takeUntil(this.unsubscribe$))
-    //   .subscribe(state => {
-    //     console.log(state);
-    //   });
-
-    // this.userStateService.userState$
-    //   .pipe(takeUntil(this.unsubscribe$))
-    //   .subscribe(user => {
-    //     console.log(user);
-    //   });
-
     this.socialRoomsStateService.createPersonalRoom();
     this.socialRoomsStateService.joinFriendsRoomsIfPresent();
-
     this.handleSideNavKeyBind();
   }
 

@@ -28,6 +28,7 @@ import {
 import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
+import { Friend } from 'src/app/models/friend/friend';
 
 @Injectable({
   providedIn: 'root',
@@ -43,7 +44,6 @@ export class UserStateService {
   public user$ = userSelector(this.userState$);
   public userOnline$ = userOnlineSelector(this.user$);
   public userFriends$ = userFriendsSelector(this.user$);
-
   public userOnlineFriends$ = userOnlineFriendsSelector(this.user$);
   public userOfflineFriends$ = userOfflineFriendsSelector(this.user$);
 
@@ -217,27 +217,143 @@ export class UserStateService {
     });
   }
 
-  setUserFriendOnline(friendId: string, online: boolean): void {
+  // setUserFriendOnline(friendId: string, online: boolean): void {
+  //   const currentState = this._userState.value;
+  //   if (!currentState.user) return;
+  //   const updatedFriends = currentState.user.friends.map(friend =>
+  //     friend._id === friendId ? { ...friend, online } : friend
+  //   );
+  //   this._userState.next({
+  //     ...currentState,
+  //     user: new User({ ...currentState.user, friends: updatedFriends } as User),
+  //   });
+  // }
+
+  setUserFriendOnline(friendId: string): void {
     const currentState = this._userState.value;
     if (!currentState.user) return;
-    const updatedFriends = currentState.user.friends.map(friend =>
-      friend._id === friendId ? { ...friend, online } : friend
+
+    const friendIndex = currentState.user.friends.findIndex(
+      friend => friend._id === friendId
     );
+
+    if (friendIndex === -1) return; // if the friend with the given ID is not found
+
+    // Create a shallow copy of the friends array
+    const updatedFriends = [...currentState.user.friends];
+
+    // Update the online status of the specified friend
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      online: true,
+    };
+
+    // Remove the friend from its current position and add to the start of the array
+    const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
+    updatedFriends.unshift(friendToMove);
+
     this._userState.next({
       ...currentState,
       user: new User({ ...currentState.user, friends: updatedFriends } as User),
     });
   }
 
-  setUserFriendsOnline(friendIds: string[], online: boolean): void {
+  setUserFriendsOnline(friendIds: string[]): void {
     const currentState = this._userState.value;
     if (!currentState.user) return;
-    const updatedFriends = currentState.user.friends.map(friend =>
-      friendIds.includes(friend._id) ? { ...friend, online } : friend
-    );
+
+    // Create a shallow copy of the friends array
+    const updatedFriends = [...currentState.user.friends];
+
+    friendIds.forEach(friendId => {
+      const friendIndex = updatedFriends.findIndex(
+        friend => friend._id === friendId
+      );
+      if (friendIndex === -1) return; // if the friend with the given ID is not found
+
+      // Update the online status of the specified friend
+      updatedFriends[friendIndex] = {
+        ...updatedFriends[friendIndex],
+        online: true,
+      };
+
+      // Remove the friend from its current position and add to the start of the array
+      const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
+      updatedFriends.unshift(friendToMove);
+    });
+
     this._userState.next({
       ...currentState,
       user: new User({ ...currentState.user, friends: updatedFriends } as User),
+    });
+  }
+
+  setUserFriendOffline(friendId: string): void {
+    const currentState = this._userState.value;
+    if (!currentState.user) return;
+
+    const friendIndex = currentState.user.friends.findIndex(
+      friend => friend._id === friendId
+    );
+
+    if (friendIndex === -1) return; // if the friend with the given ID is not found
+
+    // Create a shallow copy of the friends array
+    const updatedFriends = [...currentState.user.friends];
+
+    // Update the online status of the specified friend
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      online: false,
+    };
+
+    // Remove the friend from its current position and push to the end of the array
+    const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
+    updatedFriends.push(friendToMove);
+
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, friends: updatedFriends } as User),
+    });
+  }
+
+  setUserFriendsOffline(friendIds: string[]): void {
+    const currentState = this._userState.value;
+    if (!currentState.user) return;
+
+    // Create a shallow copy of the friends array
+    const updatedFriends = [...currentState.user.friends];
+
+    friendIds.forEach(friendId => {
+      const friendIndex = updatedFriends.findIndex(
+        friend => friend._id === friendId
+      );
+      if (friendIndex === -1) return; // if the friend with the given ID is not found
+
+      // Update the online status of the specified friend
+      updatedFriends[friendIndex] = {
+        ...updatedFriends[friendIndex],
+        online: false,
+      };
+
+      // Remove the friend from its current position and push to the end of the array
+      const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
+      updatedFriends.push(friendToMove);
+    });
+
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, friends: updatedFriends } as User),
+    });
+  }
+
+  setUserFriends(friends: Friend[]) {
+    const currentState = this._userState.value;
+    if (!currentState.user) return;
+
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, friends: [...friends] } as User),
     });
   }
 

@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Friend } from 'src/app/models/friend/friend';
 import { SocialService } from 'src/app/services/social/social.service';
@@ -10,7 +10,6 @@ import { SocialService } from 'src/app/services/social/social.service';
 })
 export class SocialCellComponent implements OnInit {
   @Input() friend: Friend;
-  @Output() friendChange: EventEmitter<Friend> = new EventEmitter();
 
   hasUnviewedMessages = false;
   panelOpenState = false;

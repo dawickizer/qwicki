@@ -23,7 +23,6 @@ export class SocialChatBoxComponent implements OnInit {
   @ViewChild('test') test: ElementRef;
 
   @Input() friend: Friend;
-  @Output() friendChange: EventEmitter<Friend> = new EventEmitter();
 
   @Output() removeFriend: EventEmitter<Friend> = new EventEmitter();
   @Output() unviewedMessage: EventEmitter<boolean> = new EventEmitter();
