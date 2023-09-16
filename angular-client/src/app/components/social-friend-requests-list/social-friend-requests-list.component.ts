@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { SocialService } from 'src/app/services/social/social.service';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { UserStateService } from 'src/app/state/user/user.state.service';
 
 @Component({
   selector: 'app-social-friend-requests-list',
@@ -17,37 +17,15 @@ export class SocialFriendRequestsListComponent {
 
   potentialFriend: string;
 
-  constructor(private socialService: SocialService) {}
+  constructor(private userStateService: UserStateService) {}
 
   isInboundFriendRequestsComponent(): boolean {
     return this.title === 'friend requests';
   }
 
   sendFriendRequest() {
-    // this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
-    //   next: async host => {
-    //     this.colyseusService.host = new User(host);
-    //     const friendRequest: FriendRequest = this.findOutboundFriendRequest();
-    //     const room: Colyseus.Room =
-    //       await this.colyseusService.joinExistingRoomIfPresent(
-    //         friendRequest.to
-    //       );
-    //     if (room) {
-    //       room.send('sendFriendRequest', friendRequest);
-    //       this.colyseusService.leaveRoom(room);
-    //     }
-    //     this.send.emit(friendRequest);
-    //     this.openSnackBar(
-    //       'Friend request sent to ' + this.potentialFriend,
-    //       'Dismiss'
-    //     );
-    //     this.potentialFriend = '';
-    //   },
-    //   error: error => {
-    //     this.openSnackBar(error, 'Dismiss');
-    //     this.potentialFriend = '';
-    //   },
-    // });
+    this.userStateService.sendFriendRequest(this.potentialFriend);
+    this.potentialFriend = '';
   }
 
   acceptFriendRequest(friendRequest: FriendRequest) {

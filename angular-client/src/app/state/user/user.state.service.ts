@@ -31,6 +31,7 @@ import { InactivityService } from 'src/app/services/inactivity/inactivity.servic
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { Friend } from 'src/app/models/friend/friend';
+import { SocialService } from 'src/app/services/social/social.service';
 
 @Injectable({
   providedIn: 'root',
@@ -58,6 +59,7 @@ export class UserStateService {
   constructor(
     private authService: AuthService,
     private userService: UserService,
+    private socialService: SocialService,
     private inactivityService: InactivityService,
     private matchMakingService: MatchMakingService,
     private router: Router,
@@ -206,6 +208,35 @@ export class UserStateService {
       )
       .subscribe();
   }
+
+  sendFriendRequest(potentialFriend: string) {
+    // this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
+    //   next: async host => {
+    //     this.colyseusService.host = new User(host);
+    //     const friendRequest: FriendRequest = this.findOutboundFriendRequest();
+    //     const room: Colyseus.Room =
+    //       await this.colyseusService.joinExistingRoomIfPresent(
+    //         friendRequest.to
+    //       );
+    //     if (room) {
+    //       room.send('sendFriendRequest', friendRequest);
+    //       this.colyseusService.leaveRoom(room);
+    //     }
+    //     this.send.emit(friendRequest);
+    //     this.openSnackBar(
+    //       'Friend request sent to ' + this.potentialFriend,
+    //       'Dismiss'
+    //     );
+    //     this.potentialFriend = '';
+    //   },
+    //   error: error => {
+    //     this.openSnackBar(error, 'Dismiss');
+    //     this.potentialFriend = '';
+    //   },
+    // });
+  }
+
+  // Everything below this line has no API effects and is purely state logic
 
   setInitialState() {
     this._userState.next(initialState);
