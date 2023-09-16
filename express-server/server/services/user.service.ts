@@ -29,6 +29,32 @@ export const getUserById = async (userId: string): Promise<User | null> => {
   }
 };
 
+export const getUserByCredentials = async (credentials: {
+  username: string;
+  password: string;
+}): Promise<User | null> => {
+  try {
+    return await User.findOne({
+      usernameLower: credentials.username.toLowerCase(),
+      password: credentials.password,
+    });
+  } catch (error) {
+    console.error('Error fetching user by credentials:', error);
+    throw new Error('Unable to retrieve user by credentials.');
+  }
+};
+
+export const getUserByUsername = async (
+  username: string
+): Promise<User | null> => {
+  try {
+    return await User.findOne({ usernameLower: username.toLowerCase() });
+  } catch (error) {
+    console.error(`Error fetching user by username ${username}:`, error);
+    throw new Error(`Unable to retrieve user by username ${username}.`);
+  }
+};
+
 export const updateUserById = async (
   id: string | Schema.Types.ObjectId,
   updatedUser: User
