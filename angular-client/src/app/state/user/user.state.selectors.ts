@@ -5,6 +5,7 @@ import { User } from 'src/app/models/user/user';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { Friend } from 'src/app/models/friend/friend';
 import { isEqual } from 'lodash';
+import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 
 export const jwtSelector = (
   userState$: Observable<UserState>
@@ -80,7 +81,7 @@ export const userOfflineFriendsSelector = (
 
 export const userInboundFriendRequestsSelector = (
   user$: Observable<User | null>
-): Observable<Friend[] | null> =>
+): Observable<FriendRequest[] | null> =>
   user$.pipe(
     map(user => (user ? user.inboundFriendRequests : null)),
     distinctUntilChanged(isEqual)
@@ -88,7 +89,7 @@ export const userInboundFriendRequestsSelector = (
 
 export const userOutboundFriendRequestsSelector = (
   user$: Observable<User | null>
-): Observable<Friend[] | null> =>
+): Observable<FriendRequest[] | null> =>
   user$.pipe(
     map(user => (user ? user.outboundFriendRequests : null)),
     distinctUntilChanged(isEqual)

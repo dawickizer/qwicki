@@ -35,7 +35,7 @@ import { SocialSidenavComponent } from './components/social-sidenav/social-siden
 import { SocialChatBoxComponent } from './components/social-chat-box/social-chat-box.component';
 import { SocialCellComponent } from './components/social-cell/social-cell.component';
 import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
-// import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
+import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
 import { SocialFriendsTabComponent } from './components/social-friends-tab/social-friends-tab.component';
 import { SocialGroupsTabComponent } from './components/social-groups-tab/social-groups-tab.component';
 import { CreateGameComponent } from './components/create-game/create-game.component';
@@ -82,7 +82,7 @@ import { UserStateService } from './state/user/user.state.service';
     SocialChatBoxComponent,
     SocialCellComponent,
     SocialFriendsListComponent,
-    // SocialFriendRequestsListComponent,
+    SocialFriendRequestsListComponent,
     CreateGameComponent,
     JoinGameComponent,
     GameComponent,

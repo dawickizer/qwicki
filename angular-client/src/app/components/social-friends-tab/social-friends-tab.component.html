@@ -1,11 +1,9 @@
 <div class="social-friends-tab">
-  <!-- <app-social-friend-requests-list
+  <app-social-friend-requests-list
     title="friend requests"
     titleColor="color:aliceblue"
-    [(friendRequests)]="inboundFriendRequests"
-    (send)="onSendFriendRequest($event)"
-    (accept)="onAcceptFriendRequest()"></app-social-friend-requests-list>
-  <br /> -->
+    [friendRequests]="inboundFriendRequests"></app-social-friend-requests-list>
+  <br />
   <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>

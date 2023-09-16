@@ -48,8 +48,10 @@ export class UserStateService {
   public userFriends$ = userFriendsSelector(this.user$);
   public userOnlineFriends$ = userOnlineFriendsSelector(this.user$);
   public userOfflineFriends$ = userOfflineFriendsSelector(this.user$);
-  public inboundFriendRequests$ = userInboundFriendRequestsSelector(this.user$);
-  public outboundFriendRequests$ = userOutboundFriendRequestsSelector(
+  public userInboundFriendRequests$ = userInboundFriendRequestsSelector(
+    this.user$
+  );
+  public userOutboundFriendRequests$ = userOutboundFriendRequestsSelector(
     this.user$
   );
 

@@ -26,6 +26,11 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   constructor(private userStateService: UserStateService) {}
 
   ngOnInit() {
+    this.subscribeToFriends();
+    this.subscribeToFriendRequests();
+  }
+
+  subscribeToFriends() {
     this.userStateService.userFriends$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(friends => {
@@ -49,19 +54,25 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
       });
   }
 
+  subscribeToFriendRequests() {
+    this.userStateService.userInboundFriendRequests$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(inboundFriendRequests => {
+        this.inboundFriendRequests.data = inboundFriendRequests;
+        console.log(this.inboundFriendRequests.data);
+      });
+
+    this.userStateService.userOutboundFriendRequests$
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(outboundFriendRequests => {
+        this.outboundFriendRequests.data = outboundFriendRequests;
+        console.log(this.outboundFriendRequests.data);
+      });
+  }
+
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-  }
-
-  onSendFriendRequest(friendRequest: FriendRequest) {
-    // dispatch send friend request action
-    console.log(friendRequest);
-  }
-
-  onAcceptFriendRequest() {
-    // dispatch accept friend request action
-    console.log('Accept friend request');
   }
 
   filter(filterValue: any) {
