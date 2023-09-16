@@ -36,7 +36,19 @@ export const getUserById = async (
 ): Promise<void> => {
   try {
     const userId = req.params.userId;
-    const user = await userService.getUserById(userId);
+    const friendsParam = req.query.friends === 'true';
+    const friendRequestsParam = req.query.friendRequests === 'true';
+    let user;
+
+    if (friendsParam && friendRequestsParam) {
+      user = await userService.getUserByIdAndPopulateChildren(userId);
+    } else if (friendsParam) {
+      user = await userService.getUserByIdAndPopulateFriends(userId);
+    } else if (friendRequestsParam) {
+      user = await userService.getUserByIdAndPopulateFriendRequests(userId);
+    } else {
+      user = await userService.getUserById(userId);
+    }
 
     if (user) {
       res.status(200).json(user);

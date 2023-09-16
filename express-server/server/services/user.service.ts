@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose';
+import { PopulateOptions, Schema } from 'mongoose';
 import { User } from '../models/user';
 
 export const createUser = async (user: User): Promise<User> => {
@@ -20,12 +20,80 @@ export const getAllUsers = async (): Promise<User[]> => {
   }
 };
 
-export const getUserById = async (userId: string): Promise<User | null> => {
+export const getUserById = async (
+  userId: string | Schema.Types.ObjectId
+): Promise<User | null> => {
   try {
     return await User.findById(userId);
   } catch (error) {
     console.error(`Error fetching user with ID ${userId}:`, error);
     throw new Error(`Unable to retrieve user with ID ${userId}.`);
+  }
+};
+
+export const getUserByIdAndPopulateFriends = async (
+  id: string | Schema.Types.ObjectId
+): Promise<User | null> => {
+  try {
+    const populateOptions: PopulateOptions = {
+      path: 'friends',
+      select: 'username',
+    };
+    return await User.findById(id).populate(populateOptions);
+  } catch (error) {
+    console.error(
+      `Error fetching and populating friends for user with ID ${id}:`,
+      error
+    );
+    throw new Error(
+      `Unable to fetch and populate friends for user with ID ${id}.`
+    );
+  }
+};
+
+export const getUserByIdAndPopulateFriendRequests = async (
+  id: string | Schema.Types.ObjectId
+): Promise<User | null> => {
+  try {
+    const populateOptions: PopulateOptions[] = friendRequest(
+      'inboundFriendRequests'
+    ).concat(friendRequest('outboundFriendRequests'));
+    return await User.findById(id).populate(populateOptions);
+  } catch (error) {
+    console.error(
+      `Error fetching and populating friend requests for user with ID ${id}:`,
+      error
+    );
+    throw new Error(
+      `Unable to fetch and populate friend requests for user with ID ${id}.`
+    );
+  }
+};
+
+export const getUserByIdAndPopulateChildren = async (
+  id: string | Schema.Types.ObjectId
+): Promise<User | null> => {
+  try {
+    const friendsOptions: PopulateOptions = {
+      path: 'friends',
+      select: 'username',
+    };
+
+    const friendRequestsOptions: PopulateOptions[] = friendRequest(
+      'inboundFriendRequests'
+    ).concat(friendRequest('outboundFriendRequests'));
+
+    return await User.findById(id)
+      .populate(friendsOptions)
+      .populate(friendRequestsOptions);
+  } catch (error) {
+    console.error(
+      `Error fetching and populating children for user with ID ${id}:`,
+      error
+    );
+    throw new Error(
+      `Unable to fetch and populate children for user with ID ${id}.`
+    );
   }
 };
 
@@ -82,4 +150,27 @@ export const deleteUserById = async (
     console.error(`Error deleting user with ID ${userId}:`, error);
     throw new Error(`Unable to delete user with ID ${userId}.`);
   }
+};
+
+const friendRequest = (path: string) => {
+  return [
+    // reference
+    {
+      path: path,
+      model: 'FriendRequest',
+      populate: [
+        // reference
+        {
+          path: 'from',
+          model: 'User',
+          select: 'username',
+        },
+        {
+          path: 'to',
+          model: 'User',
+          select: 'username',
+        },
+      ],
+    },
+  ];
 };
