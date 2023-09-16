@@ -20,9 +20,11 @@ import {
   isLoggedInSelector,
   jwtSelector,
   userFriendsSelector,
+  userInboundFriendRequestsSelector,
   userOfflineFriendsSelector,
   userOnlineFriendsSelector,
   userOnlineSelector,
+  userOutboundFriendRequestsSelector,
   userSelector,
 } from './user.state.selectors';
 import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
@@ -46,6 +48,10 @@ export class UserStateService {
   public userFriends$ = userFriendsSelector(this.user$);
   public userOnlineFriends$ = userOnlineFriendsSelector(this.user$);
   public userOfflineFriends$ = userOfflineFriendsSelector(this.user$);
+  public inboundFriendRequests$ = userInboundFriendRequestsSelector(this.user$);
+  public outboundFriendRequests$ = userOutboundFriendRequestsSelector(
+    this.user$
+  );
 
   constructor(
     private authService: AuthService,
@@ -217,18 +223,6 @@ export class UserStateService {
     });
   }
 
-  // setUserFriendOnline(friendId: string, online: boolean): void {
-  //   const currentState = this._userState.value;
-  //   if (!currentState.user) return;
-  //   const updatedFriends = currentState.user.friends.map(friend =>
-  //     friend._id === friendId ? { ...friend, online } : friend
-  //   );
-  //   this._userState.next({
-  //     ...currentState,
-  //     user: new User({ ...currentState.user, friends: updatedFriends } as User),
-  //   });
-  // }
-
   setUserFriendOnline(friendId: string): void {
     const currentState = this._userState.value;
     if (!currentState.user) return;
@@ -378,6 +372,7 @@ export class UserStateService {
   }
 
   private handleError = (error: any): Observable<null> => {
+    console.error(error);
     this.snackBar.open(error, 'Dismiss', { duration: 5000 });
     this.setIsLoading(false);
     return of(null);

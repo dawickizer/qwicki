@@ -4,9 +4,7 @@
 // import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 // import { SocialService } from 'src/app/services/social/social.service';
 // import * as Colyseus from 'colyseus.js';
-// import { MatSnackBar } from '@angular/material/snack-bar';
 // import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-// import { Router } from '@angular/router';
 
 // @Component({
 //   selector: 'app-social-friend-requests-list',
@@ -39,8 +37,6 @@
 //   potentialFriend: string;
 
 //   constructor(
-//     private router: Router,
-//     private snackBar: MatSnackBar,
 //     public colyseusService: ColyseusService,
 //     private socialService: SocialService
 //   ) {}
@@ -156,11 +152,5 @@
 //         friendRequest.to.username.toLowerCase() ===
 //         this.potentialFriend.toLowerCase()
 //     );
-//   }
-
-//   openSnackBar(message: string, action: string) {
-//     this.snackBar.open(message, action, {
-//       duration: 5000,
-//     });
 //   }
 // }

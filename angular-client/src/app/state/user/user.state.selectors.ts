@@ -77,3 +77,19 @@ export const userOfflineFriendsSelector = (
     map(user => (user ? user.offlineFriends : null)),
     distinctUntilChanged(isEqual)
   );
+
+export const userInboundFriendRequestsSelector = (
+  user$: Observable<User | null>
+): Observable<Friend[] | null> =>
+  user$.pipe(
+    map(user => (user ? user.inboundFriendRequests : null)),
+    distinctUntilChanged(isEqual)
+  );
+
+export const userOutboundFriendRequestsSelector = (
+  user$: Observable<User | null>
+): Observable<Friend[] | null> =>
+  user$.pipe(
+    map(user => (user ? user.outboundFriendRequests : null)),
+    distinctUntilChanged(isEqual)
+  );
