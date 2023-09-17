@@ -25,16 +25,17 @@ export const createFriendRequest = async (
   }
 };
 
-export const deleteFriendRequest = (
+export const deleteFriendRequestById = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   try {
     const userId = req.params.userId;
     const friendRequestId = req.params.friendRequestId;
-    // Logic to delete the friend request...
-    res.status(204).send();
+    const result =
+      await friendRequestService.deleteFriendRequestById(friendRequestId);
+    res.status(204).send(result);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
