@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as userService from '../services/user.service';
 import { User } from '../models/user';
+import CustomError from '../error/CustomError';
 
 export const createUser = async (
   req: Request,
@@ -12,7 +13,10 @@ export const createUser = async (
     const user = await userService.createUser(newUser);
     res.status(201).json({ user });
   } catch (error) {
-    next(error);
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.status).json(error.message);
+    else next(error);
   }
 };
 
@@ -25,7 +29,10 @@ export const getAllUsers = async (
     const users = await userService.getAllUsers();
     res.status(200).json(users);
   } catch (error) {
-    next(error);
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.status).json(error.message);
+    else next(error);
   }
 };
 
@@ -38,7 +45,7 @@ export const getUserById = async (
     const userId = req.params.userId;
     const friendsParam = req.query.friends === 'true';
     const friendRequestsParam = req.query.friendRequests === 'true';
-    let user;
+    let user: User;
 
     if (friendsParam && friendRequestsParam) {
       user = await userService.getUserByIdAndPopulateChildren(userId);
@@ -50,13 +57,12 @@ export const getUserById = async (
       user = await userService.getUserById(userId);
     }
 
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).send(`User with ID ${userId} not found.`);
-    }
+    res.status(200).json(user);
   } catch (error) {
-    next(error);
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.status).json(error.message);
+    else next(error);
   }
 };
 
@@ -68,16 +74,13 @@ export const updateUserById = async (
   try {
     const userId: string = req.params.userId;
     const updatedUser: User = req.body;
-
     const user = await userService.updateUserById(userId, updatedUser);
-
-    if (user) {
-      res.status(200).json(user);
-    } else {
-      res.status(404).send(`User with ID ${userId} not found.`);
-    }
+    res.status(200).json(user);
   } catch (error) {
-    next(error);
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.status).json(error.message);
+    else next(error);
   }
 };
 
@@ -89,13 +92,11 @@ export const deleteUserById = async (
   try {
     const userId = req.params.userId;
     const result = await userService.deleteUserById(userId);
-
-    if (result) {
-      res.status(204).send();
-    } else {
-      res.status(404).send('User not found.');
-    }
+    res.status(204).send(result);
   } catch (error) {
-    next(error);
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.status).json(error.message);
+    else next(error);
   }
 };

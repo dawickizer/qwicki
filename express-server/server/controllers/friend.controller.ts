@@ -1,47 +1,45 @@
 import { Request, Response, NextFunction } from 'express';
+import * as friendService from '../services/friend.service';
+import CustomError from '../error/CustomError';
 
-// Fetch all friends for a user
-export const getAllFriendsForUser = (
+// COME BACK TO THIS AFTER FRIEND REQUEST LOGIC...this should take the friend request in the body,
+// ensure the friend request is in the users inbound friend requests, add the friends to each other,
+// remove inbound/outbound friend request from each other, and then returns the entire user since multiple
+// state updates happened to the user
+export const addFriendForUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
+): Promise<void> => {
   try {
     const userId = req.params.userId;
-    // Implement logic here...
-    res.status(200).send(`Fetching all friends for user with ID: ${userId}`); // 200: OK
+    const friendId = req.body.friendId;
+    const friend = await friendService.addFriendForUser(userId, friendId);
+    await friendService.addFriendForUser(friendId, userId);
+    res.status(201).send(friend);
   } catch (error) {
-    next(error);
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.status).json(error.message);
+    else next(error);
   }
 };
 
-// Add a friend for a user
-export const addFriendForUser = (
+export const deleteFriendFromUser = async (
   req: Request,
   res: Response,
   next: NextFunction
-): void => {
-  try {
-    const userId = req.params.userId;
-    // Implement logic here...
-    res.status(201).send(`Adding a friend for user with ID: ${userId}`); // 201: Created
-  } catch (error) {
-    next(error);
-  }
-};
-
-// Delete a specific friend from a user's friend list
-export const deleteFriendFromUser = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+): Promise<void> => {
   try {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
-    // Implement logic here...
-    res.status(204).send(); // 204: No Content (typically used for successful DELETE operations)
+    await friendService.deleteFriendFromUser(userId, friendId);
+    await friendService.deleteFriendFromUser(friendId, userId);
+    res.status(204).send();
   } catch (error) {
-    next(error);
+    console.log(error);
+    if (error instanceof CustomError)
+      res.status(error.status).json(error.message);
+    else next(error);
   }
 };
