@@ -13,7 +13,6 @@ export const createUser = async (
     const user = await userService.createUser(newUser);
     res.status(201).json({ user });
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);
@@ -29,7 +28,6 @@ export const getAllUsers = async (
     const users = await userService.getAllUsers();
     res.status(200).json(users);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);
@@ -59,7 +57,6 @@ export const getUserById = async (
 
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);
@@ -77,7 +74,6 @@ export const updateUserById = async (
     const user = await userService.updateUserById(userId, updatedUser);
     res.status(200).json(user);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);
@@ -94,7 +90,6 @@ export const deleteUserById = async (
     const result = await userService.deleteUserById(userId);
     res.status(204).send(result);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);

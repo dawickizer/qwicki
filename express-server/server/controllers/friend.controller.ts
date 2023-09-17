@@ -18,7 +18,6 @@ export const addFriendForUser = async (
     await friendService.addFriendForUser(friendId, userId);
     res.status(201).send(friend);
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);
@@ -37,7 +36,6 @@ export const deleteFriendFromUser = async (
     await friendService.deleteFriendFromUser(friendId, userId);
     res.status(204).send();
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);

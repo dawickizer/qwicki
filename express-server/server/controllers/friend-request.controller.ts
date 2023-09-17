@@ -19,7 +19,6 @@ export const createFriendRequest = async (
 
     res.status(201).send(user);
   } catch (error: any) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);
@@ -37,7 +36,6 @@ export const deleteFriendRequest = (
     // Logic to delete the friend request...
     res.status(204).send();
   } catch (error) {
-    console.log(error);
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
     else next(error);
