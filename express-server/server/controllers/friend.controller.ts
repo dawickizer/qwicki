@@ -2,10 +2,6 @@ import { Request, Response, NextFunction } from 'express';
 import * as friendService from '../services/friend.service';
 import CustomError from '../error/CustomError';
 
-// COME BACK TO THIS AFTER FRIEND REQUEST LOGIC...this should take the friend request in the body,
-// ensure the friend request is in the users inbound friend requests, add the friends to each other,
-// remove inbound/outbound friend request from each other, and then returns the entire user since multiple
-// state updates happened to the user
 export const addFriendForUser = async (
   req: Request,
   res: Response,
@@ -13,10 +9,9 @@ export const addFriendForUser = async (
 ): Promise<void> => {
   try {
     const userId = req.params.userId;
-    const friendId = req.body.friendId;
-    const friend = await friendService.addFriendForUser(userId, friendId);
-    await friendService.addFriendForUser(friendId, userId);
-    res.status(201).send(friend);
+    const friendRequestId = req.body.friendRequestId;
+    const user = await friendService.addFriendForUser(userId, friendRequestId);
+    res.status(201).send(user);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);

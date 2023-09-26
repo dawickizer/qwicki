@@ -86,7 +86,22 @@ export const updateUserById = async (
   updatedUser: User
 ): Promise<User | null> => {
   updatedUser.usernameLower = updatedUser.username;
-  const user = await User.findByIdAndUpdate(userId, updatedUser, { new: true });
+
+    // Extract the fields you want to update from updatedUser to prevent unauthorized updates to fields
+    //  that should not be modified
+    const { username, usernameLower, email, password, firstName, middleName, lastName } = updatedUser;
+
+    const updatedFields: Partial<User> = {
+      username,
+      usernameLower,
+      email,
+      password,
+      firstName,
+      middleName,
+      lastName,
+    };
+
+  const user = await User.findByIdAndUpdate(userId, updatedFields, { new: true });
   if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
   return user;
 };

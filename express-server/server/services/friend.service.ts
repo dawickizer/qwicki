@@ -1,20 +1,43 @@
 import { Schema } from 'mongoose';
 import * as userService from './user.service';
+import * as friendRequestService from './friend-request.service'
 import { User } from '../models/user';
 import NotFoundError from '../error/NotFoundError';
 import BadRequestError from '../error/BadRequestError';
 
+
+// STILL NOT WORKING HOW I WANT WHEN TRYING TO POPULATE THE USER WITH HIS CHILD DATA
 export const addFriendForUser = async (
   userId: string | Schema.Types.ObjectId,
-  friendId: string | Schema.Types.ObjectId
+  friendRequestId: string | Schema.Types.ObjectId
 ): Promise<User> => {
-  const user = await userService.getUserById(userId as Schema.Types.ObjectId);
-  if (!user.friends.includes(friendId as Schema.Types.ObjectId)) {
-    user.friends.push(friendId as Schema.Types.ObjectId);
+
+  const friendRequest = await friendRequestService.getFriendRequestById(friendRequestId);
+  let toUser = await userService.getUserById(friendRequest.to);
+  const fromUser = await userService.getUserById(friendRequest.from);
+
+  if (userId != friendRequest.to) {
+    throw new BadRequestError("This friend request is not addressed to you")
   }
-  await user.save();
-  return await getFriendById(friendId);
-};
+  
+  if (!toUser.inboundFriendRequests.includes(friendRequest._id)) {
+    throw new BadRequestError("This friend request is not addressed to you")
+  }
+
+  if (toUser.friends.includes(friendRequest.from)) {
+    throw new BadRequestError("You and this user are already friends")
+  }
+  // Refresh the toUser after deleting the friend request
+  await friendRequestService.deleteFriendRequestById(friendRequest._id);
+  toUser = await userService.getUserByIdAndPopulateChildren(friendRequest.to);
+
+  toUser.friends.push(friendRequest.from);
+  fromUser.friends.push(friendRequest.to);
+
+  await toUser.save();
+  await fromUser.save();
+  return toUser;
+}
 
 export const deleteFriendFromUser = async (
   userId: string | Schema.Types.ObjectId,

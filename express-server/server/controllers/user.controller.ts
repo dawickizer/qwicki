@@ -88,6 +88,7 @@ export const deleteUserById = async (
   try {
     const userId = req.params.userId;
     const result = await userService.deleteUserById(userId);
+    // need to remove friend and friend requests on other users associated to this userId
     res.status(204).send(result);
   } catch (error) {
     if (error instanceof CustomError)
