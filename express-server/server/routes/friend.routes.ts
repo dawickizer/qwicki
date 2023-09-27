@@ -3,7 +3,7 @@ import { requestBody } from '../middleware/log.middleware';
 import { isAuthenticatedJWT } from '../middleware/auth.middleware';
 import {
   addFriendForUser,
-  deleteFriendFromUser,
+  removeFriendFromUser,
 } from '../controllers/friend.controller';
 
 const router = Router({ mergeParams: true });
@@ -12,7 +12,7 @@ router.post('/', [isAuthenticatedJWT, requestBody], addFriendForUser);
 router.delete(
   '/:friendId',
   [isAuthenticatedJWT, requestBody],
-  deleteFriendFromUser
+  removeFriendFromUser
 );
 
 export default router;

@@ -38,19 +38,26 @@ export const addFriendForUser = async (
   return toUser;
 };
 
-export const deleteFriendFromUser = async (
+export const removeFriend = async (
   userId: string | Schema.Types.ObjectId,
   friendId: string | Schema.Types.ObjectId
 ): Promise<boolean> => {
-  const user = await userService.getUserById(userId as Schema.Types.ObjectId);
-  const friendIndexInUser = user.friends.indexOf(
-    friendId as Schema.Types.ObjectId
-  );
-  if (friendIndexInUser === -1)
-    throw new BadRequestError(`User not in friends list`);
-  user.friends.splice(friendIndexInUser, 1);
-  await user.save();
-  return true;
+    const [userUpdate, friendUpdate] = await Promise.all([
+      User.updateOne(
+        { _id: userId },
+        { $pull: { friends: friendId } }
+      ),
+      User.updateOne(
+        { _id: friendId },
+        { $pull: { friends: userId } }
+      )
+    ]);
+
+    if (userUpdate.modifiedCount === 0 || friendUpdate.modifiedCount === 0) {
+      throw new BadRequestError(`Users are not friends`);
+    }
+
+    return true
 };
 
 export const getFriendById = async (

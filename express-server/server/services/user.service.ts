@@ -117,44 +117,6 @@ export const updateUserById = async (
   return user;
 };
 
-export const updateUserByIdAndPopulateChildren = async (
-  userId: string | Schema.Types.ObjectId,
-  updatedUser: User
-): Promise<User | null> => {
-  updatedUser.usernameLower = updatedUser.username;
-
-  // Extract the fields you want to update from updatedUser to prevent unauthorized updates to fields
-  //  that should not be modified
-  const {
-    username,
-    usernameLower,
-    email,
-    password,
-    firstName,
-    middleName,
-    lastName,
-  } = updatedUser;
-
-  const updatedFields: Partial<User> = {
-    username,
-    usernameLower,
-    email,
-    password,
-    firstName,
-    middleName,
-    lastName,
-  };
-
-  const user = await User.findOneAndUpdate({ _id: userId }, updatedFields, {
-    new: true,
-  })
-    .populate('friends', ['username'])
-    .populate(friendRequest('inboundFriendRequests'))
-    .populate(friendRequest('outboundFriendRequests'));
-  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
-  return user;
-};
-
 export const addInboundFriendRequest = async (
   userId: Schema.Types.ObjectId,
   friendRequestId: Schema.Types.ObjectId

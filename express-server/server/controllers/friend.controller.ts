@@ -19,7 +19,7 @@ export const addFriendForUser = async (
   }
 };
 
-export const deleteFriendFromUser = async (
+export const removeFriendFromUser = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -27,8 +27,7 @@ export const deleteFriendFromUser = async (
   try {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
-    await friendService.deleteFriendFromUser(userId, friendId);
-    await friendService.deleteFriendFromUser(friendId, userId);
+    await friendService.removeFriend(userId, friendId);
     res.status(204).send();
   } catch (error) {
     if (error instanceof CustomError)
