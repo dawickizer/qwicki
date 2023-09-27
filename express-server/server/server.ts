@@ -1,5 +1,5 @@
 // Get dependencies
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import express from 'express';
 import http from 'http';
 import cors from 'cors';
@@ -36,7 +36,7 @@ app.use('/social', social);
 app.use('/users-temp', userRoutes);
 
 // Error handling middleware should come after all the regular routes and middleware
-app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((err: Error, req: Request, res: Response) => {
   console.error(err.stack);
   res.status(500).send('Something went wrong.');
 });

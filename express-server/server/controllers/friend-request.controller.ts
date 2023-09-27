@@ -31,7 +31,7 @@ export const deleteFriendRequestById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.params.userId;
+    //const userId = req.params.userId;
     const friendRequestId = req.params.friendRequestId;
     const result =
       await friendRequestService.deleteFriendRequestById(friendRequestId);

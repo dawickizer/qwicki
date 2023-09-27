@@ -183,6 +183,39 @@ export const removeOutboundFriendRequest = async (
   return user;
 };
 
+export const addFriend = async (
+  userId: string | Schema.Types.ObjectId,
+  friendId: string | Schema.Types.ObjectId
+): Promise<User> => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $push: { friends: friendId } },
+    { new: true }
+  )
+    .populate('friends', ['username'])
+    .populate(friendRequest('inboundFriendRequests'))
+    .populate(friendRequest('outboundFriendRequests'));
+
+  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
+  return user;
+};
+
+export const removeFriend = async (
+  userId: string | Schema.Types.ObjectId,
+  friendId: string | Schema.Types.ObjectId
+): Promise<User> => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $pull: { friends: friendId } },
+    { new: true }
+  )
+    .populate('friends', ['username'])
+    .populate(friendRequest('inboundFriendRequests'))
+    .populate(friendRequest('outboundFriendRequests'));
+  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
+  return user;
+};
+
 export const deleteUserById = async (
   userId: string | Schema.Types.ObjectId
 ): Promise<boolean> => {
