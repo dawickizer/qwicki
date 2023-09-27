@@ -10,6 +10,7 @@ import api from './routes/api';
 import auth from './routes/auth';
 import users from './routes/users';
 import social from './routes/social';
+import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
 import { requestTime } from './middleware/log';
 import { establishDbConnection } from './config/database';
@@ -33,6 +34,7 @@ app.use('/auth', auth);
 app.use('/users', users);
 app.use('/social', social);
 
+app.use('/auth-temp', authRoutes);
 app.use('/users-temp', userRoutes);
 
 // Error handling middleware should come after all the regular routes and middleware

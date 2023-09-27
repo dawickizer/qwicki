@@ -2,10 +2,40 @@ import { PopulateOptions, Schema } from 'mongoose';
 import { User } from '../models/user';
 import NotFoundError from '../error/NotFoundError';
 import * as friendRequestService from './friend-request.service';
+import ConflictError from '../error/ConflictError';
 
 export const createUser = async (user: User): Promise<User> => {
   user.usernameLower = user.username;
-  return await User.create(user);
+  user.emailLower = user.email;
+  user.role = 'user';
+
+  // Extract the fields you want to create off of to prevent unauthorized fields
+  // that should not be modified
+  const {
+    username,
+    usernameLower,
+    email,
+    emailLower,
+    password,
+    firstName,
+    middleName,
+    lastName,
+    role,
+  } = user;
+
+  const userFields: Partial<User> = {
+    username,
+    usernameLower,
+    email,
+    emailLower,
+    password,
+    firstName,
+    middleName,
+    lastName,
+    role,
+  };
+
+  return await User.create(userFields);
 };
 
 export const getAllUsers = async (): Promise<User[]> => {
@@ -69,10 +99,7 @@ export const getUserByCredentials = async (credentials: {
     usernameLower: credentials.username.toLowerCase(),
     password: credentials.password,
   });
-  if (!user)
-    throw new NotFoundError(
-      `User not found. username: ${credentials.username}`
-    );
+  if (!user) throw new NotFoundError(`Credentials Invalid`);
   return user;
 };
 
@@ -87,6 +114,7 @@ export const updateUserById = async (
   updatedUser: User
 ): Promise<User | null> => {
   updatedUser.usernameLower = updatedUser.username;
+  updatedUser.emailLower = updatedUser.email;
 
   // Extract the fields you want to update from updatedUser to prevent unauthorized updates to fields
   //  that should not be modified
@@ -94,6 +122,7 @@ export const updateUserById = async (
     username,
     usernameLower,
     email,
+    emailLower,
     password,
     firstName,
     middleName,
@@ -104,6 +133,7 @@ export const updateUserById = async (
     username,
     usernameLower,
     email,
+    emailLower,
     password,
     firstName,
     middleName,
@@ -253,6 +283,22 @@ export const cleanupUserReferences = async (
   await friendRequestService.deleteManyFriendRequestsByUserId(userId);
 
   return true;
+};
+
+export const userExistsByUsername = async (
+  username: string
+): Promise<{ _id: any } | null> => {
+  const result = await User.exists({ usernameLower: username.toLowerCase() });
+  if (result) throw new ConflictError('Username taken');
+  return result;
+};
+
+export const userExistsByEmail = async (
+  email: string
+): Promise<{ _id: any } | null> => {
+  const result = await User.exists({ emailLower: email.toLowerCase() });
+  if (result) throw new ConflictError('Email taken');
+  return result;
 };
 
 const friendRequest = (path: string) => {

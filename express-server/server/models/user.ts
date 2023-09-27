@@ -7,6 +7,7 @@ interface User extends Document {
   password: string;
   role: string;
   email: string;
+  emailLower: string;
   firstName: string;
   middleName: string;
   lastName: string;
@@ -22,6 +23,7 @@ const UserSchema = new Schema<User>({
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
   email: { type: String, unique: true, default: null },
+  emailLower: { type: String, unique: true, lowercase: true },
   firstName: { type: String, default: null },
   middleName: { type: String, default: null },
   lastName: { type: String, default: null },
