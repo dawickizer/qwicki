@@ -22,6 +22,6 @@ router.delete('/:userId', [isAuthenticatedJWT, requestBody], deleteUserById);
 
 router.use('/:userId/friends', friendRoutes);
 router.use('/:userId/friend-requests', friendRequestRoutes);
-router.use('/:userId/messages/:otherUserId', messageRoutes);
+router.use('/:userId/messages', messageRoutes);
 
 export default router;

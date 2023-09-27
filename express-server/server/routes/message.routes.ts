@@ -9,8 +9,8 @@ import { isAuthenticatedJWT } from '../middleware/auth.middleware';
 
 const router = Router({ mergeParams: true });
 
-router.get('/', [isAuthenticatedJWT, requestBody], getMessagesBetweenUsers);
-router.post('/', [isAuthenticatedJWT, requestBody], sendMessage);
-router.get('/:messageId', [isAuthenticatedJWT, requestBody], getMessageById);
+router.get('/:friendId', [isAuthenticatedJWT, requestBody], getMessagesBetweenUsers);
+router.post('/:friendId', [isAuthenticatedJWT, requestBody], sendMessage);
+router.get('/:friendId/:messageId', [isAuthenticatedJWT, requestBody], getMessageById);
 
 export default router;
