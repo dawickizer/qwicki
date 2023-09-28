@@ -1,57 +1,52 @@
-export const getMessages = async (): Promise<void> => {};
+import { Schema } from 'mongoose';
+import { Message } from '../models/message';
+import * as userService from './user.service';
+import BadRequestError from '../error/BadRequestError';
 
-export const sendMessage = async (): Promise<void> => {};
+export const getMessages = async (): Promise<Message[]> => {
+  return null;
+};
+
+export const createMessage = async (
+  userId: string | Schema.Types.ObjectId,
+  friendId: string | Schema.Types.ObjectId,
+  content: string
+): Promise<Message> => {
+  if (userId === friendId)
+    throw new BadRequestError('You cannot message yourself');
+
+  const fromUser = await userService.getUserById(userId);
+  const toUser = await userService.getUserById(friendId);
+
+  if (!fromUser.friends.includes(toUser._id))
+    throw new BadRequestError(
+      'You cannot send a message to someone that is not your friend'
+    );
+
+  return (
+    await Message.create({
+      to: toUser._id,
+      from: fromUser._id,
+      createdAt: new Date(),
+      content: content,
+    })
+  ).populate([
+    {
+      path: 'from',
+      model: 'User',
+      select: 'username',
+    },
+    {
+      path: 'to',
+      model: 'User',
+      select: 'username',
+    },
+  ]);
+};
 
 export const checkUnviewedMessages = async (): Promise<void> => {};
 
 export const markMessagesAsViewed = async (): Promise<void> => {};
-
-// async sendMessage(req: any): Promise<Message | null> {
-//     let message: Message = new Message();
-//     const toUser: User | null = await this.userService.get(
-//       req.body.message.to._id
-//     );
-//     const fromUser: User | null = await this.userService.get(
-//       req.body.decodedJWT._id
-//     );
-
-//     if (toUser && fromUser) {
-//       // Check message eligibility (could add blocked logic later)
-//       if (toUser.id === fromUser.id) throw Error('You cannot message yourself');
-//       if (!fromUser.friends.includes(toUser._id))
-//         throw Error(
-//           'You cannot send a message to someone that is not your friend'
-//         );
-
-//       // update message with 'to' and 'from' friends ids
-//       message.to = toUser._id;
-//       message.from = fromUser._id;
-
-//       // handle message metadata
-//       message.createdAt = new Date();
-//       message.content = req.body.message.content;
-
-//       // persist the message
-//       message = await this.createMessageAndPopulate(message);
-
-//       return message;
-//     } else throw Error('User does not exist');
-//   }
-
-//   async createMessageAndPopulate(message: Message): Promise<Message> {
-//     return (await Message.create(message)).populate([
-//       {
-//         path: 'from',
-//         model: 'User',
-//         select: 'username',
-//       },
-//       {
-//         path: 'to',
-//         model: 'User',
-//         select: 'username',
-//       },
-//     ]);
-//   }
 
 //   async hasUnviewedMessages(req: any): Promise<boolean> {
 //     const requestor: User | null = await this.userService.get(

@@ -22,7 +22,7 @@ export const getMessages = async (
   }
 };
 
-export const sendMessage = async (
+export const createMessage = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -30,14 +30,13 @@ export const sendMessage = async (
   try {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
-
-    await messageService.sendMessage();
-
-    res
-      .status(201)
-      .send(
-        `Message sent from user with ID: ${userId} to user with ID: ${friendId}`
-      );
+    const content = req.body.content;
+    const message = await messageService.createMessage(
+      userId,
+      friendId,
+      content
+    );
+    res.status(201).send(message);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);

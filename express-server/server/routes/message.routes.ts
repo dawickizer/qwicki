@@ -3,7 +3,7 @@ import {
   checkUnviewedMessages,
   getMessages,
   markMessagesAsViewed,
-  sendMessage,
+  createMessage,
 } from '../controllers/message.controller';
 import { requestBody } from '../middleware/log.middleware';
 import { isAuthenticatedJWT } from '../middleware/auth.middleware';
@@ -11,7 +11,7 @@ import { isAuthenticatedJWT } from '../middleware/auth.middleware';
 const router = Router({ mergeParams: true });
 
 router.get('/:friendId', [isAuthenticatedJWT, requestBody], getMessages);
-router.post('/:friendId', [isAuthenticatedJWT, requestBody], sendMessage);
+router.post('/:friendId', [isAuthenticatedJWT, requestBody], createMessage);
 router.get(
   '/:friendId/unviewed',
   [isAuthenticatedJWT, requestBody],
