@@ -9,20 +9,16 @@ import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
 
 import { User } from '../../models/user/user';
+import { Message } from 'src/app/models/message/message';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
   readonly API = environment.EXPRESS_SERVER;
+  private endpoint = '/users';
 
   constructor(private http: HttpClient) {}
-
-  add(user: User): Observable<User> {
-    return this.http
-      .post<User>(`${this.API}/users`, user)
-      .pipe(catchError(this.handleError));
-  }
 
   get(
     id: string,
@@ -44,38 +40,92 @@ export class UserService {
     }
 
     return this.http
-      .get<User>(`${this.API}/users/${id}`, { params })
-      .pipe(catchError(this.handleError));
-  }
-
-  getFriendByUsername(username: string): Observable<User> {
-    return this.http
-      .get<User>(`${this.API}/users/friends/${username}`)
+      .get<User>(`${this.API}${this.endpoint}/${id}`, { params })
       .pipe(catchError(this.handleError));
   }
 
   update(user: User): Observable<User> {
     return this.http
-      .put<User>(`${this.API}/users/${user._id}`, user)
+      .put<User>(`${this.API}${this.endpoint}/${user._id}`, user)
       .pipe(catchError(this.handleError));
   }
 
   delete(user: User): Observable<any> {
     return this.http
-      .delete(`${this.API}/users/${user._id}`)
+      .delete(`${this.API}${this.endpoint}/${user._id}`)
       .pipe(catchError(this.handleError));
   }
 
-  deleteMany(users: User[]): Observable<any> {
-    const params = new HttpParams().set('ids', users.join(','));
+  createFriendRequest(user: User, username: string): Observable<User> {
     return this.http
-      .delete(`${this.API}/users/`, { params })
+      .post<User>(`${this.API}${this.endpoint}/${user._id}/friend-requests`, {
+        username,
+      })
       .pipe(catchError(this.handleError));
   }
 
-  getAll(): Observable<User[]> {
+  deleteFriendRequest(user: User, friendRequestId: string): Observable<User> {
     return this.http
-      .get<User[]>(`${this.API}/users`)
+      .delete<User>(
+        `${this.API}${this.endpoint}/${user._id}/friend-requests/${friendRequestId}`
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  addFriend(user: User, friendRequestId: string): Observable<User> {
+    return this.http
+      .post<User>(`${this.API}${this.endpoint}/${user._id}/friends`, {
+        friendRequestId,
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  removeFriend(user: User, friendId: string): Observable<User> {
+    return this.http
+      .delete<User>(
+        `${this.API}${this.endpoint}/${user._id}/friends/${friendId}`
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  createMessage(
+    user: User,
+    friendId: string,
+    content: string
+  ): Observable<Message> {
+    return this.http
+      .post<Message>(
+        `${this.API}${this.endpoint}/${user._id}/messages/${friendId}`,
+        { content }
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  getMessages(user: User, friendId: string): Observable<Message[]> {
+    return this.http
+      .get<Message[]>(
+        `${this.API}${this.endpoint}/${user._id}/messages/${friendId}`
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  getUnviewedMessagesCount(
+    user: User,
+    friendId: string
+  ): Observable<{ count: number }> {
+    return this.http
+      .get<{ count: number }>(
+        `${this.API}${this.endpoint}/${user._id}/messages/${friendId}/unviewed`
+      )
+      .pipe(catchError(this.handleError));
+  }
+
+  markMessagesAsViewed(user: User, friendId: string): Observable<boolean> {
+    return this.http
+      .put<boolean>(
+        `${this.API}${this.endpoint}/${user._id}/messages/${friendId}/viewed`,
+        null
+      )
       .pipe(catchError(this.handleError));
   }
 
