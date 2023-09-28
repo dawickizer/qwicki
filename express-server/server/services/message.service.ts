@@ -48,67 +48,29 @@ export const createMessage = async (
     .populate(user('to'));
 };
 
-export const checkUnviewedMessages = async (): Promise<void> => {};
+export const unviewedMessagesCount = async (
+  userId: string | Schema.Types.ObjectId,
+  friendId: string | Schema.Types.ObjectId
+): Promise<number> => {
+  const count = await Message.exists({
+    $and: [{ to: userId }, { from: friendId }, { viewed: false }],
+  }).count();
 
-export const markMessagesAsViewed = async (): Promise<void> => {};
+  return count;
+};
 
-//   async hasUnviewedMessages(req: any): Promise<boolean> {
-//     const requestor: User | null = await this.userService.get(
-//       req.body.decodedJWT._id
-//     );
-//     const requested: User | null = await this.userService.get(req.params.id);
-//     const unviewedMessages = await Message.find({
-//       $and: [{ to: requestor._id }, { from: requested._id }, { viewed: false }],
-//     });
-//     return unviewedMessages && unviewedMessages.length > 0 ? true : false;
-//   }
-
-//   async markUnviewedMessagesAsViewed(req: any): Promise<boolean> {
-//     const requestor: User | null = await this.userService.get(
-//       req.body.decodedJWT._id
-//     );
-//     const requested: User | null = await this.userService.get(req.params.id);
-//     await Message.updateMany(
-//       {
-//         $and: [
-//           { to: requestor._id },
-//           { from: requested._id },
-//           { viewed: false },
-//         ],
-//       },
-//       { viewed: true }
-//     );
-//     return false;
-//   }
-
-//   async getMessagesBetween(req: any): Promise<Message[]> {
-//     const requestor: User | null = await this.userService.get(
-//       req.body.decodedJWT._id
-//     );
-//     const requested: User | null = await this.userService.get(req.params.id);
-//     return await Message.find({
-//       $or: [
-//         { $and: [{ to: requestor._id }, { from: requested._id }] },
-//         { $and: [{ to: requested._id }, { from: requestor._id }] },
-//       ],
-//     }).sort('createdAt');
-//   }
-
-//   async getMessagesBetweenAndPopulate(req: any): Promise<Message[]> {
-//     const requestor: User | null = await this.userService.get(
-//       req.body.decodedJWT._id
-//     );
-//     const requested: User | null = await this.userService.get(req.params.id);
-//     return await Message.find({
-//       $or: [
-//         { $and: [{ to: requestor._id }, { from: requested._id }] },
-//         { $and: [{ to: requested._id }, { from: requestor._id }] },
-//       ],
-//     })
-//       .populate(this.user('from'))
-//       .populate(this.user('to'))
-//       .sort('createdAt');
-//   }
+export const markMessagesAsViewed = async (
+  userId: string | Schema.Types.ObjectId,
+  friendId: string | Schema.Types.ObjectId
+): Promise<boolean> => {
+  await Message.updateMany(
+    {
+      $and: [{ to: userId }, { from: friendId }, { viewed: false }],
+    },
+    { viewed: true }
+  );
+  return true;
+};
 
 export const user = (path: string) => {
   return [

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  checkUnviewedMessages,
+  unviewedMessagesCount,
   getMessages,
   markMessagesAsViewed,
   createMessage,
@@ -15,7 +15,7 @@ router.post('/:friendId', [isAuthenticatedJWT, requestBody], createMessage);
 router.get(
   '/:friendId/unviewed',
   [isAuthenticatedJWT, requestBody],
-  checkUnviewedMessages
+  unviewedMessagesCount
 );
 router.put(
   '/:friendId/viewed',

@@ -39,7 +39,7 @@ export const createMessage = async (
   }
 };
 
-export const checkUnviewedMessages = async (
+export const unviewedMessagesCount = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -47,13 +47,8 @@ export const checkUnviewedMessages = async (
   try {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
-
-    await messageService.checkUnviewedMessages();
-    res
-      .status(200)
-      .send(
-        `Checking unviewed messages between user with ID: ${userId} and user with ID: ${friendId}`
-      );
+    const count = await messageService.unviewedMessagesCount(userId, friendId);
+    res.status(200).send({ count });
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
@@ -69,14 +64,8 @@ export const markMessagesAsViewed = async (
   try {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
-
-    await messageService.markMessagesAsViewed();
-
-    res
-      .status(200)
-      .send(
-        `Marking unviewed messages as viewed between user with ID: ${userId} and user with ID: ${friendId}`
-      );
+    const result = await messageService.markMessagesAsViewed(userId, friendId);
+    res.status(200).send(result);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
