@@ -31,11 +31,13 @@ export const deleteFriendRequestById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    //const userId = req.params.userId;
+    const userId = req.params.userId;
     const friendRequestId = req.params.friendRequestId;
-    const result =
-      await friendRequestService.deleteFriendRequestById(friendRequestId);
-    res.status(204).send(result);
+    const user = await friendRequestService.deleteFriendRequestById(
+      userId,
+      friendRequestId
+    );
+    res.status(200).send(user);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);

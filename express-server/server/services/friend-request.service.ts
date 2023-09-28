@@ -70,8 +70,9 @@ export const createFriendRequest = async (
 };
 
 export const deleteFriendRequestById = async (
+  userId: string | Schema.Types.ObjectId,
   friendRequestId: string | Schema.Types.ObjectId
-): Promise<boolean> => {
+): Promise<User> => {
   const friendRequest = await getFriendRequestById(friendRequestId);
 
   if (!friendRequest) throw new NotFoundError('FriendRequest not found');
@@ -96,10 +97,9 @@ export const deleteFriendRequestById = async (
     ),
   ]);
 
-  // Deleting the friend request
   await FriendRequest.findByIdAndDelete(friendRequestId);
 
-  return true;
+  return await userService.getUserByIdAndPopulateChildren(userId);
 };
 
 export const deleteManyFriendRequestsByUserId = async (

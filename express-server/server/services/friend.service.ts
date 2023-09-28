@@ -35,7 +35,7 @@ export const addFriend = async (
     userService.removeOutboundFriendRequest(fromUser._id, friendRequest._id),
     userService.addFriend(toUser._id, fromUser._id),
     userService.addFriend(fromUser._id, toUser._id),
-    friendRequestService.deleteFriendRequestById(friendRequest._id),
+    friendRequestService.deleteFriendRequestById(userId, friendRequest._id),
   ]);
 
   // Return the 'toUser' with its updated data and children data
@@ -45,13 +45,13 @@ export const addFriend = async (
 export const removeFriend = async (
   userId: string | Schema.Types.ObjectId,
   friendId: string | Schema.Types.ObjectId
-): Promise<boolean> => {
+): Promise<User> => {
   await Promise.all([
     userService.removeFriend(userId, friendId),
     userService.removeFriend(friendId, userId),
   ]);
 
-  return true;
+  return userService.getUserByIdAndPopulateChildren(userId);
 };
 
 export const getFriendById = async (
