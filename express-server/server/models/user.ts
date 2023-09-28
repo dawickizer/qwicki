@@ -2,6 +2,8 @@ import { Schema, model, Document } from 'mongoose';
 import { handleE11000, handleRequiredField } from '../middleware/error';
 
 interface User extends Document {
+  createdAt: Date;
+  updatedAt: Date;
   username: string;
   usernameLower: string;
   password: string;
@@ -17,24 +19,27 @@ interface User extends Document {
 }
 
 // create mongoose schema
-const UserSchema = new Schema<User>({
-  username: { type: String, unique: true, required: true },
-  usernameLower: { type: String, unique: true, lowercase: true },
-  password: { type: String, required: true },
-  role: { type: String, default: 'user' },
-  email: { type: String, unique: true, default: null },
-  emailLower: { type: String, unique: true, lowercase: true },
-  firstName: { type: String, default: null },
-  middleName: { type: String, default: null },
-  lastName: { type: String, default: null },
-  friends: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
-  inboundFriendRequests: [
-    { type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' },
-  ],
-  outboundFriendRequests: [
-    { type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' },
-  ],
-});
+const UserSchema = new Schema<User>(
+  {
+    username: { type: String, unique: true, required: true },
+    usernameLower: { type: String, unique: true, lowercase: true },
+    password: { type: String, required: true },
+    role: { type: String, default: 'user' },
+    email: { type: String, unique: true, default: null },
+    emailLower: { type: String, unique: true, lowercase: true },
+    firstName: { type: String, default: null },
+    middleName: { type: String, default: null },
+    lastName: { type: String, default: null },
+    friends: [{ type: Schema.Types.ObjectId, default: [], ref: 'User' }],
+    inboundFriendRequests: [
+      { type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' },
+    ],
+    outboundFriendRequests: [
+      { type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' },
+    ],
+  },
+  { timestamps: true }
+);
 
 UserSchema.post('save', handleE11000);
 UserSchema.post('update', handleE11000);

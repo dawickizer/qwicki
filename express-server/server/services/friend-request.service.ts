@@ -58,8 +58,6 @@ export const createFriendRequest = async (
   const friendRequest = await FriendRequest.create({
     from: fromUser._id,
     to: toUser._id,
-    createdAt: new Date(),
-    accepted: false,
   });
 
   // Update users' friend request arrays

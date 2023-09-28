@@ -3,8 +3,21 @@ import { Message } from '../models/message';
 import * as userService from './user.service';
 import BadRequestError from '../error/BadRequestError';
 
-export const getMessages = async (): Promise<Message[]> => {
-  return null;
+export const getMessages = async (
+  userId: string | Schema.Types.ObjectId,
+  friendId: string | Schema.Types.ObjectId
+): Promise<Message[]> => {
+  const requestor = await userService.getUserById(userId);
+  const requested = await userService.getUserById(friendId);
+  return await Message.find({
+    $or: [
+      { $and: [{ to: requestor._id }, { from: requested._id }] },
+      { $and: [{ to: requested._id }, { from: requestor._id }] },
+    ],
+  })
+    .populate(user('from'))
+    .populate(user('to'))
+    .sort('createdAt');
 };
 
 export const createMessage = async (
@@ -23,25 +36,16 @@ export const createMessage = async (
       'You cannot send a message to someone that is not your friend'
     );
 
-  return (
-    await Message.create({
-      to: toUser._id,
-      from: fromUser._id,
-      createdAt: new Date(),
-      content: content,
-    })
-  ).populate([
-    {
-      path: 'from',
-      model: 'User',
-      select: 'username',
-    },
-    {
-      path: 'to',
-      model: 'User',
-      select: 'username',
-    },
-  ]);
+  const message = await Message.create({
+    to: toUser._id,
+    from: fromUser._id,
+    createdAt: new Date(),
+    content: content,
+  });
+
+  return await Message.findById(message._id)
+    .populate(user('from'))
+    .populate(user('to'));
 };
 
 export const checkUnviewedMessages = async (): Promise<void> => {};
@@ -106,14 +110,12 @@ export const markMessagesAsViewed = async (): Promise<void> => {};
 //       .sort('createdAt');
 //   }
 
-//   private user(path: string) {
-//     return [
-//       // reference
-//       {
-//         path: path,
-//         model: 'User',
-//         select: 'username',
-//       },
-//     ];
-//   }
-// }
+export const user = (path: string) => {
+  return [
+    {
+      path: path,
+      model: 'User',
+      select: 'username',
+    },
+  ];
+};

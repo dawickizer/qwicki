@@ -10,13 +10,8 @@ export const getMessages = async (
   try {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
-
-    await messageService.getMessages();
-    res
-      .status(200)
-      .send(
-        `Fetching all messages between user with ID: ${userId} and user with ID: ${friendId}`
-      );
+    const messages = await messageService.getMessages(userId, friendId);
+    res.status(200).send(messages);
   } catch (error) {
     next(error);
   }
