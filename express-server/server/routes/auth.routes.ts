@@ -1,6 +1,6 @@
 import { Router } from 'express';
 
-import { isAuthenticatedJWT } from '../middleware/auth.middleware';
+import { isAuthenticated } from '../middleware/auth.middleware';
 import { requestBody } from '../middleware/log.middleware';
 import {
   currentUser,
@@ -15,7 +15,7 @@ const router = Router();
 router.post('/login', [requestBody], login);
 router.post('/signup', [requestBody], signup);
 router.post('/is-logged-in', [requestBody], isLoggedIn);
-router.post('/logout', [isAuthenticatedJWT, requestBody], logout);
-router.post('/current-user', [isAuthenticatedJWT, requestBody], currentUser);
+router.post('/logout', [isAuthenticated, requestBody], logout);
+router.post('/current-user', [isAuthenticated, requestBody], currentUser);
 
 export default router;

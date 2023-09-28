@@ -6,20 +6,28 @@ import {
   createMessage,
 } from '../controllers/message.controller';
 import { requestBody } from '../middleware/log.middleware';
-import { isAuthenticatedJWT } from '../middleware/auth.middleware';
+import { isAuthenticated, isAuthorized } from '../middleware/auth.middleware';
 
 const router = Router({ mergeParams: true });
 
-router.get('/:friendId', [isAuthenticatedJWT, requestBody], getMessages);
-router.post('/:friendId', [isAuthenticatedJWT, requestBody], createMessage);
+router.get(
+  '/:friendId',
+  [isAuthenticated, isAuthorized, requestBody],
+  getMessages
+);
+router.post(
+  '/:friendId',
+  [isAuthenticated, isAuthorized, requestBody],
+  createMessage
+);
 router.get(
   '/:friendId/unviewed',
-  [isAuthenticatedJWT, requestBody],
+  [isAuthenticated, isAuthorized, requestBody],
   unviewedMessagesCount
 );
 router.put(
   '/:friendId/viewed',
-  [isAuthenticatedJWT, requestBody],
+  [isAuthenticated, isAuthorized, requestBody],
   markMessagesAsViewed
 );
 

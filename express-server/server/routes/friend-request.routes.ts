@@ -3,15 +3,19 @@ import {
   createFriendRequest,
   deleteFriendRequestById,
 } from '../controllers/friend-request.controller';
-import { isAuthenticatedJWT } from '../middleware/auth.middleware';
+import { isAuthenticated, isAuthorized } from '../middleware/auth.middleware';
 import { requestBody } from '../middleware/log.middleware';
 
 const router = Router({ mergeParams: true });
 
-router.post('/', [isAuthenticatedJWT, requestBody], createFriendRequest);
+router.post(
+  '/',
+  [isAuthenticated, isAuthorized, requestBody],
+  createFriendRequest
+);
 router.delete(
   '/:friendRequestId',
-  [isAuthenticatedJWT, requestBody],
+  [isAuthenticated, isAuthorized, requestBody],
   deleteFriendRequestById
 );
 
