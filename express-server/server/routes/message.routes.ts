@@ -1,16 +1,26 @@
 import { Router } from 'express';
 import {
-  getMessagesBetweenUsers,
+  checkUnviewedMessages,
+  getMessages,
+  markMessagesAsViewed,
   sendMessage,
-  getMessageById,
 } from '../controllers/message.controller';
 import { requestBody } from '../middleware/log.middleware';
 import { isAuthenticatedJWT } from '../middleware/auth.middleware';
 
 const router = Router({ mergeParams: true });
 
-router.get('/:friendId', [isAuthenticatedJWT, requestBody], getMessagesBetweenUsers);
+router.get('/:friendId', [isAuthenticatedJWT, requestBody], getMessages);
 router.post('/:friendId', [isAuthenticatedJWT, requestBody], sendMessage);
-router.get('/:friendId/:messageId', [isAuthenticatedJWT, requestBody], getMessageById);
+router.get(
+  '/:friendId/unviewed',
+  [isAuthenticatedJWT, requestBody],
+  checkUnviewedMessages
+);
+router.put(
+  '/:friendId/viewed',
+  [isAuthenticatedJWT, requestBody],
+  markMessagesAsViewed
+);
 
 export default router;
