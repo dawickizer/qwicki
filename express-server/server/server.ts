@@ -6,13 +6,10 @@ import cors from 'cors';
 import { json, urlencoded } from 'body-parser';
 
 // Get our API routes
-import api from './routes/api';
-import auth from './routes/auth';
-import users from './routes/users';
-import social from './routes/social';
+import apiRoutes from './routes/api.routes';
 import authRoutes from './routes/auth.routes';
 import userRoutes from './routes/user.routes';
-import { requestTime } from './middleware/log';
+import { requestTime } from './middleware/log.middleware';
 import { establishDbConnection } from './config/database';
 
 const app = express();
@@ -29,13 +26,9 @@ app.use(cors());
 app.use(requestTime);
 
 // Set our api routes
-app.use('/', api);
-app.use('/auth', auth);
-app.use('/users', users);
-app.use('/social', social);
-
-app.use('/auth-temp', authRoutes);
-app.use('/users-temp', userRoutes);
+app.use('/', apiRoutes);
+app.use('/auth', authRoutes);
+app.use('/users', userRoutes);
 
 // Error handling middleware should come after all the regular routes and middleware
 app.use((err: Error, req: Request, res: Response) => {

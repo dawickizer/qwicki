@@ -1,5 +1,8 @@
 import { Schema, model, Document } from 'mongoose';
-import { handleE11000, handleRequiredField } from '../middleware/error';
+import {
+  handleE11000,
+  handleRequiredField,
+} from '../middleware/error.middleware';
 
 interface User extends Document {
   createdAt: Date;
