@@ -89,7 +89,10 @@ export class UserStateService {
           this.setDecodedJwt(decodedJwt);
         }),
         switchMap(decodedJwt => {
-          return this.userService.get(decodedJwt._id);
+          return this.userService.get(decodedJwt._id, {
+            friends: true,
+            friendRequests: true,
+          });
         }),
         tap((user: User) => {
           this.setUser(user);

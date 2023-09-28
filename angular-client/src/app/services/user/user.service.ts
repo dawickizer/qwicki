@@ -24,9 +24,27 @@ export class UserService {
       .pipe(catchError(this.handleError));
   }
 
-  get(id: string): Observable<User> {
+  get(
+    id: string,
+    options?: { friends?: boolean; friendRequests?: boolean }
+  ): Observable<User> {
+    let params = new HttpParams();
+
+    if (options) {
+      if (options.friends !== undefined) {
+        params = params.append('friends', options.friends.toString());
+      }
+
+      if (options.friendRequests !== undefined) {
+        params = params.append(
+          'friendRequests',
+          options.friendRequests.toString()
+        );
+      }
+    }
+
     return this.http
-      .get<User>(`${this.API}/users/${id}`)
+      .get<User>(`${this.API}/users/${id}`, { params })
       .pipe(catchError(this.handleError));
   }
 

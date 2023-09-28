@@ -35,19 +35,19 @@ export class AuthService {
 
   currentUser(): Observable<any> {
     return this.http
-      .get<any>(`${this.API}/current-user`)
+      .post<any>(`${this.API}/current-user`, null)
       .pipe(catchError(this.handleError));
   }
 
   logout(): Observable<any> {
     return this.http
-      .put<any>(`${this.API}/logout`, null)
+      .post<any>(`${this.API}/logout`, null)
       .pipe(catchError(this.handleError));
   }
 
   isLoggedIn(): Observable<boolean> {
     return this.http
-      .get<boolean>(`${this.API}/is-logged-in`)
+      .post<boolean>(`${this.API}/is-logged-in`, null)
       .pipe(catchError(this.handleError));
   }
 
