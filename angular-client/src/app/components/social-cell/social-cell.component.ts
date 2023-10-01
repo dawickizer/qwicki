@@ -1,7 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Friend } from 'src/app/models/friend/friend';
-import { SocialService } from 'src/app/services/social/social.service';
 
 @Component({
   selector: 'app-social-cell',
@@ -13,11 +11,6 @@ export class SocialCellComponent implements OnInit {
 
   hasUnviewedMessages = false;
   panelOpenState = false;
-
-  constructor(
-    private socialService: SocialService,
-    private snackBar: MatSnackBar
-  ) {}
 
   ngOnInit(): void {
     this.onUnviewedMessage();

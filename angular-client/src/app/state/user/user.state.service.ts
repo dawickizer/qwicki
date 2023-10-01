@@ -31,7 +31,6 @@ import { InactivityService } from 'src/app/services/inactivity/inactivity.servic
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { Friend } from 'src/app/models/friend/friend';
-import { SocialService } from 'src/app/services/social/social.service';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 
 @Injectable({
@@ -60,7 +59,6 @@ export class UserStateService {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private socialService: SocialService,
     private inactivityService: InactivityService,
     private matchMakingService: MatchMakingService,
     private router: Router,
