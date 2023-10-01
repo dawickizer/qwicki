@@ -17,7 +17,6 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') drawer: MatSidenav;
 
   user$: Observable<User>;
-  userStateIsLoading$: Observable<boolean>;
   unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -30,7 +29,6 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.user$ = this.userStateService.user$;
-    this.userStateIsLoading$ = this.userStateService.isLoading$;
     this.socialRoomsStateService.createPersonalRoom();
     this.socialRoomsStateService.joinFriendsRoomsIfPresent();
     this.handleSideNavKeyBind();

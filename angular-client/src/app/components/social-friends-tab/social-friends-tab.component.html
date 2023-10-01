@@ -4,6 +4,10 @@
     titleColor="color:aliceblue"
     [friendRequests]="inboundFriendRequests"></app-social-friend-requests-list>
   <br />
+  <app-social-friend-requests-list
+    title="pending"
+    titleColor="color:yellow"
+    [friendRequests]="outboundFriendRequests"></app-social-friend-requests-list>
   <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>

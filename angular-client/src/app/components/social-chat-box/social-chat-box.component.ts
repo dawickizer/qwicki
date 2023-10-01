@@ -10,8 +10,8 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
-import { SocialService } from 'src/app/services/social/social.service';
 import { Friend } from 'src/app/models/friend/friend';
+import { UserStateService } from 'src/app/state/user/user.state.service';
 
 @Component({
   selector: 'app-social-chat-box',
@@ -23,8 +23,6 @@ export class SocialChatBoxComponent implements OnInit {
   @ViewChild('test') test: ElementRef;
 
   @Input() friend: Friend;
-
-  @Output() removeFriend: EventEmitter<Friend> = new EventEmitter();
   @Output() unviewedMessage: EventEmitter<boolean> = new EventEmitter();
 
   private _potentialMessage: Message;
@@ -54,7 +52,7 @@ export class SocialChatBoxComponent implements OnInit {
 
   constructor(
     private snackBar: MatSnackBar,
-    private socialService: SocialService
+    private userStateService: UserStateService
   ) {}
 
   ngOnInit(): void {
@@ -147,26 +145,8 @@ export class SocialChatBoxComponent implements OnInit {
     // }
   }
 
-  onRemoveFriend() {
-    // console.log(friend)
-    // this.socialService.removeFriend(friend).subscribe({
-    //   next: async host => {
-    //     this.colyseusService.host = new User(host);
-    //     const room: Colyseus.Room =
-    //       this.colyseusService.onlineFriendsRooms.find(
-    //         room => room.id === friend._id
-    //       );
-    //     if (room) {
-    //       room.send('removeFriend', host);
-    //       this.colyseusService.leaveRoom(room);
-    //     } else {
-    //       this.colyseusService.hostRoom.send('disconnectFriend', friend);
-    //     }
-    //     this.updateFriends();
-    //     this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');
-    //   },
-    //   error: error => this.openSnackBar(error, 'Dismiss'),
-    // });
+  removeFriend() {
+    this.userStateService.removeFriend(this.friend);
   }
 
   onUnviewedMessage() {
