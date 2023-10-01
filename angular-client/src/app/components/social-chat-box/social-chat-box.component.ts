@@ -58,13 +58,13 @@ export class SocialChatBoxComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.socialService.getMessagesBetween(this.friend).subscribe({
-      next: async (messages: Message[]) => {
-        this.messages.data = this.addEmptyMessages(messages);
-        this.setScrollHeight();
-      },
-      error: error => this.openSnackBar(error, 'Dismiss'),
-    });
+    // this.socialService.getMessagesBetween(this.friend).subscribe({
+    //   next: async (messages: Message[]) => {
+    //     this.messages.data = this.addEmptyMessages(messages);
+    //     this.setScrollHeight();
+    //   },
+    //   error: error => this.openSnackBar(error, 'Dismiss'),
+    // });
   }
 
   handlePotentialMessage(message: Message) {
