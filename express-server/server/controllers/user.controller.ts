@@ -71,7 +71,10 @@ export const updateUserById = async (
   try {
     const userId: string = req.params.userId;
     const updatedUser: User = req.body;
-    const user = await userService.updateUserById(userId, updatedUser);
+    const user = await userService.updateUserByIdAndPopulateChildren(
+      userId,
+      updatedUser
+    );
     res.status(200).json(user);
   } catch (error) {
     if (error instanceof CustomError)

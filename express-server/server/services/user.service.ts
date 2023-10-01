@@ -5,6 +5,12 @@ import * as friendRequestService from './friend-request.service';
 import ConflictError from '../error/ConflictError';
 
 export const createUser = async (user: User): Promise<User> => {
+  // run checks on fields that should be unique..will throw conflict errors
+  await Promise.all([
+    userExistsByUsername(user.username),
+    userExistsByEmail(user.email),
+  ]);
+
   user.usernameLower = user.username;
   user.emailLower = user.email;
   user.role = 'user';
@@ -109,15 +115,21 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   return user;
 };
 
-export const updateUserById = async (
+export const updateUserByIdAndPopulateChildren = async (
   userId: string | Schema.Types.ObjectId,
   updatedUser: User
 ): Promise<User | null> => {
+  // run checks on fields that should be unique..will throw conflict errors
+  await Promise.all([
+    userExistsByUsername(updatedUser.username, { excludingUserId: userId }),
+    userExistsByEmail(updatedUser.email, { excludingUserId: userId }),
+  ]);
+
   updatedUser.usernameLower = updatedUser.username;
   updatedUser.emailLower = updatedUser.email;
 
   // Extract the fields you want to update from updatedUser to prevent unauthorized updates to fields
-  //  that should not be modified
+  // that should not be modified
   const {
     username,
     usernameLower,
@@ -142,7 +154,11 @@ export const updateUserById = async (
 
   const user = await User.findByIdAndUpdate(userId, updatedFields, {
     new: true,
-  });
+  })
+    .populate('friends', ['username'])
+    .populate(friendRequest('inboundFriendRequests'))
+    .populate(friendRequest('outboundFriendRequests'));
+
   if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
   return user;
 };
@@ -286,17 +302,29 @@ export const cleanupUserReferences = async (
 };
 
 export const userExistsByUsername = async (
-  username: string
+  username: string,
+  options?: { excludingUserId?: string | Schema.Types.ObjectId }
 ): Promise<{ _id: any } | null> => {
-  const result = await User.exists({ usernameLower: username.toLowerCase() });
+  const query: any = { usernameLower: username.toLowerCase() };
+  if (options?.excludingUserId) {
+    query['_id'] = { $ne: options.excludingUserId };
+  }
+
+  const result = await User.exists(query);
   if (result) throw new ConflictError('Username taken');
   return result;
 };
 
 export const userExistsByEmail = async (
-  email: string
+  email: string,
+  options?: { excludingUserId?: string | Schema.Types.ObjectId }
 ): Promise<{ _id: any } | null> => {
-  const result = await User.exists({ emailLower: email.toLowerCase() });
+  const query: any = { emailLower: email.toLowerCase() };
+  if (options?.excludingUserId) {
+    query['_id'] = { $ne: options.excludingUserId };
+  }
+
+  const result = await User.exists(query);
   if (result) throw new ConflictError('Email taken');
   return result;
 };

@@ -25,10 +25,6 @@ export const login = async (credentials: any): Promise<any> => {
 };
 
 export const signup = async (user: User): Promise<any> => {
-  await Promise.all([
-    userService.userExistsByUsername(user.username),
-    userService.userExistsByEmail(user.email),
-  ]);
   user = await userService.createUser(user);
   return {
     token: jwt.sign(
