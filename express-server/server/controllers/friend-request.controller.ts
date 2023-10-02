@@ -12,12 +12,12 @@ export const createFriendRequest = async (
     const userId = req.params.userId;
     const toUsername = req.body.username;
 
-    const user = await friendRequestService.createFriendRequest(
+    const friendRequest = await friendRequestService.createFriendRequest(
       userId,
       toUsername
     );
 
-    res.status(201).send(user);
+    res.status(201).send(friendRequest);
   } catch (error: any) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);

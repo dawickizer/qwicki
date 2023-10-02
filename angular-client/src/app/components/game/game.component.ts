@@ -25,10 +25,12 @@ import '@babylonjs/inspector';
 import { ActivatedRoute } from '@angular/router';
 
 // Services
-import { AuthService } from 'src/app/services/auth/auth.service';
+import {
+  AuthFlowService,
+  AuthService,
+} from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
-import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 
 // Models
 import { Player } from 'src/app/models/player/player';
@@ -65,7 +67,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     private playerService: PlayerService,
     private authService: AuthService,
     private keyBindService: KeyBindService,
-    private authStateService: AuthStateService
+    private authFlowService: AuthFlowService
   ) {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
@@ -88,7 +90,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
           this.playerOnRemove();
         });
       },
-      error: () => this.authStateService.logout(),
+      error: () => this.authFlowService.logout(),
     });
   }
 

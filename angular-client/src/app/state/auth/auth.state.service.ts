@@ -10,7 +10,6 @@ import {
 import { AuthState, initialState } from './auth.state';
 import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
-import { UserService } from 'src/app/services/user/user.service';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { NavigationExtras, Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
@@ -23,9 +22,6 @@ import {
 import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
-import { UserStateService } from '../user/user.state.service';
-import { FriendsStateService } from '../friends/friends.state.service';
-import { FriendRequestsStateService } from '../friend-requests/friend-requests.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -41,12 +37,8 @@ export class AuthStateService {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService,
     private inactivityService: InactivityService,
     private matchMakingService: MatchMakingService,
-    private userStateService: UserStateService,
-    private friendsStateService: FriendsStateService,
-    private friendRequestsStateService: FriendRequestsStateService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
@@ -59,60 +51,36 @@ export class AuthStateService {
     });
   }
 
-  login(credentials: Credentials, route: string): void {
+  login(credentials: Credentials): Observable<DecodedJwt> {
     this.setIsLoading(true);
-    this.authService
-      .login(credentials)
-      .pipe(
-        tap((response: Credentials) => {
-          this.setJwt(response.token);
-        }),
-        switchMap(() => {
-          return this.authService.currentUser();
-        }),
-        tap((decodedJwt: DecodedJwt) => {
-          this.setDecodedJwt(decodedJwt);
-        }),
-        switchMap(decodedJwt => {
-          return this.userService.get(decodedJwt._id, {
-            friends: true,
-            friendRequests: true,
-          });
-        }),
-        tap((user: User) => {
-          this.loginFlow(user, route);
-        }),
-        catchError(this.handleError)
-      )
-      .subscribe();
+    return this.authService.login(credentials).pipe(
+      tap((response: Credentials) => {
+        this.setJwt(response.token);
+      }),
+      switchMap(() => this.authService.currentUser()),
+      tap(decodedJwt => {
+        this.setDecodedJwt(decodedJwt);
+        this.setIsLoggedIn(true);
+        this.setIsLoading(false);
+      }),
+      catchError(this.handleError)
+    );
   }
 
-  signup(user: User, route: string): void {
+  signup(user: User): Observable<DecodedJwt> {
     this.setIsLoading(true);
-    this.authService
-      .signup(user)
-      .pipe(
-        tap((response: Credentials) => {
-          this.setJwt(response.token);
-        }),
-        switchMap(() => {
-          return this.authService.currentUser();
-        }),
-        tap((decodedJwt: DecodedJwt) => {
-          this.setDecodedJwt(decodedJwt);
-        }),
-        switchMap(decodedJwt => {
-          return this.userService.get(decodedJwt._id, {
-            friends: true,
-            friendRequests: true,
-          });
-        }),
-        tap((user: User) => {
-          this.loginFlow(user, route);
-        }),
-        catchError(this.handleError)
-      )
-      .subscribe();
+    return this.authService.signup(user).pipe(
+      tap((response: Credentials) => {
+        this.setJwt(response.token);
+      }),
+      switchMap(() => this.authService.currentUser()),
+      tap(decodedJwt => {
+        this.setDecodedJwt(decodedJwt);
+        this.setIsLoggedIn(true);
+        this.setIsLoading(false);
+      }),
+      catchError(this.handleError)
+    );
   }
 
   isLoggedIn(): Observable<boolean> {
@@ -180,19 +148,6 @@ export class AuthStateService {
     this._authState.next({ ...currentState, decodedJwt });
   }
 
-  private loginFlow(user: User, route: string) {
-    this.userStateService.setUser(user);
-    this.friendsStateService.setFriends(user.friends);
-    this.friendRequestsStateService.setInboundFriendRequests(
-      user.inboundFriendRequests
-    );
-    this.friendRequestsStateService.setOutboundFriendRequests(
-      user.outboundFriendRequests
-    );
-    this.setIsLoggedIn(true);
-    this.setIsLoading(false);
-    this.router.navigate([route]);
-  }
   private handleError = (error: any): Observable<null> => {
     console.error(error);
     this.snackBar.open(error, 'Dismiss', { duration: 5000 });

@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+  ActivatedRouteSnapshot,
+  Router,
+  RouterStateSnapshot,
+} from '@angular/router';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -8,11 +12,15 @@ import {
 } from '@angular/common/http';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
-import { catchError } from 'rxjs/operators';
+import { catchError, switchMap } from 'rxjs/operators';
 import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 import { AuthStateService } from 'src/app/state/auth/auth.state.service';
+import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
+import { UserStateService } from 'src/app/state/user/user.state.service';
+import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
+import { FriendRequestsStateService } from 'src/app/state/friend-requests/friend-requests.state.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -33,7 +41,7 @@ export class AuthService {
       .pipe(catchError(this.handleError));
   }
 
-  currentUser(): Observable<any> {
+  currentUser(): Observable<DecodedJwt> {
     return this.http
       .post<any>(`${this.API}/current-user`, null)
       .pipe(catchError(this.handleError));
@@ -64,6 +72,58 @@ export class AuthService {
     }
     // Return an observable with a user-facing error message.
     return throwError(() => error.error);
+  }
+}
+
+@Injectable({
+  providedIn: 'root',
+})
+export class AuthFlowService {
+  constructor(
+    private authStateService: AuthStateService,
+    private userStateService: UserStateService,
+    private friendsStateService: FriendsStateService,
+    private friendRequestsStateService: FriendRequestsStateService,
+    private router: Router
+  ) {}
+
+  login(credentials: Credentials, returnPath: string): void {
+    const authObservable = this.authStateService.login(credentials);
+    this.executeAuthenticationFlow(authObservable, returnPath);
+  }
+
+  signup(user: User, returnPath: string): void {
+    const authObservable = this.authStateService.signup(user);
+    this.executeAuthenticationFlow(authObservable, returnPath);
+  }
+
+  logout(): void {
+    this.authStateService.logout();
+  }
+
+  private executeAuthenticationFlow(
+    authObservable: Observable<DecodedJwt>,
+    returnPath: string
+  ): void {
+    authObservable
+      .pipe(
+        switchMap(decodedJwt =>
+          this.userStateService.getUser(decodedJwt._id, {
+            friends: true,
+            friendRequests: true,
+          })
+        )
+      )
+      .subscribe(user => {
+        this.friendsStateService.setFriends(user.friends);
+        this.friendRequestsStateService.setInboundFriendRequests(
+          user.inboundFriendRequests
+        );
+        this.friendRequestsStateService.setOutboundFriendRequests(
+          user.outboundFriendRequests
+        );
+        this.router.navigate([returnPath]);
+      });
   }
 }
 

@@ -12,12 +12,15 @@ import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FriendsStateService } from '../friends/friends.state.service';
 import { UserStateService } from '../user/user.state.service';
+import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
+import { AuthStateService } from '../auth/auth.state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FriendRequestsStateService {
   private user: User;
+  private jwt: string;
 
   private _friendRequestsState = new BehaviorSubject<FriendRequestsState>(
     initialState
@@ -37,8 +40,11 @@ export class FriendRequestsStateService {
     private userService: UserService,
     private friendsStateService: FriendsStateService,
     private userStateService: UserStateService,
+    private authStateService: AuthStateService,
+    private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
+    this.subscribeToAuthState();
     this.subscribeToUserState();
   }
 
@@ -48,15 +54,29 @@ export class FriendRequestsStateService {
     });
   }
 
+  private subscribeToAuthState() {
+    this.authStateService.jwt$.subscribe(jwt => {
+      this.jwt = jwt;
+    });
+  }
+
   // Side effects
   sendFriendRequest(potentialFriend: string) {
     this.setIsLoading(true);
     this.userService
       .createFriendRequest(this.user, potentialFriend)
       .pipe(
-        tap(user => {
-          this.setOutboundFriendRequests(user.outboundFriendRequests);
+        tap(async friendRequest => {
+          this.addOutboundFriendRequest(friendRequest);
           this.setIsLoading(false);
+          const room = await this.colyseusService.joinExistingRoomIfPresent(
+            friendRequest.to._id,
+            this.jwt
+          );
+          if (room) {
+            room.send('sendFriendRequest', friendRequest);
+            this.colyseusService.leaveRoom(room);
+          }
           this.snackBar.open(
             `Friend Request sent to ${potentialFriend}`,
             'Dismiss',
@@ -67,9 +87,6 @@ export class FriendRequestsStateService {
       )
       .subscribe();
 
-    // this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
-    //   next: async host => {
-    //     this.colyseusService.host = new User(host);
     //     const friendRequest: FriendRequest = this.findOutboundFriendRequest();
     //     const room: Colyseus.Room =
     //       await this.colyseusService.joinExistingRoomIfPresent(
@@ -79,18 +96,6 @@ export class FriendRequestsStateService {
     //       room.send('sendFriendRequest', friendRequest);
     //       this.colyseusService.leaveRoom(room);
     //     }
-    //     this.send.emit(friendRequest);
-    //     this.openSnackBar(
-    //       'Friend request sent to ' + this.potentialFriend,
-    //       'Dismiss'
-    //     );
-    //     this.potentialFriend = '';
-    //   },
-    //   error: error => {
-    //     this.openSnackBar(error, 'Dismiss');
-    //     this.potentialFriend = '';
-    //   },
-    // });
   }
 
   acceptFriendRequest(friendRequest: FriendRequest): void {
@@ -226,6 +231,20 @@ export class FriendRequestsStateService {
     });
   }
 
+  addInboundFriendRequest(friendRequest: FriendRequest): void {
+    const currentState = this._friendRequestsState.value;
+    if (!currentState.inboundFriendRequests) return;
+
+    const updatedInboundFriendRequests = [
+      ...currentState.inboundFriendRequests,
+      friendRequest,
+    ];
+    this._friendRequestsState.next({
+      ...currentState,
+      inboundFriendRequests: updatedInboundFriendRequests,
+    });
+  }
+
   setOutboundFriendRequests(outboundFriendRequests: FriendRequest[]) {
     const currentState = this._friendRequestsState.value;
     if (!currentState.outboundFriendRequests) return;
@@ -235,6 +254,20 @@ export class FriendRequestsStateService {
       outboundFriendRequests: [...outboundFriendRequests].map(
         outboundFriendRequest => new FriendRequest(outboundFriendRequest)
       ),
+    });
+  }
+
+  addOutboundFriendRequest(friendRequest: FriendRequest): void {
+    const currentState = this._friendRequestsState.value;
+    if (!currentState.outboundFriendRequests) return;
+
+    const updatedOutboundFriendRequests = [
+      ...currentState.outboundFriendRequests,
+      friendRequest,
+    ];
+    this._friendRequestsState.next({
+      ...currentState,
+      outboundFriendRequests: updatedOutboundFriendRequests,
     });
   }
 

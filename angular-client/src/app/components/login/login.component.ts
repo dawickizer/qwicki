@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AuthStateService } from 'src/app/state/auth/auth.state.service';
+import { AuthFlowService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private authStateService: AuthStateService
+    private authFlowService: AuthFlowService
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +32,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    this.authStateService.login(this.credentials, this.return);
+    this.authFlowService.login(this.credentials, this.return);
     this.credentials = { username: '', password: '' };
   }
 }

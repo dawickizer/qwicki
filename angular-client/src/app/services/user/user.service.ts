@@ -10,6 +10,7 @@ import { Observable, throwError } from 'rxjs';
 
 import { User } from '../../models/user/user';
 import { Message } from 'src/app/models/message/message';
+import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 
 @Injectable({
   providedIn: 'root',
@@ -56,11 +57,14 @@ export class UserService {
       .pipe(catchError(this.handleError));
   }
 
-  createFriendRequest(user: User, username: string): Observable<User> {
+  createFriendRequest(user: User, username: string): Observable<FriendRequest> {
     return this.http
-      .post<User>(`${this.API}${this.endpoint}/${user._id}/friend-requests`, {
-        username,
-      })
+      .post<FriendRequest>(
+        `${this.API}${this.endpoint}/${user._id}/friend-requests`,
+        {
+          username,
+        }
+      )
       .pipe(catchError(this.handleError));
   }
 

@@ -15,6 +15,8 @@ import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { AuthStateService } from '../auth/auth.state.service';
 import { FriendsStateService } from '../friends/friends.state.service';
 import { Friend } from 'src/app/models/friend/friend';
+import { FriendRequestsStateService } from '../friend-requests/friend-requests.state.service';
+import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 
 @Injectable({
   providedIn: 'root',
@@ -38,6 +40,7 @@ export class SocialRoomsStateService {
     private userStateService: UserStateService,
     private authStateService: AuthStateService,
     private friendsStateService: FriendsStateService,
+    private friendRequestsStateService: FriendRequestsStateService,
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
@@ -227,11 +230,6 @@ export class SocialRoomsStateService {
 
   private setPersonalRoomListeners(room: Room): Room {
     //     this.colyseusService.hostRoom.onMessage(
-    //       'sendFriendRequest',
-    //       (friendRequest: FriendRequest) =>
-    //         this.handleSendFriendRequestEvent(friendRequest)
-    //     );
-    //     this.colyseusService.hostRoom.onMessage(
     //       'acceptFriendRequest',
     //       (friendRequest: FriendRequest) =>
     //         this.handleAcceptFriendRequestEvent(friendRequest)
@@ -260,6 +258,11 @@ export class SocialRoomsStateService {
     room.onMessage('offline', (roomId: string) => {
       this.friendsStateService.setFriendOffline(roomId);
     });
+
+    room.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
+      this.friendRequestsStateService.addInboundFriendRequest(friendRequest);
+    });
+
     room.onError((code, message) =>
       console.log(
         `An error occurred with the room. Error Code: ${code} | Message: ${message}`
@@ -335,11 +338,6 @@ export class SocialRoomsStateService {
     this.setIsLoading(false);
   };
 }
-
-//   private handleSendFriendRequestEvent(friendRequest: FriendRequest) {
-//     this.colyseusService.host.inboundFriendRequests.push(friendRequest);
-//     this.updateFriendRequests();
-//   }
 
 //   private handleAcceptFriendRequestEvent(friendRequest: FriendRequest) {
 //     friendRequest.to.online = true;

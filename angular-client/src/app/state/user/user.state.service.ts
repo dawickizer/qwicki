@@ -27,6 +27,23 @@ export class UserStateService {
   ) {}
 
   // Side effects
+  getUser(
+    id: string,
+    options?: { friends?: boolean; friendRequests?: boolean }
+  ): Observable<User> {
+    this.setIsLoading(true);
+    return this.userService.get(id, options).pipe(
+      tap(user => {
+        this.setUser(user);
+        this.setIsLoading(false);
+        this.snackBar.open(`Hello, ${user.username}`, 'Dismiss', {
+          duration: 5000,
+        });
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   updateUser(user: User): void {
     this.setIsLoading(true);
     this.userService

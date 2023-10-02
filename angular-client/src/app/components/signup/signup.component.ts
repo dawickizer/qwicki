@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { User } from 'src/app/models/user/user';
-import { AuthStateService } from 'src/app/state/auth/auth.state.service';
+import { AuthFlowService } from 'src/app/services/auth/auth.service';
 
 @Component({
   selector: 'app-signup',
@@ -10,9 +10,9 @@ import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 export class SignupComponent {
   user: User = new User();
 
-  constructor(private authStateService: AuthStateService) {}
+  constructor(private authFlowService: AuthFlowService) {}
 
   signup() {
-    this.authStateService.signup(new User(this.user), '/');
+    this.authFlowService.signup(new User(this.user), '/');
   }
 }

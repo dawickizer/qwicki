@@ -23,7 +23,7 @@ export const getFriendRequestsByUserId = async (
 export const createFriendRequest = async (
   userId: string | Schema.Types.ObjectId,
   toUsername: string
-): Promise<User> => {
+): Promise<FriendRequest> => {
   // Retrieve both users in parallel.
   const [toUser, fromUser] = await Promise.all([
     userService.getUserByUsername(toUsername),
@@ -61,12 +61,12 @@ export const createFriendRequest = async (
   });
 
   // Update users' friend request arrays
-  const [updatedFromUser] = await Promise.all([
+  await Promise.all([
     userService.addOutboundFriendRequest(fromUser._id, friendRequest._id),
     userService.addInboundFriendRequest(toUser._id, friendRequest._id),
   ]);
 
-  return updatedFromUser;
+  return friendRequest.populate([{path: 'to', select: 'username'}, {path: 'from', select: 'username'}]);
 };
 
 export const deleteFriendRequestById = async (

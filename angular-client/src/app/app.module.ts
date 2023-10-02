@@ -51,6 +51,7 @@ import { BorderDirective } from './directives/border.directive';
 // Services
 import { UserService } from './services/user/user.service';
 import {
+  AuthFlowService,
   AuthGuardService,
   AuthInterceptor,
   AuthService,
@@ -120,6 +121,7 @@ import { FriendsStateService } from './state/friends/friends.state.service';
   providers: [
     UserService,
     AuthService,
+    AuthFlowService,
     AuthGuardService,
     InactivityService,
     ColyseusService,

@@ -28,9 +28,11 @@ import '@babylonjs/inspector';
 
 // Services/Models
 import { FpsService } from 'src/app/services/fps/fps.service';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import {
+  AuthFlowService,
+  AuthService,
+} from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 
 @Component({
   selector: 'app-babylonjs',
@@ -56,7 +58,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
   constructor(
     private fpsService: FpsService,
     private authService: AuthService,
-    private authStateService: AuthStateService,
+    private authFlowService: AuthFlowService,
     private keyBindService: KeyBindService
   ) {}
 
@@ -89,7 +91,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
         // running babylonJS
         this.render();
       },
-      error: () => this.authStateService.logout(),
+      error: () => this.authFlowService.logout(),
     });
   }
 
