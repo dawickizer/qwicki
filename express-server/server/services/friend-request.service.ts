@@ -99,7 +99,7 @@ export const deleteFriendRequestById = async (
 
   await FriendRequest.findByIdAndDelete(friendRequestId);
 
-  return await userService.getUserByIdAndPopulateChildren(userId);
+  return await friendRequest.populate([{path: 'to', select: 'username'}, {path: 'from', select: 'username'}]);
 };
 
 export const deleteManyFriendRequestsByUserId = async (

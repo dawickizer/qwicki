@@ -68,9 +68,12 @@ export class UserService {
       .pipe(catchError(this.handleError));
   }
 
-  deleteFriendRequest(user: User, friendRequestId: string): Observable<User> {
+  deleteFriendRequest(
+    user: User,
+    friendRequestId: string
+  ): Observable<FriendRequest> {
     return this.http
-      .delete<User>(
+      .delete<FriendRequest>(
         `${this.API}${this.endpoint}/${user._id}/friend-requests/${friendRequestId}`
       )
       .pipe(catchError(this.handleError));

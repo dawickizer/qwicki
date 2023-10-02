@@ -234,16 +234,7 @@ export class SocialRoomsStateService {
     //       (friendRequest: FriendRequest) =>
     //         this.handleAcceptFriendRequestEvent(friendRequest)
     //     );
-    //     this.colyseusService.hostRoom.onMessage(
-    //       'rejectFriendRequest',
-    //       (friendRequest: FriendRequest) =>
-    //         this.handleRejectFriendRequestEvent(friendRequest)
-    //     );
-    //     this.colyseusService.hostRoom.onMessage(
-    //       'revokeFriendRequest',
-    //       (friendRequest: FriendRequest) =>
-    //         this.handleRevokeFriendRequestEvent(friendRequest)
-    //     );
+
     //     this.colyseusService.hostRoom.onMessage(
     //       'removeFriend',
     //       (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend)
@@ -261,6 +252,16 @@ export class SocialRoomsStateService {
 
     room.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
       this.friendRequestsStateService.addInboundFriendRequest(friendRequest);
+    });
+
+    room.onMessage('rejectFriendRequest', (friendRequest: FriendRequest) => {
+      this.friendRequestsStateService.removeOutboundFriendRequest(
+        friendRequest
+      );
+    });
+
+    room.onMessage('revokeFriendRequest', (friendRequest: FriendRequest) => {
+      this.friendRequestsStateService.removeInboundFriendRequest(friendRequest);
     });
 
     room.onError((code, message) =>
@@ -346,34 +347,6 @@ export class SocialRoomsStateService {
 //       this.colyseusService.host.outboundFriendRequests.filter(
 //         outboundFriendRequest =>
 //           outboundFriendRequest.to._id !== friendRequest.to._id
-//       );
-//     this.updateFriends();
-//     this.updateFriendRequests();
-//   }
-
-//   private handleRejectFriendRequestEvent(friendRequest: FriendRequest) {
-//     this.colyseusService.host.friends =
-//       this.colyseusService.host.friends.filter(
-//         friend => friend._id !== friendRequest.to._id
-//       );
-//     this.colyseusService.host.outboundFriendRequests =
-//       this.colyseusService.host.outboundFriendRequests.filter(
-//         outboundFriendRequest =>
-//           outboundFriendRequest.to._id !== friendRequest.to._id
-//       );
-//     this.updateFriends();
-//     this.updateFriendRequests();
-//   }
-
-//   private handleRevokeFriendRequestEvent(friendRequest: FriendRequest) {
-//     this.colyseusService.host.friends =
-//       this.colyseusService.host.friends.filter(
-//         friend => friend._id !== friendRequest.from._id
-//       );
-//     this.colyseusService.host.inboundFriendRequests =
-//       this.colyseusService.host.inboundFriendRequests.filter(
-//         inboundFriendRequest =>
-//           inboundFriendRequest.from._id !== friendRequest.from._id
 //       );
 //     this.updateFriends();
 //     this.updateFriendRequests();
