@@ -28,11 +28,11 @@ import { ActivatedRoute } from '@angular/router';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
+import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 
 // Models
 import { Player } from 'src/app/models/player/player';
 import { PlayerService } from 'src/app/services/player/player.service';
-import { UserStateService } from 'src/app/state/user/user.state.service';
 
 @Component({
   selector: 'app-game',
@@ -65,7 +65,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     private playerService: PlayerService,
     private authService: AuthService,
     private keyBindService: KeyBindService,
-    private userStateService: UserStateService
+    private authStateService: AuthStateService
   ) {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
@@ -88,7 +88,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
           this.playerOnRemove();
         });
       },
-      error: () => this.userStateService.logout(),
+      error: () => this.authStateService.logout(),
     });
   }
 

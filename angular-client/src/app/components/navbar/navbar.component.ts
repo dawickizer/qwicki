@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { UserStateService } from 'src/app/state/user/user.state.service';
+import { AuthStateService } from 'src/app/state/auth/auth.state.service';
+
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './navbar.component.html',
@@ -9,13 +10,13 @@ import { UserStateService } from 'src/app/state/user/user.state.service';
 export class NavbarComponent implements OnInit {
   isLoggedIn$: Observable<boolean>;
 
-  constructor(private userStateService: UserStateService) {}
+  constructor(private authStateService: AuthStateService) {}
 
   ngOnInit(): void {
-    this.isLoggedIn$ = this.userStateService.isLoggedIn$;
+    this.isLoggedIn$ = this.authStateService.isLoggedIn$;
   }
 
   logout() {
-    this.userStateService.logout();
+    this.authStateService.logout();
   }
 }

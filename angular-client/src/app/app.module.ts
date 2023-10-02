@@ -66,6 +66,8 @@ import { GameService } from './services/game/game.service';
 
 // State
 import { UserStateService } from './state/user/user.state.service';
+import { AuthStateService } from './state/auth/auth.state.service';
+import { SocialRoomsStateService } from './state/social-rooms/social-rooms.state.service';
 
 @NgModule({
   declarations: [
@@ -127,6 +129,8 @@ import { UserStateService } from './state/user/user.state.service';
     KeyBindService,
     MatchMakingService,
     UserStateService,
+    AuthStateService,
+    SocialRoomsStateService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],

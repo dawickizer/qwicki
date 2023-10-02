@@ -13,6 +13,7 @@ import { Room } from 'colyseus.js';
 import { UserStateService } from '../user/user.state.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { User } from 'src/app/models/user/user';
+import { AuthStateService } from '../auth/auth.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -34,10 +35,12 @@ export class SocialRoomsStateService {
 
   constructor(
     private userStateService: UserStateService,
+    private authStateService: AuthStateService,
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
     this.subscribeToUserState();
+    this.subscribeToAuthState();
   }
 
   createPersonalRoom(): void {
@@ -202,13 +205,16 @@ export class SocialRoomsStateService {
     this.userStateService.user$.subscribe(user => {
       this.user = user;
     });
-    this.userStateService.decodedJwt$.subscribe(decodedJwt => {
+  }
+
+  private subscribeToAuthState() {
+    this.authStateService.decodedJwt$.subscribe(decodedJwt => {
       this.decodedJwt = decodedJwt;
     });
-    this.userStateService.jwt$.subscribe(jwt => {
+    this.authStateService.jwt$.subscribe(jwt => {
       this.jwt = jwt;
     });
-    this.userStateService.isLoggedIn$.subscribe(isLoggedIn => {
+    this.authStateService.isLoggedIn$.subscribe(isLoggedIn => {
       if (!isLoggedIn) this.leaveAllRooms();
     });
   }

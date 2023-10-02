@@ -12,7 +12,7 @@ import { catchError } from 'rxjs/operators';
 import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
-import { UserStateService } from 'src/app/state/user/user.state.service';
+import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -69,19 +69,19 @@ export class AuthService {
 
 @Injectable()
 export class AuthGuardService {
-  constructor(private userStateService: UserStateService) {}
+  constructor(private authStateService: AuthStateService) {}
 
   // do NOT remove route param as it affects angular dep injection and will cause bugs with router logic
   async canActivate(
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Promise<boolean> {
-    const isLoggedIn = await firstValueFrom(this.userStateService.isLoggedIn());
+    const isLoggedIn = await firstValueFrom(this.authStateService.isLoggedIn());
 
     if (isLoggedIn) {
       return true;
     } else {
-      this.userStateService.logout({
+      this.authStateService.logout({
         extras: { queryParams: { return: state.url } },
         makeBackendCall: false,
       });
@@ -94,8 +94,8 @@ export class AuthGuardService {
 export class AuthInterceptor implements HttpInterceptor {
   jwt: string;
 
-  constructor(private userStateService: UserStateService) {
-    this.userStateService.jwt$.subscribe(jwt => {
+  constructor(private authStateService: AuthStateService) {
+    this.authStateService.jwt$.subscribe(jwt => {
       this.jwt = jwt;
     });
   }
