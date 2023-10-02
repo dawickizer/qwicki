@@ -11,7 +11,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
 import { Friend } from 'src/app/models/friend/friend';
-import { UserStateService } from 'src/app/state/user/user.state.service';
+import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
 
 @Component({
   selector: 'app-social-chat-box',
@@ -52,7 +52,7 @@ export class SocialChatBoxComponent implements OnInit {
 
   constructor(
     private snackBar: MatSnackBar,
-    private userStateService: UserStateService
+    private friendsStateService: FriendsStateService
   ) {}
 
   ngOnInit(): void {
@@ -146,7 +146,7 @@ export class SocialChatBoxComponent implements OnInit {
   }
 
   removeFriend() {
-    this.userStateService.removeFriend(this.friend);
+    this.friendsStateService.removeFriend(this.friend);
   }
 
   onUnviewedMessage() {

@@ -11,11 +11,13 @@ import { Friend } from 'src/app/models/friend/friend';
 import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/app/models/user/user';
+import { UserStateService } from '../user/user.state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FriendsStateService {
+  private user: User;
   private _friendsState = new BehaviorSubject<FriendsState>(initialState);
 
   public friendsState$: Observable<FriendsState> =
@@ -27,14 +29,23 @@ export class FriendsStateService {
 
   constructor(
     private userService: UserService,
+    private userStateService: UserStateService,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.subscribeToUserState();
+  }
+
+  private subscribeToUserState() {
+    this.userStateService.user$.subscribe(user => {
+      this.user = user;
+    });
+  }
 
   // Side effects
-  removeFriend(user: User, friend: Friend): void {
+  removeFriend(friend: Friend): void {
     this.setIsLoading(true);
     this.userService
-      .removeFriend(user, friend._id)
+      .removeFriend(this.user, friend._id)
       .pipe(
         tap(user => {
           this.setFriends(user.friends);

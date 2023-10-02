@@ -4,7 +4,8 @@ import { MatTableDataSource } from '@angular/material/table';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { Friend } from 'src/app/models/friend/friend';
 import { Subject, takeUntil } from 'rxjs';
-import { UserStateService } from 'src/app/state/user/user.state.service';
+import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
+import { FriendRequestsStateService } from 'src/app/state/friend-requests/friend-requests.state.service';
 
 @Component({
   selector: 'app-social-friends-tab',
@@ -23,7 +24,10 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   unsubscribe$ = new Subject<void>();
   displayedColumns: string[] = ['username'];
 
-  constructor(private userStateService: UserStateService) {}
+  constructor(
+    private friendRequestsStateService: FriendRequestsStateService,
+    private friendsStateService: FriendsStateService
+  ) {}
 
   ngOnInit() {
     this.subscribeToFriends();
@@ -31,7 +35,7 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   }
 
   subscribeToFriends() {
-    this.userStateService.userFriends$
+    this.friendsStateService.friends$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(friends => {
         // merge results to preserve old mem addresses which will make it so angular doesn't re-render the entire list, which can be
@@ -55,14 +59,14 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   }
 
   subscribeToFriendRequests() {
-    this.userStateService.userInboundFriendRequests$
+    this.friendRequestsStateService.inboundFriendRequests$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(inboundFriendRequests => {
         this.inboundFriendRequests.data = inboundFriendRequests;
         console.log(this.inboundFriendRequests.data);
       });
 
-    this.userStateService.userOutboundFriendRequests$
+    this.friendRequestsStateService.outboundFriendRequests$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(outboundFriendRequests => {
         this.outboundFriendRequests.data = outboundFriendRequests;

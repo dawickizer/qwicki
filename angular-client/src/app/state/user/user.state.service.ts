@@ -6,13 +6,9 @@ import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   isLoadingSelector,
-  userOnlineSelector,
+  onlineSelector,
   userSelector,
 } from './user.state.selectors';
-import { Friend } from 'src/app/models/friend/friend';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-import { FriendsStateService } from '../friends/friends.state.service';
-import { FriendRequestsStateService } from '../friend-requests/friend-requests.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,20 +19,9 @@ export class UserStateService {
   public userState$: Observable<UserState> = this._userState.asObservable();
   public isLoading$ = isLoadingSelector(this.userState$);
   public user$ = userSelector(this.userState$);
-  public userOnline$ = userOnlineSelector(this.user$);
-  public userFriends$ = this.friendsStateService.friends$;
-  public userOnlineFriends$ = this.friendsStateService.onlineFriends$;
-  public userOfflineFriends$ = this.friendsStateService.offlineFriends$;
-  public userFriendsIsLoading$ = this.friendsStateService.isLoading$;
-  public userInboundFriendRequests$ =
-    this.friendRequestsStateService.inboundFriendRequests$;
-  public userOutboundFriendRequests$ =
-    this.friendRequestsStateService.outboundFriendRequests$;
-  public friendRequestsIsLoading = this.friendRequestsStateService.isLoading$;
+  public online$ = onlineSelector(this.user$);
 
   constructor(
-    private friendsStateService: FriendsStateService,
-    private friendRequestsStateService: FriendRequestsStateService,
     private userService: UserService,
     private snackBar: MatSnackBar
   ) {}
@@ -80,31 +65,6 @@ export class UserStateService {
       .subscribe();
   }
 
-  sendFriendRequest(potentialFriend: string): void {
-    const user = this._userState.value.user;
-    this.friendRequestsStateService.sendFriendRequest(user, potentialFriend);
-  }
-
-  acceptFriendRequest(friendRequest: FriendRequest): void {
-    const user = this._userState.value.user;
-    this.friendRequestsStateService.acceptFriendRequest(user, friendRequest);
-  }
-
-  revokeFriendRequest(friendRequest: FriendRequest): void {
-    const user = this._userState.value.user;
-    this.friendRequestsStateService.revokeFriendRequest(user, friendRequest);
-  }
-
-  rejectFriendRequest(friendRequest: FriendRequest): void {
-    const user = this._userState.value.user;
-    this.friendRequestsStateService.rejectFriendRequest(user, friendRequest);
-  }
-
-  removeFriend(friend: Friend): void {
-    const user = this._userState.value.user;
-    this.friendsStateService.removeFriend(user, friend);
-  }
-
   // Pure state
 
   setInitialState() {
@@ -113,27 +73,16 @@ export class UserStateService {
 
   setUser(user: User): void {
     const currentState = this._userState.value;
-    this.friendsStateService.setFriends(user.friends);
-    this.friendRequestsStateService.setInboundFriendRequests(
-      user.inboundFriendRequests
-    );
-    this.friendRequestsStateService.setOutboundFriendRequests(
-      user.outboundFriendRequests
-    );
     this._userState.next({ ...currentState, user: new User(user) });
   }
 
-  setUserOnline(online: boolean): void {
+  setOnline(online: boolean): void {
     const currentState = this._userState.value;
     if (!currentState.user) return;
     this._userState.next({
       ...currentState,
       user: new User({ ...currentState.user, online } as User),
     });
-  }
-
-  setUserFriends(friends: Friend[]) {
-    this.friendsStateService.setFriends(friends);
   }
 
   setIsLoading(isLoading: boolean): void {

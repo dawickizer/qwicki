@@ -20,7 +20,7 @@ export const isLoadingSelector = (
     distinctUntilChanged()
   );
 
-export const userOnlineSelector = (
+export const onlineSelector = (
   user$: Observable<User | null>
 ): Observable<boolean | null> =>
   user$.pipe(

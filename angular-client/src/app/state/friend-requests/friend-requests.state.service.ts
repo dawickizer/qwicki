@@ -11,11 +11,14 @@ import { User } from 'src/app/models/user/user';
 import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FriendsStateService } from '../friends/friends.state.service';
+import { UserStateService } from '../user/user.state.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FriendRequestsStateService {
+  private user: User;
+
   private _friendRequestsState = new BehaviorSubject<FriendRequestsState>(
     initialState
   );
@@ -33,14 +36,23 @@ export class FriendRequestsStateService {
   constructor(
     private userService: UserService,
     private friendsStateService: FriendsStateService,
+    private userStateService: UserStateService,
     private snackBar: MatSnackBar
-  ) {}
+  ) {
+    this.subscribeToUserState();
+  }
+
+  private subscribeToUserState() {
+    this.userStateService.user$.subscribe(user => {
+      this.user = user;
+    });
+  }
 
   // Side effects
-  sendFriendRequest(user: User, potentialFriend: string) {
+  sendFriendRequest(potentialFriend: string) {
     this.setIsLoading(true);
     this.userService
-      .createFriendRequest(user, potentialFriend)
+      .createFriendRequest(this.user, potentialFriend)
       .pipe(
         tap(user => {
           this.setOutboundFriendRequests(user.outboundFriendRequests);
@@ -81,10 +93,10 @@ export class FriendRequestsStateService {
     // });
   }
 
-  acceptFriendRequest(user: User, friendRequest: FriendRequest): void {
+  acceptFriendRequest(friendRequest: FriendRequest): void {
     this.setIsLoading(true);
     this.userService
-      .addFriend(user, friendRequest._id)
+      .addFriend(this.user, friendRequest._id)
       .pipe(
         tap(user => {
           this.setInboundFriendRequests(user.inboundFriendRequests);
@@ -121,10 +133,10 @@ export class FriendRequestsStateService {
     // });
   }
 
-  revokeFriendRequest(user: User, friendRequest: FriendRequest): void {
+  revokeFriendRequest(friendRequest: FriendRequest): void {
     this.setIsLoading(true);
     this.userService
-      .deleteFriendRequest(user, friendRequest._id)
+      .deleteFriendRequest(this.user, friendRequest._id)
       .pipe(
         tap(user => {
           this.setOutboundFriendRequests(user.outboundFriendRequests);
@@ -159,10 +171,10 @@ export class FriendRequestsStateService {
     // });
   }
 
-  rejectFriendRequest(user: User, friendRequest: FriendRequest): void {
+  rejectFriendRequest(friendRequest: FriendRequest): void {
     this.setIsLoading(true);
     this.userService
-      .deleteFriendRequest(user, friendRequest._id)
+      .deleteFriendRequest(this.user, friendRequest._id)
       .pipe(
         tap(user => {
           this.setInboundFriendRequests(user.inboundFriendRequests);

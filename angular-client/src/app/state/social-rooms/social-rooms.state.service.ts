@@ -297,7 +297,7 @@ export class SocialRoomsStateService {
   private handleConnectedRoomSuccess = (room: Room) => {
     if (room) {
       if (this.isPersonalRoom(room.id)) {
-        this.userStateService.setUserOnline(true);
+        this.userStateService.setOnline(true);
         room = this.setPersonalRoomListeners(room);
         this.setPersonalRoom(room);
       } else {
@@ -317,7 +317,7 @@ export class SocialRoomsStateService {
 
       rooms.forEach(room => {
         if (this.isPersonalRoom(room.id)) {
-          this.userStateService.setUserOnline(true);
+          this.userStateService.setOnline(true);
           personalRoom = this.setPersonalRoomListeners(room);
           this.setPersonalRoom(personalRoom);
         } else {

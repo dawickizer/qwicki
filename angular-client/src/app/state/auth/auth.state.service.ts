@@ -24,6 +24,8 @@ import { InactivityService } from 'src/app/services/inactivity/inactivity.servic
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { UserStateService } from '../user/user.state.service';
+import { FriendsStateService } from '../friends/friends.state.service';
+import { FriendRequestsStateService } from '../friend-requests/friend-requests.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +45,8 @@ export class AuthStateService {
     private inactivityService: InactivityService,
     private matchMakingService: MatchMakingService,
     private userStateService: UserStateService,
+    private friendsStateService: FriendsStateService,
+    private friendRequestsStateService: FriendRequestsStateService,
     private router: Router,
     private snackBar: MatSnackBar
   ) {
@@ -76,10 +80,7 @@ export class AuthStateService {
           });
         }),
         tap((user: User) => {
-          this.userStateService.setUser(user);
-          this.setIsLoggedIn(true);
-          this.setIsLoading(false);
-          this.router.navigate([route]);
+          this.loginFlow(user, route);
         }),
         catchError(this.handleError)
       )
@@ -107,10 +108,7 @@ export class AuthStateService {
           });
         }),
         tap((user: User) => {
-          this.userStateService.setUser(user);
-          this.setIsLoggedIn(true);
-          this.setIsLoading(false);
-          this.router.navigate([route]);
+          this.loginFlow(user, route);
         }),
         catchError(this.handleError)
       )
@@ -182,6 +180,19 @@ export class AuthStateService {
     this._authState.next({ ...currentState, decodedJwt });
   }
 
+  private loginFlow(user: User, route: string) {
+    this.userStateService.setUser(user);
+    this.friendsStateService.setFriends(user.friends);
+    this.friendRequestsStateService.setInboundFriendRequests(
+      user.inboundFriendRequests
+    );
+    this.friendRequestsStateService.setOutboundFriendRequests(
+      user.outboundFriendRequests
+    );
+    this.setIsLoggedIn(true);
+    this.setIsLoading(false);
+    this.router.navigate([route]);
+  }
   private handleError = (error: any): Observable<null> => {
     console.error(error);
     this.snackBar.open(error, 'Dismiss', { duration: 5000 });
