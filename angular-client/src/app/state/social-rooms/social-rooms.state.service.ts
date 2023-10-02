@@ -41,7 +41,7 @@ export class SocialRoomsStateService {
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
-    this.subscribeToUserState();
+    this.subscribeToFriendsState();
     this.subscribeToAuthState();
   }
 
@@ -203,7 +203,7 @@ export class SocialRoomsStateService {
     this._socialRoomsState.next({ ...currentState, isLoading });
   }
 
-  private subscribeToUserState() {
+  private subscribeToFriendsState() {
     this.friendsStateService.friends$.subscribe(friends => {
       this.friends = friends;
     });
