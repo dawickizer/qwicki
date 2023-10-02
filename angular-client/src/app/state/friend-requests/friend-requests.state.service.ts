@@ -153,25 +153,6 @@ export class FriendRequestsStateService {
         catchError(this.handleError)
       )
       .subscribe();
-    // this.socialService.revokeFriendRequest(friendRequest).subscribe({
-    //   next: async host => {
-    //     this.colyseusService.host = new User(host);
-    //     const room: Colyseus.Room =
-    //       await this.colyseusService.joinExistingRoomIfPresent(
-    //         friendRequest.to
-    //       );
-    //     if (room) {
-    //       room.send('revokeFriendRequest', friendRequest);
-    //       this.colyseusService.leaveRoom(room);
-    //     }
-    //     this.updateFriendRequests();
-    //     this.openSnackBar(
-    //       `Revoked ${friendRequest.to.username}'s friend request`,
-    //       'Dismiss'
-    //     );
-    //   },
-    //   error: error => this.openSnackBar(error, 'Dismiss'),
-    // });
   }
 
   rejectFriendRequest(friendRequest: FriendRequest): void {
