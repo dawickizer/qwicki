@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, tap, of, catchError } from 'rxjs';
 import { FriendRequestsState, initialState } from './friend-requests.state';
 import {
   isLoadingSelector,
@@ -7,6 +7,10 @@ import {
   outboundFriendRequestsSelector,
 } from './friend-requests.state.selectors';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { User } from 'src/app/models/user/user';
+import { UserService } from 'src/app/services/user/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FriendsStateService } from '../friends/friends.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +30,174 @@ export class FriendRequestsStateService {
     this.friendRequestsState$
   );
 
+  constructor(
+    private userService: UserService,
+    private friendsStateService: FriendsStateService,
+    private snackBar: MatSnackBar
+  ) {}
+
+  // Side effects
+  sendFriendRequest(user: User, potentialFriend: string) {
+    this.setIsLoading(true);
+    this.userService
+      .createFriendRequest(user, potentialFriend)
+      .pipe(
+        tap(user => {
+          this.setOutboundFriendRequests(user.outboundFriendRequests);
+          this.setIsLoading(false);
+          this.snackBar.open(
+            `Friend Request sent to ${potentialFriend}`,
+            'Dismiss',
+            { duration: 5000 }
+          );
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+
+    // this.socialService.sendFriendRequest(this.potentialFriend).subscribe({
+    //   next: async host => {
+    //     this.colyseusService.host = new User(host);
+    //     const friendRequest: FriendRequest = this.findOutboundFriendRequest();
+    //     const room: Colyseus.Room =
+    //       await this.colyseusService.joinExistingRoomIfPresent(
+    //         friendRequest.to
+    //       );
+    //     if (room) {
+    //       room.send('sendFriendRequest', friendRequest);
+    //       this.colyseusService.leaveRoom(room);
+    //     }
+    //     this.send.emit(friendRequest);
+    //     this.openSnackBar(
+    //       'Friend request sent to ' + this.potentialFriend,
+    //       'Dismiss'
+    //     );
+    //     this.potentialFriend = '';
+    //   },
+    //   error: error => {
+    //     this.openSnackBar(error, 'Dismiss');
+    //     this.potentialFriend = '';
+    //   },
+    // });
+  }
+
+  acceptFriendRequest(user: User, friendRequest: FriendRequest): void {
+    this.setIsLoading(true);
+    this.userService
+      .addFriend(user, friendRequest._id)
+      .pipe(
+        tap(user => {
+          this.setInboundFriendRequests(user.inboundFriendRequests);
+          this.friendsStateService.setFriends(user.friends);
+          this.setIsLoading(false);
+          this.snackBar.open(
+            `You and ${friendRequest.from.username} are now friends`,
+            'Dismiss',
+            { duration: 5000 }
+          );
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+    // this.socialService.acceptFriendRequest(friendRequest).subscribe({
+    //   next: async host => {
+    //     this.colyseusService.host = new User(host);
+    //     const room: Colyseus.Room =
+    //       await this.colyseusService.joinExistingRoomIfPresent(
+    //         friendRequest.from
+    //       );
+    //     if (room) {
+    //       room.send('acceptFriendRequest', friendRequest);
+    //       this.colyseusService.onlineFriendsRooms.push(room);
+    //     }
+    //     this.updateFriendRequests();
+    //     this.accept.emit(true);
+    //     this.openSnackBar(
+    //       `You and ${friendRequest.from.username} are now friends`,
+    //       'Dismiss'
+    //     );
+    //   },
+    //   error: error => this.openSnackBar(error, 'Dismiss'),
+    // });
+  }
+
+  revokeFriendRequest(user: User, friendRequest: FriendRequest): void {
+    this.setIsLoading(true);
+    this.userService
+      .deleteFriendRequest(user, friendRequest._id)
+      .pipe(
+        tap(user => {
+          this.setOutboundFriendRequests(user.outboundFriendRequests);
+          this.setIsLoading(false);
+          this.snackBar.open(
+            `Friend Request unsent to ${friendRequest.to.username}`,
+            'Dismiss',
+            { duration: 5000 }
+          );
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+    // this.socialService.revokeFriendRequest(friendRequest).subscribe({
+    //   next: async host => {
+    //     this.colyseusService.host = new User(host);
+    //     const room: Colyseus.Room =
+    //       await this.colyseusService.joinExistingRoomIfPresent(
+    //         friendRequest.to
+    //       );
+    //     if (room) {
+    //       room.send('revokeFriendRequest', friendRequest);
+    //       this.colyseusService.leaveRoom(room);
+    //     }
+    //     this.updateFriendRequests();
+    //     this.openSnackBar(
+    //       `Revoked ${friendRequest.to.username}'s friend request`,
+    //       'Dismiss'
+    //     );
+    //   },
+    //   error: error => this.openSnackBar(error, 'Dismiss'),
+    // });
+  }
+
+  rejectFriendRequest(user: User, friendRequest: FriendRequest): void {
+    this.setIsLoading(true);
+    this.userService
+      .deleteFriendRequest(user, friendRequest._id)
+      .pipe(
+        tap(user => {
+          this.setInboundFriendRequests(user.inboundFriendRequests);
+          this.setIsLoading(false);
+          this.snackBar.open(
+            `Friend Request from ${friendRequest.from.username} rejected`,
+            'Dismiss',
+            { duration: 5000 }
+          );
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+    // this.socialService.rejectFriendRequest(friendRequest).subscribe({
+    //   next: async host => {
+    //     this.colyseusService.host = new User(host);
+    //     const room: Colyseus.Room =
+    //       await this.colyseusService.joinExistingRoomIfPresent(
+    //         friendRequest.from
+    //       );
+    //     if (room) {
+    //       room.send('rejectFriendRequest', friendRequest);
+    //       this.colyseusService.leaveRoom(room);
+    //     }
+    //     this.updateFriendRequests();
+    //     this.openSnackBar(
+    //       `Rejected ${friendRequest.from.username}'s friend request`,
+    //       'Dismiss'
+    //     );
+    //   },
+    //   error: error => this.openSnackBar(error, 'Dismiss'),
+    // });
+  }
+
+  // Pure state
   setInitialState() {
     this._friendRequestsState.next(initialState);
   }
@@ -58,4 +230,11 @@ export class FriendRequestsStateService {
     const currentState = this._friendRequestsState.value;
     this._friendRequestsState.next({ ...currentState, isLoading });
   }
+
+  private handleError = (error: any): Observable<null> => {
+    console.error(error);
+    this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+    this.setIsLoading(false);
+    return of(null);
+  };
 }

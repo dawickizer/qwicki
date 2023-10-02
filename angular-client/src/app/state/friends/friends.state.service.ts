@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject, Observable, of, tap, catchError } from 'rxjs';
 import { FriendsState, initialState } from './friends.state';
-
 import {
   friendsSelector,
   isLoadingSelector,
@@ -9,6 +8,9 @@ import {
   onlineFriendsSelector,
 } from './friends.state.selectors';
 import { Friend } from 'src/app/models/friend/friend';
+import { UserService } from 'src/app/services/user/user.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { User } from 'src/app/models/user/user';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +25,50 @@ export class FriendsStateService {
   public onlineFriends$ = onlineFriendsSelector(this.friends$);
   public offlineFriends$ = offlineFriendsSelector(this.friends$);
 
+  constructor(
+    private userService: UserService,
+    private snackBar: MatSnackBar
+  ) {}
+
+  // Side effects
+  removeFriend(user: User, friend: Friend): void {
+    this.setIsLoading(true);
+    this.userService
+      .removeFriend(user, friend._id)
+      .pipe(
+        tap(user => {
+          this.setFriends(user.friends);
+          this.setIsLoading(false);
+          this.snackBar.open(
+            `You and ${friend.username} are no longer friends`,
+            'Dismiss',
+            { duration: 5000 }
+          );
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+    // this.socialService.removeFriend(friend).subscribe({
+    //   next: async host => {
+    //     this.colyseusService.host = new User(host);
+    //     const room: Colyseus.Room =
+    //       this.colyseusService.onlineFriendsRooms.find(
+    //         room => room.id === friend._id
+    //       );
+    //     if (room) {
+    //       room.send('removeFriend', host);
+    //       this.colyseusService.leaveRoom(room);
+    //     } else {
+    //       this.colyseusService.hostRoom.send('disconnectFriend', friend);
+    //     }
+    //     this.updateFriends();
+    //     this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');
+    //   },
+    //   error: error => this.openSnackBar(error, 'Dismiss'),
+    // });
+  }
+
+  // Pure state
   setInitialState() {
     this._friendsState.next(initialState);
   }
@@ -160,4 +206,11 @@ export class FriendsStateService {
     const currentState = this._friendsState.value;
     this._friendsState.next({ ...currentState, isLoading });
   }
+
+  private handleError = (error: any): Observable<null> => {
+    console.error(error);
+    this.snackBar.open(error, 'Dismiss', { duration: 5000 });
+    this.setIsLoading(false);
+    return of(null);
+  };
 }
