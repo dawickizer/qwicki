@@ -6,14 +6,13 @@ import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import {
   isLoadingSelector,
-  userInboundFriendRequestsSelector,
   userOnlineSelector,
-  userOutboundFriendRequestsSelector,
   userSelector,
 } from './user.state.selectors';
 import { Friend } from 'src/app/models/friend/friend';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { FriendsStateService } from '../friends/friends.state.service';
+import { FriendRequestsStateService } from '../friend-requests/friend-requests.state.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,15 +27,14 @@ export class UserStateService {
   public userFriends$ = this.friendsStateService.friends$;
   public userOnlineFriends$ = this.friendsStateService.onlineFriends$;
   public userOfflineFriends$ = this.friendsStateService.offlineFriends$;
-  public userInboundFriendRequests$ = userInboundFriendRequestsSelector(
-    this.user$
-  );
-  public userOutboundFriendRequests$ = userOutboundFriendRequestsSelector(
-    this.user$
-  );
+  public userInboundFriendRequests$ =
+    this.friendRequestsStateService.inboundFriendRequests$;
+  public userOutboundFriendRequests$ =
+    this.friendRequestsStateService.outboundFriendRequests$;
 
   constructor(
     private friendsStateService: FriendsStateService,
+    private friendRequestsStateService: FriendRequestsStateService,
     private userService: UserService,
     private snackBar: MatSnackBar
   ) {}
@@ -86,7 +84,9 @@ export class UserStateService {
       .createFriendRequest(user, potentialFriend)
       .pipe(
         tap(user => {
-          this.setUserOutboundFriendRequests(user.outboundFriendRequests);
+          this.friendRequestsStateService.setOutboundFriendRequests(
+            user.outboundFriendRequests
+          );
           this.setIsLoading(false);
           this.snackBar.open(
             `Friend Request sent to ${potentialFriend}`,
@@ -131,7 +131,9 @@ export class UserStateService {
       .addFriend(user, friendRequest._id)
       .pipe(
         tap(user => {
-          this.setUserInboundFriendRequests(user.inboundFriendRequests);
+          this.friendRequestsStateService.setInboundFriendRequests(
+            user.inboundFriendRequests
+          );
           this.friendsStateService.setFriends(user.friends);
           this.setIsLoading(false);
           this.snackBar.open(
@@ -172,7 +174,9 @@ export class UserStateService {
       .deleteFriendRequest(user, friendRequest._id)
       .pipe(
         tap(user => {
-          this.setUserOutboundFriendRequests(user.outboundFriendRequests);
+          this.friendRequestsStateService.setOutboundFriendRequests(
+            user.outboundFriendRequests
+          );
           this.setIsLoading(false);
           this.snackBar.open(
             `Friend Request unsent to ${friendRequest.to.username}`,
@@ -211,7 +215,9 @@ export class UserStateService {
       .deleteFriendRequest(user, friendRequest._id)
       .pipe(
         tap(user => {
-          this.setUserInboundFriendRequests(user.inboundFriendRequests);
+          this.friendRequestsStateService.setInboundFriendRequests(
+            user.inboundFriendRequests
+          );
           this.setIsLoading(false);
           this.snackBar.open(
             `Friend Request from ${friendRequest.from.username} rejected`,
@@ -290,6 +296,12 @@ export class UserStateService {
   setUser(user: User): void {
     const currentState = this._userState.value;
     this.friendsStateService.setFriends(user.friends);
+    this.friendRequestsStateService.setInboundFriendRequests(
+      user.inboundFriendRequests
+    );
+    this.friendRequestsStateService.setOutboundFriendRequests(
+      user.outboundFriendRequests
+    );
     this._userState.next({ ...currentState, user: new User(user) });
   }
 
@@ -304,32 +316,6 @@ export class UserStateService {
 
   setUserFriends(friends: Friend[]) {
     this.friendsStateService.setFriends(friends);
-  }
-
-  setUserInboundFriendRequests(inboundFriendRequests: FriendRequest[]) {
-    const currentState = this._userState.value;
-    if (!currentState.user) return;
-
-    this._userState.next({
-      ...currentState,
-      user: new User({
-        ...currentState.user,
-        inboundFriendRequests: [...inboundFriendRequests],
-      } as User),
-    });
-  }
-
-  setUserOutboundFriendRequests(outboundFriendRequests: FriendRequest[]) {
-    const currentState = this._userState.value;
-    if (!currentState.user) return;
-
-    this._userState.next({
-      ...currentState,
-      user: new User({
-        ...currentState.user,
-        outboundFriendRequests: [...outboundFriendRequests],
-      } as User),
-    });
   }
 
   setIsLoading(isLoading: boolean): void {
