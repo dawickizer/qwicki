@@ -12,14 +12,15 @@ import {
 import { Room } from 'colyseus.js';
 import { UserStateService } from '../user/user.state.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
-import { User } from 'src/app/models/user/user';
 import { AuthStateService } from '../auth/auth.state.service';
+import { FriendsStateService } from '../friends/friends.state.service';
+import { Friend } from 'src/app/models/friend/friend';
 
 @Injectable({
   providedIn: 'root',
 })
 export class SocialRoomsStateService {
-  private user: User;
+  private friends: Friend[];
   private decodedJwt: DecodedJwt;
   private jwt: string;
   private _socialRoomsState = new BehaviorSubject<SocialRoomsState>(
@@ -36,6 +37,7 @@ export class SocialRoomsStateService {
   constructor(
     private userStateService: UserStateService,
     private authStateService: AuthStateService,
+    private friendsStateService: FriendsStateService,
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
@@ -48,7 +50,7 @@ export class SocialRoomsStateService {
   }
 
   joinFriendsRoomsIfPresent() {
-    const roomIds = this.user.friends.map(friend => friend._id);
+    const roomIds = this.friends.map(friend => friend._id);
     this.joinExistingRoomsIfPresent(roomIds);
   }
 
@@ -202,8 +204,8 @@ export class SocialRoomsStateService {
   }
 
   private subscribeToUserState() {
-    this.userStateService.user$.subscribe(user => {
-      this.user = user;
+    this.friendsStateService.friends$.subscribe(friends => {
+      this.friends = friends;
     });
   }
 
@@ -253,10 +255,10 @@ export class SocialRoomsStateService {
     //     );
 
     room.onMessage('online', (roomId: string) => {
-      this.userStateService.setUserFriendOnline(roomId);
+      this.friendsStateService.setFriendOnline(roomId);
     });
     room.onMessage('offline', (roomId: string) => {
-      this.userStateService.setUserFriendOffline(roomId);
+      this.friendsStateService.setFriendOffline(roomId);
     });
     room.onError((code, message) =>
       console.log(
@@ -275,7 +277,7 @@ export class SocialRoomsStateService {
     //       );
 
     room.onMessage('dispose', (roomId: string) => {
-      this.userStateService.setUserFriendOffline(roomId);
+      this.friendsStateService.setFriendOffline(roomId);
       this.removeConnectedRoomById(roomId);
     });
     room.onError((code, message) =>
@@ -299,7 +301,7 @@ export class SocialRoomsStateService {
         room = this.setPersonalRoomListeners(room);
         this.setPersonalRoom(room);
       } else {
-        this.userStateService.setUserFriendOnline(room.id);
+        this.friendsStateService.setFriendOnline(room.id);
         room = this.setFriendRoomListeners(room);
       }
       this.addConnectedRoom(room);
@@ -324,7 +326,7 @@ export class SocialRoomsStateService {
           friendRoomIds.push(room.id);
         }
       });
-      this.userStateService.setUserFriendsOnline(friendRoomIds);
+      this.friendsStateService.setFriendsOnline(friendRoomIds);
       this.addConnectedRooms([
         ...(personalRoom ? [personalRoom] : []),
         ...friendRooms,
