@@ -49,7 +49,6 @@ import { UserFilterableMultiSelectComponent } from './components/user-filterable
 import { BorderDirective } from './directives/border.directive';
 
 // Services
-import { UserService } from './services/user/user.service';
 import {
   AuthFlowService,
   AuthGuardService,
@@ -66,10 +65,16 @@ import { MatchMakingService } from './services/match-making/match-making.service
 import { GameService } from './services/game/game.service';
 
 // State
-import { UserStateService } from './state/user/user.state.service';
 import { AuthStateService } from './state/auth/auth.state.service';
 import { SocialRoomsStateService } from './state/social-rooms/social-rooms.state.service';
 import { FriendsStateService } from './state/friends/friends.state.service';
+
+import { UserService } from './state/user/user.service';
+import { UserApiService } from './state/user/user.api.service';
+import { UserEffectsService } from './state/user/user.effects.service';
+import { UserStateService } from './state/user/user.state.service';
+import { FriendRequestApiService } from './state/friend-requests/friend-request.api.service';
+import { FriendApiService } from './state/friends/friend.api.service';
 
 @NgModule({
   declarations: [
@@ -119,7 +124,6 @@ import { FriendsStateService } from './state/friends/friends.state.service';
     BrowserAnimationsModule,
   ],
   providers: [
-    UserService,
     AuthService,
     AuthFlowService,
     AuthGuardService,
@@ -132,9 +136,14 @@ import { FriendsStateService } from './state/friends/friends.state.service';
     KeyBindService,
     MatchMakingService,
     UserStateService,
+    UserService,
+    UserEffectsService,
+    UserApiService,
     AuthStateService,
     SocialRoomsStateService,
     FriendsStateService,
+    FriendRequestApiService,
+    FriendApiService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],

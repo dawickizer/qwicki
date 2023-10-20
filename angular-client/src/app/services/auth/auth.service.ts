@@ -18,9 +18,10 @@ import { Credentials } from 'src/app/models/credentials/credentials';
 import { User } from 'src/app/models/user/user';
 import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
-import { UserStateService } from 'src/app/state/user/user.state.service';
 import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
 import { FriendRequestsStateService } from 'src/app/state/friend-requests/friend-requests.state.service';
+import { UserService } from 'src/app/state/user/user.service';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -81,7 +82,7 @@ export class AuthService {
 export class AuthFlowService {
   constructor(
     private authStateService: AuthStateService,
-    private userStateService: UserStateService,
+    private userService: UserService,
     private friendsStateService: FriendsStateService,
     private friendRequestsStateService: FriendRequestsStateService,
     private router: Router
@@ -108,7 +109,7 @@ export class AuthFlowService {
     authObservable
       .pipe(
         switchMap(decodedJwt =>
-          this.userStateService.getUser(decodedJwt._id, {
+          this.userService.getUser(decodedJwt._id, {
             friends: true,
             friendRequests: true,
           })

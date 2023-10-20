@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { UserState } from './user.state';
-import { User } from 'src/app/models/user/user';
 import { isEqual } from 'lodash';
+import { User } from './user.model';
 
 export const userSelector = (
   userState$: Observable<UserState>

@@ -10,13 +10,13 @@ import {
   personalRoomSelector,
 } from './social-rooms.selectors';
 import { Room } from 'colyseus.js';
-import { UserStateService } from '../user/user.state.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { AuthStateService } from '../auth/auth.state.service';
 import { FriendsStateService } from '../friends/friends.state.service';
 import { Friend } from 'src/app/models/friend/friend';
 import { FriendRequestsStateService } from '../friend-requests/friend-requests.state.service';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +37,7 @@ export class SocialRoomsStateService {
   public friendsRooms$ = friendsRoomsSelector(this.socialRoomsState$);
 
   constructor(
-    private userStateService: UserStateService,
+    private userService: UserService,
     private authStateService: AuthStateService,
     private friendsStateService: FriendsStateService,
     private friendRequestsStateService: FriendRequestsStateService,
@@ -255,7 +255,9 @@ export class SocialRoomsStateService {
     });
 
     room.onMessage('acceptFriendRequest', (friendRequest: FriendRequest) => {
-      this.friendRequestsStateService.removeOutboundFriendRequest(friendRequest);
+      this.friendRequestsStateService.removeOutboundFriendRequest(
+        friendRequest
+      );
       this.friendsStateService.addFriend(friendRequest.to);
       this.joinExistingRoomIfPresent(friendRequest.from._id);
     });
@@ -301,7 +303,7 @@ export class SocialRoomsStateService {
   private handleConnectedRoomSuccess = (room: Room) => {
     if (room) {
       if (this.isPersonalRoom(room.id)) {
-        this.userStateService.setOnline(true);
+        this.userService.setOnline(true);
         room = this.setPersonalRoomListeners(room);
         this.setPersonalRoom(room);
       } else {
@@ -321,7 +323,7 @@ export class SocialRoomsStateService {
 
       rooms.forEach(room => {
         if (this.isPersonalRoom(room.id)) {
-          this.userStateService.setOnline(true);
+          this.userService.setOnline(true);
           personalRoom = this.setPersonalRoomListeners(room);
           this.setPersonalRoom(personalRoom);
         } else {

@@ -8,10 +8,10 @@ import {
   onlineFriendsSelector,
 } from './friends.state.selectors';
 import { Friend } from 'src/app/models/friend/friend';
-import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { User } from 'src/app/models/user/user';
-import { UserStateService } from '../user/user.state.service';
+import { FriendApiService } from './friend.api.service';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,15 +28,15 @@ export class FriendsStateService {
   public offlineFriends$ = offlineFriendsSelector(this.friends$);
 
   constructor(
+    private friendApiService: FriendApiService,
     private userService: UserService,
-    private userStateService: UserStateService,
     private snackBar: MatSnackBar
   ) {
     this.subscribeToUserState();
   }
 
   private subscribeToUserState() {
-    this.userStateService.user$.subscribe(user => {
+    this.userService.user$.subscribe(user => {
       this.user = user;
     });
   }
@@ -44,22 +44,22 @@ export class FriendsStateService {
   // Side effects
   deleteFriend(friend: Friend): void {
     this.setIsLoading(true);
-    this.userService
-      .removeFriend(this.user, friend._id)
+    this.friendApiService
+      .remove(this.user, friend._id)
       .pipe(
         tap(friend => {
           this.removeFriend(friend);
           this.setIsLoading(false);
-              //     const room: Colyseus.Room =
-    //       this.colyseusService.onlineFriendsRooms.find(
-    //         room => room.id === friend._id
-    //       );
-    //     if (room) {
-    //       room.send('removeFriend', host);
-    //       this.colyseusService.leaveRoom(room);
-    //     } else {
-    //       this.colyseusService.hostRoom.send('disconnectFriend', friend);
-    //     }
+          //     const room: Colyseus.Room =
+          //       this.colyseusService.onlineFriendsRooms.find(
+          //         room => room.id === friend._id
+          //       );
+          //     if (room) {
+          //       room.send('removeFriend', host);
+          //       this.colyseusService.leaveRoom(room);
+          //     } else {
+          //       this.colyseusService.hostRoom.send('disconnectFriend', friend);
+          //     }
           this.snackBar.open(
             `You and ${friend.username} are no longer friends`,
             'Dismiss',
@@ -69,7 +69,6 @@ export class FriendsStateService {
         catchError(this.handleError)
       )
       .subscribe();
-
   }
 
   // Pure state
@@ -210,10 +209,7 @@ export class FriendsStateService {
     const currentState = this._friendsState.value;
     if (!currentState.friends) return;
 
-    const updatedFriends = [
-      ...currentState.friends,
-      friend,
-    ];
+    const updatedFriends = [...currentState.friends, friend];
     this._friendsState.next({
       ...currentState,
       friends: updatedFriends,
@@ -224,10 +220,9 @@ export class FriendsStateService {
     const currentState = this._friendsState.value;
     if (!currentState.friends) return;
 
-    const updatedFriends =
-      currentState.friends.filter(
-        current => current._id !== friend._id
-      );
+    const updatedFriends = currentState.friends.filter(
+      current => current._id !== friend._id
+    );
 
     this._friendsState.next({
       ...currentState,

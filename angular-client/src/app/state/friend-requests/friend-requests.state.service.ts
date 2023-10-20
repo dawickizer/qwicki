@@ -8,12 +8,13 @@ import {
 } from './friend-requests.state.selectors';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { User } from 'src/app/models/user/user';
-import { UserService } from 'src/app/services/user/user.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FriendsStateService } from '../friends/friends.state.service';
 import { UserStateService } from '../user/user.state.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { AuthStateService } from '../auth/auth.state.service';
+import { FriendRequestApiService } from './friend-request.api.service';
+import { FriendApiService } from '../friends/friend.api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,8 @@ export class FriendRequestsStateService {
   );
 
   constructor(
-    private userService: UserService,
+    private friendRequestApiService: FriendRequestApiService,
+    private friendApiService: FriendApiService,
     private friendsStateService: FriendsStateService,
     private userStateService: UserStateService,
     private authStateService: AuthStateService,
@@ -63,8 +65,8 @@ export class FriendRequestsStateService {
   // Side effects
   sendFriendRequest(potentialFriend: string) {
     this.setIsLoading(true);
-    this.userService
-      .createFriendRequest(this.user, potentialFriend)
+    this.friendRequestApiService
+      .create(this.user, potentialFriend)
       .pipe(
         tap(async friendRequest => {
           this.addOutboundFriendRequest(friendRequest);
@@ -90,17 +92,20 @@ export class FriendRequestsStateService {
 
   acceptFriendRequest(friendRequest: FriendRequest): void {
     this.setIsLoading(true);
-    this.userService
-      .addFriend(this.user, friendRequest._id)
+    this.friendApiService
+      .add(this.user, friendRequest._id)
       .pipe(
         tap(async user => {
           this.setInboundFriendRequests(user.inboundFriendRequests);
           this.friendsStateService.setFriends(user.friends);
-          const room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from._id, this.jwt);
-        if (room) {
-          room.send('acceptFriendRequest', friendRequest);
-          this.colyseusService.leaveRoom(room);
-        }
+          const room = await this.colyseusService.joinExistingRoomIfPresent(
+            friendRequest.from._id,
+            this.jwt
+          );
+          if (room) {
+            room.send('acceptFriendRequest', friendRequest);
+            this.colyseusService.leaveRoom(room);
+          }
           this.setIsLoading(false);
           this.snackBar.open(
             `You and ${friendRequest.from.username} are now friends`,
@@ -115,8 +120,8 @@ export class FriendRequestsStateService {
 
   revokeFriendRequest(friendRequest: FriendRequest): void {
     this.setIsLoading(true);
-    this.userService
-      .deleteFriendRequest(this.user, friendRequest._id)
+    this.friendRequestApiService
+      .delete(this.user, friendRequest._id)
       .pipe(
         tap(async friendRequest => {
           this.removeOutboundFriendRequest(friendRequest);
@@ -142,8 +147,8 @@ export class FriendRequestsStateService {
 
   rejectFriendRequest(friendRequest: FriendRequest): void {
     this.setIsLoading(true);
-    this.userService
-      .deleteFriendRequest(this.user, friendRequest._id)
+    this.friendRequestApiService
+      .delete(this.user, friendRequest._id)
       .pipe(
         tap(async friendRequest => {
           this.removeInboundFriendRequest(friendRequest);
