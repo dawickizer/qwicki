@@ -6,7 +6,7 @@ import {
   inboundFriendRequestsSelector,
   outboundFriendRequestsSelector,
 } from './friend-request.state.selectors';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, tap, of, catchError } from 'rxjs';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserStateService } from '../user/user.state.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';

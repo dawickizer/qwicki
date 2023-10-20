@@ -3,7 +3,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { User } from '../user/user.model';
 
 @Injectable({

@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subject, takeUntil } from 'rxjs';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { FriendRequestService } from 'src/app/state/friend-request/friend-request.service';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 
 @Component({
   selector: 'app-social-friend-requests-list',

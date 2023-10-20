@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { FriendRequestEffectService } from './friend-request.effect.service';
 import { FriendRequestStateService } from './friend-request.state.service';
 import { User } from '../user/user.model';

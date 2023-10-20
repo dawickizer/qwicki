@@ -1,4 +1,4 @@
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 
 export interface FriendRequestState {
   inboundFriendRequests: FriendRequest[] | null;
