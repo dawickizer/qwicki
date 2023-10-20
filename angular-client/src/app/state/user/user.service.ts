@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { UserStateService } from './user.state.service';
 import { User } from './user.model';
-import { UserEffectsService } from './user.effects.service';
+import { UserEffectService } from './user.effect.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +22,7 @@ export class UserService {
   }
 
   constructor(
-    private userEffectsService: UserEffectsService,
+    private userEffectService: UserEffectService,
     private userStateService: UserStateService
   ) {}
 
@@ -30,15 +30,15 @@ export class UserService {
     id: string,
     options?: { friends?: boolean; friendRequests?: boolean }
   ): Observable<User> {
-    return this.userEffectsService.getUser(id, options);
+    return this.userEffectService.getUser(id, options);
   }
 
   updateUser(user: User): Observable<User> {
-    return this.userEffectsService.updateUser(user);
+    return this.userEffectService.updateUser(user);
   }
 
   deleteUser(user: User): Observable<any> {
-    return this.userEffectsService.deleteUser(user);
+    return this.userEffectService.deleteUser(user);
   }
 
   // These methods might not be necessary to expose,

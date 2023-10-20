@@ -10,8 +10,9 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
-import { Friend } from 'src/app/models/friend/friend';
-import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
+import { FriendService } from 'src/app/state/friend/friend.service';
+import { Subject, takeUntil } from 'rxjs';
+import { Friend } from 'src/app/state/friend/friend.model';
 
 @Component({
   selector: 'app-social-chat-box',
@@ -50,9 +51,11 @@ export class SocialChatBoxComponent implements OnInit {
   messagesDisplayedColumns: string[] = ['message'];
   messages = new MatTableDataSource<Message>([] as Message[]);
 
+  unsubscribe$ = new Subject<void>();
+
   constructor(
     private snackBar: MatSnackBar,
-    private friendsStateService: FriendsStateService
+    private friendService: FriendService
   ) {}
 
   ngOnInit(): void {
@@ -63,6 +66,11 @@ export class SocialChatBoxComponent implements OnInit {
     //   },
     //   error: error => this.openSnackBar(error, 'Dismiss'),
     // });
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   handlePotentialMessage(message: Message) {
@@ -146,7 +154,10 @@ export class SocialChatBoxComponent implements OnInit {
   }
 
   removeFriend() {
-    this.friendsStateService.deleteFriend(this.friend);
+    this.friendService
+      .deleteFriend(this.friend)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
   }
 
   onUnviewedMessage() {

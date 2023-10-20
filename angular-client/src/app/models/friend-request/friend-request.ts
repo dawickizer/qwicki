@@ -1,4 +1,4 @@
-import { Friend } from '../friend/friend';
+import { Friend } from 'src/app/state/friend/friend.model';
 
 export class FriendRequest {
   _id?: string;

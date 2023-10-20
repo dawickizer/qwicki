@@ -1,8 +1,8 @@
 import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { Friend } from 'src/app/models/friend/friend';
-import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
+import { FriendService } from 'src/app/state/friend/friend.service';
+import { Friend } from 'src/app/state/friend/friend.model';
 
 @Component({
   selector: 'app-social-friends-list',
@@ -14,11 +14,11 @@ export class SocialFriendsListComponent {
 
   friendsDisplayedColumns: string[] = ['username'];
 
-  constructor(private friendsStateService: FriendsStateService) {}
+  constructor(private friendService: FriendService) {}
 
   dropFriend(event: CdkDragDrop<string[]>) {
     moveItemInArray(this.friends.data, event.previousIndex, event.currentIndex);
     this.friends._updateChangeSubscription();
-    this.friendsStateService.setFriends(this.friends.data);
+    this.friendService.setFriends(this.friends.data);
   }
 }

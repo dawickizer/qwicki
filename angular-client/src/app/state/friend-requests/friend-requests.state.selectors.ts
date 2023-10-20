@@ -5,25 +5,25 @@ import { isEqual } from 'lodash';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 
 export const isLoadingSelector = (
-  friendsState$: Observable<FriendRequestsState>
+  friendState$: Observable<FriendRequestsState>
 ): Observable<boolean> =>
-  friendsState$.pipe(
+  friendState$.pipe(
     map(state => state.isLoading),
     distinctUntilChanged(isEqual)
   );
 
 export const inboundFriendRequestsSelector = (
-  friendsState$: Observable<FriendRequestsState>
+  friendState$: Observable<FriendRequestsState>
 ): Observable<FriendRequest[] | null> =>
-  friendsState$.pipe(
+  friendState$.pipe(
     map(state => state.inboundFriendRequests),
     distinctUntilChanged(isEqual)
   );
 
 export const outboundFriendRequestsSelector = (
-  friendsState$: Observable<FriendRequestsState>
+  friendState$: Observable<FriendRequestsState>
 ): Observable<FriendRequest[] | null> =>
-  friendsState$.pipe(
+  friendState$.pipe(
     map(state => state.outboundFriendRequests),
     distinctUntilChanged(isEqual)
   );

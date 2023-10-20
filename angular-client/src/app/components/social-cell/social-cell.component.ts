@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Friend } from 'src/app/models/friend/friend';
+import { Friend } from 'src/app/state/friend/friend.model';
 
 @Component({
   selector: 'app-social-cell',

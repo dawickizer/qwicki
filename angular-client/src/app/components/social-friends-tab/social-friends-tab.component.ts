@@ -2,10 +2,10 @@ import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-import { Friend } from 'src/app/models/friend/friend';
 import { Subject, takeUntil } from 'rxjs';
-import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
 import { FriendRequestsStateService } from 'src/app/state/friend-requests/friend-requests.state.service';
+import { FriendService } from 'src/app/state/friend/friend.service';
+import { Friend } from 'src/app/state/friend/friend.model';
 
 @Component({
   selector: 'app-social-friends-tab',
@@ -26,7 +26,7 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
 
   constructor(
     private friendRequestsStateService: FriendRequestsStateService,
-    private friendsStateService: FriendsStateService
+    private friendService: FriendService
   ) {}
 
   ngOnInit() {
@@ -35,7 +35,7 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   }
 
   subscribeToFriends() {
-    this.friendsStateService.friends$
+    this.friendService.friends$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(friends => {
         // merge results to preserve old mem addresses which will make it so angular doesn't re-render the entire list, which can be

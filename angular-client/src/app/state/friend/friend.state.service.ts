@@ -1,83 +1,36 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of, tap, catchError } from 'rxjs';
-import { FriendsState, initialState } from './friends.state';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { FriendState, initialState } from './friend.state';
 import {
   friendsSelector,
   isLoadingSelector,
   offlineFriendsSelector,
   onlineFriendsSelector,
-} from './friends.state.selectors';
-import { Friend } from 'src/app/models/friend/friend';
+} from './friend.state.selectors';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FriendApiService } from './friend.api.service';
-import { UserService } from '../user/user.service';
-import { User } from '../user/user.model';
+import { Friend } from './friend.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class FriendsStateService {
-  private user: User;
-  private _friendsState = new BehaviorSubject<FriendsState>(initialState);
+export class FriendStateService {
+  private _friendState = new BehaviorSubject<FriendState>(initialState);
 
-  public friendsState$: Observable<FriendsState> =
-    this._friendsState.asObservable();
-  public isLoading$ = isLoadingSelector(this.friendsState$);
-  public friends$ = friendsSelector(this.friendsState$);
+  public friendState$: Observable<FriendState> =
+    this._friendState.asObservable();
+  public isLoading$ = isLoadingSelector(this.friendState$);
+  public friends$ = friendsSelector(this.friendState$);
   public onlineFriends$ = onlineFriendsSelector(this.friends$);
   public offlineFriends$ = offlineFriendsSelector(this.friends$);
 
-  constructor(
-    private friendApiService: FriendApiService,
-    private userService: UserService,
-    private snackBar: MatSnackBar
-  ) {
-    this.subscribeToUserState();
-  }
+  constructor(private snackBar: MatSnackBar) {}
 
-  private subscribeToUserState() {
-    this.userService.user$.subscribe(user => {
-      this.user = user;
-    });
-  }
-
-  // Side effects
-  deleteFriend(friend: Friend): void {
-    this.setIsLoading(true);
-    this.friendApiService
-      .remove(this.user, friend._id)
-      .pipe(
-        tap(friend => {
-          this.removeFriend(friend);
-          this.setIsLoading(false);
-          //     const room: Colyseus.Room =
-          //       this.colyseusService.onlineFriendsRooms.find(
-          //         room => room.id === friend._id
-          //       );
-          //     if (room) {
-          //       room.send('removeFriend', host);
-          //       this.colyseusService.leaveRoom(room);
-          //     } else {
-          //       this.colyseusService.hostRoom.send('disconnectFriend', friend);
-          //     }
-          this.snackBar.open(
-            `You and ${friend.username} are no longer friends`,
-            'Dismiss',
-            { duration: 5000 }
-          );
-        }),
-        catchError(this.handleError)
-      )
-      .subscribe();
-  }
-
-  // Pure state
   setInitialState() {
-    this._friendsState.next(initialState);
+    this._friendState.next(initialState);
   }
 
   setFriendOnline(friendId: string): void {
-    const currentState = this._friendsState.value;
+    const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
     const friendIndex = currentState.friends.findIndex(
@@ -101,14 +54,14 @@ export class FriendsStateService {
 
     updatedFriends.map(friend => new Friend(friend));
 
-    this._friendsState.next({
+    this._friendState.next({
       ...currentState,
       friends: updatedFriends.map(friend => new Friend(friend)),
     });
   }
 
   setFriendsOnline(friendIds: string[]): void {
-    const currentState = this._friendsState.value;
+    const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
     // Create a shallow copy of the friends array
@@ -131,14 +84,14 @@ export class FriendsStateService {
       updatedFriends.unshift(friendToMove);
     });
 
-    this._friendsState.next({
+    this._friendState.next({
       ...currentState,
       friends: updatedFriends.map(friend => new Friend(friend)),
     });
   }
 
   setFriendOffline(friendId: string): void {
-    const currentState = this._friendsState.value;
+    const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
     const friendIndex = currentState.friends.findIndex(
@@ -160,14 +113,14 @@ export class FriendsStateService {
     const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
     updatedFriends.push(friendToMove);
 
-    this._friendsState.next({
+    this._friendState.next({
       ...currentState,
       friends: updatedFriends.map(friend => new Friend(friend)),
     });
   }
 
   setFriendsOffline(friendIds: string[]): void {
-    const currentState = this._friendsState.value;
+    const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
     // Create a shallow copy of the friends array
@@ -190,49 +143,49 @@ export class FriendsStateService {
       updatedFriends.push(friendToMove);
     });
 
-    this._friendsState.next({
+    this._friendState.next({
       ...currentState,
       friends: updatedFriends.map(friend => new Friend(friend)),
     });
   }
 
   setFriends(friends: Friend[]): void {
-    const currentState = this._friendsState.value;
+    const currentState = this._friendState.value;
     if (!currentState.friends) return;
-    this._friendsState.next({
+    this._friendState.next({
       ...currentState,
       friends: [...friends].map(friend => new Friend(friend)),
     });
   }
 
   addFriend(friend: Friend): void {
-    const currentState = this._friendsState.value;
+    const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
     const updatedFriends = [...currentState.friends, friend];
-    this._friendsState.next({
+    this._friendState.next({
       ...currentState,
       friends: updatedFriends,
     });
   }
 
   removeFriend(friend: Friend): void {
-    const currentState = this._friendsState.value;
+    const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
     const updatedFriends = currentState.friends.filter(
       current => current._id !== friend._id
     );
 
-    this._friendsState.next({
+    this._friendState.next({
       ...currentState,
       friends: updatedFriends,
     });
   }
 
   setIsLoading(isLoading: boolean): void {
-    const currentState = this._friendsState.value;
-    this._friendsState.next({ ...currentState, isLoading });
+    const currentState = this._friendState.value;
+    this._friendState.next({ ...currentState, isLoading });
   }
 
   private handleError = (error: any): Observable<null> => {

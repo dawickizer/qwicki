@@ -9,7 +9,7 @@ import { User } from './user.model';
 @Injectable({
   providedIn: 'root',
 })
-export class UserEffectsService {
+export class UserEffectService {
   constructor(
     private userApiService: UserApiService,
     private userStateService: UserStateService,

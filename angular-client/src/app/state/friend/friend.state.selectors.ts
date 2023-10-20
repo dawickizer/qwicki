@@ -1,21 +1,21 @@
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { FriendsState } from './friends.state';
-import { Friend } from 'src/app/models/friend/friend';
+import { FriendState } from './friend.state';
 import { isEqual } from 'lodash';
+import { Friend } from './friend.model';
 
 export const isLoadingSelector = (
-  friendsState$: Observable<FriendsState>
+  friendState$: Observable<FriendState>
 ): Observable<boolean> =>
-  friendsState$.pipe(
+  friendState$.pipe(
     map(state => state.isLoading),
     distinctUntilChanged(isEqual)
   );
 
 export const friendsSelector = (
-  friendsState$: Observable<FriendsState>
+  friendState$: Observable<FriendState>
 ): Observable<Friend[] | null> =>
-  friendsState$.pipe(
+  friendState$.pipe(
     map(state => state.friends),
     distinctUntilChanged(isEqual)
   );

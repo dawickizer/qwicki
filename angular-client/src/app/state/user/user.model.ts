@@ -1,5 +1,5 @@
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-import { Friend } from 'src/app/models/friend/friend';
+import { Friend } from '../friend/friend.model';
 
 export class User {
   _id?: string;

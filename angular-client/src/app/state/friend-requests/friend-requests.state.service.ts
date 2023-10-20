@@ -8,13 +8,13 @@ import {
 } from './friend-requests.state.selectors';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { FriendsStateService } from '../friends/friends.state.service';
 import { UserStateService } from '../user/user.state.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { AuthStateService } from '../auth/auth.state.service';
 import { FriendRequestApiService } from './friend-request.api.service';
-import { FriendApiService } from '../friends/friend.api.service';
+import { FriendApiService } from '../friend/friend.api.service';
 import { User } from '../user/user.model';
+import { FriendService } from '../friend/friend.service';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +40,7 @@ export class FriendRequestsStateService {
   constructor(
     private friendRequestApiService: FriendRequestApiService,
     private friendApiService: FriendApiService,
-    private friendsStateService: FriendsStateService,
+    private friendService: FriendService,
     private userStateService: UserStateService,
     private authStateService: AuthStateService,
     private colyseusService: ColyseusService,
@@ -97,7 +97,7 @@ export class FriendRequestsStateService {
       .pipe(
         tap(async user => {
           this.setInboundFriendRequests(user.inboundFriendRequests);
-          this.friendsStateService.setFriends(user.friends);
+          this.friendService.setFriends(user.friends);
           const room = await this.colyseusService.joinExistingRoomIfPresent(
             friendRequest.from._id,
             this.jwt

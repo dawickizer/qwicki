@@ -67,14 +67,18 @@ import { GameService } from './services/game/game.service';
 // State
 import { AuthStateService } from './state/auth/auth.state.service';
 import { SocialRoomsStateService } from './state/social-rooms/social-rooms.state.service';
-import { FriendsStateService } from './state/friends/friends.state.service';
 
 import { UserService } from './state/user/user.service';
 import { UserApiService } from './state/user/user.api.service';
-import { UserEffectsService } from './state/user/user.effects.service';
+import { UserEffectService } from './state/user/user.effect.service';
 import { UserStateService } from './state/user/user.state.service';
+
 import { FriendRequestApiService } from './state/friend-requests/friend-request.api.service';
-import { FriendApiService } from './state/friends/friend.api.service';
+
+import { FriendApiService } from './state/friend/friend.api.service';
+import { FriendStateService } from './state/friend/friend.state.service';
+import { FriendService } from './state/friend/friend.service';
+import { FriendEffectService } from './state/friend/friend.effect.service';
 
 @NgModule({
   declarations: [
@@ -137,11 +141,13 @@ import { FriendApiService } from './state/friends/friend.api.service';
     MatchMakingService,
     UserStateService,
     UserService,
-    UserEffectsService,
+    UserEffectService,
     UserApiService,
     AuthStateService,
     SocialRoomsStateService,
-    FriendsStateService,
+    FriendStateService,
+    FriendService,
+    FriendEffectService,
     FriendRequestApiService,
     FriendApiService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
