@@ -11,6 +11,7 @@ import { Observable, throwError } from 'rxjs';
 import { User } from '../../models/user/user';
 import { Message } from 'src/app/models/message/message';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { Friend } from 'src/app/models/friend/friend';
 
 @Injectable({
   providedIn: 'root',
@@ -87,9 +88,9 @@ export class UserService {
       .pipe(catchError(this.handleError));
   }
 
-  removeFriend(user: User, friendId: string): Observable<User> {
+  removeFriend(user: User, friendId: string): Observable<Friend> {
     return this.http
-      .delete<User>(
+      .delete<Friend>(
         `${this.API}${this.endpoint}/${user._id}/friends/${friendId}`
       )
       .pipe(catchError(this.handleError));

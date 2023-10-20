@@ -33,11 +33,11 @@ export const deleteFriendRequestById = async (
   try {
     const userId = req.params.userId;
     const friendRequestId = req.params.friendRequestId;
-    const user = await friendRequestService.deleteFriendRequestById(
+    const friendRequest = await friendRequestService.deleteFriendRequestById(
       userId,
       friendRequestId
     );
-    res.status(200).send(user);
+    res.status(200).send(friendRequest);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);

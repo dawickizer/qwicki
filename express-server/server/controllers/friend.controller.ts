@@ -27,8 +27,8 @@ export const removeFriend = async (
   try {
     const userId = req.params.userId;
     const friendId = req.params.friendId;
-    const user = await friendService.removeFriend(userId, friendId);
-    res.status(200).send(user);
+    const friend = await friendService.removeFriend(userId, friendId);
+    res.status(200).send(friend);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);

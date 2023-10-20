@@ -93,9 +93,14 @@ export class FriendRequestsStateService {
     this.userService
       .addFriend(this.user, friendRequest._id)
       .pipe(
-        tap(user => {
+        tap(async user => {
           this.setInboundFriendRequests(user.inboundFriendRequests);
           this.friendsStateService.setFriends(user.friends);
+          const room = await this.colyseusService.joinExistingRoomIfPresent(friendRequest.from._id, this.jwt);
+        if (room) {
+          room.send('acceptFriendRequest', friendRequest);
+          this.colyseusService.leaveRoom(room);
+        }
           this.setIsLoading(false);
           this.snackBar.open(
             `You and ${friendRequest.from.username} are now friends`,
@@ -106,26 +111,6 @@ export class FriendRequestsStateService {
         catchError(this.handleError)
       )
       .subscribe();
-    // this.socialService.acceptFriendRequest(friendRequest).subscribe({
-    //   next: async host => {
-    //     this.colyseusService.host = new User(host);
-    //     const room: Colyseus.Room =
-    //       await this.colyseusService.joinExistingRoomIfPresent(
-    //         friendRequest.from
-    //       );
-    //     if (room) {
-    //       room.send('acceptFriendRequest', friendRequest);
-    //       this.colyseusService.onlineFriendsRooms.push(room);
-    //     }
-    //     this.updateFriendRequests();
-    //     this.accept.emit(true);
-    //     this.openSnackBar(
-    //       `You and ${friendRequest.from.username} are now friends`,
-    //       'Dismiss'
-    //     );
-    //   },
-    //   error: error => this.openSnackBar(error, 'Dismiss'),
-    // });
   }
 
   revokeFriendRequest(friendRequest: FriendRequest): void {

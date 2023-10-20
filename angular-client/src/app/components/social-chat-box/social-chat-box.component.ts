@@ -146,7 +146,7 @@ export class SocialChatBoxComponent implements OnInit {
   }
 
   removeFriend() {
-    this.friendsStateService.removeFriend(this.friend);
+    this.friendsStateService.deleteFriend(this.friend);
   }
 
   onUnviewedMessage() {

@@ -42,27 +42,15 @@ export class FriendsStateService {
   }
 
   // Side effects
-  removeFriend(friend: Friend): void {
+  deleteFriend(friend: Friend): void {
     this.setIsLoading(true);
     this.userService
       .removeFriend(this.user, friend._id)
       .pipe(
-        tap(user => {
-          this.setFriends(user.friends);
+        tap(friend => {
+          this.removeFriend(friend);
           this.setIsLoading(false);
-          this.snackBar.open(
-            `You and ${friend.username} are no longer friends`,
-            'Dismiss',
-            { duration: 5000 }
-          );
-        }),
-        catchError(this.handleError)
-      )
-      .subscribe();
-    // this.socialService.removeFriend(friend).subscribe({
-    //   next: async host => {
-    //     this.colyseusService.host = new User(host);
-    //     const room: Colyseus.Room =
+              //     const room: Colyseus.Room =
     //       this.colyseusService.onlineFriendsRooms.find(
     //         room => room.id === friend._id
     //       );
@@ -72,11 +60,16 @@ export class FriendsStateService {
     //     } else {
     //       this.colyseusService.hostRoom.send('disconnectFriend', friend);
     //     }
-    //     this.updateFriends();
-    //     this.openSnackBar('Unfriended ' + friend.username, 'Dismiss');
-    //   },
-    //   error: error => this.openSnackBar(error, 'Dismiss'),
-    // });
+          this.snackBar.open(
+            `You and ${friend.username} are no longer friends`,
+            'Dismiss',
+            { duration: 5000 }
+          );
+        }),
+        catchError(this.handleError)
+      )
+      .subscribe();
+
   }
 
   // Pure state
@@ -204,12 +197,41 @@ export class FriendsStateService {
     });
   }
 
-  setFriends(friends: Friend[]) {
+  setFriends(friends: Friend[]): void {
     const currentState = this._friendsState.value;
     if (!currentState.friends) return;
     this._friendsState.next({
       ...currentState,
       friends: [...friends].map(friend => new Friend(friend)),
+    });
+  }
+
+  addFriend(friend: Friend): void {
+    const currentState = this._friendsState.value;
+    if (!currentState.friends) return;
+
+    const updatedFriends = [
+      ...currentState.friends,
+      friend,
+    ];
+    this._friendsState.next({
+      ...currentState,
+      friends: updatedFriends,
+    });
+  }
+
+  removeFriend(friend: Friend): void {
+    const currentState = this._friendsState.value;
+    if (!currentState.friends) return;
+
+    const updatedFriends =
+      currentState.friends.filter(
+        current => current._id !== friend._id
+      );
+
+    this._friendsState.next({
+      ...currentState,
+      friends: updatedFriends,
     });
   }
 

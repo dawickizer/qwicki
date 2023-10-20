@@ -229,16 +229,6 @@ export class SocialRoomsStateService {
   }
 
   private setPersonalRoomListeners(room: Room): Room {
-    //     this.colyseusService.hostRoom.onMessage(
-    //       'acceptFriendRequest',
-    //       (friendRequest: FriendRequest) =>
-    //         this.handleAcceptFriendRequestEvent(friendRequest)
-    //     );
-
-    //     this.colyseusService.hostRoom.onMessage(
-    //       'removeFriend',
-    //       (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend)
-    //     );
     //     this.colyseusService.hostRoom.onMessage('messageHost', (message: Message) =>
     //       this.handleMessageHostEvent(message)
     //     );
@@ -262,6 +252,16 @@ export class SocialRoomsStateService {
 
     room.onMessage('revokeFriendRequest', (friendRequest: FriendRequest) => {
       this.friendRequestsStateService.removeInboundFriendRequest(friendRequest);
+    });
+
+    room.onMessage('acceptFriendRequest', (friendRequest: FriendRequest) => {
+      this.friendRequestsStateService.removeOutboundFriendRequest(friendRequest);
+      this.friendsStateService.addFriend(friendRequest.to);
+      this.joinExistingRoomIfPresent(friendRequest.from._id);
+    });
+
+    room.onMessage('removeFriend', (friend: Friend) => {
+      this.friendsStateService.removeFriend(friend);
     });
 
     room.onError((code, message) =>
@@ -339,26 +339,6 @@ export class SocialRoomsStateService {
     this.setIsLoading(false);
   };
 }
-
-//   private handleAcceptFriendRequestEvent(friendRequest: FriendRequest) {
-//     friendRequest.to.online = true;
-//     this.colyseusService.host.friends.push(friendRequest.to);
-//     this.colyseusService.host.outboundFriendRequests =
-//       this.colyseusService.host.outboundFriendRequests.filter(
-//         outboundFriendRequest =>
-//           outboundFriendRequest.to._id !== friendRequest.to._id
-//       );
-//     this.updateFriends();
-//     this.updateFriendRequests();
-//   }
-
-//   private handleRemoveFriendEvent(removeFriend: User) {
-//     this.colyseusService.host.friends =
-//       this.colyseusService.host.friends.filter(
-//         friend => friend._id !== removeFriend._id
-//       );
-//     this.updateFriends();
-//   }
 
 //   private handleDisconnectFriendEvent(disconnectFriend: User) {
 //     this.colyseusService.host.friends =
