@@ -7,7 +7,6 @@ import {
   outboundFriendRequestsSelector,
 } from './friend-requests.state.selectors';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-import { User } from 'src/app/models/user/user';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { FriendsStateService } from '../friends/friends.state.service';
 import { UserStateService } from '../user/user.state.service';
@@ -15,6 +14,7 @@ import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { AuthStateService } from '../auth/auth.state.service';
 import { FriendRequestApiService } from './friend-request.api.service';
 import { FriendApiService } from '../friends/friend.api.service';
+import { User } from '../user/user.model';
 
 @Injectable({
   providedIn: 'root',

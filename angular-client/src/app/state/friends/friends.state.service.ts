@@ -9,9 +9,9 @@ import {
 } from './friends.state.selectors';
 import { Friend } from 'src/app/models/friend/friend';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { User } from 'src/app/models/user/user';
 import { FriendApiService } from './friend.api.service';
 import { UserService } from '../user/user.service';
+import { User } from '../user/user.model';
 
 @Injectable({
   providedIn: 'root',

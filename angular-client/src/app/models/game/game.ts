@@ -1,5 +1,5 @@
-import { User } from '../user/user';
 import * as Colyseus from 'colyseus.js';
+import { User } from 'src/app/state/user/user.model';
 
 export class Game {
   _id?: string;

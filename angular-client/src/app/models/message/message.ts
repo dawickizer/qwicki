@@ -1,4 +1,4 @@
-import { User } from '../user/user';
+import { User } from 'src/app/state/user/user.model';
 
 export class Message {
   _id?: string;

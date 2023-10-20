@@ -15,12 +15,12 @@ import { environment } from '../../../environments/environment';
 import { catchError, switchMap } from 'rxjs/operators';
 import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
-import { User } from 'src/app/models/user/user';
 import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { FriendsStateService } from 'src/app/state/friends/friends.state.service';
 import { FriendRequestsStateService } from 'src/app/state/friend-requests/friend-requests.state.service';
 import { UserService } from 'src/app/state/user/user.service';
+import { User } from 'src/app/state/user/user.model';
 
 @Injectable({
   providedIn: 'root',

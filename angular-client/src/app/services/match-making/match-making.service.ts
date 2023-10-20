@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as Colyseus from 'colyseus.js';
 import { Game } from 'src/app/models/game/game';
-import { User } from 'src/app/models/user/user';
+import { User } from 'src/app/state/user/user.model';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

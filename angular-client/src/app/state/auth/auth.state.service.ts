@@ -8,7 +8,6 @@ import {
   catchError,
 } from 'rxjs';
 import { AuthState, initialState } from './auth.state';
-import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { NavigationExtras, Router } from '@angular/router';
@@ -22,6 +21,7 @@ import {
 import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
+import { User } from '../user/user.model';
 
 @Injectable({
   providedIn: 'root',

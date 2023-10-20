@@ -1,5 +1,5 @@
 // import { Component, OnInit } from '@angular/core';
-// import { User } from 'src/app/models/user/user';
+// import { User } from "src/app/state/user/user.model";
 // import { of, Observable } from 'rxjs';
 // import { Group } from 'src/app/models/group/group';
 // import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';

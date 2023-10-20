@@ -3,9 +3,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-
-import { User } from '../../models/user/user';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
+import { User } from '../user/user.model';
 
 @Injectable({
   providedIn: 'root',

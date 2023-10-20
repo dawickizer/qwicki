@@ -1,12 +1,12 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { User } from 'src/app/models/user/user';
 import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { Subject, Observable } from 'rxjs';
 import { SocialRoomsStateService } from 'src/app/state/social-rooms/social-rooms.state.service';
 import { UserService } from 'src/app/state/user/user.service';
+import { User } from 'src/app/state/user/user.model';
 
 @Component({
   selector: 'app-social-sidenav',

@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { User } from 'src/app/models/user/user';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthStateService } from 'src/app/state/auth/auth.state.service';
+import { User } from 'src/app/state/user/user.model';
 import { UserService } from 'src/app/state/user/user.service';
 
 @Component({
