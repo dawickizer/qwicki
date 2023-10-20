@@ -1,11 +1,11 @@
 import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { Subject, takeUntil } from 'rxjs';
-import { FriendRequestsStateService } from 'src/app/state/friend-requests/friend-requests.state.service';
 import { FriendService } from 'src/app/state/friend/friend.service';
 import { Friend } from 'src/app/state/friend/friend.model';
+import { FriendRequestService } from 'src/app/state/friend-request/friend-request.service';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 
 @Component({
   selector: 'app-social-friends-tab',
@@ -25,7 +25,7 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   displayedColumns: string[] = ['username'];
 
   constructor(
-    private friendRequestsStateService: FriendRequestsStateService,
+    private friendRequestService: FriendRequestService,
     private friendService: FriendService
   ) {}
 
@@ -59,14 +59,14 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
   }
 
   subscribeToFriendRequests() {
-    this.friendRequestsStateService.inboundFriendRequests$
+    this.friendRequestService.inboundFriendRequests$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(inboundFriendRequests => {
         this.inboundFriendRequests.data = inboundFriendRequests;
         console.log(this.inboundFriendRequests.data);
       });
 
-    this.friendRequestsStateService.outboundFriendRequests$
+    this.friendRequestService.outboundFriendRequests$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(outboundFriendRequests => {
         this.outboundFriendRequests.data = outboundFriendRequests;

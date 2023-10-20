@@ -6,6 +6,7 @@ import {
   EventEmitter,
   ElementRef,
   ViewChild,
+  OnDestroy,
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
@@ -19,7 +20,7 @@ import { Friend } from 'src/app/state/friend/friend.model';
   templateUrl: './social-chat-box.component.html',
   styleUrls: ['./social-chat-box.component.css'],
 })
-export class SocialChatBoxComponent implements OnInit {
+export class SocialChatBoxComponent implements OnInit, OnDestroy {
   @ViewChild('scrollable') scrollable: ElementRef;
   @ViewChild('test') test: ElementRef;
 

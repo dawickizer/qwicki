@@ -17,10 +17,10 @@ import { Observable, firstValueFrom, throwError } from 'rxjs';
 import { Credentials } from 'src/app/models/credentials/credentials';
 import { AuthStateService } from 'src/app/state/auth/auth.state.service';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
-import { FriendRequestsStateService } from 'src/app/state/friend-requests/friend-requests.state.service';
 import { UserService } from 'src/app/state/user/user.service';
 import { User } from 'src/app/state/user/user.model';
 import { FriendService } from 'src/app/state/friend/friend.service';
+import { FriendRequestService } from 'src/app/state/friend-request/friend-request.service';
 
 @Injectable({
   providedIn: 'root',
@@ -84,7 +84,7 @@ export class AuthFlowService {
     private authStateService: AuthStateService,
     private userService: UserService,
     private friendService: FriendService,
-    private friendRequestsStateService: FriendRequestsStateService,
+    private friendRequestService: FriendRequestService,
     private router: Router
   ) {}
 
@@ -117,10 +117,10 @@ export class AuthFlowService {
       )
       .subscribe(user => {
         this.friendService.setFriends(user.friends);
-        this.friendRequestsStateService.setInboundFriendRequests(
+        this.friendRequestService.setInboundFriendRequests(
           user.inboundFriendRequests
         );
-        this.friendRequestsStateService.setOutboundFriendRequests(
+        this.friendRequestService.setOutboundFriendRequests(
           user.outboundFriendRequests
         );
         this.router.navigate([returnPath]);

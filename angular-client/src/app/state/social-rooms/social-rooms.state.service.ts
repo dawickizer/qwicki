@@ -12,11 +12,11 @@ import {
 import { Room } from 'colyseus.js';
 import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { AuthStateService } from '../auth/auth.state.service';
-import { FriendRequestsStateService } from '../friend-requests/friend-requests.state.service';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 import { UserService } from '../user/user.service';
 import { FriendService } from '../friend/friend.service';
 import { Friend } from '../friend/friend.model';
+import { FriendRequestService } from '../friend-request/friend-request.service';
+import { FriendRequest } from '../friend-request/friend-requests.model';
 
 @Injectable({
   providedIn: 'root',
@@ -40,7 +40,7 @@ export class SocialRoomsStateService {
     private userService: UserService,
     private authStateService: AuthStateService,
     private friendService: FriendService,
-    private friendRequestsStateService: FriendRequestsStateService,
+    private friendRequestService: FriendRequestService,
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
@@ -241,23 +241,19 @@ export class SocialRoomsStateService {
     });
 
     room.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
-      this.friendRequestsStateService.addInboundFriendRequest(friendRequest);
+      this.friendRequestService.addInboundFriendRequest(friendRequest);
     });
 
     room.onMessage('rejectFriendRequest', (friendRequest: FriendRequest) => {
-      this.friendRequestsStateService.removeOutboundFriendRequest(
-        friendRequest
-      );
+      this.friendRequestService.removeOutboundFriendRequest(friendRequest);
     });
 
     room.onMessage('revokeFriendRequest', (friendRequest: FriendRequest) => {
-      this.friendRequestsStateService.removeInboundFriendRequest(friendRequest);
+      this.friendRequestService.removeInboundFriendRequest(friendRequest);
     });
 
     room.onMessage('acceptFriendRequest', (friendRequest: FriendRequest) => {
-      this.friendRequestsStateService.removeOutboundFriendRequest(
-        friendRequest
-      );
+      this.friendRequestService.removeOutboundFriendRequest(friendRequest);
       this.friendService.addFriend(friendRequest.to);
       this.joinExistingRoomIfPresent(friendRequest.from._id);
     });

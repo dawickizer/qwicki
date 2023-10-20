@@ -33,31 +33,35 @@ export class FriendService {
     return this.friendEffectService.deleteFriend(friend);
   }
 
-  setFriends(friends: Friend[]) {
+  setInitialState(): void {
+    this.friendStateService.setInitialState();
+  }
+
+  setFriends(friends: Friend[]): void {
     this.friendStateService.setFriends(friends);
   }
 
-  setFriendOnline(friendId: string) {
+  setFriendOnline(friendId: string): void {
     this.friendStateService.setFriendOnline(friendId);
   }
 
-  setFriendsOnline(friendIds: string[]) {
+  setFriendsOnline(friendIds: string[]): void {
     this.friendStateService.setFriendsOnline(friendIds);
   }
 
-  setFriendOffline(friendId: string) {
+  setFriendOffline(friendId: string): void {
     this.friendStateService.setFriendOffline(friendId);
   }
 
-  setFriendsOffline(friendIds: string[]) {
+  setFriendsOffline(friendIds: string[]): void {
     this.friendStateService.setFriendsOffline(friendIds);
   }
 
-  addFriend(friend: Friend) {
+  addFriend(friend: Friend): void {
     this.friendStateService.addFriend(friend);
   }
 
-  removeFriend(friend: Friend) {
+  removeFriend(friend: Friend): void {
     this.friendStateService.removeFriend(friend);
   }
 }

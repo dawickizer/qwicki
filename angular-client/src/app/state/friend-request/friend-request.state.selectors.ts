@@ -1,11 +1,11 @@
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
-import { FriendRequestsState } from './friend-requests.state';
+import { FriendRequestState } from './friend-request.state';
 import { isEqual } from 'lodash';
 import { FriendRequest } from 'src/app/models/friend-request/friend-request';
 
 export const isLoadingSelector = (
-  friendState$: Observable<FriendRequestsState>
+  friendState$: Observable<FriendRequestState>
 ): Observable<boolean> =>
   friendState$.pipe(
     map(state => state.isLoading),
@@ -13,7 +13,7 @@ export const isLoadingSelector = (
   );
 
 export const inboundFriendRequestsSelector = (
-  friendState$: Observable<FriendRequestsState>
+  friendState$: Observable<FriendRequestState>
 ): Observable<FriendRequest[] | null> =>
   friendState$.pipe(
     map(state => state.inboundFriendRequests),
@@ -21,7 +21,7 @@ export const inboundFriendRequestsSelector = (
   );
 
 export const outboundFriendRequestsSelector = (
-  friendState$: Observable<FriendRequestsState>
+  friendState$: Observable<FriendRequestState>
 ): Observable<FriendRequest[] | null> =>
   friendState$.pipe(
     map(state => state.outboundFriendRequests),

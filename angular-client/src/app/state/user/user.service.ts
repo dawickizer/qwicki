@@ -41,9 +41,10 @@ export class UserService {
     return this.userEffectService.deleteUser(user);
   }
 
-  // These methods might not be necessary to expose,
-  // but I've kept them in case you want components to directly manipulate state without side-effects.
-  // It's advisable to limit the exposure of direct state manipulation methods.
+  setInitialState(): void {
+    this.userStateService.setInitialState();
+  }
+
   setUser(user: User): void {
     this.userStateService.setUser(user);
   }
@@ -55,6 +56,4 @@ export class UserService {
   setIsLoading(isLoading: boolean): void {
     this.userStateService.setIsLoading(isLoading);
   }
-
-  // You can also add additional convenience methods here, if required.
 }
