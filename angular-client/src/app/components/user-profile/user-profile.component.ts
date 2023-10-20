@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AuthStateService } from 'src/app/state/auth/auth.state.service';
+import { AuthService } from 'src/app/state/auth/auth.service';
 import { User } from 'src/app/state/user/user.model';
 import { UserService } from 'src/app/state/user/user.service';
 
@@ -16,7 +16,7 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 
   constructor(
     private userService: UserService,
-    private authStateService: AuthStateService
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
@@ -44,6 +44,9 @@ export class UserProfileComponent implements OnInit, OnDestroy {
       .deleteUser(this.user)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
-    this.authStateService.logout({ makeBackendCall: false });
+    this.authService
+      .logout({ makeBackendCall: false })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
   }
 }

@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { Observable, tap, of, catchError } from 'rxjs';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UserStateService } from '../user/user.state.service';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-import { AuthStateService } from '../auth/auth.state.service';
 import { FriendRequestApiService } from './friend-request.api.service';
 import { FriendApiService } from '../friend/friend.api.service';
 import { User } from '../user/user.model';
 import { FriendService } from '../friend/friend.service';
 import { FriendRequestStateService } from './friend-request.state.service';
+import { AuthService } from '../auth/auth.service';
+import { UserService } from '../user/user.service';
 
 @Injectable({
   providedIn: 'root',
@@ -20,11 +20,11 @@ export class FriendRequestEffectService {
 
   constructor(
     private friendRequestApiService: FriendRequestApiService,
-    private friendApiService: FriendApiService,
     private friendRequestStateService: FriendRequestStateService,
     private friendService: FriendService,
-    private userStateService: UserStateService,
-    private authStateService: AuthStateService,
+    private friendApiService: FriendApiService,
+    private userService: UserService,
+    private authService: AuthService,
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {
@@ -33,13 +33,13 @@ export class FriendRequestEffectService {
   }
 
   private subscribeToUserState() {
-    this.userStateService.user$.subscribe(user => {
+    this.userService.user$.subscribe(user => {
       this.user = user;
     });
   }
 
   private subscribeToAuthState() {
-    this.authStateService.jwt$.subscribe(jwt => {
+    this.authService.jwt$.subscribe(jwt => {
       this.jwt = jwt;
     });
   }

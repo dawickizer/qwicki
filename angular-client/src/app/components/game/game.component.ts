@@ -25,16 +25,14 @@ import '@babylonjs/inspector';
 import { ActivatedRoute } from '@angular/router';
 
 // Services
-import {
-  AuthFlowService,
-  AuthService,
-} from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 
 // Models
 import { Player } from 'src/app/models/player/player';
 import { PlayerService } from 'src/app/services/player/player.service';
+import { AuthService } from 'src/app/state/auth/auth.service';
+import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
 
 @Component({
   selector: 'app-game',
@@ -72,7 +70,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
-    this.authService.currentUser().subscribe({
+    this.authService.decodedJwt$.subscribe({
       next: async user => {
         this.route.queryParams.subscribe(async params => {
           this.createScene();

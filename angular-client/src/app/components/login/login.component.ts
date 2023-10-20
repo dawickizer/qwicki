@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Credentials } from 'src/app/models/credentials/credentials';
+import { Credentials } from 'src/app/state/auth/credentials.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AuthFlowService } from 'src/app/services/auth/auth.service';
+import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
 
 @Component({
   selector: 'app-login',

@@ -1,8 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { Subject, Observable } from 'rxjs';
 import { SocialRoomsStateService } from 'src/app/state/social-rooms/social-rooms.state.service';
 import { UserService } from 'src/app/state/user/user.service';
@@ -21,8 +19,6 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
 
   constructor(
     private keyBindService: KeyBindService,
-    public authService: AuthService,
-    public colyseusService: ColyseusService,
     private userService: UserService,
     private socialRoomsStateService: SocialRoomsStateService
   ) {}

@@ -1,4 +1,4 @@
-import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
+import { DecodedJwt } from './decoded-jwt.model';
 
 export interface AuthState {
   isLoggedIn: boolean;

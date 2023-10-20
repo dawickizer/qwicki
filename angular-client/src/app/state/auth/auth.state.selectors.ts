@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { AuthState } from './auth.state';
-import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
 import { isEqual } from 'lodash';
+import { DecodedJwt } from './decoded-jwt.model';
 
 export const jwtSelector = (
   userState$: Observable<AuthState>

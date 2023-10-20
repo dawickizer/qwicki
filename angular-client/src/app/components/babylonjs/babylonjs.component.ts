@@ -28,11 +28,9 @@ import '@babylonjs/inspector';
 
 // Services/Models
 import { FpsService } from 'src/app/services/fps/fps.service';
-import {
-  AuthFlowService,
-  AuthService,
-} from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
+import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
+import { AuthService } from 'src/app/state/auth/auth.service';
 
 @Component({
   selector: 'app-babylonjs',
@@ -64,7 +62,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
-    this.authService.currentUser().subscribe({
+    this.authService.decodedJwt$.subscribe({
       next: async user => {
         this.username = user.username;
 

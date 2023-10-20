@@ -10,13 +10,13 @@ import {
   personalRoomSelector,
 } from './social-rooms.selectors';
 import { Room } from 'colyseus.js';
-import { DecodedJwt } from 'src/app/models/decoded-jwt/decoded-jwt';
-import { AuthStateService } from '../auth/auth.state.service';
 import { UserService } from '../user/user.service';
 import { FriendService } from '../friend/friend.service';
 import { Friend } from '../friend/friend.model';
 import { FriendRequestService } from '../friend-request/friend-request.service';
 import { FriendRequest } from '../friend-request/friend-requests.model';
+import { AuthService } from '../auth/auth.service';
+import { DecodedJwt } from '../auth/decoded-jwt.model';
 
 @Injectable({
   providedIn: 'root',
@@ -38,7 +38,7 @@ export class SocialRoomsStateService {
 
   constructor(
     private userService: UserService,
-    private authStateService: AuthStateService,
+    private authService: AuthService,
     private friendService: FriendService,
     private friendRequestService: FriendRequestService,
     private colyseusService: ColyseusService,
@@ -213,13 +213,13 @@ export class SocialRoomsStateService {
   }
 
   private subscribeToAuthState() {
-    this.authStateService.decodedJwt$.subscribe(decodedJwt => {
+    this.authService.decodedJwt$.subscribe(decodedJwt => {
       this.decodedJwt = decodedJwt;
     });
-    this.authStateService.jwt$.subscribe(jwt => {
+    this.authService.jwt$.subscribe(jwt => {
       this.jwt = jwt;
     });
-    this.authStateService.isLoggedIn$.subscribe(isLoggedIn => {
+    this.authService.isLoggedIn$.subscribe(isLoggedIn => {
       if (!isLoggedIn) this.leaveAllRooms();
     });
   }
