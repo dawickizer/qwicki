@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { Subject, Observable } from 'rxjs';
-import { SocialRoomsStateService } from 'src/app/state/social-rooms/social-rooms.state.service';
+import { Subject, Observable, takeUntil } from 'rxjs';
 import { UserService } from 'src/app/state/user/user.service';
 import { User } from 'src/app/state/user/user.model';
+import { InboxService } from 'src/app/state/inbox/inbox.service';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -20,13 +20,19 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   constructor(
     private keyBindService: KeyBindService,
     private userService: UserService,
-    private socialRoomsStateService: SocialRoomsStateService
+    private inboxService: InboxService
   ) {}
 
   ngOnInit() {
     this.user$ = this.userService.user$;
-    this.socialRoomsStateService.createPersonalRoom();
-    this.socialRoomsStateService.joinFriendsRoomsIfPresent();
+    this.inboxService
+      .createPersonalInbox()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
+    this.inboxService
+      .joinFriendsInboxesIfPresent()
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
     this.handleSideNavKeyBind();
   }
 

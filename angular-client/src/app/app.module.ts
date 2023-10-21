@@ -42,6 +42,9 @@ import { GameService } from './services/game/game.service';
 import { GunService } from './services/gun/gun.service';
 import { HomeComponent } from './components/home/home.component';
 import { InactivityService } from './services/inactivity/inactivity.service';
+import { InboxEffectService } from './state/inbox/inbox.effect.service';
+import { InboxService } from './state/inbox/inbox.service';
+import { InboxStateService } from './state/inbox/inbox.state.service';
 import { JoinGameComponent } from './components/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
 import { LoginComponent } from './components/login/login.component';
@@ -57,7 +60,6 @@ import { SocialFriendsTabComponent } from './components/social-friends-tab/socia
 import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
 import { SocialGroupsListComponent } from './components/social-groups-list/social-groups-list.component';
 import { SocialGroupsTabComponent } from './components/social-groups-tab/social-groups-tab.component';
-import { SocialRoomsStateService } from './state/social-rooms/social-rooms.state.service';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
@@ -119,6 +121,9 @@ import { AuthInterceptor } from './state/auth/auth.interceptor.service';
     AuthGuardService,
     AuthStateService,
     ColyseusService,
+    InboxEffectService,
+    InboxService,
+    InboxStateService,
     FpsService,
     FriendApiService,
     FriendEffectService,
@@ -134,7 +139,6 @@ import { AuthInterceptor } from './state/auth/auth.interceptor.service';
     KeyBindService,
     MatchMakingService,
     PlayerService,
-    SocialRoomsStateService,
     UserApiService,
     UserEffectService,
     UserService,

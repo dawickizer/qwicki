@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class InboxServiceService {
+export class InboxService {
   get isLoading$(): Observable<boolean> {
     return this.inboxStateService.isLoading$;
   }
@@ -28,6 +28,14 @@ export class InboxServiceService {
     private inboxStateService: InboxStateService,
     private inboxEffectService: InboxEffectService
   ) {}
+
+  createPersonalInbox(): Observable<Room<any>> {
+    return this.inboxEffectService.createPersonalInbox();
+  }
+
+  joinFriendsInboxesIfPresent(): Observable<Room<any>[]> {
+    return this.inboxEffectService.joinFriendsInboxesIfPresent();
+  }
 
   setInitialState(): void {
     this.inboxStateService.setInitialState();
