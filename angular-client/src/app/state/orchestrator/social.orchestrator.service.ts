@@ -61,8 +61,6 @@ export class SocialOrchestratorService {
         const friendsInbox = this.friendsInboxes.find(
           friendsInbox => friendsInbox.id === deletedFriend._id
         );
-        console.log(this.friendsInboxes);
-        console.log(friendsInbox);
         if (friendsInbox) {
           friendsInbox.send('removeFriend', this.user);
           this.inboxService.leaveInbox(friendsInbox);
