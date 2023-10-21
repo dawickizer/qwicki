@@ -1,20 +1,20 @@
 import { Client } from 'colyseus';
-import { SocialRoom } from '../rooms/SocialRoom';
-import { SocialManager } from './SocialManager';
+import { Inbox } from '../rooms/Inbox';
+import { InboxManager } from './InboxManager';
 
-export class ChatManager extends SocialManager {
-  constructor(socialRoom: SocialRoom) {
-    super(socialRoom);
+export class ChatManager extends InboxManager {
+  constructor(inbox: Inbox) {
+    super(inbox);
   }
 
   setOnMessageListeners() {
-    this.socialRoom.onMessage('messageHost', (client, message) => {
-      this.socialRoom.hostClient.send('messageHost', message);
+    this.inbox.onMessage('messageHost', (client, message) => {
+      this.inbox.hostClient.send('messageHost', message);
     });
 
-    this.socialRoom.onMessage('messageUser', (client, message) => {
-      const user = this.socialRoom.getUserById(message.to._id);
-      const userClient: Client = this.socialRoom.getClient(user);
+    this.inbox.onMessage('messageUser', (client, message) => {
+      const user = this.inbox.getUserById(message.to._id);
+      const userClient: Client = this.inbox.getClient(user);
       userClient.send('messageUser', message);
     });
   }

@@ -66,7 +66,10 @@ export const createFriendRequest = async (
     userService.addInboundFriendRequest(toUser._id, friendRequest._id),
   ]);
 
-  return friendRequest.populate([{path: 'to', select: 'username'}, {path: 'from', select: 'username'}]);
+  return friendRequest.populate([
+    { path: 'to', select: 'username' },
+    { path: 'from', select: 'username' },
+  ]);
 };
 
 export const deleteFriendRequestById = async (
@@ -99,7 +102,10 @@ export const deleteFriendRequestById = async (
 
   await FriendRequest.findByIdAndDelete(friendRequestId);
 
-  return await friendRequest.populate([{path: 'to', select: 'username'}, {path: 'from', select: 'username'}]);
+  return await friendRequest.populate([
+    { path: 'to', select: 'username' },
+    { path: 'from', select: 'username' },
+  ]);
 };
 
 export const deleteManyFriendRequestsByUserId = async (

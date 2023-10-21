@@ -37,6 +37,10 @@ export class InboxService {
     return this.inboxEffectService.joinFriendsInboxesIfPresent();
   }
 
+  leaveInboxes(inboxes: Room[]): Observable<number[]> {
+    return this.inboxEffectService.leaveInboxes(inboxes);
+  }
+
   setInitialState(): void {
     this.inboxStateService.setInitialState();
   }

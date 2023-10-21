@@ -1,7 +1,7 @@
 import { Schema, type, MapSchema } from '@colyseus/schema';
 import { User } from './User';
 
-export class SocialRoomState extends Schema {
+export class InboxState extends Schema {
   @type(User)
   host: User;
 

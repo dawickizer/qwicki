@@ -46,7 +46,6 @@ export const removeFriend = async (
   userId: string | Schema.Types.ObjectId,
   friendId: string | Schema.Types.ObjectId
 ): Promise<User> => {
-
   const friend = getFriendById(friendId);
 
   await Promise.all([

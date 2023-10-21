@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
-import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
+import { Component, OnDestroy } from '@angular/core';
+import { Subject, takeUntil } from 'rxjs';
+import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
 import { User } from 'src/app/state/user/user.model';
 
 @Component({
@@ -7,12 +8,21 @@ import { User } from 'src/app/state/user/user.model';
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
-export class SignupComponent {
+export class SignupComponent implements OnDestroy {
   user: User = new User();
+  unsubscribe$ = new Subject<void>();
 
-  constructor(private authFlowService: AuthFlowService) {}
+  constructor(private authOrchestratorService: AuthOrchestratorService) {}
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 
   signup() {
-    this.authFlowService.signup(new User(this.user), '/');
+    this.authOrchestratorService
+      .signup(new User(this.user), '/')
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
   }
 }

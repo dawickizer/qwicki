@@ -32,7 +32,8 @@ import { MatchMakingService } from 'src/app/services/match-making/match-making.s
 import { Player } from 'src/app/models/player/player';
 import { PlayerService } from 'src/app/services/player/player.service';
 import { AuthService } from 'src/app/state/auth/auth.service';
-import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
+import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -42,7 +43,7 @@ import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
 export class GameComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('drawer') drawer: MatSidenav;
-
+  unsubscribe$ = new Subject<void>();
   engine: Engine;
   scene: Scene;
   universalCamera: UniversalCamera;
@@ -65,7 +66,7 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     private playerService: PlayerService,
     private authService: AuthService,
     private keyBindService: KeyBindService,
-    private authFlowService: AuthFlowService
+    private authOrchestratorService: AuthOrchestratorService
   ) {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
@@ -88,7 +89,11 @@ export class GameComponent implements AfterViewInit, OnDestroy {
           this.playerOnRemove();
         });
       },
-      error: () => this.authFlowService.logout(),
+      error: () =>
+        this.authOrchestratorService
+          .logout()
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe(),
     });
   }
 
@@ -96,6 +101,8 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     console.log('Disposing scene');
     this.scene?.dispose();
     this.keyBindService.removeKeyBinds();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   async createOrJoinGameRoom(params: any) {

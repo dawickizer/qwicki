@@ -21,7 +21,8 @@ import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
 import { AuthApiService } from './state/auth/auth.api.service';
 import { AuthGuardService } from './state/auth/auth.guard.service';
-import { AuthFlowService } from './state/auth/auth.flow.service';
+import { AuthInterceptor } from './state/auth/auth.interceptor.service';
+import { AuthOrchestratorService } from './state/orchestrator/auth.orchestrator.service';
 import { AuthService } from './state/auth/auth.service';
 import { AuthStateService } from './state/auth/auth.state.service';
 import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
@@ -67,7 +68,6 @@ import { UserEffectService } from './state/user/user.effect.service';
 import { UserFilterableMultiSelectComponent } from './components/user-filterable-multi-select/user-filterable-multi-select.component';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
-import { AuthInterceptor } from './state/auth/auth.interceptor.service';
 
 @NgModule({
   declarations: [
@@ -116,9 +116,9 @@ import { AuthInterceptor } from './state/auth/auth.interceptor.service';
   ],
   providers: [
     AuthApiService,
-    AuthService,
-    AuthFlowService,
     AuthGuardService,
+    AuthOrchestratorService,
+    AuthService,
     AuthStateService,
     ColyseusService,
     InboxEffectService,

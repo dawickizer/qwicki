@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Credentials } from 'src/app/state/auth/credentials.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
+import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +17,7 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: ActivatedRoute,
-    private authFlowService: AuthFlowService
+    private authOrchestratorService: AuthOrchestratorService
   ) {}
 
   ngOnInit(): void {
@@ -32,7 +32,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   login() {
-    this.authFlowService.login(this.credentials, this.return);
+    this.authOrchestratorService
+      .login(this.credentials, this.return)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe();
     this.credentials = { username: '', password: '' };
   }
 }

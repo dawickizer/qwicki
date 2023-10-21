@@ -25,11 +25,12 @@ import {
 } from '@babylonjs/core';
 import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
+import { Subject, takeUntil } from 'rxjs';
 
 // Services/Models
 import { FpsService } from 'src/app/services/fps/fps.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { AuthFlowService } from 'src/app/state/auth/auth.flow.service';
+import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
 import { AuthService } from 'src/app/state/auth/auth.service';
 
 @Component({
@@ -40,7 +41,7 @@ import { AuthService } from 'src/app/state/auth/auth.service';
 export class BabylonjsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('drawer') drawer: MatSidenav;
-
+  unsubscribe$ = new Subject<void>();
   engine: Engine;
   scene: Scene;
   universalCamera: UniversalCamera;
@@ -56,7 +57,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
   constructor(
     private fpsService: FpsService,
     private authService: AuthService,
-    private authFlowService: AuthFlowService,
+    private authOrchestratorService: AuthOrchestratorService,
     private keyBindService: KeyBindService
   ) {}
 
@@ -89,7 +90,11 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
         // running babylonJS
         this.render();
       },
-      error: () => this.authFlowService.logout(),
+      error: () =>
+        this.authOrchestratorService
+          .logout()
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe(),
     });
   }
 
@@ -97,6 +102,8 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
     console.log('Disposing scene');
     this.scene?.dispose();
     this.keyBindService.removeKeyBinds();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   createScene() {

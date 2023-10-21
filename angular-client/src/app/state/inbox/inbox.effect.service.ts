@@ -1,13 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  Observable,
-  tap,
-  of,
-  catchError,
-  from,
-  combineLatest,
-  switchMap,
-} from 'rxjs';
+import { Observable, tap, of, catchError, from } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { Room } from 'colyseus.js';
@@ -117,27 +109,6 @@ export class InboxEffectService {
     );
   }
 
-  leaveAllInboxes(): Observable<number[]> {
-    this.inboxStateService.setIsLoading(true);
-    return combineLatest([
-      this.inboxStateService.connectedInboxes$,
-      this.inboxStateService.personalInbox$,
-    ]).pipe(
-      switchMap(([connectedInboxes, personalRoom]) => {
-        const inboxes = [...connectedInboxes];
-        if (personalRoom) {
-          inboxes.push(personalRoom);
-        }
-        return from(this.colyseusService.leaveRooms(inboxes));
-      }),
-      tap(() => {
-        this.inboxStateService.setInitialState();
-        this.inboxStateService.setIsLoading(false);
-      }),
-      catchError(this.handleError)
-    );
-  }
-
   private subscribeToFriendState() {
     this.friendService.friends$.subscribe(friends => {
       this.friends = friends;
@@ -151,13 +122,10 @@ export class InboxEffectService {
     this.authService.jwt$.subscribe(jwt => {
       this.jwt = jwt;
     });
-    this.authService.isLoggedIn$.subscribe(isLoggedIn => {
-      if (!isLoggedIn) this.leaveAllInboxes().subscribe();
-    });
   }
 
   private isPersonalInbox(inboxId: string): boolean {
-    return inboxId === this.decodedJwt._id;
+    return inboxId === this.decodedJwt?._id;
   }
 
   private setPersonalInboxListeners(inbox: Room): Room {
@@ -223,6 +191,7 @@ export class InboxEffectService {
   }
 
   private handleError = (error: any): Observable<null> => {
+    console.error(error);
     this.snackBar.open(error, 'Dismiss', { duration: 5000 });
     this.inboxStateService.setIsLoading(false);
     return of(null);

@@ -15,7 +15,7 @@ export class ColyseusService {
         jwt
       );
       if (!room) {
-        room = await this._client.create('social_room', {
+        room = await this._client.create('inbox', {
           accessToken: jwt,
         });
       }
