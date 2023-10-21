@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { Subject, Observable, takeUntil } from 'rxjs';
+import { Subject, Observable } from 'rxjs';
 import { UserService } from 'src/app/state/user/user.service';
 import { User } from 'src/app/state/user/user.model';
 import { InboxService } from 'src/app/state/inbox/inbox.service';
@@ -25,14 +25,8 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.user$ = this.userService.user$;
-    this.inboxService
-      .createPersonalInbox()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
-    this.inboxService
-      .joinFriendsInboxesIfPresent()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
+    this.inboxService.createPersonalInbox().subscribe();
+    this.inboxService.joinFriendsInboxesIfPresent().subscribe();
     this.handleSideNavKeyBind();
   }
 

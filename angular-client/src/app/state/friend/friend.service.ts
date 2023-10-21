@@ -3,6 +3,8 @@ import { FriendStateService } from './friend.state.service';
 import { FriendEffectService } from './friend.effect.service';
 import { Friend } from './friend.model';
 import { Observable } from 'rxjs';
+import { User } from '../user/user.model';
+import { FriendRequest } from '../friend-request/friend-requests.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,8 +31,12 @@ export class FriendService {
     private friendStateService: FriendStateService
   ) {}
 
-  deleteFriend(friend: Friend): Observable<Friend> {
-    return this.friendEffectService.deleteFriend(friend);
+  addNewFriend(user: User, friendRequest: FriendRequest): Observable<User> {
+    return this.friendEffectService.addNewFriend(user, friendRequest);
+  }
+
+  deleteFriend(user: User, friend: Friend): Observable<Friend> {
+    return this.friendEffectService.deleteFriend(user, friend);
   }
 
   setInitialState(): void {

@@ -155,7 +155,7 @@ export class InboxEffectService {
     inbox.onMessage('acceptFriendRequest', (friendRequest: FriendRequest) => {
       this.friendRequestService.removeOutboundFriendRequest(friendRequest);
       this.friendService.addFriend(friendRequest.to);
-      this.joinExistingInboxIfPresent(friendRequest.from._id).subscribe();
+      this.friendService.setFriendOnline(friendRequest.to._id);
     });
 
     inbox.onMessage('removeFriend', (friend: Friend) => {
@@ -171,12 +171,14 @@ export class InboxEffectService {
   }
 
   private setFriendInboxListeners(inbox: Room): Room {
-    //       inbox.onMessage('disconnectFriend', (disconnectFriend: User) =>
-    //         this.handleDisconnectFriendEvent(disconnectFriend)
-    //       );
     //       inbox.onMessage('messageUser', (message: Message) =>
     //         this.handleMessageUserEvent(message)
     //       );
+
+    inbox.onMessage('disconnectFriend', (disconnectFriend: Friend) => {
+      this.friendService.removeFriend(disconnectFriend);
+      this.inboxStateService.removeConnectedInboxById(disconnectFriend._id);
+    });
 
     inbox.onMessage('dispose', (inboxId: string) => {
       this.friendService.setFriendOffline(inboxId);
@@ -238,15 +240,6 @@ export class InboxEffectService {
     this.inboxStateService.setIsLoading(false);
   };
 }
-
-//   private handleDisconnectFriendEvent(disconnectFriend: User) {
-//     this.colyseusService.host.friends =
-//       this.colyseusService.host.friends.filter(
-//         friend => friend._id !== disconnectFriend._id
-//       );
-//     this.updateFriends();
-//     this.colyseusService.removeInboxById(disconnectFriend._id);
-//   }
 
 //   private handleMessageHostEvent(message: Message) {
 //     this.potentialMessage = message;

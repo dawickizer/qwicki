@@ -34,7 +34,6 @@ export class LoginComponent implements OnInit, OnDestroy {
   login() {
     this.authOrchestratorService
       .login(this.credentials, this.return)
-      .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
     this.credentials = { username: '', password: '' };
   }

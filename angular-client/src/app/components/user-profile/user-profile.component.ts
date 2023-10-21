@@ -33,20 +33,11 @@ export class UserProfileComponent implements OnInit, OnDestroy {
   }
 
   update() {
-    this.userService
-      .updateUser(this.user)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
+    this.userService.updateUser(this.user).subscribe();
   }
 
   delete() {
-    this.userService
-      .deleteUser(this.user)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
-    this.authService
-      .logout({ makeBackendCall: false })
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
+    this.userService.deleteUser(this.user).subscribe();
+    this.authService.logout({ makeBackendCall: false }).subscribe();
   }
 }

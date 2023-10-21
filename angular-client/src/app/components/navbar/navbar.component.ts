@@ -1,5 +1,5 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
 import { AuthService } from 'src/app/state/auth/auth.service';
 
@@ -27,9 +27,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   logout() {
-    this.authOrchestratorService
-      .logout()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
+    this.authOrchestratorService.logout().subscribe();
   }
 }

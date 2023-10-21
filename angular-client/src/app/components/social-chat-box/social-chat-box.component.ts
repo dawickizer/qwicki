@@ -11,9 +11,9 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Message } from 'src/app/models/message/message';
-import { FriendService } from 'src/app/state/friend/friend.service';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Friend } from 'src/app/state/friend/friend.model';
+import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
   selector: 'app-social-chat-box',
@@ -56,7 +56,7 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
 
   constructor(
     private snackBar: MatSnackBar,
-    private friendService: FriendService
+    private socialOrchestratorService: SocialOrchestratorService
   ) {}
 
   ngOnInit(): void {
@@ -155,10 +155,7 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
   }
 
   removeFriend() {
-    this.friendService
-      .deleteFriend(this.friend)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
+    this.socialOrchestratorService.deleteFriend(this.friend).subscribe();
   }
 
   onUnviewedMessage() {

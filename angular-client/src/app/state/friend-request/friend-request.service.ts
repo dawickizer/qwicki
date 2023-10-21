@@ -26,20 +26,34 @@ export class FriendRequestService {
     private friendRequestStateService: FriendRequestStateService
   ) {}
 
-  sendFriendRequest(potentialFriend: string): Observable<FriendRequest> {
-    return this.friendRequestEffectService.sendFriendRequest(potentialFriend);
+  sendFriendRequest(
+    user: User,
+    potentialFriend: string
+  ): Observable<FriendRequest> {
+    return this.friendRequestEffectService.sendFriendRequest(
+      user,
+      potentialFriend
+    );
   }
 
-  acceptFriendRequest(friendRequest: FriendRequest): Observable<User> {
-    return this.friendRequestEffectService.acceptFriendRequest(friendRequest);
+  revokeFriendRequest(
+    user: User,
+    friendRequest: FriendRequest
+  ): Observable<FriendRequest> {
+    return this.friendRequestEffectService.revokeFriendRequest(
+      user,
+      friendRequest
+    );
   }
 
-  revokeFriendRequest(friendRequest: FriendRequest): Observable<FriendRequest> {
-    return this.friendRequestEffectService.revokeFriendRequest(friendRequest);
-  }
-
-  rejectFriendRequest(friendRequest: FriendRequest): Observable<FriendRequest> {
-    return this.friendRequestEffectService.rejectFriendRequest(friendRequest);
+  rejectFriendRequest(
+    user: User,
+    friendRequest: FriendRequest
+  ): Observable<FriendRequest> {
+    return this.friendRequestEffectService.rejectFriendRequest(
+      user,
+      friendRequest
+    );
   }
 
   setInitialState(): void {

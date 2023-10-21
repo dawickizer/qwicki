@@ -25,7 +25,7 @@ import {
 } from '@babylonjs/core';
 import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 
 // Services/Models
 import { FpsService } from 'src/app/services/fps/fps.service';
@@ -90,11 +90,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
         // running babylonJS
         this.render();
       },
-      error: () =>
-        this.authOrchestratorService
-          .logout()
-          .pipe(takeUntil(this.unsubscribe$))
-          .subscribe(),
+      error: () => this.authOrchestratorService.logout().subscribe(),
     });
   }
 

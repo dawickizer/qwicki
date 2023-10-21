@@ -61,6 +61,7 @@ import { SocialFriendsTabComponent } from './components/social-friends-tab/socia
 import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
 import { SocialGroupsListComponent } from './components/social-groups-list/social-groups-list.component';
 import { SocialGroupsTabComponent } from './components/social-groups-tab/social-groups-tab.component';
+import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
@@ -139,6 +140,7 @@ import { UserStateService } from './state/user/user.state.service';
     KeyBindService,
     MatchMakingService,
     PlayerService,
+    SocialOrchestratorService,
     UserApiService,
     UserEffectService,
     UserService,

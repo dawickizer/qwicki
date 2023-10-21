@@ -1,5 +1,5 @@
 import { Component, OnDestroy } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject } from 'rxjs';
 import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
 import { User } from 'src/app/state/user/user.model';
 
@@ -20,9 +20,6 @@ export class SignupComponent implements OnDestroy {
   }
 
   signup() {
-    this.authOrchestratorService
-      .signup(new User(this.user), '/')
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
+    this.authOrchestratorService.signup(new User(this.user), '/').subscribe();
   }
 }

@@ -7,7 +7,6 @@ import {
   outboundFriendRequestsSelector,
 } from './friend-request.state.selectors';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
-import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -26,8 +25,6 @@ export class FriendRequestStateService {
   public outboundFriendRequests$ = outboundFriendRequestsSelector(
     this.friendRequestState$
   );
-
-  constructor(private snackBar: MatSnackBar) {}
 
   setInitialState() {
     this._friendRequestState.next(initialState);

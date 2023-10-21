@@ -1,8 +1,8 @@
 import { Component, Input, OnDestroy } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { Subject, takeUntil } from 'rxjs';
-import { FriendRequestService } from 'src/app/state/friend-request/friend-request.service';
+import { Subject } from 'rxjs';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
+import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
   selector: 'app-social-friend-requests-list',
@@ -20,7 +20,7 @@ export class SocialFriendRequestsListComponent implements OnDestroy {
 
   unsubscribe$ = new Subject<void>();
 
-  constructor(private friendRequestService: FriendRequestService) {}
+  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
 
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -32,31 +32,25 @@ export class SocialFriendRequestsListComponent implements OnDestroy {
   }
 
   sendFriendRequest() {
-    this.friendRequestService
+    this.socialOrchestratorService
       .sendFriendRequest(this.potentialFriend)
-      .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
     this.potentialFriend = '';
   }
 
-  acceptFriendRequest(friendRequest: FriendRequest) {
-    this.friendRequestService
-      .acceptFriendRequest(friendRequest)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
+  addNewFriend(friendRequest: FriendRequest) {
+    this.socialOrchestratorService.addNewFriend(friendRequest).subscribe();
   }
 
   rejectFriendRequest(friendRequest: FriendRequest) {
-    this.friendRequestService
+    this.socialOrchestratorService
       .rejectFriendRequest(friendRequest)
-      .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
   }
 
   revokeFriendRequest(friendRequest: FriendRequest) {
-    this.friendRequestService
+    this.socialOrchestratorService
       .revokeFriendRequest(friendRequest)
-      .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
   }
 }
