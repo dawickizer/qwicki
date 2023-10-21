@@ -20,8 +20,8 @@ export class FriendEffectService {
   addNewFriend(user: User, friendRequest: FriendRequest): Observable<User> {
     this.friendStateService.setIsLoading(true);
     return this.friendApiService.add(user, friendRequest._id).pipe(
-      tap(user => {
-        this.friendStateService.setFriends(user.friends);
+      tap(() => {
+        this.friendStateService.addFriend(friendRequest.from);
         this.friendStateService.setIsLoading(false);
         this.snackBar.open(
           `You and ${friendRequest.from.username} are now friends`,
