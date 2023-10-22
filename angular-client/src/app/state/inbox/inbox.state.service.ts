@@ -85,6 +85,31 @@ export class InboxStateService {
     });
   }
 
+  updateConnectedInbox(updatedInbox: Room): void {
+    const currentState = this._inboxState.value;
+    const updatedConnectedInboxes = currentState.connectedInboxes.map(inbox =>
+      inbox.id === updatedInbox.id ? updatedInbox : inbox
+    );
+    this._inboxState.next({
+      ...currentState,
+      connectedInboxes: updatedConnectedInboxes,
+    });
+  }
+
+  updateConnectedInboxes(updatedInboxes: Room[]): void {
+    const currentState = this._inboxState.value;
+    const updatedConnectedInboxes = currentState.connectedInboxes.map(inbox => {
+      const foundUpdatedInbox = updatedInboxes.find(
+        updated => updated.id === inbox.id
+      );
+      return foundUpdatedInbox ? foundUpdatedInbox : inbox;
+    });
+    this._inboxState.next({
+      ...currentState,
+      connectedInboxes: updatedConnectedInboxes,
+    });
+  }
+
   setIsLoading(isLoading: boolean): void {
     const currentState = this._inboxState.value;
     this._inboxState.next({ ...currentState, isLoading });

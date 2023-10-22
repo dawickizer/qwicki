@@ -4,7 +4,7 @@ import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { Subject, Observable } from 'rxjs';
 import { UserService } from 'src/app/state/user/user.service';
 import { User } from 'src/app/state/user/user.model';
-import { InboxService } from 'src/app/state/inbox/inbox.service';
+import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -20,13 +20,13 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
   constructor(
     private keyBindService: KeyBindService,
     private userService: UserService,
-    private inboxService: InboxService
+    private socialOrchestratorService: SocialOrchestratorService
   ) {}
 
   ngOnInit() {
     this.user$ = this.userService.user$;
-    this.inboxService.createPersonalInbox().subscribe();
-    this.inboxService.joinFriendsInboxesIfPresent().subscribe();
+    this.socialOrchestratorService.createPersonalInbox().subscribe();
+    this.socialOrchestratorService.joinFriendsInboxesIfPresent().subscribe();
     this.handleSideNavKeyBind();
   }
 

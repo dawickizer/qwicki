@@ -29,16 +29,22 @@ export class InboxService {
     private inboxEffectService: InboxEffectService
   ) {}
 
-  createPersonalInbox(): Observable<Room<any>> {
-    return this.inboxEffectService.createPersonalInbox();
+  createInbox(inboxId: string, jwt: string): Observable<Room<any>> {
+    return this.inboxEffectService.createInbox(inboxId, jwt);
   }
 
-  joinFriendsInboxesIfPresent(): Observable<Room<any>[]> {
-    return this.inboxEffectService.joinFriendsInboxesIfPresent();
+  joinExistingInboxesIfPresent(
+    inboxIds: string[],
+    jwt: string
+  ): Observable<Room<any>[]> {
+    return this.inboxEffectService.joinExistingInboxesIfPresent(inboxIds, jwt);
   }
 
-  joinExistingInboxIfPresent(inboxId: string): Observable<Room<any>> {
-    return this.inboxEffectService.joinExistingInboxIfPresent(inboxId);
+  joinExistingInboxIfPresent(
+    inboxId: string,
+    jwt: string
+  ): Observable<Room<any>> {
+    return this.inboxEffectService.joinExistingInboxIfPresent(inboxId, jwt);
   }
 
   leaveInboxes(inboxes: Room[]): Observable<number[]> {
@@ -75,6 +81,14 @@ export class InboxService {
 
   removeConnectedInboxes(inboxesToRemove: Room[]): void {
     this.inboxStateService.removeConnectedInboxes(inboxesToRemove);
+  }
+
+  updateConnectedInbox(updatedInbox: Room): void {
+    this.inboxStateService.updateConnectedInbox(updatedInbox);
+  }
+
+  updateConnectedInboxes(updatedInboxes: Room[]): void {
+    this.inboxStateService.updateConnectedInboxes(updatedInboxes);
   }
 
   setIsLoading(isLoading: boolean): void {
