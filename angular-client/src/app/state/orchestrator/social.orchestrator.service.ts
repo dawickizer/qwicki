@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap, switchMap, map } from 'rxjs';
+import { Observable, tap, switchMap, map, of } from 'rxjs';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { User } from '../user/user.model';
 import { FriendService } from '../friend/friend.service';
@@ -57,15 +57,18 @@ export class SocialOrchestratorService {
 
   deleteFriend(friend: Friend): Observable<Friend> {
     return this.friendService.deleteFriend(this.user, friend).pipe(
-      tap(deletedFriend => {
+      switchMap(deletedFriend => {
         const friendsInbox = this.friendsInboxes.find(
           friendsInbox => friendsInbox.id === deletedFriend._id
         );
         if (friendsInbox) {
           friendsInbox.send('removeFriend', this.user);
-          this.inboxService.leaveInbox(friendsInbox);
+          return this.inboxService
+            .leaveInbox(friendsInbox)
+            .pipe(map(() => deletedFriend));
         } else {
           this.personalInbox.send('disconnectFriend', friend);
+          return of(deletedFriend);
         }
       })
     );
