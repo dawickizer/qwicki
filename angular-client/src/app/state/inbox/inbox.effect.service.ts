@@ -132,6 +132,9 @@ export class InboxEffectService {
     //     this.colyseusService.hostInbox.onMessage('messageHost', (message: Message) =>
     //       this.handleMessageHostEvent(message)
     //     );
+    //   private handleMessageHostEvent(message: Message) {
+    //     this.potentialMessage = message;
+    //   }
 
     inbox.onMessage('online', (inboxId: string) => {
       this.friendService.setFriendOnline(inboxId);
@@ -174,6 +177,10 @@ export class InboxEffectService {
     //       inbox.onMessage('messageUser', (message: Message) =>
     //         this.handleMessageUserEvent(message)
     //       );
+
+    //   private handleMessageUserEvent(message: Message) {
+    //     this.potentialMessage = message;
+    //   }
 
     inbox.onMessage('disconnectFriend', (disconnectFriend: Friend) => {
       this.friendService.removeFriend(disconnectFriend);
@@ -240,11 +247,3 @@ export class InboxEffectService {
     this.inboxStateService.setIsLoading(false);
   };
 }
-
-//   private handleMessageHostEvent(message: Message) {
-//     this.potentialMessage = message;
-//   }
-
-//   private handleMessageUserEvent(message: Message) {
-//     this.potentialMessage = message;
-//   }
