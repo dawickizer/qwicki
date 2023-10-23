@@ -54,7 +54,6 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
             return friend;
           }
         });
-        console.log(this.friends.data);
       });
   }
 
@@ -63,14 +62,12 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(inboundFriendRequests => {
         this.inboundFriendRequests.data = inboundFriendRequests;
-        console.log(this.inboundFriendRequests.data);
       });
 
     this.friendRequestService.outboundFriendRequests$
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(outboundFriendRequests => {
         this.outboundFriendRequests.data = outboundFriendRequests;
-        console.log(this.outboundFriendRequests.data);
       });
   }
 

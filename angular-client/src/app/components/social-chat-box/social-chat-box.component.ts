@@ -10,9 +10,10 @@ import {
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Subject } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
+import { MessageService } from 'src/app/state/message/message.service';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
@@ -56,17 +57,24 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
 
   constructor(
     private snackBar: MatSnackBar,
-    private socialOrchestratorService: SocialOrchestratorService
+    private socialOrchestratorService: SocialOrchestratorService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
-    // this.socialService.getMessagesBetween(this.friend).subscribe({
-    //   next: async (messages: Message[]) => {
-    //     this.messages.data = this.addEmptyMessages(messages);
-    //     this.setScrollHeight();
-    //   },
-    //   error: error => this.openSnackBar(error, 'Dismiss'),
-    // });
+    this.socialOrchestratorService
+      .getAllMessagesBetween(this.friend)
+      .subscribe(messages => {
+        this.messages.data = this.addEmptyMessages(messages);
+        this.setScrollHeight();
+      });
+
+    this.messageService
+      .messagesByFriendId$(this.friend._id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(messages => {
+        this.messages.data = messages;
+      });
   }
 
   ngOnDestroy() {

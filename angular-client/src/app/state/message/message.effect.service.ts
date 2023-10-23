@@ -20,7 +20,7 @@ export class MessageEffectService {
   getAllBetween(user: User, friend: Friend): Observable<Message[]> {
     return this.messageApiService.getAllBetween(user, friend).pipe(
       tap(messages => {
-        // state modifying logic
+        this.messageStateService.setFriendMessages(friend, messages);
       }),
       catchError(this.handleError)
     );

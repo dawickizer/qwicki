@@ -22,6 +22,10 @@ export class MessageService {
     return this.messageStateService.messages$;
   }
 
+  messagesByFriendId$(friendId: string): Observable<Message[] | null> {
+    return this.messageStateService.messagesByFriendId$(friendId);
+  }
+
   constructor(
     private messageEffectService: MessageEffectService,
     private messageStateService: MessageStateService
@@ -52,5 +56,17 @@ export class MessageService {
 
   setMessages(messages: Map<string, Message[]>): void {
     this.messageStateService.setMessages(messages);
+  }
+
+  setFriendMessages(friend: Friend, messages: Message[]) {
+    return this.messageStateService.setFriendMessages(friend, messages);
+  }
+
+  addMessagesToFriend(friend: Friend, messages: Message[]) {
+    return this.messageStateService.addMessagesToFriend(friend, messages);
+  }
+
+  addMessageToFriend(friend: Friend, message: Message) {
+    return this.messageStateService.addMessageToFriend(friend, message);
   }
 }

@@ -11,6 +11,8 @@ import { Friend } from '../friend/friend.model';
 import { FriendRequest } from '../friend-request/friend-requests.model';
 import { Room } from 'colyseus.js';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
+import { Message } from '../message/message.model';
+import { MessageService } from '../message/message.service';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +31,7 @@ export class SocialOrchestratorService {
     private userService: UserService,
     private authService: AuthService,
     private inboxService: InboxService,
+    private messageService: MessageService,
     private colyseusService: ColyseusService
   ) {
     this.subscribeToAuthState();
@@ -67,6 +70,10 @@ export class SocialOrchestratorService {
     this.inboxService.personalInbox$.subscribe(personalInbox => {
       this.personalInbox = personalInbox;
     });
+  }
+
+  getAllMessagesBetween(friend: Friend): Observable<Message[]> {
+    return this.messageService.getAllBetween(this.user, friend);
   }
 
   deleteFriend(friend: Friend): Observable<Friend> {
