@@ -8,6 +8,10 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class InboxService {
+  get inboxState$() {
+    return this.inboxStateService.inboxState$;
+  }
+
   get isLoading$(): Observable<boolean> {
     return this.inboxStateService.isLoading$;
   }

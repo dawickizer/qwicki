@@ -9,6 +9,10 @@ import { User } from '../user/user.model';
   providedIn: 'root',
 })
 export class FriendRequestService {
+  get friendRequestState$() {
+    return this.friendRequestStateService.friendRequestState$;
+  }
+
   get isLoading$(): Observable<boolean> {
     return this.friendRequestStateService.isLoading$;
   }

@@ -10,6 +10,10 @@ import { FriendRequest } from '../friend-request/friend-requests.model';
   providedIn: 'root',
 })
 export class FriendService {
+  get friendState$() {
+    return this.friendStateService.friendState$;
+  }
+
   get isLoading$() {
     return this.friendStateService.isLoading$;
   }

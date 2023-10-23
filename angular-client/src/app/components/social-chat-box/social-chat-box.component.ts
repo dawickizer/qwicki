@@ -10,9 +10,9 @@ import {
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Message } from 'src/app/models/message/message';
 import { Subject } from 'rxjs';
 import { Friend } from 'src/app/state/friend/friend.model';
+import { Message } from 'src/app/state/message/message.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({

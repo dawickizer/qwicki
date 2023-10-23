@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, of } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { FriendState, initialState } from './friend.state';
 import {
   friendsSelector,
@@ -7,7 +7,6 @@ import {
   offlineFriendsSelector,
   onlineFriendsSelector,
 } from './friend.state.selectors';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Friend } from './friend.model';
 
 @Injectable({
@@ -22,8 +21,6 @@ export class FriendStateService {
   public friends$ = friendsSelector(this.friendState$);
   public onlineFriends$ = onlineFriendsSelector(this.friends$);
   public offlineFriends$ = offlineFriendsSelector(this.friends$);
-
-  constructor(private snackBar: MatSnackBar) {}
 
   setInitialState() {
     this._friendState.next(initialState);
@@ -187,11 +184,4 @@ export class FriendStateService {
     const currentState = this._friendState.value;
     this._friendState.next({ ...currentState, isLoading });
   }
-
-  private handleError = (error: any): Observable<null> => {
-    console.error(error);
-    this.snackBar.open(error, 'Dismiss', { duration: 5000 });
-    this.setIsLoading(false);
-    return of(null);
-  };
 }

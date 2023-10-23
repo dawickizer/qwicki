@@ -8,7 +8,10 @@ import { UserEffectService } from './user.effect.service';
   providedIn: 'root',
 })
 export class UserService {
-  // Directly exposing some state observables from UserStateService
+  get userState$() {
+    return this.userStateService.userState$;
+  }
+
   get isLoading$(): Observable<boolean> {
     return this.userStateService.isLoading$;
   }
