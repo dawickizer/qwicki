@@ -28,17 +28,6 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
   @Input() friend: Friend;
   @Output() unviewedMessage: EventEmitter<boolean> = new EventEmitter();
 
-  private _potentialMessage: Message;
-  @Input() set potentialMessage(message: Message) {
-    this._potentialMessage = message;
-    if (message && this.friend && message.from._id === this.friend._id)
-      this.handlePotentialMessage(message);
-  }
-
-  get potentialMessage(): Message {
-    return this._potentialMessage;
-  }
-
   private _panelOpenState: boolean;
   @Input() set panelOpenState(panelOpenState: boolean) {
     this._panelOpenState = panelOpenState;
@@ -65,7 +54,7 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
     this.socialOrchestratorService
       .getAllMessagesBetween(this.friend)
       .subscribe(messages => {
-        this.messages.data = this.addEmptyMessages(messages);
+        this.messages.data = messages;
         this.setScrollHeight();
       });
 
@@ -73,23 +62,18 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
       .messagesByFriendId$(this.friend._id)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(messages => {
-        this.messages.data = messages;
+        if (messages) {
+          this.messages.data = messages;
+          this.onUnviewedMessage();
+          this.setScrollHeight();
+          this.newMessage = '';
+        }
       });
   }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-  }
-
-  handlePotentialMessage(message: Message) {
-    this.onUnviewedMessage();
-    this.messages.data = this.addEmptyMessages([
-      ...this.messages.data,
-      message,
-    ]);
-    this.messages._updateChangeSubscription();
-    this.setScrollHeight();
   }
 
   setScrollHeight() {
@@ -127,39 +111,14 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
   sendMessage(event?: any) {
     // // prevent that text area from causing an expand event
     if (event) event.preventDefault();
-    console.log(this.newMessage);
-    // // if text is empty dont do anything
-    // if (this.newMessage && this.newMessage !== '') {
-    //   const message: Message = new Message();
-    //   message.content = this.newMessage;
-    //   message.to = this.friend;
-
-    //   this.socialService.sendMessage(message).subscribe({
-    //     next: async (message: Message) => {
-    //       const room: Colyseus.Room =
-    //         this.colyseusService.onlineFriendsRooms.find(
-    //           room => room.id === message.to._id
-    //         );
-    //       if (room) {
-    //         room.send('messageHost', message);
-    //       } else {
-    //         this.colyseusService.hostRoom.send('messageUser', message);
-    //       }
-    //       this.onUnviewedMessage();
-    //       this.messages.data = this.addEmptyMessages([
-    //         ...this.messages.data,
-    //         message,
-    //       ]);
-    //       this.messages._updateChangeSubscription();
-    //       this.setScrollHeight();
-    //       this.newMessage = '';
-    //     },
-    //     error: error => {
-    //       this.newMessage = '';
-    //       this.openSnackBar(error, 'Dismiss');
-    //     },
-    //   });
-    // }
+    if (this.newMessage && this.newMessage !== '') {
+      const message: Message = new Message();
+      message.content = this.newMessage;
+      message.to = this.friend;
+      this.socialOrchestratorService
+        .sendMessage(this.friend, message)
+        .subscribe();
+    }
   }
 
   removeFriend() {
@@ -168,28 +127,6 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
 
   onUnviewedMessage() {
     this.unviewedMessage.emit(true);
-  }
-
-  addEmptyMessages(messages: Message[]): Message[] {
-    const emptyMessage: Message = new Message();
-    emptyMessage.content = '';
-    if (messages.length < 1) {
-      messages.unshift(emptyMessage);
-      messages.unshift(emptyMessage);
-      messages.unshift(emptyMessage);
-      messages.unshift(emptyMessage);
-    } else if (messages.length < 2) {
-      messages.unshift(emptyMessage);
-      messages.unshift(emptyMessage);
-      messages.unshift(emptyMessage);
-    } else if (messages.length < 3) {
-      messages.unshift(emptyMessage);
-      messages.unshift(emptyMessage);
-    } else if (messages.length < 4) {
-      messages.unshift(emptyMessage);
-    }
-
-    return messages;
   }
 
   openSnackBar(message: string, action: string) {

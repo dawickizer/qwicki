@@ -29,7 +29,7 @@ export class MessageEffectService {
   send(user: User, friend: Friend, message: Message): Observable<Message> {
     return this.messageApiService.send(user, friend, message).pipe(
       tap(message => {
-        // state modifying logic
+        this.messageStateService.addMessageToFriend(friend, message);
       }),
       catchError(this.handleError)
     );

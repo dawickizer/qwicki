@@ -1,10 +1,10 @@
-import { User } from '../user/user.model';
+import { Friend } from '../friend/friend.model';
 
 export class Message {
   _id?: string;
   createdAt: Date;
-  from: User;
-  to: User;
+  from: Friend;
+  to: Friend;
   content: string;
   viewed: boolean;
 }

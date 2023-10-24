@@ -76,6 +76,22 @@ export class SocialOrchestratorService {
     return this.messageService.getAllBetween(this.user, friend);
   }
 
+  sendMessage(friend: Friend, message: Message): Observable<Message> {
+    return this.messageService.send(this.user, friend, message).pipe(
+      tap(message => {
+        const friendsInbox = this.friendsInboxes.find(
+          friendsInbox => friendsInbox.id === message.to._id
+        );
+
+        if (friendsInbox) {
+          friendsInbox.send('messageHost', message);
+        } else {
+          this.personalInbox.send('messageUser', message);
+        }
+      })
+    );
+  }
+
   deleteFriend(friend: Friend): Observable<Friend> {
     return this.friendService.deleteFriend(this.user, friend).pipe(
       switchMap(deletedFriend => {
@@ -203,12 +219,9 @@ export class SocialOrchestratorService {
   }
 
   private setPersonalInboxListeners(inbox: Room): Room {
-    //     this.colyseusService.hostInbox.onMessage('messageHost', (message: Message) =>
-    //       this.handleMessageHostEvent(message)
-    //     );
-    //   private handleMessageHostEvent(message: Message) {
-    //     this.potentialMessage = message;
-    //   }
+    inbox.onMessage('messageHost', (message: Message) => {
+      this.messageService.addMessageToFriend(message.from, message);
+    });
 
     inbox.onMessage('online', (inboxId: string) => {
       this.friendService.setFriendOnline(inboxId);
@@ -248,13 +261,9 @@ export class SocialOrchestratorService {
   }
 
   private setFriendInboxListeners(inbox: Room): Room {
-    //       inbox.onMessage('messageUser', (message: Message) =>
-    //         this.handleMessageUserEvent(message)
-    //       );
-
-    //   private handleMessageUserEvent(message: Message) {
-    //     this.potentialMessage = message;
-    //   }
+    inbox.onMessage('messageUser', (message: Message) => {
+      this.messageService.addMessageToFriend(message.from, message);
+    });
 
     inbox.onMessage('disconnectFriend', (disconnectFriend: Friend) => {
       this.friendService.removeFriend(disconnectFriend);
