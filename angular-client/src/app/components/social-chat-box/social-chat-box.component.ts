@@ -8,7 +8,6 @@ import {
   ViewChild,
   OnDestroy,
 } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
 import { Subject, takeUntil } from 'rxjs';
 import { Friend } from 'src/app/state/friend/friend.model';
@@ -45,7 +44,6 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
   unsubscribe$ = new Subject<void>();
 
   constructor(
-    private snackBar: MatSnackBar,
     private socialOrchestratorService: SocialOrchestratorService,
     private messageService: MessageService
   ) {}
@@ -127,11 +125,5 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
 
   onUnviewedMessage() {
     this.unviewedMessage.emit(true);
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000,
-    });
   }
 }
