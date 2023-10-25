@@ -17,7 +17,7 @@ export class FriendEffectService {
     private snackBar: MatSnackBar
   ) {}
 
-  addNewFriend(user: User, friendRequest: FriendRequest): Observable<User> {
+  addFriend(user: User, friendRequest: FriendRequest): Observable<User> {
     this.friendStateService.setIsLoading(true);
     return this.friendApiService.add(user, friendRequest._id).pipe(
       tap(() => {

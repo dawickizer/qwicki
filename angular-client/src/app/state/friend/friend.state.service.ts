@@ -26,7 +26,7 @@ export class FriendStateService {
     this._friendState.next(initialState);
   }
 
-  setFriendOnline(friendId: string): void {
+  reorderFriend(friendId: string, position: 'front' | 'end'): void {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
@@ -39,17 +39,13 @@ export class FriendStateService {
     // Create a shallow copy of the friends array
     const updatedFriends = [...currentState.friends];
 
-    // Update the online status of the specified friend
-    updatedFriends[friendIndex] = {
-      ...updatedFriends[friendIndex],
-      online: true,
-    };
-
-    // Remove the friend from its current position and add to the start of the array
     const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
-    updatedFriends.unshift(friendToMove);
 
-    updatedFriends.map(friend => new Friend(friend));
+    if (position === 'front') {
+      updatedFriends.unshift(friendToMove);
+    } else {
+      updatedFriends.push(friendToMove);
+    }
 
     this._friendState.next({
       ...currentState,
@@ -57,37 +53,29 @@ export class FriendStateService {
     });
   }
 
+  setFriendOnline(friendId: string): void {
+    this.updateFriendStatus(friendId, true);
+    this.reorderFriend(friendId, 'front');
+  }
+
   setFriendsOnline(friendIds: string[]): void {
-    const currentState = this._friendState.value;
-    if (!currentState.friends) return;
-
-    // Create a shallow copy of the friends array
-    const updatedFriends = [...currentState.friends];
-
     friendIds.forEach(friendId => {
-      const friendIndex = updatedFriends.findIndex(
-        friend => friend._id === friendId
-      );
-      if (friendIndex === -1) return; // if the friend with the given ID is not found
-
-      // Update the online status of the specified friend
-      updatedFriends[friendIndex] = {
-        ...updatedFriends[friendIndex],
-        online: true,
-      };
-
-      // Remove the friend from its current position and add to the start of the array
-      const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
-      updatedFriends.unshift(friendToMove);
-    });
-
-    this._friendState.next({
-      ...currentState,
-      friends: updatedFriends.map(friend => new Friend(friend)),
+      this.setFriendOnline(friendId);
     });
   }
 
   setFriendOffline(friendId: string): void {
+    this.updateFriendStatus(friendId, false);
+    this.reorderFriend(friendId, 'end');
+  }
+
+  setFriendsOffline(friendIds: string[]): void {
+    friendIds.forEach(friendId => {
+      this.setFriendOffline(friendId);
+    });
+  }
+
+  private updateFriendStatus(friendId: string, online: boolean): void {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
@@ -103,42 +91,8 @@ export class FriendStateService {
     // Update the online status of the specified friend
     updatedFriends[friendIndex] = {
       ...updatedFriends[friendIndex],
-      online: false,
+      online,
     };
-
-    // Remove the friend from its current position and push to the end of the array
-    const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
-    updatedFriends.push(friendToMove);
-
-    this._friendState.next({
-      ...currentState,
-      friends: updatedFriends.map(friend => new Friend(friend)),
-    });
-  }
-
-  setFriendsOffline(friendIds: string[]): void {
-    const currentState = this._friendState.value;
-    if (!currentState.friends) return;
-
-    // Create a shallow copy of the friends array
-    const updatedFriends = [...currentState.friends];
-
-    friendIds.forEach(friendId => {
-      const friendIndex = updatedFriends.findIndex(
-        friend => friend._id === friendId
-      );
-      if (friendIndex === -1) return; // if the friend with the given ID is not found
-
-      // Update the online status of the specified friend
-      updatedFriends[friendIndex] = {
-        ...updatedFriends[friendIndex],
-        online: false,
-      };
-
-      // Remove the friend from its current position and push to the end of the array
-      const friendToMove = updatedFriends.splice(friendIndex, 1)[0];
-      updatedFriends.push(friendToMove);
-    });
 
     this._friendState.next({
       ...currentState,

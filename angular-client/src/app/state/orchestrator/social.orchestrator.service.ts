@@ -229,6 +229,7 @@ export class SocialOrchestratorService {
   private setPersonalInboxListeners(inbox: Room): Room {
     inbox.onMessage('messageHost', (message: Message) => {
       this.messageService.addMessageToFriend(message.from, message);
+      this.friendService.reorderFriend(message.from._id, 'front');
     });
 
     inbox.onMessage('online', (inboxId: string) => {
@@ -272,6 +273,7 @@ export class SocialOrchestratorService {
   private setFriendInboxListeners(inbox: Room): Room {
     inbox.onMessage('messageUser', (message: Message) => {
       this.messageService.addMessageToFriend(message.from, message);
+      this.friendService.reorderFriend(message.from._id, 'front');
     });
 
     inbox.onMessage('disconnectFriend', (disconnectedFriend: Friend) => {

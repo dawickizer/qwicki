@@ -36,7 +36,7 @@ export class FriendService {
   ) {}
 
   addNewFriend(user: User, friendRequest: FriendRequest): Observable<User> {
-    return this.friendEffectService.addNewFriend(user, friendRequest);
+    return this.friendEffectService.addFriend(user, friendRequest);
   }
 
   deleteFriend(user: User, friend: Friend): Observable<Friend> {
@@ -73,5 +73,9 @@ export class FriendService {
 
   removeFriend(friend: Friend): void {
     this.friendStateService.removeFriend(friend);
+  }
+
+  reorderFriend(friendId: string, position: 'front' | 'end'): void {
+    this.friendStateService.reorderFriend(friendId, position);
   }
 }
