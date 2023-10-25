@@ -24,8 +24,6 @@ export class SocialCellComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    console.log(this.panelOpenState);
-    console.log(this.unviewedMessages);
     this.socialOrchestratorService
       .getAllMessagesBetween(this.friend)
       .subscribe();
@@ -69,7 +67,6 @@ export class SocialCellComponent implements OnInit, OnDestroy {
 
   markMessagesAsViewed() {
     if (this.panelOpenState && this.unviewedMessages.length > 0) {
-      console.log('HMMMMMMM');
       this.socialOrchestratorService
         .markMessagesAsViewed(this.friend, this.unviewedMessages)
         .subscribe();

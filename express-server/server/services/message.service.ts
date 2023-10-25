@@ -66,7 +66,9 @@ export const markMessagesAsViewed = async (
   await Message.updateMany({ _id: { $in: messageIds } }, { viewed: true });
 
   // Fetch and return the updated messages
-  const updatedMessages = await Message.find({ _id: { $in: messageIds } });
+  const updatedMessages = await Message.find({ _id: { $in: messageIds } })
+    .populate(user('from'))
+    .populate(user('to'));
   return updatedMessages;
 };
 
