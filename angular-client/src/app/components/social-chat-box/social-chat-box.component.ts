@@ -62,8 +62,6 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
           this.onUnviewedMessage();
           this.setScrollHeight();
           this.newMessage = '';
-          console.log(this.friend.username);
-          console.log(messages);
         }
       });
   }
