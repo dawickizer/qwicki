@@ -4,6 +4,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
+import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
@@ -69,6 +70,7 @@ import { UserEffectService } from './state/user/user.effect.service';
 import { UserFilterableMultiSelectComponent } from './components/user-filterable-multi-select/user-filterable-multi-select.component';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
+import { NotificationBadgeComponent } from './components/notification-badge/notification-badge.component';
 
 @NgModule({
   declarations: [
@@ -93,6 +95,7 @@ import { UserStateService } from './state/user/user.state.service';
     SocialSidenavComponent,
     UserProfileComponent,
     UserFilterableMultiSelectComponent,
+    NotificationBadgeComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -101,6 +104,7 @@ import { UserStateService } from './state/user/user.state.service';
     DragDropModule,
     FormsModule,
     HttpClientModule,
+    MatBadgeModule,
     MatButtonModule,
     MatCardModule,
     MatDividerModule,

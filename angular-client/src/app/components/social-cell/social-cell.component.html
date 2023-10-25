@@ -17,11 +17,9 @@
       {{ friend.username }}
     </mat-panel-title>
     <mat-panel-description>
-      <div
+      <app-notification-badge
         *ngIf="unviewedMessages.length > 0 && !panelOpenState"
-        class="notification-bubble">
-        {{ unviewedMessages.length > 99 ? '99+' : unviewedMessages.length }}
-      </div>
+        [count]="unviewedMessages.length"></app-notification-badge>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <app-social-chat-box

@@ -195,6 +195,18 @@ export class SocialOrchestratorService {
       );
   }
 
+  connect(): Observable<any> {
+    return this.createPersonalInbox().pipe(
+      switchMap(() => this.joinFriendsInboxesIfPresent()),
+      tap(() => {
+        // sort friends by online with message, online without message, offline with message, rest
+        // if i do the sort here i can potentially remove the reordering of users from the setFriendOnline/Offline
+        // state functions and then manually reorder on online/offline room events
+        this.friendService.setFriends(this.friends);
+      })
+    );
+  }
+
   createPersonalInbox(): Observable<Room<any>> {
     return this.inboxService.createInbox(this.decodedJwt._id, this.jwt).pipe(
       tap(inbox => {

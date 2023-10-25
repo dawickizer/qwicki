@@ -13,9 +13,9 @@ import { Subject, takeUntil } from 'rxjs';
 export class SocialCellComponent implements OnInit, OnDestroy {
   @Input() friend: Friend;
 
-  unviewedMessages: Message[] = [];
   panelOpenState = false;
   messages: Map<string, Message[]> = new Map();
+  unviewedMessages: Message[] = [];
   unsubscribe$ = new Subject<void>();
 
   constructor(
@@ -34,7 +34,15 @@ export class SocialCellComponent implements OnInit, OnDestroy {
       .subscribe(messages => {
         if (messages) {
           this.messages = messages;
-          this.getUnviewedMessages();
+        }
+      });
+
+    this.messageService
+      .unviewedMessagesByFriendId$(this.friend._id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(unviewedMessages => {
+        if (unviewedMessages) {
+          this.unviewedMessages = unviewedMessages;
           this.markMessagesAsViewed();
         }
       });
@@ -43,17 +51,6 @@ export class SocialCellComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.complete();
-  }
-
-  getUnviewedMessages() {
-    this.unviewedMessages = [];
-    for (const messageArray of this.messages.values()) {
-      for (const message of messageArray) {
-        if (!message.viewed && message.from._id === this.friend._id) {
-          this.unviewedMessages.push(message);
-        }
-      }
-    }
   }
 
   onPanelOpen() {

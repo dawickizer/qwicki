@@ -18,12 +18,20 @@ export class MessageService {
     return this.messageStateService.isLoading$;
   }
 
+  get unviewedMessages$() {
+    return this.messageStateService.unviewedMessages$;
+  }
+
   get messages$() {
     return this.messageStateService.messages$;
   }
 
   messagesByFriendId$(friendId: string): Observable<Map<string, Message[]>> {
     return this.messageStateService.messagesByFriendId$(friendId);
+  }
+
+  unviewedMessagesByFriendId$(friendId: string): Observable<Message[]> {
+    return this.messageStateService.unviewedMessagesByFriendId$(friendId);
   }
 
   constructor(
@@ -59,6 +67,10 @@ export class MessageService {
 
   setInitialState(): void {
     this.messageStateService.setInitialState();
+  }
+
+  setIsLoading(isLoading: boolean): void {
+    this.messageStateService.setIsLoading(isLoading);
   }
 
   setMessages(messages: Map<string, Map<string, Message[]>>): void {

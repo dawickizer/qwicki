@@ -5,6 +5,8 @@ import {
   isLoadingSelector,
   messagesSelector,
   messagesByFriendIdSelector,
+  unviewedMessagesByFriendIdSelector,
+  unviewedMessagesSelector,
 } from './message.state.selectors';
 import { Message } from './message.model';
 import { Friend } from '../friend/friend.model';
@@ -19,12 +21,20 @@ export class MessageStateService {
     this._messageState.asObservable();
   public isLoading$ = isLoadingSelector(this.messageState$);
   public messages$ = messagesSelector(this.messageState$);
+  public unviewedMessages$ = unviewedMessagesSelector(this.messages$);
 
   // expose the dynamic selector since the above pattern cannot be followed
   messagesByFriendId$(
     friendId: string
   ): Observable<Map<string, Message[]> | null> {
     return messagesByFriendIdSelector(this.messages$, friendId);
+  }
+
+  unviewedMessagesByFriendId$(friendId: string): Observable<Message[]> {
+    return unviewedMessagesByFriendIdSelector(
+      messagesByFriendIdSelector(this.messages$, friendId),
+      friendId
+    );
   }
 
   setInitialState() {

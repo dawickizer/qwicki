@@ -14,12 +14,25 @@
 
     <mat-tab-group
       class="social-sidenav-tab-group social-sidenav-no-pagination">
-      <mat-tab label="Friends">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Friends
+          <app-notification-badge
+            *ngIf="unviewedMessagesCount > 0"
+            [count]="unviewedMessagesCount"></app-notification-badge>
+        </ng-template>
+
         <app-social-friends-tab></app-social-friends-tab>
       </mat-tab>
-      <!-- <mat-tab label="Groups">
-        <app-social-groups-tab> </app-social-groups-tab>
-      </mat-tab> -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Groups
+          <app-notification-badge
+            *ngIf="unviewedMessagesCount > 0"
+            [count]="unviewedMessagesCount"></app-notification-badge>
+        </ng-template>
+        <!-- <app-social-groups-tab> </app-social-groups-tab> -->
+      </mat-tab>
     </mat-tab-group>
   </mat-drawer>
   <!-- <app-home [self]="self" [selfJWT]="selfJWT"></app-home> -->
