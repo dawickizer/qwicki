@@ -92,6 +92,13 @@ export class SocialOrchestratorService {
     );
   }
 
+  markMessagesAsViewed(
+    friend: Friend,
+    messages: Message[]
+  ): Observable<Message[]> {
+    return this.messageService.markAsViewed(this.user, friend, messages);
+  }
+
   deleteFriend(friend: Friend): Observable<Friend> {
     return this.friendService.deleteFriend(this.user, friend).pipe(
       switchMap(deletedFriend => {

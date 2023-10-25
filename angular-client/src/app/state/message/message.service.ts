@@ -49,8 +49,12 @@ export class MessageService {
     return this.messageEffectService.getUnviewedCountBetween(user, friend);
   }
 
-  markAsViewed(user: User, friend: Friend): Observable<boolean> {
-    return this.messageEffectService.markAsViewed(user, friend);
+  markAsViewed(
+    user: User,
+    friend: Friend,
+    messages: Message[]
+  ): Observable<Message[]> {
+    return this.messageEffectService.markAsViewed(user, friend, messages);
   }
 
   setInitialState(): void {
@@ -63,6 +67,10 @@ export class MessageService {
 
   removeMessagesFromFriend(friend: Friend): void {
     this.messageStateService.removeMessagesFromFriend(friend);
+  }
+
+  updateFriendMessages(friend: Friend, messages: Message[]) {
+    this.messageStateService.updateFriendMessages(friend, messages);
   }
 
   setFriendMessages(friend: Friend, messages: Map<string, Message[]>): void {

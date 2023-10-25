@@ -36,3 +36,17 @@
   font-size: 12px;
   padding-right: 4px;
 }
+
+.notification-bubble {
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  display: inline-block;
+  border-radius: 50%; /* Makes the badge rounded */
+  background-color: #d31f1f; /* Red-ish background color */
+  color: #ffffff; /* White text color */
+  font-size: 12px; /* Adjust based on your design needs */
+  font-weight: bold;
+  position: relative;
+  text-align: center; /* Centers single digit numbers */
+}

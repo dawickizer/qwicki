@@ -78,6 +78,31 @@ export class MessageStateService {
     this._messageState.next({ ...currentState, messages: updatedMessages });
   }
 
+  updateFriendMessages(friend: Friend, updatedMessagesArray: Message[]) {
+    const currentState = this._messageState.value;
+    const updatedMessages = new Map(currentState.messages);
+    const currentFriendMessages = new Map(
+      updatedMessages.get(friend._id) || []
+    );
+
+    for (const updatedMessage of updatedMessagesArray) {
+      const dateKey = this.getDateKey(new Date(updatedMessage.createdAt));
+      const dateMessages = currentFriendMessages.get(dateKey) || [];
+      const messageIndex = dateMessages.findIndex(
+        message => message._id === updatedMessage._id
+      );
+
+      if (messageIndex !== -1) {
+        const clonedDateMessages = [...dateMessages];
+        clonedDateMessages[messageIndex] = updatedMessage;
+        currentFriendMessages.set(dateKey, clonedDateMessages);
+      }
+    }
+
+    updatedMessages.set(friend._id, currentFriendMessages);
+    this._messageState.next({ ...currentState, messages: updatedMessages });
+  }
+
   groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
     const grouped: Map<string, Message[]> = new Map();
 

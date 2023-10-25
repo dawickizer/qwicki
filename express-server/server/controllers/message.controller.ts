@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import * as messageService from '../services/message.service';
 import CustomError from '../error/CustomError';
+import { Schema } from 'mongoose';
 
 export const getMessages = async (
   req: Request,
@@ -62,9 +63,8 @@ export const markMessagesAsViewed = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.params.userId;
-    const friendId = req.params.friendId;
-    const result = await messageService.markMessagesAsViewed(userId, friendId);
+    const messageIds: string | Schema.Types.ObjectId[] = req.body;
+    const result = await messageService.markMessagesAsViewed(messageIds);
     res.status(200).send(result);
   } catch (error) {
     if (error instanceof CustomError)

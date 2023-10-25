@@ -43,18 +43,19 @@ export class MessageEffectService {
     user: User,
     friend: Friend
   ): Observable<{ count: number }> {
-    return this.messageApiService.getUnviewedCountBetween(user, friend).pipe(
-      tap(count => {
-        // state modifying logic
-      }),
-      catchError(this.handleError)
-    );
+    return this.messageApiService
+      .getUnviewedCountBetween(user, friend)
+      .pipe(catchError(this.handleError));
   }
 
-  markAsViewed(user: User, friend: Friend): Observable<boolean> {
-    return this.messageApiService.markAsViewed(user, friend).pipe(
-      tap(result => {
-        // state modifying logic
+  markAsViewed(
+    user: User,
+    friend: Friend,
+    messages: Message[]
+  ): Observable<Message[]> {
+    return this.messageApiService.markAsViewed(user, friend, messages).pipe(
+      tap(messages => {
+        this.messageStateService.updateFriendMessages(friend, messages);
       }),
       catchError(this.handleError)
     );

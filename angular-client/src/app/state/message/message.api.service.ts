@@ -44,11 +44,15 @@ export class MessageApiService {
       .pipe(catchError(this.handleError));
   }
 
-  markAsViewed(user: User, friend: Friend): Observable<boolean> {
+  markAsViewed(
+    user: User,
+    friend: Friend,
+    messages: Message[]
+  ): Observable<Message[]> {
     return this.http
-      .put<boolean>(
+      .put<Message[]>(
         `${this.API}${this.endpoint}/${user._id}/messages/${friend._id}/viewed`,
-        null
+        messages.map(message => message._id)
       )
       .pipe(catchError(this.handleError));
   }

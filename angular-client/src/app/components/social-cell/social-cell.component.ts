@@ -1,52 +1,78 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Friend } from 'src/app/state/friend/friend.model';
+import { Message } from 'src/app/state/message/message.model';
+import { MessageService } from 'src/app/state/message/message.service';
+import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-social-cell',
   templateUrl: './social-cell.component.html',
   styleUrls: ['./social-cell.component.css'],
 })
-export class SocialCellComponent implements OnInit {
+export class SocialCellComponent implements OnInit, OnDestroy {
   @Input() friend: Friend;
 
-  hasUnviewedMessages = false;
+  unviewedMessages: Message[] = [];
   panelOpenState = false;
+  messages: Map<string, Message[]> = new Map();
+  unsubscribe$ = new Subject<void>();
+
+  constructor(
+    private socialOrchestratorService: SocialOrchestratorService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
-    this.onUnviewedMessage();
+    console.log(this.panelOpenState);
+    console.log(this.unviewedMessages);
+    this.socialOrchestratorService
+      .getAllMessagesBetween(this.friend)
+      .subscribe();
+
+    this.messageService
+      .messagesByFriendId$(this.friend._id)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(messages => {
+        if (messages) {
+          this.messages = messages;
+          this.getUnviewedMessages();
+          this.markMessagesAsViewed();
+        }
+      });
   }
 
-  onUnviewedMessage() {
-    // if (!this.panelOpenState) {
-    //   this.socialService.hasUnviewedMessages(this.friend).subscribe({
-    //     next: async (hasUnviewedMessages: boolean) => {
-    //       this.hasUnviewedMessages = hasUnviewedMessages;
-    //     },
-    //     error: error => this.openSnackBar(error, 'Dismiss'),
-    //   });
-    // } else {
-    //   this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
-    //     next: async (hasUnviewedMessages: boolean) => {
-    //       this.hasUnviewedMessages = hasUnviewedMessages;
-    //     },
-    //     error: error => this.openSnackBar(error, 'Dismiss'),
-    //   });
-    // }
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
+  getUnviewedMessages() {
+    this.unviewedMessages = [];
+    for (const messageArray of this.messages.values()) {
+      for (const message of messageArray) {
+        if (!message.viewed) {
+          this.unviewedMessages.push(message);
+        }
+      }
+    }
   }
 
   onPanelOpen() {
     this.panelOpenState = true;
-    // if (this.hasUnviewedMessages) {
-    //   this.socialService.markUnviewedMessagesAsViewed(this.friend).subscribe({
-    //     next: async (hasUnviewedMessages: boolean) => {
-    //       this.hasUnviewedMessages = hasUnviewedMessages;
-    //     },
-    //     error: error => this.openSnackBar(error, 'Dismiss'),
-    //   });
-    // }
+    this.markMessagesAsViewed();
   }
 
   onPanelClose() {
     this.panelOpenState = false;
+  }
+
+  markMessagesAsViewed() {
+    if (this.panelOpenState && this.unviewedMessages.length > 0) {
+      console.log('HMMMMMMM');
+      this.socialOrchestratorService
+        .markMessagesAsViewed(this.friend, this.unviewedMessages)
+        .subscribe();
+    }
   }
 }

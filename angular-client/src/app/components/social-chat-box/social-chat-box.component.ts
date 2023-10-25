@@ -1,17 +1,6 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  Output,
-  EventEmitter,
-  ElementRef,
-  ViewChild,
-  OnDestroy,
-} from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, Input, ElementRef, ViewChild } from '@angular/core';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
-import { MessageService } from 'src/app/state/message/message.service';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
@@ -19,11 +8,10 @@ import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orc
   templateUrl: './social-chat-box.component.html',
   styleUrls: ['./social-chat-box.component.css'],
 })
-export class SocialChatBoxComponent implements OnInit, OnDestroy {
+export class SocialChatBoxComponent {
   @ViewChild('scrollable') scrollable: ElementRef;
 
   @Input() friend: Friend;
-  @Output() unviewedMessage: EventEmitter<boolean> = new EventEmitter();
 
   private _panelOpenState: boolean;
   @Input() set panelOpenState(panelOpenState: boolean) {
@@ -35,41 +23,19 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
     return this._panelOpenState;
   }
 
-  messages: Map<string, Message[]> = new Map();
+  private _messages: Map<string, Message[]> = new Map();
+  @Input() set messages(messages: Map<string, Message[]>) {
+    this._messages = messages;
+    this.setScrollHeight();
+  }
+
+  get messages(): Map<string, Message[]> {
+    return this._messages;
+  }
+
   newMessage = '';
 
-  unsubscribe$ = new Subject<void>();
-
-  constructor(
-    private socialOrchestratorService: SocialOrchestratorService,
-    private messageService: MessageService
-  ) {}
-
-  ngOnInit(): void {
-    this.socialOrchestratorService
-      .getAllMessagesBetween(this.friend)
-      .subscribe(messages => {
-        this.messages = messages;
-        this.setScrollHeight();
-      });
-
-    this.messageService
-      .messagesByFriendId$(this.friend._id)
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(messages => {
-        if (messages) {
-          this.messages = messages;
-          this.onUnviewedMessage();
-          this.setScrollHeight();
-          this.newMessage = '';
-        }
-      });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-  }
+  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
 
   setScrollHeight() {
     // wait 10ms to allow elementrefs to refresh..else the scroll height will be wrong
@@ -96,14 +62,11 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
       this.socialOrchestratorService
         .sendMessage(this.friend, message)
         .subscribe();
+      this.newMessage = '';
     }
   }
 
   removeFriend() {
     this.socialOrchestratorService.deleteFriend(this.friend).subscribe();
-  }
-
-  onUnviewedMessage() {
-    this.unviewedMessage.emit(true);
   }
 }

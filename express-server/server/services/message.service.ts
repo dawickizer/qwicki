@@ -60,16 +60,14 @@ export const unviewedMessagesCount = async (
 };
 
 export const markMessagesAsViewed = async (
-  userId: string | Schema.Types.ObjectId,
-  friendId: string | Schema.Types.ObjectId
-): Promise<boolean> => {
-  await Message.updateMany(
-    {
-      $and: [{ to: userId }, { from: friendId }, { viewed: false }],
-    },
-    { viewed: true }
-  );
-  return true;
+  messageIds: string | Schema.Types.ObjectId[]
+): Promise<Message[]> => {
+  // Update the messages
+  await Message.updateMany({ _id: { $in: messageIds } }, { viewed: true });
+
+  // Fetch and return the updated messages
+  const updatedMessages = await Message.find({ _id: { $in: messageIds } });
+  return updatedMessages;
 };
 
 export const user = (path: string) => {

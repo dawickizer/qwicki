@@ -17,15 +17,15 @@
       {{ friend.username }}
     </mat-panel-title>
     <mat-panel-description>
-      <span
-        *ngIf="hasUnviewedMessages && !panelOpenState"
-        class="material-icons"
-        >mail</span
-      >
+      <div
+        *ngIf="unviewedMessages.length > 0 && !panelOpenState"
+        class="notification-bubble">
+        {{ unviewedMessages.length > 99 ? '99+' : unviewedMessages.length }}
+      </div>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <app-social-chat-box
     [panelOpenState]="panelOpenState"
     [friend]="friend"
-    (unviewedMessage)="onUnviewedMessage()"></app-social-chat-box>
+    [messages]="messages"></app-social-chat-box>
 </mat-expansion-panel>
