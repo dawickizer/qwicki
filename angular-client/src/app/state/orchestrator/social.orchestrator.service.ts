@@ -72,7 +72,7 @@ export class SocialOrchestratorService {
     });
   }
 
-  getAllMessagesBetween(friend: Friend): Observable<Message[]> {
+  getAllMessagesBetween(friend: Friend): Observable<Map<string, Message[]>> {
     return this.messageService.getAllBetween(this.user, friend);
   }
 
@@ -95,6 +95,7 @@ export class SocialOrchestratorService {
   deleteFriend(friend: Friend): Observable<Friend> {
     return this.friendService.deleteFriend(this.user, friend).pipe(
       switchMap(deletedFriend => {
+        this.messageService.removeMessagesFromFriend(friend);
         const friendsInbox = this.friendsInboxes.find(
           friendsInbox => friendsInbox.id === deletedFriend._id
         );
@@ -250,6 +251,7 @@ export class SocialOrchestratorService {
 
     inbox.onMessage('removeFriend', (friend: Friend) => {
       this.friendService.removeFriend(friend);
+      this.messageService.removeMessagesFromFriend(friend);
     });
 
     inbox.onError((code, message) =>
@@ -265,9 +267,10 @@ export class SocialOrchestratorService {
       this.messageService.addMessageToFriend(message.from, message);
     });
 
-    inbox.onMessage('disconnectFriend', (disconnectFriend: Friend) => {
-      this.friendService.removeFriend(disconnectFriend);
-      this.inboxService.removeConnectedInboxById(disconnectFriend._id);
+    inbox.onMessage('disconnectFriend', (disconnectedFriend: Friend) => {
+      this.friendService.removeFriend(disconnectedFriend);
+      this.inboxService.removeConnectedInboxById(disconnectedFriend._id);
+      this.messageService.removeMessagesFromFriend(disconnectedFriend);
     });
 
     inbox.onMessage('dispose', (inboxId: string) => {

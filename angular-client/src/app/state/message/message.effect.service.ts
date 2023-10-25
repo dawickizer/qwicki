@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, tap, catchError } from 'rxjs';
+import { Observable, of, tap, catchError, map } from 'rxjs';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MessageApiService } from './message.api.service';
 import { Message } from './message.model';
@@ -17,11 +17,15 @@ export class MessageEffectService {
     private snackBar: MatSnackBar
   ) {}
 
-  getAllBetween(user: User, friend: Friend): Observable<Message[]> {
+  getAllBetween(
+    user: User,
+    friend: Friend
+  ): Observable<Map<string, Message[]>> {
     return this.messageApiService.getAllBetween(user, friend).pipe(
-      tap(messages => {
-        this.messageStateService.setFriendMessages(friend, messages);
-      }),
+      map(messages => this.messageStateService.groupMessagesByDate(messages)),
+      tap(messages =>
+        this.messageStateService.setFriendMessages(friend, messages)
+      ),
       catchError(this.handleError)
     );
   }

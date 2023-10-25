@@ -21,7 +21,9 @@ export class MessageStateService {
   public messages$ = messagesSelector(this.messageState$);
 
   // expose the dynamic selector since the above pattern cannot be followed
-  messagesByFriendId$(friendId: string): Observable<Message[] | null> {
+  messagesByFriendId$(
+    friendId: string
+  ): Observable<Map<string, Message[]> | null> {
     return messagesByFriendIdSelector(this.messages$, friendId);
   }
 
@@ -34,33 +36,76 @@ export class MessageStateService {
     this._messageState.next({ ...currentState, isLoading });
   }
 
-  setMessages(messages: Map<string, Message[]>): void {
+  setMessages(messages: Map<string, Map<string, Message[]>>): void {
+    const clonedMessages = new Map();
+    messages.forEach((value, key) => {
+      clonedMessages.set(key, new Map(value.entries()));
+    });
     const currentState = this._messageState.value;
-    this._messageState.next({ ...currentState, messages });
+    this._messageState.next({ ...currentState, messages: clonedMessages });
   }
 
-  setFriendMessages(friend: Friend, messages: Message[]) {
+  removeMessagesFromFriend(friend: Friend): void {
     const currentState = this._messageState.value;
     const updatedMessages = new Map(currentState.messages);
-    updatedMessages.set(friend._id, messages);
+    updatedMessages.delete(friend._id);
     this._messageState.next({ ...currentState, messages: updatedMessages });
   }
 
-  addMessagesToFriend(friend: Friend, messages: Message[]) {
+  setFriendMessages(friend: Friend, messages: Map<string, Message[]>) {
     const currentState = this._messageState.value;
     const updatedMessages = new Map(currentState.messages);
-    const currentMessages = updatedMessages.get(friend._id) || [];
-    const combinedMessages = [...currentMessages, ...messages];
-    updatedMessages.set(friend._id, combinedMessages);
+    const clonedInnerMessages = new Map(messages.entries());
+    updatedMessages.set(friend._id, clonedInnerMessages);
     this._messageState.next({ ...currentState, messages: updatedMessages });
   }
 
   addMessageToFriend(friend: Friend, message: Message) {
     const currentState = this._messageState.value;
     const updatedMessages = new Map(currentState.messages);
-    const currentMessages = updatedMessages.get(friend._id) || [];
+    const currentFriendMessages = updatedMessages.get(friend._id);
+    const dateKeyMessages = currentFriendMessages
+      ? new Map(currentFriendMessages)
+      : new Map<string, Message[]>();
+    const date = new Date(message.createdAt);
+    const dateKey = this.getDateKey(date);
+    const currentMessages = dateKeyMessages.get(dateKey)
+      ? [...dateKeyMessages.get(dateKey)]
+      : [];
     const combinedMessages = [...currentMessages, message];
-    updatedMessages.set(friend._id, combinedMessages);
+    dateKeyMessages.set(dateKey, combinedMessages);
+    updatedMessages.set(friend._id, dateKeyMessages);
     this._messageState.next({ ...currentState, messages: updatedMessages });
+  }
+
+  groupMessagesByDate(messages: Message[]): Map<string, Message[]> {
+    const grouped: Map<string, Message[]> = new Map();
+
+    for (const message of messages) {
+      const date = new Date(message.createdAt);
+      const dateKey = this.getDateKey(date);
+      const currentMessagesForDate = grouped.get(dateKey) || [];
+      currentMessagesForDate.push(message);
+      grouped.set(dateKey, currentMessagesForDate);
+    }
+
+    // Convert the map to an array
+    const entries = [...grouped.entries()];
+
+    // Sort the array based on the date keys
+    entries.sort((a, b) => {
+      const dateA = new Date(a[0]);
+      const dateB = new Date(b[0]);
+      return dateA.getTime() - dateB.getTime(); // For ascending order
+    });
+
+    // Create a new map from the sorted array
+    const sortedGrouped = new Map(entries);
+
+    return sortedGrouped;
+  }
+
+  private getDateKey(date: Date): string {
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
   }
 }

@@ -1,34 +1,27 @@
 <div (mousedown)="$event.stopPropagation()">
   <div class="scrollable" #scrollable>
-    <table mat-table [dataSource]="messages" class="mat-elevation-z0">
-      <ng-container matColumnDef="message">
-        <td
-          [style.visibility]="element.createdAt ? 'visible' : 'hidden'"
-          class="cell"
-          mat-cell
-          *matCellDef="let element">
-          <div *ngIf="isMessageOld(element)" class="old-message">
-            {{ element.createdAt | date: 'mediumDate' }}
-          </div>
-          <mat-card class="card">
-            <mat-card-subtitle class="card-subtitle small-font"
-              >{{ element.from?.username }} -
-              {{ element.createdAt | date: 'shortTime' }}</mat-card-subtitle
-            >
-            <mat-card-content class="card-content">
-              <mat-list
-                *ngFor="let paragraph of getParagraphs(element)"
-                role="list">
-                <mat-list-item role="listitem">
-                  <div [innerHTML]="paragraph"></div>
-                </mat-list-item>
-              </mat-list>
-            </mat-card-content>
-          </mat-card>
-        </td>
-      </ng-container>
-      <tr mat-row *matRowDef="let row; columns: messagesDisplayedColumns"></tr>
-    </table>
+    <div *ngFor="let group of messages | keyvalue">
+      <div class="date-header">
+        {{ group.key | date: 'mediumDate' }}
+      </div>
+      <div *ngFor="let message of group.value">
+        <mat-card class="card">
+          <mat-card-subtitle class="card-subtitle small-font">
+            {{ message.from?.username }} -
+            {{ message.createdAt | date: 'shortTime' }}
+          </mat-card-subtitle>
+          <mat-card-content class="card-content">
+            <mat-list
+              *ngFor="let paragraph of getParagraphs(message)"
+              role="list">
+              <mat-list-item role="listitem">
+                <div [innerHTML]="paragraph"></div>
+              </mat-list-item>
+            </mat-list>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
   </div>
   <mat-form-field class="input">
     <mat-label>Chat</mat-label>

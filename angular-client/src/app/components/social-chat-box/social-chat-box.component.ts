@@ -8,7 +8,6 @@ import {
   ViewChild,
   OnDestroy,
 } from '@angular/core';
-import { MatTableDataSource } from '@angular/material/table';
 import { Subject, takeUntil } from 'rxjs';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
@@ -22,7 +21,6 @@ import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orc
 })
 export class SocialChatBoxComponent implements OnInit, OnDestroy {
   @ViewChild('scrollable') scrollable: ElementRef;
-  @ViewChild('test') test: ElementRef;
 
   @Input() friend: Friend;
   @Output() unviewedMessage: EventEmitter<boolean> = new EventEmitter();
@@ -37,9 +35,8 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
     return this._panelOpenState;
   }
 
+  messages: Map<string, Message[]> = new Map();
   newMessage = '';
-  messagesDisplayedColumns: string[] = ['message'];
-  messages = new MatTableDataSource<Message>([] as Message[]);
 
   unsubscribe$ = new Subject<void>();
 
@@ -52,7 +49,7 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
     this.socialOrchestratorService
       .getAllMessagesBetween(this.friend)
       .subscribe(messages => {
-        this.messages.data = messages;
+        this.messages = messages;
         this.setScrollHeight();
       });
 
@@ -61,10 +58,12 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(messages => {
         if (messages) {
-          this.messages.data = messages;
+          this.messages = messages;
           this.onUnviewedMessage();
           this.setScrollHeight();
           this.newMessage = '';
+          console.log(this.friend.username);
+          console.log(messages);
         }
       });
   }
@@ -82,23 +81,6 @@ export class SocialChatBoxComponent implements OnInit, OnDestroy {
           this.scrollable.nativeElement.scrollHeight),
       10
     );
-  }
-
-  isMessageOld(message: Message): boolean {
-    if (message.createdAt) {
-      const today: Date = new Date();
-      const messageDate = new Date(message.createdAt);
-
-      return (
-        messageDate.getFullYear() < today.getFullYear() ||
-        (messageDate.getFullYear() == today.getFullYear() &&
-          messageDate.getMonth() < today.getMonth()) ||
-        (messageDate.getFullYear() == today.getFullYear() &&
-          messageDate.getMonth() == today.getMonth() &&
-          messageDate.getDate() < today.getDate())
-      );
-    }
-    return false;
   }
 
   getParagraphs(message: Message) {

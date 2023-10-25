@@ -22,7 +22,7 @@ export class MessageService {
     return this.messageStateService.messages$;
   }
 
-  messagesByFriendId$(friendId: string): Observable<Message[] | null> {
+  messagesByFriendId$(friendId: string): Observable<Map<string, Message[]>> {
     return this.messageStateService.messagesByFriendId$(friendId);
   }
 
@@ -31,7 +31,10 @@ export class MessageService {
     private messageStateService: MessageStateService
   ) {}
 
-  getAllBetween(user: User, friend: Friend): Observable<Message[]> {
+  getAllBetween(
+    user: User,
+    friend: Friend
+  ): Observable<Map<string, Message[]>> {
     return this.messageEffectService.getAllBetween(user, friend);
   }
 
@@ -54,19 +57,19 @@ export class MessageService {
     this.messageStateService.setInitialState();
   }
 
-  setMessages(messages: Map<string, Message[]>): void {
+  setMessages(messages: Map<string, Map<string, Message[]>>): void {
     this.messageStateService.setMessages(messages);
   }
 
-  setFriendMessages(friend: Friend, messages: Message[]) {
-    return this.messageStateService.setFriendMessages(friend, messages);
+  removeMessagesFromFriend(friend: Friend): void {
+    this.messageStateService.removeMessagesFromFriend(friend);
   }
 
-  addMessagesToFriend(friend: Friend, messages: Message[]) {
-    return this.messageStateService.addMessagesToFriend(friend, messages);
+  setFriendMessages(friend: Friend, messages: Map<string, Message[]>): void {
+    this.messageStateService.setFriendMessages(friend, messages);
   }
 
-  addMessageToFriend(friend: Friend, message: Message) {
-    return this.messageStateService.addMessageToFriend(friend, message);
+  addMessageToFriend(friend: Friend, message: Message): void {
+    this.messageStateService.addMessageToFriend(friend, message);
   }
 }

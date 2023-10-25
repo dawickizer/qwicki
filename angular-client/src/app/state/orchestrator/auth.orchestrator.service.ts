@@ -13,6 +13,7 @@ import { InactivityService } from 'src/app/services/inactivity/inactivity.servic
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { InboxService } from '../inbox/inbox.service';
 import { Room } from 'colyseus.js';
+import { MessageService } from '../message/message.service';
 
 @Injectable({
   providedIn: 'root',
@@ -28,6 +29,7 @@ export class AuthOrchestratorService {
     private matchMakingService: MatchMakingService,
     private friendService: FriendService,
     private friendRequestService: FriendRequestService,
+    private messageService: MessageService,
     private router: Router
   ) {
     this.listenToInactivityEvents();
@@ -58,6 +60,7 @@ export class AuthOrchestratorService {
         this.userService.setInitialState();
         this.friendService.setInitialState();
         this.friendRequestService.setInitialState();
+        this.messageService.setInitialState();
         this.router.navigate(['auth/login'], extras);
       })
     );
