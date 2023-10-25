@@ -20,6 +20,8 @@ export class SocialFriendRequestsListComponent implements OnDestroy {
 
   unsubscribe$ = new Subject<void>();
 
+  panelOpenState = true;
+
   constructor(private socialOrchestratorService: SocialOrchestratorService) {}
 
   ngOnDestroy() {

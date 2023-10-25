@@ -34,6 +34,11 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
     this.subscribeToFriendRequests();
   }
 
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
   subscribeToFriends() {
     this.friendService.friends$
       .pipe(takeUntil(this.unsubscribe$))
@@ -69,11 +74,6 @@ export class SocialFriendsTabComponent implements OnInit, OnDestroy {
       .subscribe(outboundFriendRequests => {
         this.outboundFriendRequests.data = outboundFriendRequests;
       });
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
   }
 
   filter(filterValue: any) {

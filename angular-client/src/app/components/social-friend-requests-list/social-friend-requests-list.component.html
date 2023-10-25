@@ -1,10 +1,19 @@
-<mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
+<mat-expansion-panel class="mat-elevation-z0" [(expanded)]="panelOpenState">
   <mat-expansion-panel-header>
     <mat-panel-title>
       <h1>
         <span [style]="titleColor">{{ title }}</span>
       </h1>
     </mat-panel-title>
+    <mat-panel-description>
+      <app-notification-badge
+        *ngIf="
+          isInboundFriendRequestsComponent() &&
+          friendRequests.data.length > 0 &&
+          !panelOpenState
+        "
+        [count]="friendRequests.data.length"></app-notification-badge>
+    </mat-panel-description>
   </mat-expansion-panel-header>
   <form
     *ngIf="isInboundFriendRequestsComponent()"
