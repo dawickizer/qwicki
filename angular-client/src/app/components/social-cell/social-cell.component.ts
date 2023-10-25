@@ -49,7 +49,7 @@ export class SocialCellComponent implements OnInit, OnDestroy {
     this.unviewedMessages = [];
     for (const messageArray of this.messages.values()) {
       for (const message of messageArray) {
-        if (!message.viewed) {
+        if (!message.viewed && message.from._id === this.friend._id) {
           this.unviewedMessages.push(message);
         }
       }

@@ -63,8 +63,14 @@ export const markMessagesAsViewed = async (
   next: NextFunction
 ): Promise<void> => {
   try {
+    const userId = req.params.userId;
+    const friendId = req.params.friendId;
     const messageIds: string | Schema.Types.ObjectId[] = req.body;
-    const result = await messageService.markMessagesAsViewed(messageIds);
+    const result = await messageService.markMessagesAsViewed(
+      userId,
+      friendId,
+      messageIds
+    );
     res.status(200).send(result);
   } catch (error) {
     if (error instanceof CustomError)
