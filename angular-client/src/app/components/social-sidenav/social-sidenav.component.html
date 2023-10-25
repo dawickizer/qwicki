@@ -13,12 +13,13 @@
     <mat-divider></mat-divider>
 
     <mat-tab-group
-      class="social-sidenav-tab-group social-sidenav-no-pagination">
+      class="social-sidenav-tab-group social-sidenav-no-pagination"
+      (selectedIndexChange)="onTabChanged($event)">
       <mat-tab>
         <ng-template mat-tab-label>
           Friends
           <app-notification-badge
-            *ngIf="unviewedMessagesCount > 0"
+            *ngIf="unviewedMessagesCount > 0 && activeTabIndex !== 0"
             [count]="unviewedMessagesCount"></app-notification-badge>
         </ng-template>
 
@@ -28,7 +29,7 @@
         <ng-template mat-tab-label>
           Groups
           <app-notification-badge
-            *ngIf="unviewedMessagesCount > 0"
+            *ngIf="unviewedMessagesCount > 0 && activeTabIndex !== 1"
             [count]="unviewedMessagesCount"></app-notification-badge>
         </ng-template>
         <!-- <app-social-groups-tab> </app-social-groups-tab> -->

@@ -14,7 +14,7 @@ import { MessageService } from 'src/app/state/message/message.service';
 })
 export class SocialSidenavComponent implements OnInit, OnDestroy {
   @ViewChild('drawer') drawer: MatSidenav;
-
+  activeTabIndex = 0;
   unviewedMessagesCount: number;
   user$: Observable<User>;
   unsubscribe$ = new Subject<void>();
@@ -54,5 +54,9 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
         this.drawer.toggle();
       }
     });
+  }
+
+  onTabChanged(index: number): void {
+    this.activeTabIndex = index;
   }
 }
