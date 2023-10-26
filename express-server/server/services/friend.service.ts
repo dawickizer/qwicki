@@ -63,3 +63,10 @@ export const getFriendById = async (
   if (!friend) throw new NotFoundError(`User not found. ID: ${friendId}`);
   return friend;
 };
+
+export const getFriendsByUserId = async (
+  userId: string | Schema.Types.ObjectId
+): Promise<User[]> => {
+  const user = await User.findById(userId).populate('friends', 'username');
+  return user?.friends || ([] as any);
+};

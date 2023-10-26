@@ -17,7 +17,25 @@ export const getFriendRequestById = async (
 export const getFriendRequestsByUserId = async (
   userId: string | Schema.Types.ObjectId
 ): Promise<FriendRequest[]> => {
-  return await FriendRequest.find({ $or: [{ from: userId }, { to: userId }] });
+  return await FriendRequest.find({ $or: [{ from: userId }, { to: userId }] })
+    .populate('from', 'username')
+    .populate('to', 'username');
+};
+
+export const getInboundFriendRequestsByUserId = async (
+  userId: string | Schema.Types.ObjectId
+): Promise<FriendRequest[]> => {
+  return await FriendRequest.find({ to: userId })
+    .populate('from', 'username')
+    .populate('to', 'username');
+};
+
+export const getOutboundFriendRequestsByUserId = async (
+  userId: string | Schema.Types.ObjectId
+): Promise<FriendRequest[]> => {
+  return await FriendRequest.find({ from: userId })
+    .populate('from', 'username')
+    .populate('to', 'username');
 };
 
 export const createFriendRequest = async (
