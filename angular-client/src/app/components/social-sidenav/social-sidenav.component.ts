@@ -1,49 +1,64 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { Subject, Observable, takeUntil } from 'rxjs';
+import { Subject, Observable, combineLatest, map } from 'rxjs';
 import { UserService } from 'src/app/state/user/user.service';
 import { User } from 'src/app/state/user/user.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 import { MessageService } from 'src/app/state/message/message.service';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
+import { FriendRequestService } from 'src/app/state/friend-request/friend-request.service';
+import { Friend } from 'src/app/state/friend/friend.model';
+import { FriendService } from 'src/app/state/friend/friend.service';
+import { Message } from 'src/app/state/message/message.model';
 
 @Component({
   selector: 'app-social-sidenav',
   templateUrl: './social-sidenav.component.html',
   styleUrls: ['./social-sidenav.component.css'],
 })
-export class SocialSidenavComponent implements OnInit, OnDestroy {
+export class SocialSidenavComponent implements OnInit {
   @ViewChild('drawer') drawer: MatSidenav;
   activeTabIndex = 0;
-  unviewedMessagesCount: number;
+  combinedNotifications$: Observable<{ count: number; hasData: boolean }>;
   user$: Observable<User>;
+  friends$: Observable<Friend[]>;
+  outboundFriendRequests$: Observable<FriendRequest[]>;
+  inboundFriendRequests$: Observable<FriendRequest[]>;
+  unviewedMessages$: Observable<Message[]>;
   unsubscribe$ = new Subject<void>();
 
   constructor(
     private keyBindService: KeyBindService,
     private userService: UserService,
-    private socialOrchestratorService: SocialOrchestratorService,
-    private messageService: MessageService
+    private friendService: FriendService,
+    private friendRequestService: FriendRequestService,
+    private messageService: MessageService,
+    private socialOrchestratorService: SocialOrchestratorService
   ) {}
 
   ngOnInit() {
     this.user$ = this.userService.user$;
+    this.friends$ = this.friendService.friends$;
+    this.inboundFriendRequests$ =
+      this.friendRequestService.inboundFriendRequests$;
+    this.outboundFriendRequests$ =
+      this.friendRequestService.outboundFriendRequests$;
+    this.unviewedMessages$ = this.messageService.unviewedMessages$;
+    this.combinedNotifications$ = combineLatest([
+      this.unviewedMessages$,
+      this.inboundFriendRequests$,
+    ]).pipe(
+      map(([unviewedMessages, inboundFriendRequests]) => ({
+        count: unviewedMessages.length + inboundFriendRequests.length,
+        hasData:
+          unviewedMessages.length > 0 || inboundFriendRequests.length > 0,
+      }))
+    );
+
     this.socialOrchestratorService.createPersonalInbox().subscribe();
     this.socialOrchestratorService.joinFriendsInboxesIfPresent().subscribe();
-    this.messageService.unviewedMessages$
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(unviewedMessages => {
-        if (unviewedMessages) {
-          this.unviewedMessagesCount = unviewedMessages.length;
-        }
-      });
     this.handleSideNavKeyBind();
-  }
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-    this.keyBindService.removeKeyBinds();
   }
 
   handleSideNavKeyBind() {

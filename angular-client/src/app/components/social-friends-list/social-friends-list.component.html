@@ -7,8 +7,8 @@
     </mat-panel-title>
     <mat-panel-description>
       <app-notification-badge
-        *ngIf="unviewedMessagesCount > 0 && !panelOpenState"
-        [count]="unviewedMessagesCount"></app-notification-badge>
+        *ngIf="unviewedMessages?.length > 0 && !panelOpenState"
+        [count]="unviewedMessages?.length"></app-notification-badge>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <table

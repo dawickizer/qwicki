@@ -1,6 +1,5 @@
-import { Component, Input, OnDestroy } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
-import { Subject } from 'rxjs';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
@@ -9,7 +8,7 @@ import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orc
   templateUrl: './social-friend-requests-list.component.html',
   styleUrls: ['./social-friend-requests-list.component.css'],
 })
-export class SocialFriendRequestsListComponent implements OnDestroy {
+export class SocialFriendRequestsListComponent {
   @Input() title: string;
   @Input() titleColor: string;
 
@@ -18,16 +17,9 @@ export class SocialFriendRequestsListComponent implements OnDestroy {
 
   potentialFriend: string;
 
-  unsubscribe$ = new Subject<void>();
-
   panelOpenState = true;
 
   constructor(private socialOrchestratorService: SocialOrchestratorService) {}
-
-  ngOnDestroy() {
-    this.unsubscribe$.next();
-    this.unsubscribe$.complete();
-  }
 
   isInboundFriendRequestsComponent(): boolean {
     return this.title === 'friend requests';

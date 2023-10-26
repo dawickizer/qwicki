@@ -9,7 +9,9 @@
     title="friend requests"
     titleColor="color:aliceblue"
     [friendRequests]="inboundFriendRequests"></app-social-friend-requests-list>
-  <app-social-friends-list [friends]="friends"></app-social-friends-list>
+  <app-social-friends-list
+    [friends]="friends"
+    [unviewedMessages]="unviewedMessages"></app-social-friends-list>
   <app-social-friend-requests-list
     title="pending"
     titleColor="color:yellow"
