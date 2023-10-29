@@ -4,7 +4,6 @@ import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { Subject, Observable, combineLatest, map } from 'rxjs';
 import { UserService } from 'src/app/state/user/user.service';
 import { User } from 'src/app/state/user/user.model';
-import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 import { MessageService } from 'src/app/state/message/message.service';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { FriendRequestService } from 'src/app/state/friend-request/friend-request.service';
@@ -33,8 +32,7 @@ export class SocialSidenavComponent implements OnInit {
     private userService: UserService,
     private friendService: FriendService,
     private friendRequestService: FriendRequestService,
-    private messageService: MessageService,
-    private socialOrchestratorService: SocialOrchestratorService
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -55,9 +53,6 @@ export class SocialSidenavComponent implements OnInit {
           unviewedMessages.length > 0 || inboundFriendRequests.length > 0,
       }))
     );
-
-    this.socialOrchestratorService.createPersonalInbox().subscribe();
-    this.socialOrchestratorService.joinFriendsInboxesIfPresent().subscribe();
     this.handleSideNavKeyBind();
   }
 

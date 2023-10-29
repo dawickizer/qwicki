@@ -15,6 +15,12 @@ export class FriendApiService {
 
   constructor(private http: HttpClient) {}
 
+  getAllByUser(user: User): Observable<Friend[]> {
+    return this.http
+      .get<Friend[]>(`${this.API}${this.endpoint}/${user._id}/friends`)
+      .pipe(catchError(this.handleError));
+  }
+
   add(user: User, friendRequestId: string): Observable<User> {
     return this.http
       .post<User>(`${this.API}${this.endpoint}/${user._id}/friends`, {

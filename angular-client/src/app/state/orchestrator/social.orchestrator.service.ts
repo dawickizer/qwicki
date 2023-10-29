@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap, switchMap, map, of } from 'rxjs';
+import { Observable, tap, switchMap, map, of, forkJoin } from 'rxjs';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { User } from '../user/user.model';
 import { FriendService } from '../friend/friend.service';
@@ -20,9 +20,11 @@ import { MessageService } from '../message/message.service';
 export class SocialOrchestratorService {
   private user: User;
   private friends: Friend[];
+  private unviewedMessages: Message[];
   private jwt: string;
   private decodedJwt: DecodedJwt;
   private friendsInboxes: Room<any>[];
+  private connectedInboxes: Room<any>[];
   private personalInbox: Room<any>;
 
   constructor(
@@ -37,6 +39,7 @@ export class SocialOrchestratorService {
     this.subscribeToAuthState();
     this.subscribeToUserState();
     this.subscribeToFriendState();
+    this.subscribeToMessageState();
     this.subscribeToInboxState();
   }
 
@@ -62,6 +65,12 @@ export class SocialOrchestratorService {
     });
   }
 
+  private subscribeToMessageState() {
+    this.messageService.unviewedMessages$.subscribe(unviewedMessages => {
+      this.unviewedMessages = unviewedMessages;
+    });
+  }
+
   private subscribeToInboxState() {
     this.inboxService.friendsInboxes$.subscribe(friendsInboxes => {
       this.friendsInboxes = friendsInboxes;
@@ -70,6 +79,38 @@ export class SocialOrchestratorService {
     this.inboxService.personalInbox$.subscribe(personalInbox => {
       this.personalInbox = personalInbox;
     });
+
+    this.inboxService.connectedInboxes$.subscribe(connectedInboxes => {
+      this.connectedInboxes = connectedInboxes;
+    });
+  }
+
+  setInitialState() {
+    this.inboxService.leaveInboxes(this.connectedInboxes).subscribe();
+    this.inboxService.setInitialState();
+    this.userService.setInitialState();
+    this.friendService.setInitialState();
+    this.friendRequestService.setInitialState();
+    this.messageService.setInitialState();
+  }
+
+  connect(decodedJwt: DecodedJwt): Observable<any> {
+    return this.userService
+      .getUser(decodedJwt._id, {
+        friends: true,
+        friendRequests: true,
+      })
+      .pipe(
+        tap(user => this.setSocials(user)),
+        switchMap(user =>
+          forkJoin(
+            user.friends.map(friend => this.getAllMessagesBetween(friend))
+          )
+        ),
+        switchMap(() => this.createPersonalInbox()),
+        switchMap(() => this.joinFriendsInboxesIfPresent()),
+        tap(() => this.sortFriends())
+      );
   }
 
   getAllMessagesBetween(friend: Friend): Observable<Map<string, Message[]>> {
@@ -121,7 +162,7 @@ export class SocialOrchestratorService {
 
   addNewFriend(friendRequest: FriendRequest): Observable<User> {
     return this.friendService.addNewFriend(this.user, friendRequest).pipe(
-      tap(async user => {
+      tap(user => {
         this.friendRequestService.setInboundFriendRequests(
           user.inboundFriendRequests
         );
@@ -140,6 +181,9 @@ export class SocialOrchestratorService {
             }),
             map(() => user)
           )
+      ),
+      switchMap(user =>
+        this.getAllMessagesBetween(friendRequest.from).pipe(map(() => user))
       )
     );
   }
@@ -193,18 +237,6 @@ export class SocialOrchestratorService {
           }
         })
       );
-  }
-
-  connect(): Observable<any> {
-    return this.createPersonalInbox().pipe(
-      switchMap(() => this.joinFriendsInboxesIfPresent()),
-      tap(() => {
-        // sort friends by online with message, online without message, offline with message, rest
-        // if i do the sort here i can potentially remove the reordering of users from the setFriendOnline/Offline
-        // state functions and then manually reorder on online/offline room events
-        this.friendService.setFriends(this.friends);
-      })
-    );
   }
 
   createPersonalInbox(): Observable<Room<any>> {
@@ -304,5 +336,80 @@ export class SocialOrchestratorService {
       )
     );
     return inbox;
+  }
+
+  private setSocials(user: User) {
+    this.friendService.setFriends(user.friends);
+    this.friendRequestService.setInboundFriendRequests(
+      user.inboundFriendRequests
+    );
+    this.friendRequestService.setOutboundFriendRequests(
+      user.outboundFriendRequests
+    );
+  }
+
+  private sortFriends() {
+    this.friends.sort((a, b) => {
+      // Check if friend A and friend B have unviewed messages
+      const aHasUnviewedMessages = this.unviewedMessages.some(
+        msg => msg.from._id === a._id
+      );
+      const bHasUnviewedMessages = this.unviewedMessages.some(
+        msg => msg.from._id === b._id
+      );
+
+      // Online with unviewed messages.
+      if (
+        a.online &&
+        aHasUnviewedMessages &&
+        (!b.online || !bHasUnviewedMessages)
+      ) {
+        return -1;
+      }
+      if (
+        b.online &&
+        bHasUnviewedMessages &&
+        (!a.online || !aHasUnviewedMessages)
+      ) {
+        return 1;
+      }
+
+      // Online without unviewed messages.
+      if (
+        a.online &&
+        !aHasUnviewedMessages &&
+        (!b.online || bHasUnviewedMessages)
+      ) {
+        return -1;
+      }
+      if (
+        b.online &&
+        !bHasUnviewedMessages &&
+        (!a.online || aHasUnviewedMessages)
+      ) {
+        return 1;
+      }
+
+      // Offline with unviewed messages.
+      if (
+        !a.online &&
+        aHasUnviewedMessages &&
+        (b.online || !bHasUnviewedMessages)
+      ) {
+        return -1;
+      }
+      if (
+        !b.online &&
+        bHasUnviewedMessages &&
+        (a.online || !aHasUnviewedMessages)
+      ) {
+        return 1;
+      }
+
+      // Offline without unviewed messages.
+      // If it reaches this point, it means both a and b are offline without unviewed messages, hence they are equal in terms of sorting.
+      return 0;
+    });
+    this.friendService.setFriends(this.friends);
   }
 }

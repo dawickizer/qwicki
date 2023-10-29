@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpClient,
+  HttpErrorResponse,
+  HttpParams,
+} from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
@@ -14,6 +18,29 @@ export class FriendRequestApiService {
   private endpoint = '/users';
 
   constructor(private http: HttpClient) {}
+
+  getAllByUser(
+    user: User,
+    options?: { inbound?: boolean; outbound?: boolean }
+  ): Observable<FriendRequest[]> {
+    let params = new HttpParams();
+    if (options) {
+      if (options.inbound !== undefined) {
+        params = params.append('inbound', options.inbound.toString());
+      }
+
+      if (options.outbound !== undefined) {
+        params = params.append('outbound', options.outbound.toString());
+      }
+    }
+
+    return this.http
+      .get<FriendRequest[]>(
+        `${this.API}${this.endpoint}/${user._id}/friend-requests`,
+        { params }
+      )
+      .pipe(catchError(this.handleError));
+  }
 
   create(user: User, username: string): Observable<FriendRequest> {
     return this.http

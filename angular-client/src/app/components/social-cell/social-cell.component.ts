@@ -24,10 +24,6 @@ export class SocialCellComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
-    this.socialOrchestratorService
-      .getAllMessagesBetween(this.friend)
-      .subscribe();
-
     this.messageService
       .messagesByFriendId$(this.friend._id)
       .pipe(takeUntil(this.unsubscribe$))
