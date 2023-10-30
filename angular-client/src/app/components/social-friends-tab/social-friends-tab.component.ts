@@ -1,27 +1,18 @@
-import { Component, OnInit, ViewChild, Input } from '@angular/core';
+import { Component, ViewChild, Input } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatTableDataSource } from '@angular/material/table';
-import { Router } from '@angular/router';
-import { FriendRequest } from 'src/app/models/friend-request/friend-request';
-import { User } from 'src/app/models/user/user';
-import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-import { Message } from 'src/app/models/message/message';
+import { Friend } from 'src/app/state/friend/friend.model';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
+import { Message } from 'src/app/state/message/message.model';
 
 @Component({
   selector: 'app-social-friends-tab',
   templateUrl: './social-friends-tab.component.html',
   styleUrls: ['./social-friends-tab.component.css'],
 })
-export class SocialFriendsTabComponent implements OnInit {
+export class SocialFriendsTabComponent {
   @ViewChild('drawer') drawer: MatSidenav;
-
-  @Input() self: User;
-  @Input() selfJWT: any;
-
-  onlineFriends = new MatTableDataSource<User>([] as User[]);
-  offlineFriends = new MatTableDataSource<User>([] as User[]);
-
+  friends = new MatTableDataSource<Friend>([] as Friend[]);
   inboundFriendRequests = new MatTableDataSource<FriendRequest>(
     [] as FriendRequest[]
   );
@@ -29,218 +20,42 @@ export class SocialFriendsTabComponent implements OnInit {
     [] as FriendRequest[]
   );
 
-  potentialMessage: Message = new Message();
-  isAsyncDataPresent = false;
-  update: FriendRequest;
+  @Input() unviewedMessages: Message[];
 
-  constructor(
-    private router: Router,
-    private snackBar: MatSnackBar,
-    public colyseusService: ColyseusService
-  ) {}
-
-  async ngOnInit() {
-    await this.establishConnections();
-    this.updateFriends();
-    this.updateFriendRequests();
-    this.isAsyncDataPresent = true;
-  }
-
-  async establishConnections() {
-    await this.colyseusService.establishHost(this.self, this.selfJWT);
-    this.setHostRoomListeners();
-    await this.colyseusService.establishOnlineFriendsRooms();
-    this.setOnlineFriendsRoomsListeners();
-  }
-
-  setHostRoomListeners() {
-    this.colyseusService.hostRoom.onMessage('online', (user: any) =>
-      this.handleOnlineEvent(user)
-    );
-    this.colyseusService.hostRoom.onMessage('offline', (user: any) =>
-      this.handleOfflineEvent(user)
-    );
-    this.colyseusService.hostRoom.onMessage(
-      'sendFriendRequest',
-      (friendRequest: FriendRequest) =>
-        this.handleSendFriendRequestEvent(friendRequest)
-    );
-    this.colyseusService.hostRoom.onMessage(
-      'acceptFriendRequest',
-      (friendRequest: FriendRequest) =>
-        this.handleAcceptFriendRequestEvent(friendRequest)
-    );
-    this.colyseusService.hostRoom.onMessage(
-      'rejectFriendRequest',
-      (friendRequest: FriendRequest) =>
-        this.handleRejectFriendRequestEvent(friendRequest)
-    );
-    this.colyseusService.hostRoom.onMessage(
-      'revokeFriendRequest',
-      (friendRequest: FriendRequest) =>
-        this.handleRevokeFriendRequestEvent(friendRequest)
-    );
-    this.colyseusService.hostRoom.onMessage(
-      'removeFriend',
-      (removeFriend: User) => this.handleRemoveFriendEvent(removeFriend)
-    );
-    this.colyseusService.hostRoom.onMessage('messageHost', (message: Message) =>
-      this.handleMessageHostEvent(message)
-    );
-    this.colyseusService.hostRoom.onError((code, message) =>
-      console.log(
-        `An error occurred with the room. Error Code: ${code} | Message: ${message}`
-      )
-    );
-  }
-
-  setOnlineFriendsRoomsListeners() {
-    this.colyseusService.onlineFriendsRooms.forEach(room => {
-      room.onMessage('offline', (user: any) => this.handleOfflineEvent(user));
-      room.onMessage('dispose', (id: string) => this.handleDisposeEvent(id));
-      room.onMessage('disconnectFriend', (disconnectFriend: User) =>
-        this.handleDisconnectFriendEvent(disconnectFriend)
-      );
-      room.onMessage('messageUser', (message: Message) =>
-        this.handleMessageUserEvent(message)
-      );
-      room.onError((code, message) =>
-        console.log(
-          `An error occurred with the room. Error Code: ${code} | Message: ${message}`
-        )
-      );
+  @Input()
+  set friendsData(data: Friend[]) {
+    // merge results to preserve old mem addresses which will make it so angular doesn't re-render the entire list, which can be
+    // disruptive if you are interacting with the list. Ensure that the online field is updated on the current object as well
+    this.friends.data = data.map(friend => {
+      const existingFriend = this.friends.data.find(f => f._id === friend._id);
+      if (existingFriend) {
+        // Check if onlineIndex or offlineIndex have changed
+        if (existingFriend.online !== friend.online) {
+          existingFriend.online = friend.online;
+        }
+        return existingFriend;
+      } else {
+        return friend;
+      }
     });
   }
 
-  onSendFriendRequest(friendRequest: FriendRequest) {
-    this.update = friendRequest;
+  @Input()
+  set inboundFriendRequestsData(data: FriendRequest[]) {
+    this.inboundFriendRequests.data = data;
   }
 
-  onAcceptFriendRequest() {
-    this.setOnlineFriendsRoomsListeners();
-    this.updateFriends();
+  @Input()
+  set outboundFriendRequestsData(data: FriendRequest[]) {
+    this.outboundFriendRequests.data = data;
   }
 
-  private updateFriends() {
-    this.onlineFriends.data = this.colyseusService.host.onlineFriends;
-    this.onlineFriends._updateChangeSubscription();
-    this.offlineFriends.data = this.colyseusService.host.offlineFriends;
-    this.offlineFriends._updateChangeSubscription();
-  }
-
-  private updateFriendRequests() {
-    this.inboundFriendRequests.data =
-      this.colyseusService.host.inboundFriendRequests;
-    this.inboundFriendRequests._updateChangeSubscription();
-    this.outboundFriendRequests.data =
-      this.colyseusService.host.outboundFriendRequests;
-    this.outboundFriendRequests._updateChangeSubscription();
-  }
-
-  private setOnlineStatusOfFriend(user: any, online: boolean) {
-    if (this.colyseusService.host._id !== user._id) {
-      const friend: User = this.findFriend(user._id);
-      if (friend) {
-        friend.online = online;
-        this.updateFriends();
-      }
-    }
-  }
-
-  private findFriend(id: string): User {
-    return this.colyseusService.host.friends.find(friend => friend._id === id);
-  }
-
-  private handleOnlineEvent(user: any) {
-    this.setOnlineStatusOfFriend(user, true);
-  }
-
-  private handleOfflineEvent(user: any) {
-    this.setOnlineStatusOfFriend(user, false);
-  }
-
-  private handleSendFriendRequestEvent(friendRequest: FriendRequest) {
-    this.colyseusService.host.inboundFriendRequests.push(friendRequest);
-    this.updateFriendRequests();
-  }
-
-  private handleAcceptFriendRequestEvent(friendRequest: FriendRequest) {
-    friendRequest.to.online = true;
-    this.colyseusService.host.friends.push(friendRequest.to);
-    this.colyseusService.host.outboundFriendRequests =
-      this.colyseusService.host.outboundFriendRequests.filter(
-        outboundFriendRequest =>
-          outboundFriendRequest.to._id !== friendRequest.to._id
-      );
-    this.updateFriends();
-    this.updateFriendRequests();
-  }
-
-  private handleRejectFriendRequestEvent(friendRequest: FriendRequest) {
-    this.colyseusService.host.friends =
-      this.colyseusService.host.friends.filter(
-        friend => friend._id !== friendRequest.to._id
-      );
-    this.colyseusService.host.outboundFriendRequests =
-      this.colyseusService.host.outboundFriendRequests.filter(
-        outboundFriendRequest =>
-          outboundFriendRequest.to._id !== friendRequest.to._id
-      );
-    this.updateFriends();
-    this.updateFriendRequests();
-  }
-
-  private handleRevokeFriendRequestEvent(friendRequest: FriendRequest) {
-    this.colyseusService.host.friends =
-      this.colyseusService.host.friends.filter(
-        friend => friend._id !== friendRequest.from._id
-      );
-    this.colyseusService.host.inboundFriendRequests =
-      this.colyseusService.host.inboundFriendRequests.filter(
-        inboundFriendRequest =>
-          inboundFriendRequest.from._id !== friendRequest.from._id
-      );
-    this.updateFriends();
-    this.updateFriendRequests();
-  }
-
-  private handleRemoveFriendEvent(removeFriend: User) {
-    this.colyseusService.host.friends =
-      this.colyseusService.host.friends.filter(
-        friend => friend._id !== removeFriend._id
-      );
-    this.updateFriends();
-  }
-
-  private handleDisconnectFriendEvent(disconnectFriend: User) {
-    this.colyseusService.host.friends =
-      this.colyseusService.host.friends.filter(
-        friend => friend._id !== disconnectFriend._id
-      );
-    this.updateFriends();
-    this.colyseusService.removeRoomById(disconnectFriend._id);
-  }
-
-  private handleDisposeEvent(id: string) {
-    this.colyseusService.removeRoomById(id);
-  }
-
-  private handleMessageHostEvent(message: Message) {
-    this.potentialMessage = message;
-  }
-
-  private handleMessageUserEvent(message: Message) {
-    this.potentialMessage = message;
-  }
+  displayedColumns: string[] = ['username'];
 
   filter(filterValue: any) {
-    this.onlineFriends.filterPredicate = (friend, filter) =>
+    this.friends.filterPredicate = (friend, filter) =>
       friend.username.trim().toLowerCase().includes(filter);
-    this.onlineFriends.filter = filterValue.target.value.trim().toLowerCase();
-
-    this.offlineFriends.filterPredicate = (friend, filter) =>
-      friend.username.trim().toLowerCase().includes(filter);
-    this.offlineFriends.filter = filterValue.target.value.trim().toLowerCase();
+    this.friends.filter = filterValue.target.value.trim().toLowerCase();
 
     this.inboundFriendRequests.filterPredicate = (friendRequest, filter) =>
       friendRequest.from.username.trim().toLowerCase().includes(filter);
@@ -253,11 +68,5 @@ export class SocialFriendsTabComponent implements OnInit {
     this.outboundFriendRequests.filter = filterValue.target.value
       .trim()
       .toLowerCase();
-  }
-
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000,
-    });
   }
 }

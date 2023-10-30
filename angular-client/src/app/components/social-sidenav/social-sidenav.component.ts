@@ -1,41 +1,59 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
-import { User } from 'src/app/models/user/user';
-import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { UserService } from 'src/app/services/user/user.service';
-import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
+import { Subject, Observable, combineLatest, map } from 'rxjs';
+import { UserService } from 'src/app/state/user/user.service';
+import { User } from 'src/app/state/user/user.model';
+import { MessageService } from 'src/app/state/message/message.service';
+import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
+import { FriendRequestService } from 'src/app/state/friend-request/friend-request.service';
+import { Friend } from 'src/app/state/friend/friend.model';
+import { FriendService } from 'src/app/state/friend/friend.service';
+import { Message } from 'src/app/state/message/message.model';
 
 @Component({
   selector: 'app-social-sidenav',
   templateUrl: './social-sidenav.component.html',
   styleUrls: ['./social-sidenav.component.css'],
 })
-export class SocialSidenavComponent implements OnInit, OnDestroy {
+export class SocialSidenavComponent implements OnInit {
   @ViewChild('drawer') drawer: MatSidenav;
-
-  self: User;
-  isAsyncDataPresent = false;
+  activeTabIndex = 0;
+  combinedNotifications$: Observable<{ count: number; hasData: boolean }>;
+  user$: Observable<User>;
+  friends$: Observable<Friend[]>;
+  outboundFriendRequests$: Observable<FriendRequest[]>;
+  inboundFriendRequests$: Observable<FriendRequest[]>;
+  unviewedMessages$: Observable<Message[]>;
+  unsubscribe$ = new Subject<void>();
 
   constructor(
     private keyBindService: KeyBindService,
-    public authService: AuthService,
-    public colyseusService: ColyseusService,
-    private userService: UserService
+    private userService: UserService,
+    private friendService: FriendService,
+    private friendRequestService: FriendRequestService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
-    this.authService.currentUser().subscribe(self =>
-      this.userService.get(self._id).subscribe(self => {
-        this.self = self;
-        this.isAsyncDataPresent = true;
-      })
+    this.user$ = this.userService.user$;
+    this.friends$ = this.friendService.friends$;
+    this.inboundFriendRequests$ =
+      this.friendRequestService.inboundFriendRequests$;
+    this.outboundFriendRequests$ =
+      this.friendRequestService.outboundFriendRequests$;
+    this.unviewedMessages$ = this.messageService.unviewedMessages$;
+    this.combinedNotifications$ = combineLatest([
+      this.unviewedMessages$,
+      this.inboundFriendRequests$,
+    ]).pipe(
+      map(([unviewedMessages, inboundFriendRequests]) => ({
+        count: unviewedMessages.length + inboundFriendRequests.length,
+        hasData:
+          unviewedMessages.length > 0 || inboundFriendRequests.length > 0,
+      }))
     );
     this.handleSideNavKeyBind();
-  }
-
-  ngOnDestroy() {
-    this.keyBindService.removeKeyBinds();
   }
 
   handleSideNavKeyBind() {
@@ -46,5 +64,9 @@ export class SocialSidenavComponent implements OnInit, OnDestroy {
         this.drawer.toggle();
       }
     });
+  }
+
+  onTabChanged(index: number): void {
+    this.activeTabIndex = index;
   }
 }

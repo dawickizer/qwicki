@@ -25,13 +25,15 @@ import '@babylonjs/inspector';
 import { ActivatedRoute } from '@angular/router';
 
 // Services
-import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 
 // Models
 import { Player } from 'src/app/models/player/player';
 import { PlayerService } from 'src/app/services/player/player.service';
+import { AuthService } from 'src/app/state/auth/auth.service';
+import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-game',
@@ -41,7 +43,7 @@ import { PlayerService } from 'src/app/services/player/player.service';
 export class GameComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('drawer') drawer: MatSidenav;
-
+  unsubscribe$ = new Subject<void>();
   engine: Engine;
   scene: Scene;
   universalCamera: UniversalCamera;
@@ -63,12 +65,13 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     private matchMakingService: MatchMakingService,
     private playerService: PlayerService,
     private authService: AuthService,
-    private keyBindService: KeyBindService
+    private keyBindService: KeyBindService,
+    private authOrchestratorService: AuthOrchestratorService
   ) {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
-    this.authService.currentUser().subscribe({
+    this.authService.decodedJwt$.subscribe({
       next: async user => {
         this.route.queryParams.subscribe(async params => {
           this.createScene();
@@ -86,7 +89,11 @@ export class GameComponent implements AfterViewInit, OnDestroy {
           this.playerOnRemove();
         });
       },
-      error: () => this.authService.logout(),
+      error: () =>
+        this.authOrchestratorService
+          .logout()
+          .pipe(takeUntil(this.unsubscribe$))
+          .subscribe(),
     });
   }
 
@@ -94,6 +101,8 @@ export class GameComponent implements AfterViewInit, OnDestroy {
     console.log('Disposing scene');
     this.scene?.dispose();
     this.keyBindService.removeKeyBinds();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   async createOrJoinGameRoom(params: any) {

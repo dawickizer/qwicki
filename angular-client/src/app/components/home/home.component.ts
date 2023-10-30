@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { User } from 'src/app/models/user/user';
+import { Component, OnInit } from '@angular/core';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { Router } from '@angular/router';
+import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 
 @Component({
   selector: 'app-home',
@@ -9,11 +9,9 @@ import { Router } from '@angular/router';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  @Input() self: User;
-  @Input() selfJWT: any;
-
   constructor(
     private router: Router,
+    private colyseusService: ColyseusService,
     public matchMakingService: MatchMakingService
   ) {}
 
@@ -22,7 +20,7 @@ export class HomeComponent implements OnInit {
   }
 
   setSelf() {
-    this.matchMakingService.self = this.self;
-    this.matchMakingService.selfJWT = this.selfJWT;
+    // this.matchMakingService.self = this.colyseusService.host;
+    // this.matchMakingService.selfJWT = this.colyseusService.hostJWT;
   }
 }

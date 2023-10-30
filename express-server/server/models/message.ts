@@ -2,6 +2,7 @@ import { Schema, model, Document } from 'mongoose';
 
 interface Message extends Document {
   createdAt: Date;
+  updatedAt: Date;
   from: Schema.Types.ObjectId;
   to: Schema.Types.ObjectId;
   content: string;
@@ -9,13 +10,15 @@ interface Message extends Document {
 }
 
 // create mongoose schema
-const MessageSchema = new Schema<Message>({
-  createdAt: { type: Date },
-  from: { type: Schema.Types.ObjectId, default: null, ref: 'User' },
-  to: { type: Schema.Types.ObjectId, default: null, ref: 'User' },
-  content: { type: String },
-  viewed: { type: Boolean, default: false },
-});
+const MessageSchema = new Schema<Message>(
+  {
+    from: { type: Schema.Types.ObjectId, ref: 'User' },
+    to: { type: Schema.Types.ObjectId, ref: 'User' },
+    content: { type: String },
+    viewed: { type: Boolean, default: false },
+  },
+  { timestamps: true }
+);
 
 // create mongoose model
 const Message = model<Message>('Message', MessageSchema);

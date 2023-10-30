@@ -1,35 +1,25 @@
-import { Component } from '@angular/core';
-import { Router } from '@angular/router';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Credentials } from 'src/app/models/credentials/credentials';
-import { User } from 'src/app/models/user/user';
-import { AuthService } from 'src/app/services/auth/auth.service';
+import { Component, OnDestroy } from '@angular/core';
+import { Subject } from 'rxjs';
+import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { User } from 'src/app/state/user/user.model';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
   styleUrls: ['./signup.component.css'],
 })
-export class SignupComponent {
-  credentials: Credentials = new Credentials();
+export class SignupComponent implements OnDestroy {
   user: User = new User();
+  unsubscribe$ = new Subject<void>();
 
-  constructor(
-    private router: Router,
-    private authService: AuthService,
-    private snackBar: MatSnackBar
-  ) {}
+  constructor(private authOrchestratorService: AuthOrchestratorService) {}
 
-  signup() {
-    this.authService.signup(this.user).subscribe({
-      next: () => this.router.navigate(['/babylonjs']),
-      error: error => this.openSnackBar(error, 'Dismiss'),
-    });
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
-  openSnackBar(message: string, action: string) {
-    this.snackBar.open(message, action, {
-      duration: 5000,
-    });
+  signup() {
+    this.authOrchestratorService.signup(new User(this.user), '/').subscribe();
   }
 }

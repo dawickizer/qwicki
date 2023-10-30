@@ -31,3 +31,12 @@
 .social-sidenav-no-pagination ::ng-deep .mat-tab-header-pagination {
   display: none;
 }
+
+/* REMOVE LATER */
+.main-div {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/assets/home.png');
+}

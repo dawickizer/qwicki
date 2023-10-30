@@ -1,46 +1,24 @@
-import { Injectable, NgZone } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Observable, timer, Subscription } from 'rxjs';
 import { MatSnackBar, MatSnackBarRef } from '@angular/material/snack-bar';
-import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InactivityService {
-  private inactivityThreshold: number = 1000 * 60 * 15; // 15 minutes
-  private logoutThreshold: number = this.inactivityThreshold + 1000 * 30; // inactivityThreshold + 30 seconds
+  private inactivityThreshold = 900000; // 15 minutes in milliseconds
+  private logoutThreshold = this.inactivityThreshold + 30000; // inactivityThreshold + 30 seconds
   private inactiveTimer: Observable<number> = timer(this.inactivityThreshold);
   private logoutTimer: Observable<number> = timer(this.logoutThreshold);
   private inactiveTimerSubscription: Subscription = new Subscription();
   private logoutTimerSubscription: Subscription = new Subscription();
-  private broadcast: BroadcastChannel = new BroadcastChannel('igima');
   private snackBarRef: MatSnackBarRef<any>;
-  private authService: AuthService;
 
-  constructor(
-    private snackBar: MatSnackBar,
-    private ngZone: NgZone
-  ) {}
+  userInactive: EventEmitter<void> = new EventEmitter();
 
-  broadcastEvents = (event: any) => {
-    if (event.data === 'logout') {
-      this.ngZone.run(() => this.authService.logout(undefined, false, false));
-    } else if (event.data === 'active') {
-      this.ngZone.run(() => this.startTimers());
-    }
-  };
-
-  setBroadcastEvents() {
-    this.broadcast.onmessage = this.broadcastEvents;
-  }
-
-  // need to set authService like this to avoid circular dependancy
-  setAuthService(authService: AuthService) {
-    this.authService = authService;
-  }
+  constructor(private snackBar: MatSnackBar) {}
 
   handleActiveEvent = () => {
-    this.broadcast.postMessage('active');
     this.startTimers();
   };
 
@@ -83,7 +61,7 @@ export class InactivityService {
   startLogoutTimer() {
     this.logoutTimerSubscription.unsubscribe();
     this.logoutTimerSubscription = this.logoutTimer.subscribe(() => {
-      this.authService.logout();
+      this.userInactive.emit();
       this.snackBarRef = this.snackBar.open(
         'You were logged out due to inactivity',
         '',

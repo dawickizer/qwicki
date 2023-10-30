@@ -25,11 +25,13 @@ import {
 } from '@babylonjs/core';
 import '@babylonjs/core/Debug/debugLayer';
 import '@babylonjs/inspector';
+import { Subject } from 'rxjs';
 
 // Services/Models
 import { FpsService } from 'src/app/services/fps/fps.service';
-import { AuthService } from 'src/app/services/auth/auth.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
+import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { AuthService } from 'src/app/state/auth/auth.service';
 
 @Component({
   selector: 'app-babylonjs',
@@ -39,7 +41,7 @@ import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
 export class BabylonjsComponent implements AfterViewInit, OnDestroy {
   @ViewChild('canvas', { static: true }) canvas: ElementRef<HTMLCanvasElement>;
   @ViewChild('drawer') drawer: MatSidenav;
-
+  unsubscribe$ = new Subject<void>();
   engine: Engine;
   scene: Scene;
   universalCamera: UniversalCamera;
@@ -55,12 +57,13 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
   constructor(
     private fpsService: FpsService,
     private authService: AuthService,
+    private authOrchestratorService: AuthOrchestratorService,
     private keyBindService: KeyBindService
   ) {}
 
   // wait for Angular to initialize components before rendering the scene else pixelated rendering happens
   async ngAfterViewInit() {
-    this.authService.currentUser().subscribe({
+    this.authService.decodedJwt$.subscribe({
       next: async user => {
         this.username = user.username;
 
@@ -87,7 +90,7 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
         // running babylonJS
         this.render();
       },
-      error: () => this.authService.logout(),
+      error: () => this.authOrchestratorService.logout().subscribe(),
     });
   }
 
@@ -95,6 +98,8 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
     console.log('Disposing scene');
     this.scene?.dispose();
     this.keyBindService.removeKeyBinds();
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   createScene() {

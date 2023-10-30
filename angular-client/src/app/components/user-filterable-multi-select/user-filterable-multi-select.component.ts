@@ -5,7 +5,7 @@ import {
   OnChanges,
   Output,
 } from '@angular/core';
-import { User } from 'src/app/models/user/user';
+import { User } from 'src/app/state/user/user.model';
 
 @Component({
   selector: 'app-user-filterable-multi-select',
