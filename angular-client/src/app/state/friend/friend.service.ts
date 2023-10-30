@@ -5,6 +5,7 @@ import { Friend } from './friend.model';
 import { Observable } from 'rxjs';
 import { User } from '../user/user.model';
 import { FriendRequest } from '../friend-request/friend-requests.model';
+import { Message } from '../message/message.model';
 
 @Injectable({
   providedIn: 'root',
@@ -77,5 +78,9 @@ export class FriendService {
 
   reorderFriend(friendId: string, position: 'front' | 'end'): void {
     this.friendStateService.reorderFriend(friendId, position);
+  }
+
+  sortFriendsByUnviewedMessages(unviewedMessages: Message[]) {
+    this.friendStateService.sortFriendsByUnviewedMessages(unviewedMessages);
   }
 }

@@ -36,53 +36,28 @@ export class SocialOrchestratorService {
     private messageService: MessageService,
     private colyseusService: ColyseusService
   ) {
-    this.subscribeToAuthState();
-    this.subscribeToUserState();
-    this.subscribeToFriendState();
-    this.subscribeToMessageState();
-    this.subscribeToInboxState();
+    this.subscribeToState();
   }
 
-  private subscribeToAuthState() {
-    this.authService.jwt$.subscribe(jwt => {
-      this.jwt = jwt;
-    });
-
-    this.authService.decodedJwt$.subscribe(decodedJwt => {
-      this.decodedJwt = decodedJwt;
-    });
-  }
-
-  private subscribeToUserState() {
-    this.userService.user$.subscribe(user => {
-      this.user = user;
-    });
-  }
-
-  private subscribeToFriendState() {
-    this.friendService.friends$.subscribe(friends => {
-      this.friends = friends;
-    });
-  }
-
-  private subscribeToMessageState() {
-    this.messageService.unviewedMessages$.subscribe(unviewedMessages => {
-      this.unviewedMessages = unviewedMessages;
-    });
-  }
-
-  private subscribeToInboxState() {
-    this.inboxService.friendsInboxes$.subscribe(friendsInboxes => {
-      this.friendsInboxes = friendsInboxes;
-    });
-
-    this.inboxService.personalInbox$.subscribe(personalInbox => {
-      this.personalInbox = personalInbox;
-    });
-
-    this.inboxService.connectedInboxes$.subscribe(connectedInboxes => {
-      this.connectedInboxes = connectedInboxes;
-    });
+  private subscribeToState() {
+    this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
+    this.authService.decodedJwt$.subscribe(
+      decodedJwt => (this.decodedJwt = decodedJwt)
+    );
+    this.userService.user$.subscribe(user => (this.user = user));
+    this.friendService.friends$.subscribe(friends => (this.friends = friends));
+    this.messageService.unviewedMessages$.subscribe(
+      unviewedMessages => (this.unviewedMessages = unviewedMessages)
+    );
+    this.inboxService.friendsInboxes$.subscribe(
+      friendsInboxes => (this.friendsInboxes = friendsInboxes)
+    );
+    this.inboxService.personalInbox$.subscribe(
+      personalInbox => (this.personalInbox = personalInbox)
+    );
+    this.inboxService.connectedInboxes$.subscribe(
+      connectedInboxes => (this.connectedInboxes = connectedInboxes)
+    );
   }
 
   setInitialState() {
@@ -109,7 +84,11 @@ export class SocialOrchestratorService {
         ),
         switchMap(() => this.createPersonalInbox()),
         switchMap(() => this.joinFriendsInboxesIfPresent()),
-        tap(() => this.sortFriends())
+        tap(() =>
+          this.friendService.sortFriendsByUnviewedMessages(
+            this.unviewedMessages
+          )
+        )
       );
   }
 
@@ -346,70 +325,5 @@ export class SocialOrchestratorService {
     this.friendRequestService.setOutboundFriendRequests(
       user.outboundFriendRequests
     );
-  }
-
-  private sortFriends() {
-    this.friends.sort((a, b) => {
-      // Check if friend A and friend B have unviewed messages
-      const aHasUnviewedMessages = this.unviewedMessages.some(
-        msg => msg.from._id === a._id
-      );
-      const bHasUnviewedMessages = this.unviewedMessages.some(
-        msg => msg.from._id === b._id
-      );
-
-      // Online with unviewed messages.
-      if (
-        a.online &&
-        aHasUnviewedMessages &&
-        (!b.online || !bHasUnviewedMessages)
-      ) {
-        return -1;
-      }
-      if (
-        b.online &&
-        bHasUnviewedMessages &&
-        (!a.online || !aHasUnviewedMessages)
-      ) {
-        return 1;
-      }
-
-      // Online without unviewed messages.
-      if (
-        a.online &&
-        !aHasUnviewedMessages &&
-        (!b.online || bHasUnviewedMessages)
-      ) {
-        return -1;
-      }
-      if (
-        b.online &&
-        !bHasUnviewedMessages &&
-        (!a.online || aHasUnviewedMessages)
-      ) {
-        return 1;
-      }
-
-      // Offline with unviewed messages.
-      if (
-        !a.online &&
-        aHasUnviewedMessages &&
-        (b.online || !bHasUnviewedMessages)
-      ) {
-        return -1;
-      }
-      if (
-        !b.online &&
-        bHasUnviewedMessages &&
-        (a.online || !aHasUnviewedMessages)
-      ) {
-        return 1;
-      }
-
-      // Offline without unviewed messages.
-      // If it reaches this point, it means both a and b are offline without unviewed messages, hence they are equal in terms of sorting.
-      return 0;
-    });
-    this.friendService.setFriends(this.friends);
   }
 }

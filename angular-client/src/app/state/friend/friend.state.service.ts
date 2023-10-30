@@ -8,6 +8,7 @@ import {
   onlineFriendsSelector,
 } from './friend.state.selectors';
 import { Friend } from './friend.model';
+import { Message } from '../message/message.model';
 
 @Injectable({
   providedIn: 'root',
@@ -132,6 +133,75 @@ export class FriendStateService {
       ...currentState,
       friends: updatedFriends,
     });
+  }
+
+  sortFriendsByUnviewedMessages(unviewedMessages: Message[]) {
+    const currentState = this._friendState.value;
+    if (!currentState.friends) return;
+    const sortedFriends = [...currentState.friends];
+
+    sortedFriends.sort((a, b) => {
+      // Check if friend A and friend B have unviewed messages
+      const aHasUnviewedMessages = unviewedMessages.some(
+        msg => msg.from._id === a._id
+      );
+      const bHasUnviewedMessages = unviewedMessages.some(
+        msg => msg.from._id === b._id
+      );
+
+      // Online with unviewed messages.
+      if (
+        a.online &&
+        aHasUnviewedMessages &&
+        (!b.online || !bHasUnviewedMessages)
+      ) {
+        return -1;
+      }
+      if (
+        b.online &&
+        bHasUnviewedMessages &&
+        (!a.online || !aHasUnviewedMessages)
+      ) {
+        return 1;
+      }
+
+      // Online without unviewed messages.
+      if (
+        a.online &&
+        !aHasUnviewedMessages &&
+        (!b.online || bHasUnviewedMessages)
+      ) {
+        return -1;
+      }
+      if (
+        b.online &&
+        !bHasUnviewedMessages &&
+        (!a.online || aHasUnviewedMessages)
+      ) {
+        return 1;
+      }
+
+      // Offline with unviewed messages.
+      if (
+        !a.online &&
+        aHasUnviewedMessages &&
+        (b.online || !bHasUnviewedMessages)
+      ) {
+        return -1;
+      }
+      if (
+        !b.online &&
+        bHasUnviewedMessages &&
+        (a.online || !aHasUnviewedMessages)
+      ) {
+        return 1;
+      }
+
+      // Offline without unviewed messages.
+      // If it reaches this point, it means both a and b are offline without unviewed messages, hence they are equal in terms of sorting.
+      return 0;
+    });
+    this.setFriends(sortedFriends);
   }
 
   setIsLoading(isLoading: boolean): void {
