@@ -1,11 +1,5 @@
 .login-card {
   max-width: 400px;
-  color: aliceblue;
-  background-color: #212529;
-}
-
-.mat-card-subtitle {
-  color: rgba(255, 255, 255, 0.5);
 }
 
 .login-header-image {
@@ -14,6 +8,7 @@
 }
 
 .login-form {
+  padding-top: 16px;
   min-width: 150px;
   max-width: 500px;
   width: 100%;

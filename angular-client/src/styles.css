@@ -9,3 +9,9 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 :focus {
     outline: none;
 }
+
+.mat-mdc-card {
+    --mdc-elevated-card-container-color: #212529;
+    --mat-card-subtitle-text-color: rgba(255, 255, 255, 0.7);
+    color: aliceblue;
+}
