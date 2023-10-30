@@ -1,72 +1,77 @@
-/* social cell stuff */
-.hint {
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 294px;
+  background: #212529;
   color: aliceblue;
+  padding: 5px;
 }
 
-.createdAt {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.input {
-  width: 100%;
-}
-
-table {
-  width: 100%;
-  background-color: #212529;
-}
-
-.scrollable {
+.message-area {
+  flex-grow: 1;
   height: 270px;
   max-width: 100%;
-  overflow: auto;
+  overflow-y: auto;
+  border-bottom: 1px solid var(--purple);
 }
 
-.mat-cell {
-  color: aliceblue;
-  font-size: 13px;
-  border-bottom-style: none;
+.date-header {
+  padding: 5px;
+  color: var(--title-text-color);
+  font-weight: bold;
 }
 
-/* get rid of padding left for the table */
-th.mat-header-cell:first-of-type,
-td.mat-cell:first-of-type,
-td.mat-footer-cell:first-of-type,
-td.mat-cell:last-of-type {
-  padding-left: 0px;
-  padding-right: 0px;
+.message-container {
+  padding: 5px;
+}
+
+.message-card {
+  background: var(--purple);
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.self-message {
+  background-color: var(--purple);
+}
+
+.friend-message {
+  background-color: gray;
+}
+
+.message-header {
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 12px;
+}
+
+.message-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.input-area {
+  border-top: 1px solid var(--purple);
+}
+
+.input-field {
+  width: 100%;
+  max-width: 100%;
+}
+
+.chat-icons {
+  display: flex;
+  justify-content: space-between;
 }
 
 textarea.mat-input-element {
-  overflow: hidden;
-}
-
-.card {
-  max-width: 280px;
-  padding: 7px;
-  background: rgba(103, 58, 183, 0.3); /* Purple background with 30% opacity */
-}
-
-.card-subtitle {
-  margin-bottom: 0;
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.card-content {
+  background: var(--purple);
+  border-radius: 5px;
   color: aliceblue;
-  margin-bottom: 5px;
 }
 
-.small-font {
-  font-size: 10px;
-}
-
-.cell {
-  padding: 3px;
-}
-
-.old-message {
-  color: aliceblue;
+.hint {
   font-size: 12px;
-  padding-left: 3px;
+  color: var(--title-text-color);
 }

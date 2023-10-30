@@ -1,5 +1,12 @@
 /* You can add global styles to this file, and also import other style files */
 
+:root {
+    --dark: #212529;
+    --purple: #7b1fa2;
+    --title-text-color: aliceblue;
+    --subtitle-text-color: rgba(255, 255, 255, 0.7);
+}
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
@@ -11,7 +18,13 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 }
 
 .mat-mdc-card {
-    --mdc-elevated-card-container-color: #212529;
-    --mat-card-subtitle-text-color: rgba(255, 255, 255, 0.7);
-    color: aliceblue;
+    --mdc-elevated-card-container-color: var(--dark);
+    --mat-card-subtitle-text-color: var(--subtitle-text-color);
+    color: var(--title-text-color);
+}
+
+.mat-mdc-snack-bar-container {
+    --mdc-snackbar-container-color: var(--dark);
+    --mdc-snackbar-supporting-text-color: var(--title-text-color);
+    --mat-snack-bar-button-color: var(--purple);
 }

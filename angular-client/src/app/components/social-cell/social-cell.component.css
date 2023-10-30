@@ -14,7 +14,7 @@
 
 ::ng-deep .mat-expansion-panel-body {
   padding: 0px !important;
-  padding-bottom: 7px !important;
+  padding-bottom: 0px !important;
 }
 
 ::ng-deep .mat-expansion-indicator:after {

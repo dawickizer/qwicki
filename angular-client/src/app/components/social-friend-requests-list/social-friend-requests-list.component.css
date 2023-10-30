@@ -1,27 +1,14 @@
 table {
-  width: 100%;
   background-color: #212529;
 }
 
-.mat-cell {
-  color: aliceblue;
-}
-
-/* get rid of padding left for the table */
-th.mat-header-cell:first-of-type,
-td.mat-cell:first-of-type,
-td.mat-footer-cell:first-of-type,
-td.mat-cell:last-of-type {
-  padding-left: 0px;
-  padding-right: 0px;
+.mdc-data-table__cell,
+.mdc-data-table__header-cell {
+  padding: 0;
 }
 
 .right-justify {
   text-align: right;
-}
-
-.profile-icon {
-  padding-bottom: 5px;
 }
 
 .mat-expansion-panel {

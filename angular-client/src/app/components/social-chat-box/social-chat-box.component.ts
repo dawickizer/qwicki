@@ -47,11 +47,6 @@ export class SocialChatBoxComponent {
     );
   }
 
-  getParagraphs(message: Message) {
-    const result = message?.content?.split('\n') ?? [];
-    return result;
-  }
-
   sendMessage(event?: any) {
     // // prevent that text area from causing an expand event
     if (event) event.preventDefault();

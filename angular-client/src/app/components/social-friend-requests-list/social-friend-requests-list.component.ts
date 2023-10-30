@@ -17,7 +17,7 @@ export class SocialFriendRequestsListComponent {
 
   potentialFriend: string;
 
-  panelOpenState = true;
+  panelOpenState = false;
 
   constructor(private socialOrchestratorService: SocialOrchestratorService) {}
 

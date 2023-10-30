@@ -95,14 +95,14 @@
 }
 
 ::ng-deep ::-webkit-scrollbar-thumb {
-  background: #7b1fa2;
+  background: var(--purple);
   border-radius: 10px;
 }
 
 ::ng-deep .material-icons,
 .material-icons-outlined {
   vertical-align: middle;
-  color: #7b1fa2;
+  color: var(--purple);
 }
 
 ::ng-deep .material-icons:hover,
@@ -112,7 +112,7 @@
 
 ::ng-deep .material-icons-outlined {
   vertical-align: middle;
-  color: #7b1fa2;
+  color: var(--purple);
 }
 
 ::ng-deep .material-icons-outlined:hover {
