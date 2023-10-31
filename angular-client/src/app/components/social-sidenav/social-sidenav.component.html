@@ -1,6 +1,5 @@
 <mat-drawer-container class="sidenav-container" autosize>
   <mat-drawer #drawer class="sidenav">
-    <!-- Profile Section -->
     <div class="profile-section">
       <span
         routerLink="/user-profile"
@@ -11,8 +10,6 @@
       <h1 *ngIf="user$ | async as user">{{ user.username }}</h1>
     </div>
     <mat-divider></mat-divider>
-
-    <!-- Tabs -->
     <mat-tab-group
       class="tab-group"
       (selectedIndexChange)="onTabChanged($event)">
@@ -34,11 +31,8 @@
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label> Groups </ng-template>
-        <!-- <app-social-groups-tab> </app-social-groups-tab> -->
       </mat-tab>
     </mat-tab-group>
   </mat-drawer>
-
-  <!-- Main Content Area -->
   <div class="main-content">Hello World</div>
 </mat-drawer-container>

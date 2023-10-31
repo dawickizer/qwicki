@@ -1,10 +1,11 @@
-/* Global Styles */
-.sidenav-container {
-  color: aliceblue;
-  background-color: #212529;
+.mat-drawer {
+  background-color: var(--dark);
 }
 
-/* Sidebar Profile Section */
+::ng-deep .sidenav-container .mat-drawer-inner-container {
+  overflow: visible;
+}
+
 .sidenav {
   width: 350px;
   padding: 20px;
@@ -20,29 +21,10 @@
   margin-bottom: 16px;
 }
 
-/* Tabs Styling */
-.tab-group ::ng-deep .mat-tab-label {
-  color: aliceblue;
-}
-
-.tab-group ::ng-deep .mat-tab-header-pagination {
-  display: none;
-}
-
-/* Overriding Angular Material Styles */
-::ng-deep .mat-drawer-inner-container {
-  overflow: visible !important;
-}
-
-/* Main Content */
 .main-content {
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
   background-image: url('/assets/home.png');
-}
-
-.mat-drawer {
-  background-color: var(--dark);
 }
