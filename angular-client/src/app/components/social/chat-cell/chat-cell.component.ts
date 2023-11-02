@@ -6,11 +6,11 @@ import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orc
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
-  selector: 'app-social-cell',
-  templateUrl: './social-cell.component.html',
-  styleUrls: ['./social-cell.component.css'],
+  selector: 'app-chat-cell',
+  templateUrl: './chat-cell.component.html',
+  styleUrls: ['./chat-cell.component.css'],
 })
-export class SocialCellComponent implements OnInit, OnDestroy {
+export class ChatCellComponent implements OnInit, OnDestroy {
   @Input() friend: Friend;
 
   panelOpenState = false;

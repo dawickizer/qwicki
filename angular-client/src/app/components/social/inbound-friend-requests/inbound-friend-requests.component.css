@@ -1,5 +1,5 @@
 table {
-  background-color: #212529;
+  background-color: var(--dark);
 }
 
 .mdc-data-table__cell,
@@ -12,8 +12,7 @@ table {
 }
 
 .mat-expansion-panel {
-  background-color: #212529;
-  color: aliceblue;
+  background-color: var(--dark);
 }
 
 .mat-expansion-panel-header {
@@ -25,15 +24,6 @@ table {
   flex-grow: 0;
 }
 
-::ng-deep .mat-expansion-panel-body {
-  padding: 0px !important;
-  padding-bottom: 7px !important;
-}
-
-::ng-deep .mat-expansion-indicator:after {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-.social-friend-requests-full-width {
+.full-width {
   width: 100%;
 }

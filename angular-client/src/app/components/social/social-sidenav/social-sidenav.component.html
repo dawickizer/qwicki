@@ -22,12 +22,12 @@
               [count]="combinedNotif.count"></app-notification-badge>
           </ng-container>
         </ng-template>
-        <app-social-friends-tab
+        <app-friends-tab
           [friendsData]="friends$ | async"
           [inboundFriendRequestsData]="inboundFriendRequests$ | async"
           [outboundFriendRequestsData]="outboundFriendRequests$ | async"
           [unviewedMessages]="unviewedMessages$ | async">
-        </app-social-friends-tab>
+        </app-friends-tab>
       </mat-tab>
       <mat-tab>
         <ng-template mat-tab-label> Groups </ng-template>

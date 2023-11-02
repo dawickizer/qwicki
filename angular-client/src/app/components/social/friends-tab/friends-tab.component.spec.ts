@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SocialCellComponent } from './social-cell.component';
+import { FriendsTabComponent } from './friends-tab.component';
 
-describe('SocialCellComponent', () => {
-  let component: SocialCellComponent;
-  let fixture: ComponentFixture<SocialCellComponent>;
+describe('FriendsTabComponent', () => {
+  let component: FriendsTabComponent;
+  let fixture: ComponentFixture<FriendsTabComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [SocialCellComponent],
+      declarations: [FriendsTabComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SocialCellComponent);
+    fixture = TestBed.createComponent(FriendsTabComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

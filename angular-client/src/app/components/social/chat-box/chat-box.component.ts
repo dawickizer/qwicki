@@ -4,11 +4,11 @@ import { Message } from 'src/app/state/message/message.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
-  selector: 'app-social-chat-box',
-  templateUrl: './social-chat-box.component.html',
-  styleUrls: ['./social-chat-box.component.css'],
+  selector: 'app-chat-box',
+  templateUrl: './chat-box.component.html',
+  styleUrls: ['./chat-box.component.css'],
 })
-export class SocialChatBoxComponent {
+export class ChatBoxComponent {
   @ViewChild('scrollable') scrollable: ElementRef;
 
   @Input() friend: Friend;

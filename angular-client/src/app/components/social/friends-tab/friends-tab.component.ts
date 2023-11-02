@@ -6,11 +6,11 @@ import { FriendRequest } from 'src/app/state/friend-request/friend-requests.mode
 import { Message } from 'src/app/state/message/message.model';
 
 @Component({
-  selector: 'app-social-friends-tab',
-  templateUrl: './social-friends-tab.component.html',
-  styleUrls: ['./social-friends-tab.component.css'],
+  selector: 'app-friends-tab',
+  templateUrl: './friends-tab.component.html',
+  styleUrls: ['./friends-tab.component.css'],
 })
-export class SocialFriendsTabComponent {
+export class FriendsTabComponent {
   @ViewChild('drawer') drawer: MatSidenav;
   friends = new MatTableDataSource<Friend>([] as Friend[]);
   inboundFriendRequests = new MatTableDataSource<FriendRequest>(

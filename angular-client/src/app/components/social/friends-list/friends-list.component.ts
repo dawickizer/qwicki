@@ -6,11 +6,11 @@ import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
 
 @Component({
-  selector: 'app-social-friends-list',
-  templateUrl: './social-friends-list.component.html',
-  styleUrls: ['./social-friends-list.component.css'],
+  selector: 'app-friends-list',
+  templateUrl: './friends-list.component.html',
+  styleUrls: ['./friends-list.component.css'],
 })
-export class SocialFriendsListComponent {
+export class FriendsListComponent {
   @Input() friends: MatTableDataSource<Friend>;
   @Input() unviewedMessages: Message[];
 
