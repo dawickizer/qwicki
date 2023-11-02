@@ -3,8 +3,7 @@
 }
 
 .mat-expansion-panel {
-  background-color: #212529;
-  color: aliceblue;
+  background-color: var(--dark);
 }
 
 .mat-expansion-panel-header {
