@@ -5,11 +5,11 @@
 // import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 
 // @Component({
-//   selector: 'app-social-create-group',
-//   templateUrl: './social-create-group.component.html',
-//   styleUrls: ['./social-create-group.component.css'],
+//   selector: 'app-create-group',
+//   templateUrl: './create-group.component.html',
+//   styleUrls: ['./create-group.component.css'],
 // })
-// export class SocialCreateGroupComponent implements OnInit {
+// export class CreateGroupComponent implements OnInit {
 //   titleColor = 'color:aliceblue';
 
 //   group: Group = new Group();

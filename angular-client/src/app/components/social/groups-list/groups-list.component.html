@@ -1,4 +1,4 @@
-<div class="social-groups-list" *ngIf="isAsyncDataPresent">
+<div class="groups-list" *ngIf="isAsyncDataPresent">
   <mat-expansion-panel class="mat-elevation-z0" [expanded]="true">
     <mat-expansion-panel-header>
       <mat-panel-title>
@@ -8,7 +8,7 @@
       </mat-panel-title>
     </mat-expansion-panel-header>
     <form>
-      <mat-form-field class="social-friends-full-width">
+      <mat-form-field class="full-width">
         <mat-label>Search</mat-label>
         <input matInput (keyup)="filter($event)" name="filter" />
       </mat-form-field>

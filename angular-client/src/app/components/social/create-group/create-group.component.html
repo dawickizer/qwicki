@@ -6,8 +6,8 @@
       </h1>
     </mat-panel-title>
   </mat-expansion-panel-header>
-  <form class="social-create-group-form" (ngSubmit)="createGroup()">
-    <mat-form-field class="social-create-group-full-width">
+  <form class="create-group-form" (ngSubmit)="createGroup()">
+    <mat-form-field class="create-group-full-width">
       <mat-label>Name</mat-label>
       <input
         matInput
@@ -15,7 +15,7 @@
         name="name"
         #input
         maxlength="20" />
-      <mat-hint class="social-create-group-hint" align="end"
+      <mat-hint class="create-group-hint" align="end"
         >{{ input.value?.length || 0 }}/20</mat-hint
       >
     </mat-form-field>

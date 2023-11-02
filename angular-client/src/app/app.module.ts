@@ -45,6 +45,8 @@ import { FriendsTabComponent } from './components/social/friends-tab/friends-tab
 import { FriendStateService } from './state/friend/friend.state.service';
 import { GameComponent } from './components/game/game.component';
 import { GameService } from './services/game/game.service';
+import { GroupsListComponent } from './components/social/groups-list/groups-list.component';
+import { GroupsTabComponent } from './components/social/groups-tab/groups-tab.component';
 import { GunService } from './services/gun/gun.service';
 import { HomeComponent } from './components/home/home.component';
 import { InboundFriendRequestsComponent } from './components/social/inbound-friend-requests/inbound-friend-requests.component';
@@ -62,8 +64,6 @@ import { NotificationBadgeComponent } from './components/notification-badge/noti
 import { OutboundFriendRequestsComponent } from './components/social/outbound-friend-requests/outbound-friend-requests.component';
 import { PlayerService } from './services/player/player.service';
 import { SignupComponent } from './components/signup/signup.component';
-import { SocialGroupsListComponent } from './components/social-groups-list/social-groups-list.component';
-import { SocialGroupsTabComponent } from './components/social-groups-tab/social-groups-tab.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
 import { UserProfileComponent } from './components/user-profile/user-profile.component';
@@ -84,6 +84,8 @@ import { UserStateService } from './state/user/user.state.service';
     FriendsListComponent,
     FriendsTabComponent,
     GameComponent,
+    GroupsListComponent,
+    GroupsTabComponent,
     HomeComponent,
     InboundFriendRequestsComponent,
     JoinGameComponent,
@@ -93,8 +95,6 @@ import { UserStateService } from './state/user/user.state.service';
     NotificationBadgeComponent,
     OutboundFriendRequestsComponent,
     SignupComponent,
-    SocialGroupsListComponent,
-    SocialGroupsTabComponent,
     SocialSidenavComponent,
     UserProfileComponent,
     UserFilterableMultiSelectComponent,
