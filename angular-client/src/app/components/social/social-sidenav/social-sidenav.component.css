@@ -1,0 +1,30 @@
+.mat-drawer {
+  background-color: var(--dark);
+}
+
+::ng-deep .sidenav-container .mat-drawer-inner-container {
+  overflow: visible;
+}
+
+.sidenav {
+  width: 350px;
+  padding: 20px;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon {
+  margin-right: 8px;
+  margin-bottom: 16px;
+}
+
+.main-content {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-image: url('/assets/home.png');
+}

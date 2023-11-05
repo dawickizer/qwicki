@@ -1,0 +1,27 @@
+<mat-expansion-panel class="mat-elevation-z0" [(expanded)]="panelOpenState">
+  <mat-expansion-panel-header>
+    <mat-panel-title>
+      <h1>
+        <span style="color: rgb(0, 162, 255)">friends</span>
+      </h1>
+    </mat-panel-title>
+    <mat-panel-description>
+      <app-notification-badge
+        *ngIf="unviewedMessages?.length > 0 && !panelOpenState"
+        [count]="unviewedMessages?.length"></app-notification-badge>
+    </mat-panel-description>
+  </mat-expansion-panel-header>
+  <table
+    cdkDropList
+    (cdkDropListDropped)="dropFriend($event)"
+    mat-table
+    [dataSource]="friends"
+    class="mat-elevation-z0">
+    <ng-container matColumnDef="username">
+      <td mat-cell *matCellDef="let element; let i = index" cdkDrag>
+        <app-chat-cell [friend]="friends.filteredData[i]"></app-chat-cell>
+      </td>
+    </ng-container>
+    <tr mat-row *matRowDef="let row; columns: friendsDisplayedColumns"></tr>
+  </table>
+</mat-expansion-panel>

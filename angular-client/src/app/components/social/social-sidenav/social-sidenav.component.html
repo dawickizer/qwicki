@@ -1,0 +1,38 @@
+<mat-drawer-container class="sidenav-container" autosize>
+  <mat-drawer #drawer class="sidenav">
+    <div class="profile-section">
+      <span
+        routerLink="/user-profile"
+        matTooltip="Go to User Profile"
+        class="material-icons profile-icon"
+        >account_circle</span
+      >
+      <h1 *ngIf="user$ | async as user">{{ user.username }}</h1>
+    </div>
+    <mat-divider></mat-divider>
+    <mat-tab-group
+      class="tab-group"
+      (selectedIndexChange)="onTabChanged($event)">
+      <mat-tab>
+        <ng-template mat-tab-label>
+          Friends
+          <ng-container *ngIf="combinedNotifications$ | async as combinedNotif">
+            <app-notification-badge
+              *ngIf="combinedNotif.hasData && activeTabIndex !== 0"
+              [count]="combinedNotif.count"></app-notification-badge>
+          </ng-container>
+        </ng-template>
+        <app-friends-tab
+          [friendsData]="friends$ | async"
+          [inboundFriendRequestsData]="inboundFriendRequests$ | async"
+          [outboundFriendRequestsData]="outboundFriendRequests$ | async"
+          [unviewedMessages]="unviewedMessages$ | async">
+        </app-friends-tab>
+      </mat-tab>
+      <mat-tab>
+        <ng-template mat-tab-label> Groups </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-drawer>
+  <div class="main-content">Hello World</div>
+</mat-drawer-container>

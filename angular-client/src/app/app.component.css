@@ -1,39 +1,29 @@
-/* This is a top level styles sheet that is making use of ::ng-deep to globally stylize common components so that future css isnt needed.
-  Essentially theming. 
-*/
-
-/* input color class */
-::ng-deep input.mat-input-element {
+/* ::ng-deep input.mat-input-element {
   color: aliceblue;
 }
 
-/* All placeholder for inputs will take this style */
 ::ng-deep .mat-input-element::placeholder {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* disabled text color for input */
 ::ng-deep .mat-input-element:disabled,
 .mat-form-field-type-mat-native-select.mat-form-field-disabled
   .mat-form-field-infix::after {
   color: aliceblue;
 }
-/* Change label color on no focus */
+
 ::ng-deep .mat-form-field .mat-form-field-label {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* Change label color on focused */
 ::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
   color: #673ab7;
 }
 
-/* underline border color on focused */
 ::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple {
   background-color: #673ab7;
 }
 
-/* All scrollbars will have this styling */
 ::ng-deep ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -42,67 +32,89 @@
   box-shadow: inset 0 0 4px #707070;
 }
 
-/* All scrollbars will have this styling */
 ::ng-deep ::-webkit-scrollbar-thumb {
   background: #673ab7;
   border-radius: 10px;
 }
 
-/* All icons apply these rules */
 ::ng-deep .material-icons,
 .material-icons-outlined {
   vertical-align: middle;
   color: #673ab7;
 }
 
-/* All icons apply these rules */
 ::ng-deep .material-icons:hover,
 .material-icons-outlined:hover {
   cursor: pointer;
 }
 
-/* All icons apply these rules */
 ::ng-deep .material-icons-outlined {
   vertical-align: middle;
   color: #673ab7;
 }
 
-/* All icons apply these rules */
 ::ng-deep .material-icons-outlined:hover {
   cursor: pointer;
 }
 
-/* All select arrows apply these rules */
 ::ng-deep .mat-select-arrow {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* All select arrows when focused apply these rules */
 ::ng-deep .mat-focused .mat-select-arrow {
   color: #673ab7;
 }
 
-/* All option text apply these rules */
 ::ng-deep .mat-option-text {
   color: aliceblue;
 }
 
-/* All select panels apply these rules */
 ::ng-deep .mat-select-panel {
   background-color: #212529;
 }
 
-/* All select values apply these rules */
 ::ng-deep .mat-select-value {
   color: aliceblue;
 }
 
-/* All pseudo checkboxes apply these rules */
 ::ng-deep .mat-pseudo-checkbox {
   color: rgba(255, 255, 255, 0.5);
 }
 
-/* All pseudo checkboxes that are checked apply these rules */
 ::ng-deep .mat-pseudo-checkbox-checked {
   background-color: #673ab7;
+}
+ */
+
+::ng-deep ::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+  overflow-y: scroll;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 4px #707070;
+}
+
+::ng-deep ::-webkit-scrollbar-thumb {
+  background: var(--purple);
+  border-radius: 10px;
+}
+
+::ng-deep .material-icons,
+.material-icons-outlined {
+  vertical-align: middle;
+  color: var(--purple);
+}
+
+::ng-deep .material-icons:hover,
+.material-icons-outlined:hover {
+  cursor: pointer;
+}
+
+::ng-deep .material-icons-outlined {
+  vertical-align: middle;
+  color: var(--purple);
+}
+
+::ng-deep .material-icons-outlined:hover {
+  cursor: pointer;
 }

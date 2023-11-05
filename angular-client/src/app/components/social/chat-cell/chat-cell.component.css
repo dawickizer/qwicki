@@ -1,0 +1,32 @@
+.mat-expansion-panel {
+  background-color: var(--dark);
+}
+
+.mat-expansion-panel-header {
+  padding: 0px;
+  padding-right: 7px;
+}
+
+.mat-expansion-panel-header-description {
+  flex-grow: 0;
+}
+
+::ng-deep .mat-expansion-panel-body {
+  padding: 0px;
+}
+
+::ng-deep .material-icons.online,
+.material-icons-outlined {
+  vertical-align: middle;
+  color: #3cb371;
+  font-size: 12px;
+  padding-right: 4px;
+}
+
+::ng-deep .material-icons.offline,
+.material-icons-outlined {
+  vertical-align: middle;
+  color: #cd5c5c;
+  font-size: 12px;
+  padding-right: 4px;
+}

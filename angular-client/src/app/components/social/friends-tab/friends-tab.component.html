@@ -1,0 +1,15 @@
+<div class="friends-tab">
+  <form>
+    <mat-form-field class="full-width">
+      <mat-label>Search</mat-label>
+      <input matInput (keyup)="filter($event)" name="filter" />
+    </mat-form-field>
+  </form>
+  <app-inbound-friend-requests
+    [friendRequests]="inboundFriendRequests"></app-inbound-friend-requests>
+  <app-friends-list
+    [friends]="friends"
+    [unviewedMessages]="unviewedMessages"></app-friends-list>
+  <app-outbound-friend-requests
+    [friendRequests]="outboundFriendRequests"></app-outbound-friend-requests>
+</div>

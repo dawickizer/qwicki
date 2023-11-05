@@ -1,0 +1,29 @@
+table {
+  background-color: var(--dark);
+}
+
+.mdc-data-table__cell,
+.mdc-data-table__header-cell {
+  padding: 0;
+}
+
+.right-justify {
+  text-align: right;
+}
+
+.profile-icon {
+  padding-bottom: 5px;
+}
+
+.mat-expansion-panel {
+  background-color: var(--dark);
+}
+
+.mat-expansion-panel-header {
+  padding: 0px;
+  padding-right: 7px;
+}
+
+.mat-expansion-panel-header-description {
+  flex-grow: 0;
+}

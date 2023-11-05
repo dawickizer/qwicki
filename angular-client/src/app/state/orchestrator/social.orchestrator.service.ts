@@ -1,5 +1,13 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap, switchMap, map, of, forkJoin } from 'rxjs';
+import {
+  Observable,
+  tap,
+  switchMap,
+  map,
+  of,
+  forkJoin,
+  defaultIfEmpty,
+} from 'rxjs';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { User } from '../user/user.model';
 import { FriendService } from '../friend/friend.service';
@@ -77,11 +85,13 @@ export class SocialOrchestratorService {
       })
       .pipe(
         tap(user => this.setSocials(user)),
-        switchMap(user =>
-          forkJoin(
-            user.friends.map(friend => this.getAllMessagesBetween(friend))
-          )
-        ),
+        switchMap(user => {
+          if (user.friends.length > 0)
+            return forkJoin(
+              user.friends.map(friend => this.getAllMessagesBetween(friend))
+            );
+          else return of(null).pipe(defaultIfEmpty(null)); // Emit a default value when there are no friends.
+        }),
         switchMap(() => this.createPersonalInbox()),
         switchMap(() => this.joinFriendsInboxesIfPresent()),
         tap(() =>

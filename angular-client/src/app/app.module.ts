@@ -26,10 +26,12 @@ import { AuthInterceptor } from './state/auth/auth.interceptor.service';
 import { AuthOrchestratorService } from './state/orchestrator/auth.orchestrator.service';
 import { AuthService } from './state/auth/auth.service';
 import { AuthStateService } from './state/auth/auth.state.service';
-import { BabylonjsComponent } from './components/babylonjs/babylonjs.component';
+import { BabylonjsComponent } from './components/game/babylonjs/babylonjs.component';
 import { BorderDirective } from './directives/border.directive';
+import { ChatBoxComponent } from './components/social/chat-box/chat-box.component';
+import { ChatCellComponent } from './components/social/chat-cell/chat-cell.component';
 import { ColyseusService } from './services/colyseus/colyseus.service';
-import { CreateGameComponent } from './components/create-game/create-game.component';
+import { CreateGameComponent } from './components/match-making/create-game/create-game.component';
 import { FpsService } from './services/fps/fps.service';
 import { FriendApiService } from './state/friend/friend.api.service';
 import { FriendEffectService } from './state/friend/friend.effect.service';
@@ -38,64 +40,64 @@ import { FriendRequestEffectService } from './state/friend-request/friend-reques
 import { FriendRequestService } from './state/friend-request/friend-request.service';
 import { FriendRequestStateService } from './state/friend-request/friend-request.state.service';
 import { FriendService } from './state/friend/friend.service';
+import { FriendsListComponent } from './components/social/friends-list/friends-list.component';
+import { FriendsTabComponent } from './components/social/friends-tab/friends-tab.component';
 import { FriendStateService } from './state/friend/friend.state.service';
-import { GameComponent } from './components/game/game.component';
+import { GameComponent } from './components/game/game/game.component';
 import { GameService } from './services/game/game.service';
+import { GroupsListComponent } from './components/social/groups-list/groups-list.component';
+import { GroupsTabComponent } from './components/social/groups-tab/groups-tab.component';
 import { GunService } from './services/gun/gun.service';
 import { HomeComponent } from './components/home/home.component';
+import { InboundFriendRequestsComponent } from './components/social/inbound-friend-requests/inbound-friend-requests.component';
 import { InactivityService } from './services/inactivity/inactivity.service';
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
-import { JoinGameComponent } from './components/join-game/join-game.component';
+import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
-import { LoginComponent } from './components/login/login.component';
+import { LoginComponent } from './components/auth/login/login.component';
 import { MatchMakingService } from './services/match-making/match-making.service';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
+import { OutboundFriendRequestsComponent } from './components/social/outbound-friend-requests/outbound-friend-requests.component';
 import { PlayerService } from './services/player/player.service';
-import { SignupComponent } from './components/signup/signup.component';
-import { SocialCellComponent } from './components/social-cell/social-cell.component';
-import { SocialChatBoxComponent } from './components/social-chat-box/social-chat-box.component';
-import { SocialFriendsListComponent } from './components/social-friends-list/social-friends-list.component';
-import { SocialFriendsTabComponent } from './components/social-friends-tab/social-friends-tab.component';
-import { SocialFriendRequestsListComponent } from './components/social-friend-requests-list/social-friend-requests-list.component';
-import { SocialGroupsListComponent } from './components/social-groups-list/social-groups-list.component';
-import { SocialGroupsTabComponent } from './components/social-groups-tab/social-groups-tab.component';
+import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
-import { SocialSidenavComponent } from './components/social-sidenav/social-sidenav.component';
-import { UserProfileComponent } from './components/user-profile/user-profile.component';
+import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
+import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
 import { UserEffectService } from './state/user/user.effect.service';
-import { UserFilterableMultiSelectComponent } from './components/user-filterable-multi-select/user-filterable-multi-select.component';
+import { UserFilterableMultiSelectComponent } from './components/misc/user-filterable-multi-select/user-filterable-multi-select.component';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
-import { NotificationBadgeComponent } from './components/notification-badge/notification-badge.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BabylonjsComponent,
     BorderDirective,
+    ChatBoxComponent,
+    ChatCellComponent,
     CreateGameComponent,
+    FriendsListComponent,
+    FriendsTabComponent,
     GameComponent,
+    GroupsListComponent,
+    GroupsTabComponent,
     HomeComponent,
+    InboundFriendRequestsComponent,
     JoinGameComponent,
     LoginComponent,
     NavbarComponent,
     NotFoundComponent,
+    NotificationBadgeComponent,
+    OutboundFriendRequestsComponent,
     SignupComponent,
-    SocialCellComponent,
-    SocialChatBoxComponent,
-    SocialFriendsListComponent,
-    SocialFriendsTabComponent,
-    SocialFriendRequestsListComponent,
-    SocialGroupsListComponent,
-    SocialGroupsTabComponent,
     SocialSidenavComponent,
     UserProfileComponent,
     UserFilterableMultiSelectComponent,
-    NotificationBadgeComponent,
   ],
   imports: [
     AppRoutingModule,

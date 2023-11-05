@@ -8,7 +8,7 @@ export class BorderDirective {
   @Input() bRadius = 0;
   @Input() bPadding = 0;
   @Input() bMargin = 0;
-  @Input() bColor = '#673ab7';
+  @Input() bColor = '#7b1fa2';
   @Input() bWidth = 1;
 
   @HostBinding('style.borderStyle')

@@ -1,0 +1,50 @@
+<div class="chat-box" (mousedown)="$event.stopPropagation()">
+  <div class="message-area scrollable" #scrollable>
+    <ng-container *ngFor="let group of messages | keyvalue">
+      <div class="date-header">{{ group.key | date: 'mediumDate' }}</div>
+      <div *ngFor="let message of group.value" class="message-container">
+        <div
+          class="message-card"
+          [ngClass]="
+            message.from?._id === friend._id ? 'friend-message' : 'self-message'
+          ">
+          <div class="message-header">
+            {{ message.from?.username }} -
+            {{ message.createdAt | date: 'shortTime' }}
+          </div>
+          <div class="message-content">{{ message.content }}</div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+  <div class="input-area">
+    <mat-form-field class="input-field">
+      <mat-label>Chat</mat-label>
+      <textarea
+        [(ngModel)]="newMessage"
+        (keydown.enter)="sendMessage($event)"
+        cdkTextareaAutosize
+        matInput
+        maxlength="250"
+        #input>
+      </textarea>
+      <mat-hint class="hint" align="end"
+        >{{ input.value.length || 0 }}/250</mat-hint
+      >
+    </mat-form-field>
+  </div>
+  <div class="chat-icons">
+    <span
+      matTooltip="Remove Friend"
+      (click)="removeFriend()"
+      class="material-icons-outlined"
+      >person_remove</span
+    >
+    <span
+      matTooltip="Send Message"
+      (click)="sendMessage()"
+      class="material-icons"
+      >send</span
+    >
+  </div>
+</div>
