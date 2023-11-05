@@ -1,5 +1,5 @@
 <div class="chat-box" (mousedown)="$event.stopPropagation()">
-  <div class="message-area scrollable" #scrollable>
+  <div class="message-area" #scrollable>
     <ng-container *ngFor="let group of messages | keyvalue">
       <div class="date-header">{{ group.key | date: 'mediumDate' }}</div>
       <div *ngFor="let message of group.value" class="message-container">

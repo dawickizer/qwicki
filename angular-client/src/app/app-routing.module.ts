@@ -5,14 +5,14 @@ import { SignupComponent } from './components/auth/signup/signup.component';
 import { BabylonjsComponent } from './components/game/babylonjs/babylonjs.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
-import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
 import { GameComponent } from './components/game/game/game.component';
 import { AuthGuardService } from './state/auth/auth.guard.service';
+import { TestComponent } from './components/test/test.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: SocialSidenavComponent,
+    component: TestComponent,
     canActivate: [AuthGuardService],
   },
   {

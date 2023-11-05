@@ -8,6 +8,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatGridListModule } from '@angular/material/grid-list';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
@@ -66,6 +67,7 @@ import { PlayerService } from './services/player/player.service';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
+import { TestComponent } from './components/test/test.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
 import { UserEffectService } from './state/user/user.effect.service';
@@ -96,6 +98,7 @@ import { UserStateService } from './state/user/user.state.service';
     OutboundFriendRequestsComponent,
     SignupComponent,
     SocialSidenavComponent,
+    TestComponent,
     UserProfileComponent,
     UserFilterableMultiSelectComponent,
   ],
@@ -111,6 +114,7 @@ import { UserStateService } from './state/user/user.state.service';
     MatCardModule,
     MatDividerModule,
     MatExpansionModule,
+    MatGridListModule,
     MatInputModule,
     MatSelectModule,
     MatSidenavModule,
