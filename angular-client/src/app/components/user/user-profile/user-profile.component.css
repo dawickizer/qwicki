@@ -30,3 +30,12 @@
   align-items: center;
   background-image: url('/assets/home.png');
 }
+
+.update-button {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.delete-button {
+  width: 100%;
+}

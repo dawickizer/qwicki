@@ -25,3 +25,12 @@
   align-items: center;
   background-image: url('/assets/home.png');
 }
+
+.login-button {
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.signup-button {
+  width: 100%;
+}

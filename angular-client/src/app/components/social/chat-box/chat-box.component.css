@@ -3,8 +3,8 @@
   flex-direction: column;
   height: 100%;
   width: 294px;
-  background: #212529;
-  color: aliceblue;
+  background: var(--dark);
+  color: var(--title-text-color);
   padding: 5px;
 }
 
@@ -13,7 +13,6 @@
   height: 270px;
   max-width: 100%;
   overflow-y: auto;
-  border-bottom: 1px solid var(--purple);
 }
 
 .date-header {
@@ -51,10 +50,6 @@
   word-wrap: break-word;
 }
 
-.input-area {
-  border-top: 1px solid var(--purple);
-}
-
 .input-field {
   width: 100%;
   max-width: 100%;
@@ -68,7 +63,7 @@
 textarea.mat-input-element {
   background: var(--purple);
   border-radius: 5px;
-  color: aliceblue;
+  color: var(--title-text-color);
 }
 
 .hint {

@@ -1,28 +1,28 @@
 <div class="main-div">
-  <mat-card class="user-profile-card">
+  <mat-card class="signup-card">
     <mat-card-header>
-      <div mat-card-avatar class="user-profile-header-image"></div>
-      <mat-card-title>Hello, {{ user.username }}</mat-card-title>
-      <mat-card-subtitle>Need to update your user profile?</mat-card-subtitle>
+      <div mat-card-avatar class="signup-header-image"></div>
+      <mat-card-title>Sign Up</mat-card-title>
+      <mat-card-subtitle>Wanna play a qwicki?</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <form
-        class="user-profile-form"
-        #userProfileForm="ngForm"
-        (ngSubmit)="userProfileForm.valid && update()">
-        <mat-form-field class="user-profile-full-width">
+        class="signup-form"
+        #signupForm="ngForm"
+        (ngSubmit)="signupForm.valid && signup()">
+        <mat-form-field class="signup-full-width">
           <mat-label>First Name</mat-label>
           <input matInput [(ngModel)]="user.firstName" name="firstName" />
         </mat-form-field>
-        <mat-form-field class="user-profile-full-width">
+        <mat-form-field class="signup-full-width">
           <mat-label>Middle Name</mat-label>
           <input matInput [(ngModel)]="user.middleName" name="middleName" />
         </mat-form-field>
-        <mat-form-field class="user-profile-full-width">
+        <mat-form-field class="signup-full-width">
           <mat-label>Last Name</mat-label>
           <input matInput [(ngModel)]="user.lastName" name="lastName" />
         </mat-form-field>
-        <mat-form-field class="user-profile-full-width">
+        <mat-form-field class="signup-full-width">
           <mat-label>Email</mat-label>
           <input
             required
@@ -31,11 +31,7 @@
             type="email"
             name="email" />
         </mat-form-field>
-        <mat-form-field class="user-profile-full-width">
-          <mat-label>Role</mat-label>
-          <input matInput disabled [(ngModel)]="user.role" name="role" />
-        </mat-form-field>
-        <mat-form-field class="user-profile-full-width">
+        <mat-form-field class="signup-full-width">
           <mat-label>username</mat-label>
           <input
             required
@@ -43,7 +39,7 @@
             [(ngModel)]="user.username"
             name="username" />
         </mat-form-field>
-        <mat-form-field class="user-profile-full-width">
+        <mat-form-field class="signup-full-width">
           <mat-label>password</mat-label>
           <input
             required
@@ -52,9 +48,15 @@
             type="password"
             name="password" />
         </mat-form-field>
-        <button mat-raised-button color="primary" type="submit">Update</button>
-        <button mat-raised-button color="warn" type="button" (click)="delete()">
-          Delete
+        <button
+          class="signup-button"
+          mat-raised-button
+          color="primary"
+          type="submit">
+          Signup
+        </button>
+        <button class="login-button" mat-raised-button routerLink="/auth/login">
+          Login
         </button>
       </form>
     </mat-card-content>
