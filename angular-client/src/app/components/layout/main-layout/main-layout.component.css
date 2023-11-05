@@ -12,6 +12,7 @@
 
 .content {
   flex-grow: 1;
+  /* background-image: url('/assets/qwicki-background.png'); */
 }
 
 .mat-drawer {

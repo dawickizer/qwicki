@@ -33,6 +33,7 @@ import { ChatBoxComponent } from './components/social/chat-box/chat-box.componen
 import { ChatCellComponent } from './components/social/chat-cell/chat-cell.component';
 import { ColyseusService } from './services/colyseus/colyseus.service';
 import { CreateGameComponent } from './components/match-making/create-game/create-game.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { FpsService } from './services/fps/fps.service';
 import { FriendApiService } from './state/friend/friend.api.service';
 import { FriendEffectService } from './state/friend/friend.effect.service';
@@ -58,8 +59,9 @@ import { InboxStateService } from './state/inbox/inbox.state.service';
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
 import { LoginComponent } from './components/auth/login/login.component';
+import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { MatchMakingService } from './services/match-making/match-making.service';
-import { NavbarComponent } from './components/navbar/navbar.component';
+import { NavbarComponent } from './components/layout/navbar/navbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
 import { OutboundFriendRequestsComponent } from './components/social/outbound-friend-requests/outbound-friend-requests.component';
@@ -67,7 +69,6 @@ import { PlayerService } from './services/player/player.service';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
-import { TestComponent } from './components/test/test.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
 import { UserEffectService } from './state/user/user.effect.service';
@@ -83,6 +84,7 @@ import { UserStateService } from './state/user/user.state.service';
     ChatBoxComponent,
     ChatCellComponent,
     CreateGameComponent,
+    DashboardComponent,
     FriendsListComponent,
     FriendsTabComponent,
     GameComponent,
@@ -92,13 +94,13 @@ import { UserStateService } from './state/user/user.state.service';
     InboundFriendRequestsComponent,
     JoinGameComponent,
     LoginComponent,
+    MainLayoutComponent,
     NavbarComponent,
     NotFoundComponent,
     NotificationBadgeComponent,
     OutboundFriendRequestsComponent,
     SignupComponent,
     SocialSidenavComponent,
-    TestComponent,
     UserProfileComponent,
     UserFilterableMultiSelectComponent,
   ],

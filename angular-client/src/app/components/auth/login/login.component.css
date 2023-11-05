@@ -23,7 +23,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('/assets/home.png');
+  background-image: url('/assets/qwicki-background.png');
 }
 
 .login-button {

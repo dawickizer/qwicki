@@ -9,7 +9,7 @@
 }
 
 .user-profile-header-image {
-  background-image: url('/assets/wick.png');
+  background-image: url('/assets/qwicki-coin.png');
   background-size: cover;
 }
 
@@ -28,7 +28,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-image: url('/assets/home.png');
 }
 
 .update-button {
