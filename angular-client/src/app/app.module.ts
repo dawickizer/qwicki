@@ -66,6 +66,7 @@ import { MatchMakingService } from './services/match-making/match-making.service
 import { NavbarComponent } from './components/layout/navbar/navbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
+import { OnlineStatusComponent } from './components/misc/online-status/online-status.component';
 import { OutboundFriendRequestsComponent } from './components/social/outbound-friend-requests/outbound-friend-requests.component';
 import { PlayerService } from './services/player/player.service';
 import { SignupComponent } from './components/auth/signup/signup.component';
@@ -102,6 +103,7 @@ import { UserStateService } from './state/user/user.state.service';
     NavbarComponent,
     NotFoundComponent,
     NotificationBadgeComponent,
+    OnlineStatusComponent,
     OutboundFriendRequestsComponent,
     SignupComponent,
     SocialSidenavComponent,

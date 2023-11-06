@@ -1,0 +1,7 @@
+<span
+  [matTooltip]="status | titlecase"
+  class="status-indicator"
+  [ngClass]="status"
+  [ngStyle]="{ 'width.px': size, 'height.px': size }"
+  (click)="readOnly ? null : updateStatus()">
+</span>

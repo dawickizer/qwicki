@@ -5,7 +5,14 @@
     class="material-icons profile-icon"
     >account_circle</span
   >
-  <h1 *ngIf="user$ | async as user">{{ user.username }}</h1>
+  <ng-container *ngIf="user$ | async as user">
+    <h1>{{ user.username }}</h1>
+    <app-online-status
+      class="online-status"
+      [size]="15"
+      [readOnly]="false"
+      [status]="user.online ? 'online' : 'offline'"></app-online-status>
+  </ng-container>
 </div>
 <mat-divider></mat-divider>
 <mat-tab-group class="tab-group" (selectedIndexChange)="onTabChanged($event)">

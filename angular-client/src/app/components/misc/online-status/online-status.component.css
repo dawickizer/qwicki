@@ -1,0 +1,20 @@
+.status-indicator {
+  display: inline-block;
+  border-radius: 50%; /* This ensures the element is always a circle */
+  vertical-align: middle; /* Aligns with adjacent text */
+}
+.status-indicator:hover {
+  cursor: pointer;
+}
+
+.status-indicator.online {
+  background-color: #3cb371; /* Green color for 'online' status */
+}
+
+.status-indicator.offline {
+  background-color: #cd5c5c; /* Red color for 'offline' status */
+}
+
+.status-indicator.away {
+  background-color: #ffa500; /* Orange color for 'away' status */
+}
