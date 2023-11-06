@@ -58,6 +58,7 @@ import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
+import { LobbyComponent } from './components/match-making/lobby/lobby.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { MatchMakingService } from './services/match-making/match-making.service';
@@ -93,6 +94,7 @@ import { UserStateService } from './state/user/user.state.service';
     HomeComponent,
     InboundFriendRequestsComponent,
     JoinGameComponent,
+    LobbyComponent,
     LoginComponent,
     MainLayoutComponent,
     NavbarComponent,

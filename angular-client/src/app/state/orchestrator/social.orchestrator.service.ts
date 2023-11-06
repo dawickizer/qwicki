@@ -122,6 +122,30 @@ export class SocialOrchestratorService {
     );
   }
 
+  notifyFriendUserIsTyping(friend: Friend, isTyping: boolean): Observable<any> {
+    return new Observable(subscriber => {
+      const friendsInbox = this.friendsInboxes.find(
+        friendsInbox => friendsInbox.id === friend._id
+      );
+
+      if (friendsInbox) {
+        friendsInbox.send('userIsTyping', {
+          friendId: this.user._id,
+          isTyping,
+        });
+        subscriber.next({ success: true });
+        subscriber.complete();
+      } else {
+        this.personalInbox.send('hostIsTyping', {
+          friendId: friend._id,
+          isTyping,
+        });
+        subscriber.next({ success: true });
+        subscriber.complete();
+      }
+    });
+  }
+
   markMessagesAsViewed(
     friend: Friend,
     messages: Message[]
@@ -265,6 +289,13 @@ export class SocialOrchestratorService {
       this.friendService.reorderFriend(message.from._id, 'front');
     });
 
+    inbox.onMessage(
+      'userIsTyping',
+      (data: { friendId: string; isTyping: boolean }) => {
+        this.friendService.setFriendIsTyping(data.friendId, data.isTyping);
+      }
+    );
+
     inbox.onMessage('online', (inboxId: string) => {
       this.friendService.setFriendOnline(inboxId);
     });
@@ -308,6 +339,13 @@ export class SocialOrchestratorService {
       this.messageService.addMessageToFriend(message.from, message);
       this.friendService.reorderFriend(message.from._id, 'front');
     });
+
+    inbox.onMessage(
+      'hostIsTyping',
+      (data: { friendId: string; isTyping: boolean }) => {
+        this.friendService.setFriendIsTyping(data.friendId, data.isTyping);
+      }
+    );
 
     inbox.onMessage('disconnectFriend', (disconnectedFriend: Friend) => {
       this.friendService.removeFriend(disconnectedFriend);

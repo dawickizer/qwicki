@@ -54,6 +54,31 @@ export class FriendStateService {
     });
   }
 
+  setFriendIsTyping(friendId: string, isTyping: boolean): void {
+    const currentState = this._friendState.value;
+    if (!currentState.friends) return;
+
+    const friendIndex = currentState.friends.findIndex(
+      friend => friend._id === friendId
+    );
+
+    if (friendIndex === -1) return; // if the friend with the given ID is not found
+
+    // Create a shallow copy of the friends array
+    const updatedFriends = [...currentState.friends];
+
+    // Update the online status of the specified friend
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      isTyping,
+    };
+
+    this._friendState.next({
+      ...currentState,
+      friends: updatedFriends.map(friend => new Friend(friend)),
+    });
+  }
+
   setFriendOnline(friendId: string): void {
     this.updateFriendStatus(friendId, true);
     this.reorderFriend(friendId, 'front');

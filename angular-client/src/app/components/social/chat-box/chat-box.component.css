@@ -8,6 +8,10 @@
   padding: 5px;
 }
 
+.is-typing {
+  height: 20px;
+}
+
 .message-area {
   flex-grow: 1;
   height: 270px;

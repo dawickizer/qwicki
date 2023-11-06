@@ -33,6 +33,9 @@ export class FriendsTabComponent {
         if (existingFriend.online !== friend.online) {
           existingFriend.online = friend.online;
         }
+        if (existingFriend.isTyping !== friend.isTyping) {
+          existingFriend.isTyping = friend.isTyping;
+        }
         return existingFriend;
       } else {
         return friend;

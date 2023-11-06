@@ -16,12 +16,16 @@
         </div>
       </div>
     </ng-container>
+    <div class="is-typing">
+      <span *ngIf="friend.isTyping">{{ friend.username }} is typing...</span>
+    </div>
   </div>
   <div class="input-area">
     <mat-form-field class="input-field">
       <mat-label>Chat</mat-label>
       <textarea
         [(ngModel)]="newMessage"
+        (keydown)="onKeyPress()"
         (keydown.enter)="sendMessage($event)"
         cdkTextareaAutosize
         matInput

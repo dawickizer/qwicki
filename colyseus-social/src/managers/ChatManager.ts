@@ -19,5 +19,27 @@ export class ChatManager extends InboxManager {
         userClient.send('messageUser', message);
       }
     });
+
+    this.inbox.onMessage(
+      'userIsTyping',
+      (client, data: { friendId: string; isTyping: boolean }) => {
+        this.inbox.hostClient.send('userIsTyping', data);
+      }
+    );
+
+    this.inbox.onMessage(
+      'hostIsTyping',
+      (client, data: { friendId: string; isTyping: boolean }) => {
+        const host = this.inbox.state.host;
+        const user = this.inbox.getUserById(data.friendId);
+        if (user) {
+          const userClient: Client = this.inbox.getClient(user);
+          userClient.send('hostIsTyping', {
+            friendId: host._id,
+            isTyping: data.isTyping,
+          });
+        }
+      }
+    );
   }
 }

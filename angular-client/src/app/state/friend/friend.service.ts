@@ -52,6 +52,10 @@ export class FriendService {
     this.friendStateService.setFriends(friends);
   }
 
+  setFriendIsTyping(friendId: string, isTyping: boolean): void {
+    this.friendStateService.setFriendIsTyping(friendId, isTyping);
+  }
+
   setFriendOnline(friendId: string): void {
     this.friendStateService.setFriendOnline(friendId);
   }

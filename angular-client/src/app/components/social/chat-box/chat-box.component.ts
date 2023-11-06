@@ -2,6 +2,8 @@ import { Component, Input, ElementRef, ViewChild } from '@angular/core';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
+import { Subject } from 'rxjs';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
   selector: 'app-chat-box',
@@ -34,8 +36,37 @@ export class ChatBoxComponent {
   }
 
   newMessage = '';
+  isTyping = false;
+  typing = new Subject<void>();
 
-  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
+  constructor(private socialOrchestratorService: SocialOrchestratorService) {
+    this.setupDebounce();
+  }
+
+  private setupDebounce(): void {
+    this.typing = new Subject<void>();
+    this.typing
+      .pipe(
+        debounceTime(2000) // Wait for 2 seconds of inactivity
+      )
+      .subscribe(() => {
+        this.isTyping = false;
+        this.socialOrchestratorService
+          .notifyFriendUserIsTyping(this.friend, false)
+          .subscribe();
+      });
+  }
+
+  onKeyPress(): void {
+    if (!this.isTyping) {
+      this.isTyping = true;
+      this.socialOrchestratorService
+        .notifyFriendUserIsTyping(this.friend, true)
+        .subscribe();
+    }
+    // Each keypress resets the debounce timer.
+    this.typing.next();
+  }
 
   setScrollHeight() {
     // wait 10ms to allow elementrefs to refresh..else the scroll height will be wrong
@@ -48,15 +79,28 @@ export class ChatBoxComponent {
   }
 
   sendMessage(event?: any) {
-    // // prevent that text area from causing an expand event
+    // Prevent that text area from causing an expand event
     if (event) event.preventDefault();
-    if (this.newMessage && this.newMessage !== '') {
+    if (this.newMessage.trim() !== '') {
       const message: Message = new Message();
       message.content = this.newMessage;
       message.to = this.friend;
       this.socialOrchestratorService
         .sendMessage(this.friend, message)
         .subscribe();
+
+      // Immediately set isTyping to false and notify that the user has stopped typing
+      this.isTyping = false;
+      this.typing.complete(); // Complete the current subject
+      this.socialOrchestratorService
+        .notifyFriendUserIsTyping(this.friend, false)
+        .subscribe();
+
+      // Recreate the typing Subject for a new typing session
+      this.typing = new Subject<void>();
+      this.setupDebounce();
+
+      // Reset the new message
       this.newMessage = '';
     }
   }
