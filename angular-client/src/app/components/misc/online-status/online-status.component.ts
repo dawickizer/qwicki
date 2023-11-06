@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 @Component({
   selector: 'app-online-status',
@@ -6,7 +7,7 @@ import { Component, Input } from '@angular/core';
   styleUrls: ['./online-status.component.css'],
 })
 export class OnlineStatusComponent {
-  @Input() status: 'online' | 'offline' | 'away';
+  @Input() status: OnlineStatus;
   @Input() readOnly = true;
   @Input() size = 10;
 
