@@ -15,6 +15,10 @@ export class PresenceManager extends InboxManager {
     this.inbox.hostClient.send('offline', user._id);
   }
 
+  notifyHostUserIsAway(user: User) {
+    this.inbox.hostClient.send('away', user._id);
+  }
+
   broadcastDisposeRoom() {
     this.inbox.broadcast('dispose', this.inbox.roomId);
   }

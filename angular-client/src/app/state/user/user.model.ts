@@ -1,5 +1,6 @@
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { Friend } from '../friend/friend.model';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 export class User {
   _id?: string;
@@ -10,7 +11,7 @@ export class User {
   firstName: string;
   middleName?: string;
   lastName: string;
-  online = false;
+  onlineStatus?: OnlineStatus = 'offline';
   friends: Friend[] = [];
   inboundFriendRequests: FriendRequest[] = [];
   outboundFriendRequests: FriendRequest[] = [];
@@ -25,7 +26,7 @@ export class User {
       this.firstName = user.firstName;
       this.middleName = user.middleName;
       this.lastName = user.lastName;
-      this.online = user.online ?? false;
+      this.onlineStatus = user.onlineStatus ?? 'offline';
       this.friends = user.friends.map(friend => new Friend(friend));
       this.inboundFriendRequests = user.inboundFriendRequests.map(
         inboundFriendRequest => new FriendRequest(inboundFriendRequest)
@@ -37,10 +38,14 @@ export class User {
   }
 
   get onlineFriends(): Friend[] {
-    return this.friends.filter(friend => friend.online);
+    return this.friends.filter(friend => friend.onlineStatus === 'online');
   }
 
   get offlineFriends(): Friend[] {
-    return this.friends.filter(friend => !friend.online);
+    return this.friends.filter(friend => friend.onlineStatus === 'offline');
+  }
+
+  get awayFriends(): Friend[] {
+    return this.friends.filter(friend => friend.onlineStatus === 'away');
   }
 }

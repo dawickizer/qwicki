@@ -3,6 +3,7 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { UserState } from './user.state';
 import { isEqual } from 'lodash';
 import { User } from './user.model';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 export const userSelector = (
   userState$: Observable<UserState>
@@ -20,10 +21,10 @@ export const isLoadingSelector = (
     distinctUntilChanged()
   );
 
-export const onlineSelector = (
+export const onlineStatusSelector = (
   user$: Observable<User | null>
-): Observable<boolean | null> =>
+): Observable<OnlineStatus | null> =>
   user$.pipe(
-    map(user => (user ? user.online : null)),
+    map(user => (user ? user.onlineStatus : null)),
     distinctUntilChanged()
   );

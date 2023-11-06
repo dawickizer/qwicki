@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { FriendState, initialState } from './friend.state';
 import {
+  awayFriendsSelector,
   friendsSelector,
   isLoadingSelector,
   offlineFriendsSelector,
@@ -9,6 +10,7 @@ import {
 } from './friend.state.selectors';
 import { Friend } from './friend.model';
 import { Message } from '../message/message.model';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +24,7 @@ export class FriendStateService {
   public friends$ = friendsSelector(this.friendState$);
   public onlineFriends$ = onlineFriendsSelector(this.friends$);
   public offlineFriends$ = offlineFriendsSelector(this.friends$);
+  public awayFriends$ = awayFriendsSelector(this.friends$);
 
   setInitialState() {
     this._friendState.next(initialState);
@@ -62,12 +65,10 @@ export class FriendStateService {
       friend => friend._id === friendId
     );
 
-    if (friendIndex === -1) return; // if the friend with the given ID is not found
+    if (friendIndex === -1) return;
 
-    // Create a shallow copy of the friends array
     const updatedFriends = [...currentState.friends];
 
-    // Update the online status of the specified friend
     updatedFriends[friendIndex] = {
       ...updatedFriends[friendIndex],
       isTyping,
@@ -80,7 +81,7 @@ export class FriendStateService {
   }
 
   setFriendOnline(friendId: string): void {
-    this.updateFriendStatus(friendId, true);
+    this.updateFriendOnlineStatus(friendId, 'online');
     this.reorderFriend(friendId, 'front');
   }
 
@@ -91,7 +92,7 @@ export class FriendStateService {
   }
 
   setFriendOffline(friendId: string): void {
-    this.updateFriendStatus(friendId, false);
+    this.updateFriendOnlineStatus(friendId, 'offline');
     this.reorderFriend(friendId, 'end');
   }
 
@@ -101,7 +102,20 @@ export class FriendStateService {
     });
   }
 
-  private updateFriendStatus(friendId: string, online: boolean): void {
+  setFriendAway(friendId: string): void {
+    this.updateFriendOnlineStatus(friendId, 'away');
+  }
+
+  setFriendsAway(friendIds: string[]): void {
+    friendIds.forEach(friendId => {
+      this.setFriendAway(friendId);
+    });
+  }
+
+  private updateFriendOnlineStatus(
+    friendId: string,
+    onlineStatus: OnlineStatus
+  ): void {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
@@ -117,7 +131,7 @@ export class FriendStateService {
     // Update the online status of the specified friend
     updatedFriends[friendIndex] = {
       ...updatedFriends[friendIndex],
-      online,
+      onlineStatus,
     };
 
     this._friendState.next({
@@ -160,6 +174,32 @@ export class FriendStateService {
     });
   }
 
+  // sortFriendsByUnviewedMessages(unviewedMessages: Message[]) {
+  //   const currentState = this._friendState.value;
+  //   if (!currentState.friends) return;
+  //   const sortedFriends = [...currentState.friends];
+
+  //   sortedFriends.sort((a, b) => {
+  //     const aUnviewedMessagesCount = unviewedMessages.filter(msg => msg.from._id === a._id).length;
+  //     const bUnviewedMessagesCount = unviewedMessages.filter(msg => msg.from._id === b._id).length;
+
+  //     // Define a priority map
+  //     const statusPriority = {
+  //       'online': 1,
+  //       'away': 2,
+  //       'offline': 3
+  //     };
+
+  //     // Calculate the sort priority
+  //     const aPriority = statusPriority[a.onlineStatus] * 10 + (aUnviewedMessagesCount > 0 ? 0 : 1);
+  //     const bPriority = statusPriority[b.onlineStatus] * 10 + (bUnviewedMessagesCount > 0 ? 0 : 1);
+
+  //     return aPriority - bPriority;
+  //   });
+
+  //   this.setFriends(sortedFriends);
+  // }
+
   sortFriendsByUnviewedMessages(unviewedMessages: Message[]) {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
@@ -176,48 +216,48 @@ export class FriendStateService {
 
       // Online with unviewed messages.
       if (
-        a.online &&
+        a.onlineStatus === 'online' &&
         aHasUnviewedMessages &&
-        (!b.online || !bHasUnviewedMessages)
+        (b.onlineStatus === 'offline' || !bHasUnviewedMessages)
       ) {
         return -1;
       }
       if (
-        b.online &&
+        b.onlineStatus === 'online' &&
         bHasUnviewedMessages &&
-        (!a.online || !aHasUnviewedMessages)
+        (a.onlineStatus === 'offline' || !aHasUnviewedMessages)
       ) {
         return 1;
       }
 
       // Online without unviewed messages.
       if (
-        a.online &&
+        a.onlineStatus === 'online' &&
         !aHasUnviewedMessages &&
-        (!b.online || bHasUnviewedMessages)
+        (b.onlineStatus === 'offline' || bHasUnviewedMessages)
       ) {
         return -1;
       }
       if (
-        b.online &&
+        b.onlineStatus === 'online' &&
         !bHasUnviewedMessages &&
-        (!a.online || aHasUnviewedMessages)
+        (a.onlineStatus === 'offline' || aHasUnviewedMessages)
       ) {
         return 1;
       }
 
       // Offline with unviewed messages.
       if (
-        !a.online &&
+        a.onlineStatus === 'offline' &&
         aHasUnviewedMessages &&
-        (b.online || !bHasUnviewedMessages)
+        (b.onlineStatus === 'online' || !bHasUnviewedMessages)
       ) {
         return -1;
       }
       if (
-        !b.online &&
+        b.onlineStatus === 'offline' &&
         bHasUnviewedMessages &&
-        (a.online || !aHasUnviewedMessages)
+        (a.onlineStatus === 'online' || !aHasUnviewedMessages)
       ) {
         return 1;
       }

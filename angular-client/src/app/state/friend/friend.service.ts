@@ -31,6 +31,10 @@ export class FriendService {
     return this.friendStateService.offlineFriends$;
   }
 
+  get awayFriends$() {
+    return this.friendStateService.awayFriends$;
+  }
+
   constructor(
     private friendEffectService: FriendEffectService,
     private friendStateService: FriendStateService
@@ -70,6 +74,14 @@ export class FriendService {
 
   setFriendsOffline(friendIds: string[]): void {
     this.friendStateService.setFriendsOffline(friendIds);
+  }
+
+  setFriendAway(friendId: string): void {
+    this.friendStateService.setFriendAway(friendId);
+  }
+
+  setFriendsAway(friendIds: string[]): void {
+    this.friendStateService.setFriendsAway(friendIds);
   }
 
   addFriend(friend: Friend): void {

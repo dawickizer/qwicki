@@ -255,7 +255,7 @@ export class SocialOrchestratorService {
   createPersonalInbox(): Observable<Room<any>> {
     return this.inboxService.createInbox(this.decodedJwt._id, this.jwt).pipe(
       tap(inbox => {
-        this.userService.setOnline(true);
+        this.userService.setOnlineStatus('online');
         inbox = this.setPersonalInboxListeners(inbox);
         this.inboxService.setPersonalInbox(inbox);
       })
@@ -299,8 +299,13 @@ export class SocialOrchestratorService {
     inbox.onMessage('online', (inboxId: string) => {
       this.friendService.setFriendOnline(inboxId);
     });
+
     inbox.onMessage('offline', (inboxId: string) => {
       this.friendService.setFriendOffline(inboxId);
+    });
+
+    inbox.onMessage('away', (inboxId: string) => {
+      this.friendService.setFriendAway(inboxId);
     });
 
     inbox.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {

@@ -30,8 +30,8 @@ export class FriendsTabComponent {
       const existingFriend = this.friends.data.find(f => f._id === friend._id);
       if (existingFriend) {
         // Check if onlineIndex or offlineIndex have changed
-        if (existingFriend.online !== friend.online) {
-          existingFriend.online = friend.online;
+        if (existingFriend.onlineStatus !== friend.onlineStatus) {
+          existingFriend.onlineStatus = friend.onlineStatus;
         }
         if (existingFriend.isTyping !== friend.isTyping) {
           existingFriend.isTyping = friend.isTyping;

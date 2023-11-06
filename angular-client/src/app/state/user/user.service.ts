@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 import { UserStateService } from './user.state.service';
 import { User } from './user.model';
 import { UserEffectService } from './user.effect.service';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 @Injectable({
   providedIn: 'root',
@@ -20,8 +21,8 @@ export class UserService {
     return this.userStateService.user$;
   }
 
-  get online$(): Observable<boolean | null> {
-    return this.userStateService.online$;
+  get onlineStatus$(): Observable<OnlineStatus | null> {
+    return this.userStateService.onlineStatus$;
   }
 
   constructor(
@@ -52,8 +53,8 @@ export class UserService {
     this.userStateService.setUser(user);
   }
 
-  setOnline(online: boolean): void {
-    this.userStateService.setOnline(online);
+  setOnlineStatus(onlineStatus: OnlineStatus): void {
+    this.userStateService.setOnlineStatus(onlineStatus);
   }
 
   setIsLoading(isLoading: boolean): void {
