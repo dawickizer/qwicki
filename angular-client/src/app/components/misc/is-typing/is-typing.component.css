@@ -1,0 +1,44 @@
+.is-typing {
+  font-style: italic;
+  color: #999;
+}
+
+.typing-dots {
+  display: inline-block;
+  margin-left: 5px;
+}
+
+.typing-dots .dot {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+  margin-right: 3px;
+  vertical-align: middle;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+@keyframes bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Stagger the animation of each dot */
+.typing-dots .dot:nth-child(1) {
+  animation-delay: -0.32s;
+}
+
+.typing-dots .dot:nth-child(2) {
+  animation-delay: -0.16s;
+}
+
+.typing-dots .dot:nth-child(3) {
+  animation-delay: 0s;
+}

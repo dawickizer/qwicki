@@ -17,7 +17,9 @@
       </div>
     </ng-container>
     <div class="is-typing">
-      <span *ngIf="friend.isTyping">{{ friend.username }} is typing...</span>
+      <app-is-typing
+        *ngIf="friend.isTyping"
+        [username]="friend.username"></app-is-typing>
     </div>
   </div>
   <div class="input-area">

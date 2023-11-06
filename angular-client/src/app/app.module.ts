@@ -56,6 +56,7 @@ import { InactivityService } from './services/inactivity/inactivity.service';
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
+import { IsTypingComponent } from './components/misc/is-typing/is-typing.component';
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
 import { LobbyComponent } from './components/match-making/lobby/lobby.component';
@@ -93,6 +94,7 @@ import { UserStateService } from './state/user/user.state.service';
     GroupsTabComponent,
     HomeComponent,
     InboundFriendRequestsComponent,
+    IsTypingComponent,
     JoinGameComponent,
     LobbyComponent,
     LoginComponent,
