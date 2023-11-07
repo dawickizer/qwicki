@@ -202,6 +202,11 @@ export class SocialOrchestratorService {
                   );
                   this.inboxService.updateConnectedInbox(inbox);
                 });
+              } else {
+                this.friendService.setFriendOnlineStatus(
+                  friendRequest.from._id,
+                  'offline'
+                );
               }
             }),
             map(() => user)
