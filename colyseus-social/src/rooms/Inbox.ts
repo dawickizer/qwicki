@@ -15,7 +15,7 @@ export class Inbox extends Room<InboxState> {
 
   onCreate(options: any) {
     this.setState(new InboxState());
-    this.roomId = isAuthenticatedJWT(options.accessToken)._id;
+    this.roomId = isAuthenticatedJWT(options.jwt)._id;
     this.setManagers();
     this.setOnMessageListeners();
     console.log(`Room ${this.roomId} created`);
@@ -26,15 +26,21 @@ export class Inbox extends Room<InboxState> {
     // whatever is returned will be tacked onto the client object in onJoin()/onLeave()
     // as auth: {returnValue} and it will be added as a third optional auth
     // parameter to the onJoin() method
-    return isAuthenticatedJWT(options.accessToken);
+    return isAuthenticatedJWT(options.jwt);
   }
 
   onJoin(client: Client, options: any, auth: any) {
-    const user: User = new User(auth._id, client.sessionId, auth.username);
+    const user: User = new User(
+      auth._id,
+      client.sessionId,
+      auth.username,
+      options.onlineStatus
+    );
     this.determineHost(user);
     this.addUser(user);
     this.logUsers();
-    if (!this.isHost(client)) this.presenceManager.notifyHostUserIsOnline(user);
+    if (!this.isHost(client))
+      this.presenceManager.notifyHostUserOnlineStatus(user);
   }
 
   onLeave(client: Client) {
@@ -53,7 +59,7 @@ export class Inbox extends Room<InboxState> {
   removeClient(client: Client) {
     const user: User = this.getUser(client);
     if (this.hostClient && user)
-      this.presenceManager.notifyHostUserIsOffline(user);
+      this.presenceManager.notifyHostUserOnlineStatus(user, 'offline');
     this.deleteUser(user);
     this.logUsers();
   }
@@ -91,7 +97,9 @@ export class Inbox extends Room<InboxState> {
 
   logUsers() {
     console.log('Users in the chat:');
-    this.state.users.forEach(user => console.log(`${user.username}`));
+    this.state.users.forEach(user =>
+      console.log(`${user.username} - ${user.onlineStatus}`)
+    );
   }
 
   disconnectRoom() {
@@ -113,5 +121,6 @@ export class Inbox extends Room<InboxState> {
   private setOnMessageListeners() {
     this.friendManager.setOnMessageListeners();
     this.chatManager.setOnMessageListeners();
+    this.presenceManager.setOnMessageListeners();
   }
 }

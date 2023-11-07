@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
   selector: 'app-online-status',
@@ -10,6 +11,8 @@ export class OnlineStatusComponent {
   @Input() status: OnlineStatus;
   @Input() readOnly = true;
   @Input() size = 10;
+
+  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
 
   updateStatus() {
     if (this.readOnly) return;
@@ -26,5 +29,6 @@ export class OnlineStatusComponent {
       default:
         this.status = 'online';
     }
+    this.socialOrchestratorService.setUserOnlineStatus(this.status).subscribe();
   }
 }

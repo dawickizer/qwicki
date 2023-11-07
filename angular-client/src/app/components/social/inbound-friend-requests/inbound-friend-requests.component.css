@@ -20,6 +20,10 @@ table {
   padding-right: 7px;
 }
 
+::ng-deep .padding-0 .mat-expansion-panel-body {
+  padding: 0px;
+}
+
 .mat-expansion-panel-header-description {
   flex-grow: 0;
 }

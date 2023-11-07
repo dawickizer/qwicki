@@ -27,3 +27,7 @@ table {
 .mat-expansion-panel-header-description {
   flex-grow: 0;
 }
+
+::ng-deep .padding-0 .mat-expansion-panel-body {
+  padding: 0px;
+}

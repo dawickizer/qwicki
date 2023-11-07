@@ -80,35 +80,18 @@ export class FriendStateService {
     });
   }
 
-  setFriendOnline(friendId: string): void {
-    this.updateFriendOnlineStatus(friendId, 'online');
-    this.reorderFriend(friendId, 'front');
+  setFriendOnlineStatus(friendId: string, onlineStatus: OnlineStatus): void {
+    this.updateFriendOnlineStatus(friendId, onlineStatus);
+    if (onlineStatus === 'online') this.reorderFriend(friendId, 'front');
+    else if (onlineStatus === 'offline') this.reorderFriend(friendId, 'end');
   }
 
-  setFriendsOnline(friendIds: string[]): void {
+  setFriendsOnlineStatus(
+    friendIds: string[],
+    onlineStatus: OnlineStatus
+  ): void {
     friendIds.forEach(friendId => {
-      this.setFriendOnline(friendId);
-    });
-  }
-
-  setFriendOffline(friendId: string): void {
-    this.updateFriendOnlineStatus(friendId, 'offline');
-    this.reorderFriend(friendId, 'end');
-  }
-
-  setFriendsOffline(friendIds: string[]): void {
-    friendIds.forEach(friendId => {
-      this.setFriendOffline(friendId);
-    });
-  }
-
-  setFriendAway(friendId: string): void {
-    this.updateFriendOnlineStatus(friendId, 'away');
-  }
-
-  setFriendsAway(friendIds: string[]): void {
-    friendIds.forEach(friendId => {
-      this.setFriendAway(friendId);
+      this.setFriendOnlineStatus(friendId, onlineStatus);
     });
   }
 
@@ -153,7 +136,7 @@ export class FriendStateService {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
-    const updatedFriends = [...currentState.friends, friend];
+    const updatedFriends = [friend, ...currentState.friends];
     this._friendState.next({
       ...currentState,
       friends: updatedFriends,

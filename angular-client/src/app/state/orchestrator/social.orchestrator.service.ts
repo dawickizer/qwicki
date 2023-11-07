@@ -21,6 +21,7 @@ import { Room } from 'colyseus.js';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { Message } from '../message/message.model';
 import { MessageService } from '../message/message.service';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 @Injectable({
   providedIn: 'root',
@@ -182,14 +183,22 @@ export class SocialOrchestratorService {
       }),
       switchMap(user =>
         this.inboxService
-          .joinExistingInboxIfPresent(friendRequest.from._id, this.jwt)
+          .joinExistingInboxIfPresent(friendRequest.from._id, {
+            jwt: this.jwt,
+            onlineStatus: this.user.onlineStatus,
+          })
           .pipe(
             tap(inbox => {
               if (inbox) {
-                inbox.send('acceptFriendRequest', friendRequest);
-                inbox = this.setFriendInboxListeners(inbox);
-                this.friendService.setFriendOnline(friendRequest.from._id);
-                this.inboxService.updateConnectedInbox(inbox);
+                inbox.onStateChange.once(state => {
+                  inbox.send('acceptFriendRequest', friendRequest);
+                  inbox = this.setFriendInboxListeners(inbox);
+                  this.friendService.setFriendOnlineStatus(
+                    friendRequest.from._id,
+                    state.host.onlineStatus
+                  );
+                  this.inboxService.updateConnectedInbox(inbox);
+                });
               }
             }),
             map(() => user)
@@ -208,7 +217,7 @@ export class SocialOrchestratorService {
         tap(async friendRequest => {
           const inbox = await this.colyseusService.joinExistingRoomIfPresent(
             friendRequest.to._id,
-            this.jwt
+            { jwt: this.jwt }
           );
           if (inbox) {
             inbox.send('sendFriendRequest', friendRequest);
@@ -225,7 +234,7 @@ export class SocialOrchestratorService {
         tap(async friendRequest => {
           const inbox = await this.colyseusService.joinExistingRoomIfPresent(
             friendRequest.to._id,
-            this.jwt
+            { jwt: this.jwt }
           );
           if (inbox) {
             inbox.send('revokeFriendRequest', friendRequest);
@@ -242,7 +251,7 @@ export class SocialOrchestratorService {
         tap(async friendRequest => {
           const inbox = await this.colyseusService.joinExistingRoomIfPresent(
             friendRequest.from._id,
-            this.jwt
+            { jwt: this.jwt }
           );
           if (inbox) {
             inbox.send('rejectFriendRequest', friendRequest);
@@ -253,19 +262,27 @@ export class SocialOrchestratorService {
   }
 
   createPersonalInbox(): Observable<Room<any>> {
-    return this.inboxService.createInbox(this.decodedJwt._id, this.jwt).pipe(
-      tap(inbox => {
-        this.userService.setOnlineStatus('online');
-        inbox = this.setPersonalInboxListeners(inbox);
-        this.inboxService.setPersonalInbox(inbox);
+    return this.inboxService
+      .createInbox(this.decodedJwt._id, {
+        jwt: this.jwt,
+        onlineStatus: 'online',
       })
-    );
+      .pipe(
+        tap(inbox => {
+          this.userService.setOnlineStatus('online');
+          inbox = this.setPersonalInboxListeners(inbox);
+          this.inboxService.setPersonalInbox(inbox);
+        })
+      );
   }
 
   joinFriendsInboxesIfPresent(): Observable<Room<any>[]> {
     const friendIds = this.friends.map(friend => friend._id);
     return this.inboxService
-      .joinExistingInboxesIfPresent(friendIds, this.jwt)
+      .joinExistingInboxesIfPresent(friendIds, {
+        jwt: this.jwt,
+        onlineStatus: this.user.onlineStatus,
+      })
       .pipe(
         tap(inboxes => {
           if (inboxes.length > 0) {
@@ -276,11 +293,26 @@ export class SocialOrchestratorService {
               friendInboxes.push(friendInbox);
               friendInboxIds.push(inbox.id);
             });
-            this.friendService.setFriendsOnline(friendInboxIds);
+            this.friendService.setFriendsOnlineStatus(friendInboxIds, 'online');
             this.inboxService.updateConnectedInboxes(friendInboxes);
           }
         })
       );
+  }
+
+  setUserOnlineStatus(onlineStatus: OnlineStatus): Observable<OnlineStatus> {
+    return new Observable(subscriber => {
+      this.personalInbox.send('setHostOnlineStatus', onlineStatus);
+      this.friendsInboxes.forEach(friendsInbox => {
+        friendsInbox.send('notifyHostOnlineStatus', {
+          id: this.user._id,
+          onlineStatus,
+        });
+      });
+      this.userService.setOnlineStatus(onlineStatus);
+      subscriber.next(onlineStatus);
+      subscriber.complete();
+    });
   }
 
   private setPersonalInboxListeners(inbox: Room): Room {
@@ -296,17 +328,15 @@ export class SocialOrchestratorService {
       }
     );
 
-    inbox.onMessage('online', (inboxId: string) => {
-      this.friendService.setFriendOnline(inboxId);
-    });
-
-    inbox.onMessage('offline', (inboxId: string) => {
-      this.friendService.setFriendOffline(inboxId);
-    });
-
-    inbox.onMessage('away', (inboxId: string) => {
-      this.friendService.setFriendAway(inboxId);
-    });
+    inbox.onMessage(
+      'onlineStatus',
+      (friend: { id: string; onlineStatus: OnlineStatus }) => {
+        this.friendService.setFriendOnlineStatus(
+          friend.id,
+          friend.onlineStatus
+        );
+      }
+    );
 
     inbox.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
       this.friendRequestService.addInboundFriendRequest(friendRequest);
@@ -320,11 +350,19 @@ export class SocialOrchestratorService {
       this.friendRequestService.removeInboundFriendRequest(friendRequest);
     });
 
-    inbox.onMessage('acceptFriendRequest', (friendRequest: FriendRequest) => {
-      this.friendRequestService.removeOutboundFriendRequest(friendRequest);
-      this.friendService.addFriend(friendRequest.to);
-      this.friendService.setFriendOnline(friendRequest.to._id);
-    });
+    inbox.onMessage(
+      'acceptFriendRequest',
+      (data: { friendRequest: FriendRequest; onlineStatus: OnlineStatus }) => {
+        this.friendRequestService.removeOutboundFriendRequest(
+          data.friendRequest
+        );
+        this.friendService.addFriend(data.friendRequest.to);
+        this.friendService.setFriendOnlineStatus(
+          data.friendRequest.to._id,
+          data.onlineStatus
+        );
+      }
+    );
 
     inbox.onMessage('removeFriend', (friend: Friend) => {
       this.friendService.removeFriend(friend);
@@ -346,6 +384,16 @@ export class SocialOrchestratorService {
     });
 
     inbox.onMessage(
+      'onlineStatus',
+      (friend: { id: string; onlineStatus: OnlineStatus }) => {
+        this.friendService.setFriendOnlineStatus(
+          friend.id,
+          friend.onlineStatus
+        );
+      }
+    );
+
+    inbox.onMessage(
       'hostIsTyping',
       (data: { friendId: string; isTyping: boolean }) => {
         this.friendService.setFriendIsTyping(data.friendId, data.isTyping);
@@ -359,7 +407,7 @@ export class SocialOrchestratorService {
     });
 
     inbox.onMessage('dispose', (inboxId: string) => {
-      this.friendService.setFriendOffline(inboxId);
+      this.friendService.setFriendOnlineStatus(inboxId, 'offline');
       this.inboxService.removeConnectedInboxById(inboxId);
     });
     inbox.onError((code, message) =>

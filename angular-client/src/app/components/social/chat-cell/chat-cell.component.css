@@ -11,7 +11,7 @@
   flex-grow: 0;
 }
 
-::ng-deep .mat-expansion-panel-body {
+::ng-deep .padding-0 .mat-expansion-panel-body {
   padding: 0px;
 }
 

@@ -6,6 +6,7 @@ import { Observable } from 'rxjs';
 import { User } from '../user/user.model';
 import { FriendRequest } from '../friend-request/friend-requests.model';
 import { Message } from '../message/message.model';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 @Injectable({
   providedIn: 'root',
@@ -60,28 +61,15 @@ export class FriendService {
     this.friendStateService.setFriendIsTyping(friendId, isTyping);
   }
 
-  setFriendOnline(friendId: string): void {
-    this.friendStateService.setFriendOnline(friendId);
+  setFriendOnlineStatus(friendId: string, onlineStatus: OnlineStatus): void {
+    this.friendStateService.setFriendOnlineStatus(friendId, onlineStatus);
   }
 
-  setFriendsOnline(friendIds: string[]): void {
-    this.friendStateService.setFriendsOnline(friendIds);
-  }
-
-  setFriendOffline(friendId: string): void {
-    this.friendStateService.setFriendOffline(friendId);
-  }
-
-  setFriendsOffline(friendIds: string[]): void {
-    this.friendStateService.setFriendsOffline(friendIds);
-  }
-
-  setFriendAway(friendId: string): void {
-    this.friendStateService.setFriendAway(friendId);
-  }
-
-  setFriendsAway(friendIds: string[]): void {
-    this.friendStateService.setFriendsAway(friendIds);
+  setFriendsOnlineStatus(
+    friendIds: string[],
+    onlineStatus: OnlineStatus
+  ): void {
+    this.friendStateService.setFriendsOnlineStatus(friendIds, onlineStatus);
   }
 
   addFriend(friend: Friend): void {

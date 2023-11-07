@@ -6,6 +6,7 @@ import { Room } from 'colyseus.js';
 import { AuthService } from '../auth/auth.service';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { InboxStateService } from './inbox.state.service';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 @Injectable({
   providedIn: 'root',
@@ -22,25 +23,34 @@ export class InboxEffectService {
     this.subscribeToAuthState();
   }
 
-  createInbox(inboxId: string, jwt: string): Observable<Room<any>> {
+  createInbox(
+    inboxId: string,
+    options: { jwt: string; onlineStatus: OnlineStatus }
+  ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
-    return from(this.colyseusService.createRoom(inboxId, jwt)).pipe(
+    return from(this.colyseusService.createRoom(inboxId, options)).pipe(
       tap(this.handleConnectedInboxSuccess),
       catchError(this.handleError)
     );
   }
 
-  connectToInbox(inboxId: string, jwt: string): Observable<Room<any>> {
+  connectToInbox(
+    inboxId: string,
+    options: { jwt: string; onlineStatus: OnlineStatus }
+  ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
-    return from(this.colyseusService.connectToRoom(inboxId, jwt)).pipe(
+    return from(this.colyseusService.connectToRoom(inboxId, options)).pipe(
       tap(this.handleConnectedInboxSuccess),
       catchError(this.handleError)
     );
   }
 
-  connectToInboxes(inboxIds: string[], jwt: string): Observable<Room<any>[]> {
+  connectToInboxes(
+    inboxIds: string[],
+    options: { jwt: string; onlineStatus: OnlineStatus }
+  ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
-    return from(this.colyseusService.connectToRooms(inboxIds, jwt)).pipe(
+    return from(this.colyseusService.connectToRooms(inboxIds, options)).pipe(
       tap(this.handleConnectedInboxesSuccess),
       catchError(this.handleError)
     );
@@ -48,21 +58,21 @@ export class InboxEffectService {
 
   joinExistingInboxIfPresent(
     inboxId: string,
-    jwt: string
+    options: { jwt: string; onlineStatus: OnlineStatus }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(
-      this.colyseusService.joinExistingRoomIfPresent(inboxId, jwt)
+      this.colyseusService.joinExistingRoomIfPresent(inboxId, options)
     ).pipe(tap(this.handleConnectedInboxSuccess), catchError(this.handleError));
   }
 
   joinExistingInboxesIfPresent(
     inboxIds: string[],
-    jwt: string
+    options: { jwt: string; onlineStatus: OnlineStatus }
   ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
     return from(
-      this.colyseusService.joinExistingRoomsIfPresent(inboxIds, jwt)
+      this.colyseusService.joinExistingRoomsIfPresent(inboxIds, options)
     ).pipe(
       tap(this.handleConnectedInboxesSuccess),
       catchError(this.handleError)

@@ -3,6 +3,7 @@ import { InboxStateService } from './inbox.state.service';
 import { InboxEffectService } from './inbox.effect.service';
 import { Room } from 'colyseus.js';
 import { Observable } from 'rxjs';
+import { OnlineStatus } from 'src/app/models/online-status/online-status';
 
 @Injectable({
   providedIn: 'root',
@@ -33,22 +34,28 @@ export class InboxService {
     private inboxEffectService: InboxEffectService
   ) {}
 
-  createInbox(inboxId: string, jwt: string): Observable<Room<any>> {
-    return this.inboxEffectService.createInbox(inboxId, jwt);
+  createInbox(
+    inboxId: string,
+    options: { jwt: string; onlineStatus: OnlineStatus }
+  ): Observable<Room<any>> {
+    return this.inboxEffectService.createInbox(inboxId, options);
   }
 
   joinExistingInboxesIfPresent(
     inboxIds: string[],
-    jwt: string
+    options: { jwt: string; onlineStatus: OnlineStatus }
   ): Observable<Room<any>[]> {
-    return this.inboxEffectService.joinExistingInboxesIfPresent(inboxIds, jwt);
+    return this.inboxEffectService.joinExistingInboxesIfPresent(
+      inboxIds,
+      options
+    );
   }
 
   joinExistingInboxIfPresent(
     inboxId: string,
-    jwt: string
+    options: { jwt: string; onlineStatus: OnlineStatus }
   ): Observable<Room<any>> {
-    return this.inboxEffectService.joinExistingInboxIfPresent(inboxId, jwt);
+    return this.inboxEffectService.joinExistingInboxIfPresent(inboxId, options);
   }
 
   leaveInboxes(inboxes: Room[]): Observable<number[]> {

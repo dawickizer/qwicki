@@ -13,7 +13,12 @@ export class FriendManager extends InboxManager {
     });
 
     this.inbox.onMessage('acceptFriendRequest', (client, friendRequest) => {
-      this.inbox.hostClient.send('acceptFriendRequest', friendRequest);
+      const user = this.inbox.getUserById(friendRequest.to._id);
+      if (user)
+        this.inbox.hostClient.send('acceptFriendRequest', {
+          friendRequest,
+          onlineStatus: user.onlineStatus,
+        });
     });
 
     this.inbox.onMessage('rejectFriendRequest', (client, friendRequest) => {

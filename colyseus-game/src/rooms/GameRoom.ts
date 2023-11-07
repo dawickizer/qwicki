@@ -35,7 +35,7 @@ export class GameRoom extends Room<GameRoomState> {
     // whatever is returned will be tacked onto the client object in onJoin()/onLeave()
     // as auth: {returnValue} and it will be added as a third optional auth
     // parameter to the onJoin() method
-    return isAuthenticatedJWT(options.accessToken);
+    return isAuthenticatedJWT(options.jwt);
   }
 
   onJoin(client: Client, options: any, auth: any) {
@@ -56,7 +56,7 @@ export class GameRoom extends Room<GameRoomState> {
   }
 
   initMetadata(options: any): any {
-    const decodedJWT = isAuthenticatedJWT(options.accessToken);
+    const decodedJWT = isAuthenticatedJWT(options.jwt);
     return {
       ...options.game,
       createdAt: new Date(),
