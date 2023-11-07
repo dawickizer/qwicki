@@ -6,6 +6,7 @@ import {
   map,
   of,
   forkJoin,
+  mergeMap,
   defaultIfEmpty,
 } from 'rxjs';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
@@ -189,6 +190,8 @@ export class SocialOrchestratorService {
           })
           .pipe(
             tap(inbox => {
+              // keep in mind that this logic is async and the tap will proceed while this is lagging behind
+              // for now that is fine since nothing after this really depends on the logic inside of onStateChange()
               if (inbox) {
                 inbox.onStateChange.once(state => {
                   inbox.send('acceptFriendRequest', friendRequest);
@@ -278,24 +281,51 @@ export class SocialOrchestratorService {
 
   joinFriendsInboxesIfPresent(): Observable<Room<any>[]> {
     const friendIds = this.friends.map(friend => friend._id);
+
     return this.inboxService
       .joinExistingInboxesIfPresent(friendIds, {
         jwt: this.jwt,
         onlineStatus: this.user.onlineStatus,
       })
       .pipe(
-        tap(inboxes => {
-          if (inboxes.length > 0) {
-            const friendInboxes: Room[] = [];
-            const friendInboxIds: string[] = [];
-            inboxes.forEach(inbox => {
-              const friendInbox = this.setFriendInboxListeners(inbox);
-              friendInboxes.push(friendInbox);
-              friendInboxIds.push(inbox.id);
-            });
-            this.friendService.setFriendsOnlineStatus(friendInboxIds, 'online');
-            this.inboxService.updateConnectedInboxes(friendInboxes);
+        mergeMap(inboxes => {
+          // If no inboxes are found, complete immediately with an empty array.
+          if (inboxes.length === 0) {
+            return of([]);
           }
+
+          // Map each inbox to an Observable.
+          const statusObservables = inboxes.map(inbox => {
+            return new Observable<Room<any>>(subscriber => {
+              // Immediately use the current state if it's available.
+              const currentStatus = inbox.state.host.onlineStatus;
+              if (currentStatus) {
+                inbox = this.setFriendInboxListeners(inbox);
+                this.friendService.setFriendOnlineStatus(
+                  inbox.state.host._id,
+                  currentStatus
+                );
+                this.inboxService.updateConnectedInbox(inbox);
+                subscriber.next(inbox);
+                subscriber.complete();
+              } else {
+                // Set up the .once() listener if the state is not yet available.
+                inbox.onStateChange.once(state => {
+                  inbox = this.setFriendInboxListeners(inbox);
+                  this.friendService.setFriendOnlineStatus(
+                    state.host._id,
+                    state.host.onlineStatus
+                  );
+                  this.inboxService.updateConnectedInbox(inbox);
+                  subscriber.next(inbox);
+                  subscriber.complete();
+                });
+              }
+            });
+          });
+
+          // Use forkJoin to wait for all Observables to complete.
+          return forkJoin(statusObservables);
         })
       );
   }
@@ -361,6 +391,7 @@ export class SocialOrchestratorService {
           data.friendRequest.to._id,
           data.onlineStatus
         );
+        this.getAllMessagesBetween(data.friendRequest.to).subscribe();
       }
     );
 

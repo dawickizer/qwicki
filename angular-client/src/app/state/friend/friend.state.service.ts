@@ -157,98 +157,37 @@ export class FriendStateService {
     });
   }
 
-  // sortFriendsByUnviewedMessages(unviewedMessages: Message[]) {
-  //   const currentState = this._friendState.value;
-  //   if (!currentState.friends) return;
-  //   const sortedFriends = [...currentState.friends];
-
-  //   sortedFriends.sort((a, b) => {
-  //     const aUnviewedMessagesCount = unviewedMessages.filter(msg => msg.from._id === a._id).length;
-  //     const bUnviewedMessagesCount = unviewedMessages.filter(msg => msg.from._id === b._id).length;
-
-  //     // Define a priority map
-  //     const statusPriority = {
-  //       'online': 1,
-  //       'away': 2,
-  //       'offline': 3
-  //     };
-
-  //     // Calculate the sort priority
-  //     const aPriority = statusPriority[a.onlineStatus] * 10 + (aUnviewedMessagesCount > 0 ? 0 : 1);
-  //     const bPriority = statusPriority[b.onlineStatus] * 10 + (bUnviewedMessagesCount > 0 ? 0 : 1);
-
-  //     return aPriority - bPriority;
-  //   });
-
-  //   this.setFriends(sortedFriends);
-  // }
-
   sortFriendsByUnviewedMessages(unviewedMessages: Message[]) {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
     const sortedFriends = [...currentState.friends];
 
     sortedFriends.sort((a, b) => {
-      // Check if friend A and friend B have unviewed messages
-      const aHasUnviewedMessages = unviewedMessages.some(
+      const aUnviewedMessagesCount = unviewedMessages.filter(
         msg => msg.from._id === a._id
-      );
-      const bHasUnviewedMessages = unviewedMessages.some(
+      ).length;
+      const bUnviewedMessagesCount = unviewedMessages.filter(
         msg => msg.from._id === b._id
-      );
+      ).length;
 
-      // Online with unviewed messages.
-      if (
-        a.onlineStatus === 'online' &&
-        aHasUnviewedMessages &&
-        (b.onlineStatus === 'offline' || !bHasUnviewedMessages)
-      ) {
-        return -1;
-      }
-      if (
-        b.onlineStatus === 'online' &&
-        bHasUnviewedMessages &&
-        (a.onlineStatus === 'offline' || !aHasUnviewedMessages)
-      ) {
-        return 1;
-      }
+      // Define a priority map
+      const statusPriority = {
+        online: 1,
+        away: 2,
+        offline: 3,
+      };
 
-      // Online without unviewed messages.
-      if (
-        a.onlineStatus === 'online' &&
-        !aHasUnviewedMessages &&
-        (b.onlineStatus === 'offline' || bHasUnviewedMessages)
-      ) {
-        return -1;
-      }
-      if (
-        b.onlineStatus === 'online' &&
-        !bHasUnviewedMessages &&
-        (a.onlineStatus === 'offline' || aHasUnviewedMessages)
-      ) {
-        return 1;
-      }
+      // Calculate the sort priority
+      const aPriority =
+        statusPriority[a.onlineStatus] * 10 +
+        (aUnviewedMessagesCount > 0 ? 0 : 1);
+      const bPriority =
+        statusPriority[b.onlineStatus] * 10 +
+        (bUnviewedMessagesCount > 0 ? 0 : 1);
 
-      // Offline with unviewed messages.
-      if (
-        a.onlineStatus === 'offline' &&
-        aHasUnviewedMessages &&
-        (b.onlineStatus === 'online' || !bHasUnviewedMessages)
-      ) {
-        return -1;
-      }
-      if (
-        b.onlineStatus === 'offline' &&
-        bHasUnviewedMessages &&
-        (a.onlineStatus === 'online' || !aHasUnviewedMessages)
-      ) {
-        return 1;
-      }
-
-      // Offline without unviewed messages.
-      // If it reaches this point, it means both a and b are offline without unviewed messages, hence they are equal in terms of sorting.
-      return 0;
+      return aPriority - bPriority;
     });
+
     this.setFriends(sortedFriends);
   }
 
