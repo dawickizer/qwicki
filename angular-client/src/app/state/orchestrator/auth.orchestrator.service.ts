@@ -6,9 +6,9 @@ import { Credentials } from 'src/app/state/auth/credentials.model';
 import { User } from 'src/app/state/user/user.model';
 import { AuthService } from '../auth/auth.service';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
-import { InactivityService } from 'src/app/services/inactivity/inactivity.service';
 import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
 import { SocialOrchestratorService } from './social.orchestrator.service';
+import { InactivityService } from '../inactivity/inactivity.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +21,7 @@ export class AuthOrchestratorService {
     private socialOrchestratorService: SocialOrchestratorService,
     private router: Router
   ) {
-    this.listenToInactivityEvents();
+    this.subscribeToInactivityState();
   }
 
   login(credentials: Credentials, returnPath: string): Observable<DecodedJwt> {
@@ -40,8 +40,7 @@ export class AuthOrchestratorService {
     const { extras } = options;
     return this.authService.logout(options).pipe(
       tap(() => {
-        this.inactivityService.removeActiveEvents(); // update to state logic
-        this.inactivityService.stopTimers(); // update to state logic
+        this.inactivityService.stop();
         this.matchMakingService.leaveGameRoom(); // update to state logic
         this.socialOrchestratorService.setInitialState();
         this.router.navigate(['auth/login'], extras);
@@ -53,16 +52,15 @@ export class AuthOrchestratorService {
     return this.authService.isLoggedIn().pipe(
       tap(isLoggedIn => {
         if (isLoggedIn) {
-          this.inactivityService.setActiveEvents();
-          this.inactivityService.handleActiveEvent();
+          this.inactivityService.start();
         }
       })
     );
   }
 
-  private listenToInactivityEvents(): void {
-    this.inactivityService.userInactive.subscribe(() => {
-      this.logout().subscribe();
+  private subscribeToInactivityState(): void {
+    this.inactivityService.isTimedOut$.subscribe(isTimedOut => {
+      if (isTimedOut) this.logout().subscribe();
     });
   }
 

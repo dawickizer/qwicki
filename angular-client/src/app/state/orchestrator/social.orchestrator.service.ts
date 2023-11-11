@@ -23,6 +23,7 @@ import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { Message } from '../message/message.model';
 import { MessageService } from '../message/message.service';
 import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { InactivityService } from '../inactivity/inactivity.service';
 
 @Injectable({
   providedIn: 'root',
@@ -43,6 +44,7 @@ export class SocialOrchestratorService {
     private userService: UserService,
     private authService: AuthService,
     private inboxService: InboxService,
+    private inactivityService: InactivityService,
     private messageService: MessageService,
     private colyseusService: ColyseusService
   ) {
@@ -68,6 +70,16 @@ export class SocialOrchestratorService {
     this.inboxService.connectedInboxes$.subscribe(
       connectedInboxes => (this.connectedInboxes = connectedInboxes)
     );
+
+    // There is a potential race condition here but the way my logic is coded its not happening. If the inactivity onlineStatus ever gets updaetd before the user does...there could be a scenario where the setUserOnlineStatus doesnt fire off
+    this.inactivityService.onlineStatus$.subscribe(onlineStatus => {
+      if (
+        !this.user ||
+        (this.user.onlineStatus === 'offline' && onlineStatus === 'away')
+      )
+        return;
+      this.setUserOnlineStatus(onlineStatus).subscribe();
+    });
   }
 
   setInitialState() {

@@ -51,8 +51,10 @@ import { GroupsListComponent } from './components/social/groups-list/groups-list
 import { GroupsTabComponent } from './components/social/groups-tab/groups-tab.component';
 import { GunService } from './services/gun/gun.service';
 import { HomeComponent } from './components/home/home.component';
+import { InactivityEffectService } from './state/inactivity/inactivity.effect.service';
+import { InactivityService } from './state/inactivity/inactivity.service';
+import { InactivityStateService } from './state/inactivity/inactivity.state.service';
 import { InboundFriendRequestsComponent } from './components/social/inbound-friend-requests/inbound-friend-requests.component';
-import { InactivityService } from './services/inactivity/inactivity.service';
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
@@ -140,9 +142,6 @@ import { UserStateService } from './state/user/user.state.service';
     AuthService,
     AuthStateService,
     ColyseusService,
-    InboxEffectService,
-    InboxService,
-    InboxStateService,
     FpsService,
     FriendApiService,
     FriendEffectService,
@@ -154,7 +153,12 @@ import { UserStateService } from './state/user/user.state.service';
     FriendStateService,
     GameService,
     GunService,
+    InactivityEffectService,
     InactivityService,
+    InactivityStateService,
+    InboxEffectService,
+    InboxService,
+    InboxStateService,
     KeyBindService,
     MatchMakingService,
     PlayerService,
