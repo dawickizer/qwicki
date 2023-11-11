@@ -108,4 +108,8 @@ export class ChatBoxComponent {
   removeFriend() {
     this.socialOrchestratorService.deleteFriend(this.friend).subscribe();
   }
+
+  keepOrder(a: { key: string; value: any }, b: { key: string; value: any }) {
+    return new Date(a.key).getTime() - new Date(b.key).getTime();
+  }
 }
