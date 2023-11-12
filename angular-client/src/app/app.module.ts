@@ -58,6 +58,9 @@ import { InboundFriendRequestsComponent } from './components/social/inbound-frie
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
+import { InviteEffectService } from './state/invite/invite.effect.service';
+import { InviteService } from './state/invite/invite.service';
+import { InviteStateService } from './state/invite/invite.state.service';
 import { IsTypingComponent } from './components/misc/is-typing/is-typing.component';
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
@@ -159,6 +162,9 @@ import { UserStateService } from './state/user/user.state.service';
     InboxEffectService,
     InboxService,
     InboxStateService,
+    InviteEffectService,
+    InviteService,
+    InviteStateService,
     KeyBindService,
     MatchMakingService,
     PlayerService,
