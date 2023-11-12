@@ -39,7 +39,11 @@ export const addFriend = async (
   ]);
 
   // Return the 'toUser' with its updated data and children data
-  return await userService.getUserByIdAndPopulateChildren(toUser._id);
+  return await userService.getUserById(toUser._id, {
+    friends: true,
+    friendRequests: true,
+    invites: true,
+  });
 };
 
 export const removeFriend = async (

@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import friendRoutes from './friend.routes';
 import friendRequestRoutes from './friend-request.routes';
+import inviteRoutes from './invite.routes';
 import messageRoutes from './message.routes';
 import {
   createUser,
@@ -34,6 +35,7 @@ router.delete(
 
 router.use('/:userId/friends', friendRoutes);
 router.use('/:userId/friend-requests', friendRequestRoutes);
+router.use('/:userId/invites', inviteRoutes);
 router.use('/:userId/messages', messageRoutes);
 
 export default router;

@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 
-import * as friendRequestService from '../services/friend-request.service';
+import * as inviteService from '../services/invite.service';
 import CustomError from '../error/CustomError';
 
-export const getFriendRequestsByUserId = async (
+export const getInvitesByUserId = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -16,11 +16,8 @@ export const getFriendRequestsByUserId = async (
       outbound: req.query.outbound === 'true',
     };
     // Pass params to service function
-    const friendRequests = await friendRequestService.getFriendRequestsByUserId(
-      userId,
-      params
-    );
-    res.status(200).send(friendRequests);
+    const invites = await inviteService.getInvitesByUserId(userId, params);
+    res.status(200).send(invites);
   } catch (error: any) {
     if (error instanceof CustomError) {
       res.status(error.status).json(error.message);
@@ -30,21 +27,16 @@ export const getFriendRequestsByUserId = async (
   }
 };
 
-export const createFriendRequest = async (
+export const createInvite = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const userId = req.params.userId;
-    const toUsername = req.body.username;
-
-    const friendRequest = await friendRequestService.createFriendRequest(
-      userId,
-      toUsername
-    );
-
-    res.status(201).send(friendRequest);
+    let invite = req.body;
+    invite = await inviteService.createInvite(userId, invite);
+    res.status(201).send(invite);
   } catch (error: any) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);
@@ -52,19 +44,16 @@ export const createFriendRequest = async (
   }
 };
 
-export const deleteFriendRequestById = async (
+export const deleteInviteById = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
   try {
     const userId = req.params.userId;
-    const friendRequestId = req.params.friendRequestId;
-    const friendRequest = await friendRequestService.deleteFriendRequestById(
-      userId,
-      friendRequestId
-    );
-    res.status(200).send(friendRequest);
+    const inviteId = req.params.inviteId;
+    const invite = await inviteService.deleteInviteById(userId, inviteId);
+    res.status(200).send(invite);
   } catch (error) {
     if (error instanceof CustomError)
       res.status(error.status).json(error.message);

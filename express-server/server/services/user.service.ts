@@ -1,7 +1,8 @@
-import { PopulateOptions, Schema } from 'mongoose';
+import { Schema } from 'mongoose';
 import { User } from '../models/user';
 import NotFoundError from '../error/NotFoundError';
 import * as friendRequestService from './friend-request.service';
+import * as inviteService from './invite.service';
 import ConflictError from '../error/ConflictError';
 
 export const createUser = async (user: User): Promise<User> => {
@@ -49,50 +50,37 @@ export const getAllUsers = async (): Promise<User[]> => {
 };
 
 export const getUserById = async (
-  userId: string | Schema.Types.ObjectId
+  userId: string | Schema.Types.ObjectId,
+  query?: {
+    friends?: boolean;
+    friendRequests?: boolean;
+    invites?: boolean;
+  }
 ): Promise<User> => {
-  const user = await User.findById(userId);
-  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
-  return user;
-};
+  const userQuery = User.findById(userId);
 
-export const getUserByIdAndPopulateFriends = async (
-  userId: string | Schema.Types.ObjectId
-): Promise<User> => {
-  const populateOptions: PopulateOptions = {
-    path: 'friends',
-    select: 'username',
-  };
-  const user = await User.findById(userId).populate(populateOptions);
-  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
-  return user;
-};
+  // This array will hold all the populate options based on the query params.
+  const populations = [];
 
-export const getUserByIdAndPopulateFriendRequests = async (
-  userId: string | Schema.Types.ObjectId
-): Promise<User> => {
-  const populateOptions: PopulateOptions[] = friendRequest(
-    'inboundFriendRequests'
-  ).concat(friendRequest('outboundFriendRequests'));
-  const user = await User.findById(userId).populate(populateOptions);
-  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
-  return user;
-};
+  if (query?.friends) {
+    populations.push({ path: 'friends', select: 'username' });
+  }
 
-export const getUserByIdAndPopulateChildren = async (
-  userId: string | Schema.Types.ObjectId
-): Promise<User> => {
-  const friendsOptions: PopulateOptions = {
-    path: 'friends',
-    select: 'username',
-  };
+  if (query?.friendRequests) {
+    populations.push(friendRequest('inboundFriendRequests'));
+    populations.push(friendRequest('outboundFriendRequests'));
+  }
 
-  const friendRequestsOptions: PopulateOptions[] = friendRequest(
-    'inboundFriendRequests'
-  ).concat(friendRequest('outboundFriendRequests'));
-  const user = await User.findById(userId)
-    .populate(friendsOptions)
-    .populate(friendRequestsOptions);
+  if (query?.invites) {
+    populations.push(invite('inboundInvites'));
+    populations.push(invite('outboundInvites'));
+  }
+
+  populations.forEach(populateOptions => {
+    userQuery.populate(populateOptions);
+  });
+
+  const user = await userQuery;
   if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
   return user;
 };
@@ -115,18 +103,23 @@ export const getUserByUsername = async (username: string): Promise<User> => {
   return user;
 };
 
-export const updateUserByIdAndPopulateChildren = async (
+export const updateUserById = async (
   userId: string | Schema.Types.ObjectId,
-  updatedUser: User
-): Promise<User | null> => {
+  updatedUserData: Partial<User>,
+  query?: {
+    friends?: boolean;
+    friendRequests?: boolean;
+    invites?: boolean;
+  }
+): Promise<User> => {
   // run checks on fields that should be unique..will throw conflict errors
   await Promise.all([
-    userExistsByUsername(updatedUser.username, { excludingUserId: userId }),
-    userExistsByEmail(updatedUser.email, { excludingUserId: userId }),
+    userExistsByUsername(updatedUserData.username, { excludingUserId: userId }),
+    userExistsByEmail(updatedUserData.email, { excludingUserId: userId }),
   ]);
 
-  updatedUser.usernameLower = updatedUser.username;
-  updatedUser.emailLower = updatedUser.email;
+  updatedUserData.usernameLower = updatedUserData.username;
+  updatedUserData.emailLower = updatedUserData.email;
 
   // Extract the fields you want to update from updatedUser to prevent unauthorized updates to fields
   // that should not be modified
@@ -139,9 +132,9 @@ export const updateUserByIdAndPopulateChildren = async (
     firstName,
     middleName,
     lastName,
-  } = updatedUser;
+  } = updatedUserData;
 
-  const updatedFields: Partial<User> = {
+  const allowedFields: Partial<User> = {
     username,
     usernameLower,
     email,
@@ -152,15 +145,28 @@ export const updateUserByIdAndPopulateChildren = async (
     lastName,
   };
 
-  const user = await User.findByIdAndUpdate(userId, updatedFields, {
+  // Update the user with selected fields
+  const updateQuery = User.findByIdAndUpdate(userId, allowedFields, {
     new: true,
-  })
-    .populate('friends', ['username'])
-    .populate(friendRequest('inboundFriendRequests'))
-    .populate(friendRequest('outboundFriendRequests'));
+  });
 
-  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
-  return user;
+  // Dynamic population based on query parameters
+  if (query?.friends) {
+    updateQuery.populate({ path: 'friends', select: 'username' });
+  }
+  if (query?.friendRequests) {
+    updateQuery.populate(friendRequest('inboundFriendRequests'));
+    updateQuery.populate(friendRequest('outboundFriendRequests'));
+  }
+  if (query?.invites) {
+    updateQuery.populate(invite('inboundInvites'));
+    updateQuery.populate(invite('outboundInvites'));
+  }
+
+  const updatedUser = await updateQuery.exec();
+  if (!updatedUser) throw new NotFoundError(`User not found. ID: ${userId}`);
+
+  return updatedUser;
 };
 
 export const addInboundFriendRequest = async (
@@ -229,6 +235,72 @@ export const removeOutboundFriendRequest = async (
   return user;
 };
 
+export const addInboundInvite = async (
+  userId: Schema.Types.ObjectId,
+  inviteId: Schema.Types.ObjectId
+): Promise<User> => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $push: { inboundInvites: inviteId } },
+    { new: true }
+  )
+    .populate('friends', ['username'])
+    .populate(invite('inboundInvites'))
+    .populate(invite('outboundInvites'));
+
+  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
+  return user;
+};
+
+export const addOutboundInvite = async (
+  userId: Schema.Types.ObjectId,
+  inviteId: Schema.Types.ObjectId
+): Promise<User> => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $push: { outboundInvites: inviteId } },
+    { new: true }
+  )
+    .populate('friends', ['username'])
+    .populate(invite('inboundInvites'))
+    .populate(invite('outboundInvites'));
+
+  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
+  return user;
+};
+
+export const removeInboundInvite = async (
+  userId: Schema.Types.ObjectId,
+  inviteId: Schema.Types.ObjectId
+): Promise<User> => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $pull: { inboundInvites: inviteId } },
+    { new: true }
+  )
+    .populate('friends', ['username'])
+    .populate(invite('inboundInvites'))
+    .populate(invite('outboundInvites'));
+  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
+  return user;
+};
+
+export const removeOutboundInvite = async (
+  userId: Schema.Types.ObjectId,
+  inviteId: Schema.Types.ObjectId
+): Promise<User> => {
+  const user = await User.findByIdAndUpdate(
+    userId,
+    { $pull: { outboundInvites: inviteId } },
+    { new: true }
+  )
+    .populate('friends', ['username'])
+    .populate(invite('inboundInvites'))
+    .populate(invite('outboundInvites'));
+  if (!user) throw new NotFoundError(`User not found. ID: ${userId}`);
+  return user;
+};
+
 export const addFriend = async (
   userId: string | Schema.Types.ObjectId,
   friendId: string | Schema.Types.ObjectId
@@ -274,29 +346,42 @@ export const deleteUserById = async (
 export const cleanupUserReferences = async (
   userId: string | Schema.Types.ObjectId
 ): Promise<boolean> => {
-  // Find all FriendRequest documents related to this user
+  // Find all FriendRequest and Invite documents related to this user
   const relatedFriendRequests =
     await friendRequestService.getFriendRequestsByUserId(userId);
+  const relatedInvites = await inviteService.getInvitesByUserId(userId);
 
-  // Extract the IDs of the related FriendRequests
+  // Extract the IDs of the related FriendRequests and Invites
   const relatedFriendRequestIds = relatedFriendRequests.map(fr => fr._id);
+  const relatedInviteIds = relatedInvites.map(invite => invite._id);
 
   // Remove user from friends list of other users
   await User.updateMany({ friends: userId }, { $pull: { friends: userId } });
 
   // Remove associated FriendRequests from other users’ inbound and outbound friend requests
+  // and do the same for Invites
   await User.updateMany(
-    { inboundFriendRequests: { $in: relatedFriendRequestIds } },
-    { $pull: { inboundFriendRequests: { $in: relatedFriendRequestIds } } }
+    {
+      $or: [
+        { inboundFriendRequests: { $in: relatedFriendRequestIds } },
+        { outboundFriendRequests: { $in: relatedFriendRequestIds } },
+        { inboundInvites: { $in: relatedInviteIds } },
+        { outboundInvites: { $in: relatedInviteIds } },
+      ],
+    },
+    {
+      $pull: {
+        inboundFriendRequests: { $in: relatedFriendRequestIds },
+        outboundFriendRequests: { $in: relatedFriendRequestIds },
+        inboundInvites: { $in: relatedInviteIds },
+        outboundInvites: { $in: relatedInviteIds },
+      },
+    }
   );
 
-  await User.updateMany(
-    { outboundFriendRequests: { $in: relatedFriendRequestIds } },
-    { $pull: { outboundFriendRequests: { $in: relatedFriendRequestIds } } }
-  );
-
-  // Remove associated FriendRequests
+  // Remove associated FriendRequests and Invites
   await friendRequestService.deleteManyFriendRequestsByUserId(userId);
+  await inviteService.deleteManyInvitesByUserId(userId);
 
   return true;
 };
@@ -335,6 +420,29 @@ const friendRequest = (path: string) => {
     {
       path: path,
       model: 'FriendRequest',
+      populate: [
+        // reference
+        {
+          path: 'from',
+          model: 'User',
+          select: 'username',
+        },
+        {
+          path: 'to',
+          model: 'User',
+          select: 'username',
+        },
+      ],
+    },
+  ];
+};
+
+const invite = (path: string) => {
+  return [
+    // reference
+    {
+      path: path,
+      model: 'Invite',
       populate: [
         // reference
         {

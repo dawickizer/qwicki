@@ -15,25 +15,22 @@ export const getFriendRequestById = async (
 };
 
 export const getFriendRequestsByUserId = async (
-  userId: string | Schema.Types.ObjectId
+  userId: string | Schema.Types.ObjectId,
+  params?: { inbound?: boolean; outbound?: boolean }
 ): Promise<FriendRequest[]> => {
-  return await FriendRequest.find({ $or: [{ from: userId }, { to: userId }] })
-    .populate('from', 'username')
-    .populate('to', 'username');
-};
+  let queryConditions = [];
 
-export const getInboundFriendRequestsByUserId = async (
-  userId: string | Schema.Types.ObjectId
-): Promise<FriendRequest[]> => {
-  return await FriendRequest.find({ to: userId })
-    .populate('from', 'username')
-    .populate('to', 'username');
-};
+  if (params?.inbound) {
+    queryConditions.push({ to: userId });
+  }
+  if (params?.outbound) {
+    queryConditions.push({ from: userId });
+  }
+  if (!params?.inbound && !params?.outbound) {
+    queryConditions = [{ from: userId }, { to: userId }];
+  }
 
-export const getOutboundFriendRequestsByUserId = async (
-  userId: string | Schema.Types.ObjectId
-): Promise<FriendRequest[]> => {
-  return await FriendRequest.find({ from: userId })
+  return await FriendRequest.find({ $or: queryConditions })
     .populate('from', 'username')
     .populate('to', 'username');
 };

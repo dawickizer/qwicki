@@ -41,19 +41,12 @@ export const getUserById = async (
 ): Promise<void> => {
   try {
     const userId = req.params.userId;
-    const friendsParam = req.query.friends === 'true';
-    const friendRequestsParam = req.query.friendRequests === 'true';
-    let user: User;
-
-    if (friendsParam && friendRequestsParam) {
-      user = await userService.getUserByIdAndPopulateChildren(userId);
-    } else if (friendsParam) {
-      user = await userService.getUserByIdAndPopulateFriends(userId);
-    } else if (friendRequestsParam) {
-      user = await userService.getUserByIdAndPopulateFriendRequests(userId);
-    } else {
-      user = await userService.getUserById(userId);
-    }
+    const query = {
+      friends: req.query.friends === 'true',
+      friendRequests: req.query.friendRequests === 'true',
+      invites: req.query.invites === 'true',
+    };
+    const user = await userService.getUserById(userId, query);
 
     res.status(200).json(user);
   } catch (error) {
@@ -71,10 +64,11 @@ export const updateUserById = async (
   try {
     const userId: string = req.params.userId;
     const updatedUser: User = req.body;
-    const user = await userService.updateUserByIdAndPopulateChildren(
-      userId,
-      updatedUser
-    );
+    const user = await userService.updateUserById(userId, updatedUser, {
+      friends: true,
+      friendRequests: true,
+      invites: true,
+    });
     res.status(200).json(user);
   } catch (error) {
     if (error instanceof CustomError)

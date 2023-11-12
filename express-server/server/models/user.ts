@@ -19,6 +19,8 @@ interface User extends Document {
   friends: Schema.Types.ObjectId[];
   inboundFriendRequests: Schema.Types.ObjectId[];
   outboundFriendRequests: Schema.Types.ObjectId[];
+  inboundInvites: Schema.Types.ObjectId[];
+  outboundInvites: Schema.Types.ObjectId[];
 }
 
 // create mongoose schema
@@ -39,6 +41,12 @@ const UserSchema = new Schema<User>(
     ],
     outboundFriendRequests: [
       { type: Schema.Types.ObjectId, default: [], ref: 'FriendRequest' },
+    ],
+    inboundInvites: [
+      { type: Schema.Types.ObjectId, default: [], ref: 'Invite' },
+    ],
+    outboundInvites: [
+      { type: Schema.Types.ObjectId, default: [], ref: 'Invite' },
     ],
   },
   { timestamps: true }
