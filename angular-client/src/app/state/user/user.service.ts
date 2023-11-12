@@ -32,7 +32,7 @@ export class UserService {
 
   getUser(
     id: string,
-    options?: { friends?: boolean; friendRequests?: boolean }
+    options?: { friends?: boolean; friendRequests?: boolean; invites?: boolean }
   ): Observable<User> {
     return this.userEffectService.getUser(id, options);
   }

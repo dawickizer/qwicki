@@ -18,7 +18,7 @@ export class UserEffectService {
 
   getUser(
     id: string,
-    options?: { friends?: boolean; friendRequests?: boolean }
+    options?: { friends?: boolean; friendRequests?: boolean; invites?: boolean }
   ): Observable<User> {
     this.userStateService.setIsLoading(true);
     return this.userApiService.get(id, options).pipe(

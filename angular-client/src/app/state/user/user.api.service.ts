@@ -20,7 +20,7 @@ export class UserApiService {
 
   get(
     id: string,
-    options?: { friends?: boolean; friendRequests?: boolean }
+    options?: { friends?: boolean; friendRequests?: boolean; invites?: boolean }
   ): Observable<User> {
     let params = new HttpParams();
 
@@ -34,6 +34,10 @@ export class UserApiService {
           'friendRequests',
           options.friendRequests.toString()
         );
+      }
+
+      if (options.invites !== undefined) {
+        params = params.append('invites', options.invites.toString());
       }
     }
 

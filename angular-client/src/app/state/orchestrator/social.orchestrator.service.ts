@@ -96,6 +96,7 @@ export class SocialOrchestratorService {
       .getUser(decodedJwt._id, {
         friends: true,
         friendRequests: true,
+        invites: true,
       })
       .pipe(
         tap(user => this.setSocials(user)),
