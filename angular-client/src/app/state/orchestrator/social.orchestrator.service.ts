@@ -24,6 +24,7 @@ import { Message } from '../message/message.model';
 import { MessageService } from '../message/message.service';
 import { OnlineStatus } from 'src/app/models/online-status/online-status';
 import { InactivityService } from '../inactivity/inactivity.service';
+import { InviteService } from '../invite/invite.service';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +47,7 @@ export class SocialOrchestratorService {
     private inboxService: InboxService,
     private inactivityService: InactivityService,
     private messageService: MessageService,
+    private inviteService: InviteService,
     private colyseusService: ColyseusService
   ) {
     this.subscribeToState();
@@ -89,6 +91,7 @@ export class SocialOrchestratorService {
     this.friendService.setInitialState();
     this.friendRequestService.setInitialState();
     this.messageService.setInitialState();
+    this.inviteService.setInitialState();
   }
 
   connect(decodedJwt: DecodedJwt): Observable<any> {
@@ -475,5 +478,7 @@ export class SocialOrchestratorService {
     this.friendRequestService.setOutboundFriendRequests(
       user.outboundFriendRequests
     );
+    this.inviteService.setInboundInvites(user.inboundInvites);
+    this.inviteService.setOutboundInvites(user.outboundInvites);
   }
 }

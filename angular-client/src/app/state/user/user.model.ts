@@ -1,6 +1,7 @@
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { Friend } from '../friend/friend.model';
 import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { Invite } from '../invite/invite.model';
 
 export class User {
   _id?: string;
@@ -15,6 +16,8 @@ export class User {
   friends: Friend[] = [];
   inboundFriendRequests: FriendRequest[] = [];
   outboundFriendRequests: FriendRequest[] = [];
+  inboundInvites: Invite[] = [];
+  outboundInvites: Invite[] = [];
 
   constructor(user?: Partial<User>) {
     if (user) {
@@ -33,6 +36,12 @@ export class User {
       );
       this.outboundFriendRequests = user.outboundFriendRequests.map(
         outboundFriendRequest => new FriendRequest(outboundFriendRequest)
+      );
+      this.inboundInvites = user.inboundInvites.map(
+        inboundInvite => new Invite(inboundInvite)
+      );
+      this.outboundInvites = user.outboundInvites.map(
+        outboundInvite => new Invite(outboundInvite)
       );
     }
   }
