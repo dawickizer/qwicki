@@ -6,6 +6,7 @@ import { InboxManager } from './InboxManager';
 export class PresenceManager extends InboxManager {
   constructor(inbox: Inbox) {
     super(inbox);
+    this.setOnMessageListeners();
   }
 
   notifyHostUserOnlineStatus(user: User, onlineStatus?: OnlineStatus) {

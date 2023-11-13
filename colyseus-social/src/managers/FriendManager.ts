@@ -5,6 +5,7 @@ import { InboxManager } from './InboxManager';
 export class FriendManager extends InboxManager {
   constructor(inbox: Inbox) {
     super(inbox);
+    this.setOnMessageListeners();
   }
 
   setOnMessageListeners() {

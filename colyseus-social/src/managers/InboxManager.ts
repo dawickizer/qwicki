@@ -5,5 +5,10 @@ export class InboxManager {
 
   constructor(inbox: Inbox) {
     this.inbox = inbox;
+    this.setOnMessageListeners();
+  }
+
+  setOnMessageListeners() {
+    // implement listeners here if needed
   }
 }

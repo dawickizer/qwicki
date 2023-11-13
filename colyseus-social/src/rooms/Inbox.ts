@@ -5,6 +5,7 @@ import { User } from '../schemas/User';
 import { FriendManager } from '../managers/FriendManager';
 import { ChatManager } from '../managers/ChatManager';
 import { PresenceManager } from '../managers/PresenceManager';
+import { InviteManager } from '../managers/InviteManager';
 
 export class Inbox extends Room<InboxState> {
   hostClient: Client;
@@ -12,12 +13,12 @@ export class Inbox extends Room<InboxState> {
   private friendManager: FriendManager;
   private chatManager: ChatManager;
   private presenceManager: PresenceManager;
+  private inviteManager: InviteManager;
 
   onCreate(options: any) {
     this.setState(new InboxState());
     this.roomId = isAuthenticatedJWT(options.jwt)._id;
     this.setManagers();
-    this.setOnMessageListeners();
     console.log(`Room ${this.roomId} created`);
   }
 
@@ -116,11 +117,6 @@ export class Inbox extends Room<InboxState> {
     this.friendManager = new FriendManager(this);
     this.chatManager = new ChatManager(this);
     this.presenceManager = new PresenceManager(this);
-  }
-
-  private setOnMessageListeners() {
-    this.friendManager.setOnMessageListeners();
-    this.chatManager.setOnMessageListeners();
-    this.presenceManager.setOnMessageListeners();
+    this.inviteManager = new InviteManager(this);
   }
 }
