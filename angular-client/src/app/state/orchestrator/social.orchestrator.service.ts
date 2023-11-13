@@ -25,6 +25,7 @@ import { MessageService } from '../message/message.service';
 import { OnlineStatus } from 'src/app/models/online-status/online-status';
 import { InactivityService } from '../inactivity/inactivity.service';
 import { InviteService } from '../invite/invite.service';
+import { Invite } from '../invite/invite.model';
 
 @Injectable({
   providedIn: 'root',
@@ -415,6 +416,22 @@ export class SocialOrchestratorService {
         this.getAllMessagesBetween(data.friendRequest.to).subscribe();
       }
     );
+
+    inbox.onMessage('sendInvite', (invite: Invite) => {
+      console.log(invite);
+    });
+
+    inbox.onMessage('rejectInvite', (invite: Invite) => {
+      console.log(invite);
+    });
+
+    inbox.onMessage('revokeInvite', (invite: Invite) => {
+      console.log(invite);
+    });
+
+    inbox.onMessage('acceptInvite', (invite: Invite) => {
+      console.log(invite);
+    });
 
     inbox.onMessage('removeFriend', (friend: Friend) => {
       this.friendService.removeFriend(friend);

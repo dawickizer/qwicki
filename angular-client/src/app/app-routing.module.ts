@@ -9,12 +9,12 @@ import { GameComponent } from './components/game/game/game.component';
 import { AuthGuardService } from './state/auth/auth.guard.service';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { LobbyComponent } from './components/match-making/lobby/lobby.component';
+import { PartyLobbyComponent } from './components/match-making/party-lobby/party-lobby.component';
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: '/lobby',
+    redirectTo: '/party-lobby',
     pathMatch: 'full',
   },
   {
@@ -28,8 +28,8 @@ const routes: Routes = [
         component: DashboardComponent,
       },
       {
-        path: 'lobby',
-        component: LobbyComponent,
+        path: 'party-lobby',
+        component: PartyLobbyComponent,
       },
       {
         path: 'game',
