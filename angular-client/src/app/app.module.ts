@@ -80,7 +80,6 @@ import { SocialSidenavComponent } from './components/social/social-sidenav/socia
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
 import { UserEffectService } from './state/user/user.effect.service';
-import { UserFilterableMultiSelectComponent } from './components/misc/user-filterable-multi-select/user-filterable-multi-select.component';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
 
@@ -113,7 +112,6 @@ import { UserStateService } from './state/user/user.state.service';
     SignupComponent,
     SocialSidenavComponent,
     UserProfileComponent,
-    UserFilterableMultiSelectComponent,
   ],
   imports: [
     AppRoutingModule,

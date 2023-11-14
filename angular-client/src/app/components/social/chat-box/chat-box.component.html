@@ -34,23 +34,17 @@
         maxlength="250"
         #input>
       </textarea>
+      <span
+        *ngIf="newMessage"
+        matSuffix
+        matTooltip="Send Message"
+        (click)="sendMessage()"
+        class="material-icons"
+        >send</span
+      >
       <mat-hint class="hint" align="end"
         >{{ input.value.length || 0 }}/250</mat-hint
       >
     </mat-form-field>
-  </div>
-  <div class="chat-icons">
-    <span
-      matTooltip="Remove Friend"
-      (click)="removeFriend()"
-      class="material-icons-outlined"
-      >person_remove</span
-    >
-    <span
-      matTooltip="Send Message"
-      (click)="sendMessage()"
-      class="material-icons"
-      >send</span
-    >
   </div>
 </div>

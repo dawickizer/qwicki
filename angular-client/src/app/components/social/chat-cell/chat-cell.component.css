@@ -18,3 +18,12 @@
 .online-status {
   margin-right: 4px;
 }
+
+.icon-container {
+  display: flex;
+  align-items: center;
+}
+
+.icon-container .material-icons-outlined {
+  margin: 0 8px;
+}

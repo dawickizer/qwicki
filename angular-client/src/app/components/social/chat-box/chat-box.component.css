@@ -56,11 +56,6 @@
   max-width: 100%;
 }
 
-.chat-icons {
-  display: flex;
-  justify-content: space-between;
-}
-
 textarea.mat-input-element {
   background: var(--purple);
   border-radius: 5px;

@@ -14,6 +14,25 @@
       {{ friend.username }}
     </mat-panel-title>
     <mat-panel-description>
+      <div class="icon-container">
+        <span
+          *ngIf="panelOpenState"
+          matTooltip="Remove Friend"
+          (click)="removeFriend(); $event.stopPropagation()"
+          class="material-icons-outlined"
+          aria-label="Remove friend"
+          >person_remove</span
+        >
+
+        <span
+          *ngIf="panelOpenState"
+          matTooltip="Invite Friend"
+          (click)="inviteFriend(); $event.stopPropagation()"
+          class="material-icons-outlined"
+          aria-label="Invite friend"
+          >group_add</span
+        >
+      </div>
       <app-notification-badge
         *ngIf="unviewedMessages.length > 0 && !panelOpenState"
         [count]="unviewedMessages.length"></app-notification-badge>

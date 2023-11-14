@@ -1,91 +1,3 @@
-/* ::ng-deep input.mat-input-element {
-  color: aliceblue;
-}
-
-::ng-deep .mat-input-element::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-::ng-deep .mat-input-element:disabled,
-.mat-form-field-type-mat-native-select.mat-form-field-disabled
-  .mat-form-field-infix::after {
-  color: aliceblue;
-}
-
-::ng-deep .mat-form-field .mat-form-field-label {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
-  color: #673ab7;
-}
-
-::ng-deep .mat-focused .mat-form-field-underline .mat-form-field-ripple {
-  background-color: #673ab7;
-}
-
-::ng-deep ::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-  overflow-y: scroll;
-  background: rgba(255, 255, 255, 0.5);
-  box-shadow: inset 0 0 4px #707070;
-}
-
-::ng-deep ::-webkit-scrollbar-thumb {
-  background: #673ab7;
-  border-radius: 10px;
-}
-
-::ng-deep .material-icons,
-.material-icons-outlined {
-  vertical-align: middle;
-  color: #673ab7;
-}
-
-::ng-deep .material-icons:hover,
-.material-icons-outlined:hover {
-  cursor: pointer;
-}
-
-::ng-deep .material-icons-outlined {
-  vertical-align: middle;
-  color: #673ab7;
-}
-
-::ng-deep .material-icons-outlined:hover {
-  cursor: pointer;
-}
-
-::ng-deep .mat-select-arrow {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-::ng-deep .mat-focused .mat-select-arrow {
-  color: #673ab7;
-}
-
-::ng-deep .mat-option-text {
-  color: aliceblue;
-}
-
-::ng-deep .mat-select-panel {
-  background-color: #212529;
-}
-
-::ng-deep .mat-select-value {
-  color: aliceblue;
-}
-
-::ng-deep .mat-pseudo-checkbox {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-::ng-deep .mat-pseudo-checkbox-checked {
-  background-color: #673ab7;
-}
- */
-
 ::ng-deep ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
@@ -103,18 +15,37 @@
 .material-icons-outlined {
   vertical-align: middle;
   color: var(--purple);
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 
 ::ng-deep .material-icons:hover,
 .material-icons-outlined:hover {
   cursor: pointer;
+  transform: scale(1.1); /* Slight zoom effect on hover */
+  color: #9c27b0; /* A slightly darker shade on hover */
+}
+
+::ng-deep .material-icons:active,
+.material-icons-outlined:active {
+  transform: scale(0.9); /* Slight shrink effect on active click */
 }
 
 ::ng-deep .material-icons-outlined {
   vertical-align: middle;
   color: var(--purple);
+  transition:
+    transform 0.3s ease,
+    color 0.3s ease;
 }
 
 ::ng-deep .material-icons-outlined:hover {
   cursor: pointer;
+  transform: scale(1.1); /* Slight zoom effect on hover */
+  color: #9c27b0; /* A slightly darker shade on hover */
+}
+
+::ng-deep .material-icons-outlined:active {
+  transform: scale(0.9); /* Slight shrink effect on active click */
 }
