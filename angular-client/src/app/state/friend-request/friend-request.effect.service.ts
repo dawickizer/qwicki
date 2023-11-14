@@ -10,6 +10,8 @@ import { FriendRequestStateService } from './friend-request.state.service';
   providedIn: 'root',
 })
 export class FriendRequestEffectService {
+  private receivedFriendRequestAudio = new Audio('assets/notifications/sounds/mixkit-long-pop-2358.wav');
+
   constructor(
     private friendRequestApiService: FriendRequestApiService,
     private friendRequestStateService: FriendRequestStateService,
@@ -80,6 +82,7 @@ export class FriendRequestEffectService {
   receiveFriendRequest(
     friendRequest: FriendRequest
   ): Observable<FriendRequest> {
+    this.receivedFriendRequestAudio.play();
     this.friendRequestStateService.setIsLoading(true);
     this.friendRequestStateService.addInboundFriendRequest(friendRequest);
     this.friendRequestStateService.setIsLoading(false);
