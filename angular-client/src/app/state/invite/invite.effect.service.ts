@@ -10,7 +10,9 @@ import { InviteStateService } from './invite.state.service';
   providedIn: 'root',
 })
 export class InviteEffectService {
-  private receivedInviteAudio = new Audio('assets/notifications/sounds/mixkit-magic-notification-ring-2344.wav');
+  private receivedInviteAudio = new Audio(
+    'assets/notifications/sounds/mixkit-magic-notification-ring-2344.wav'
+  );
 
   constructor(
     private inviteApiService: InviteApiService,
