@@ -64,6 +64,7 @@ import { InviteStateService } from './state/invite/invite.state.service';
 import { IsTypingComponent } from './components/misc/is-typing/is-typing.component';
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
+import { LobbyComponent } from './components/match-making/lobby/lobby.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { MatchMakingService } from './services/match-making/match-making.service';
@@ -72,7 +73,6 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
 import { OnlineStatusComponent } from './components/misc/online-status/online-status.component';
 import { OutboundFriendRequestsComponent } from './components/social/outbound-friend-requests/outbound-friend-requests.component';
-import { PartyLobbyComponent } from './components/match-making/party-lobby/party-lobby.component';
 import { PlayerService } from './services/player/player.service';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
@@ -101,6 +101,7 @@ import { UserStateService } from './state/user/user.state.service';
     InboundFriendRequestsComponent,
     IsTypingComponent,
     JoinGameComponent,
+    LobbyComponent,
     LoginComponent,
     MainLayoutComponent,
     NavbarComponent,
@@ -108,7 +109,6 @@ import { UserStateService } from './state/user/user.state.service';
     NotificationBadgeComponent,
     OnlineStatusComponent,
     OutboundFriendRequestsComponent,
-    PartyLobbyComponent,
     SignupComponent,
     SocialSidenavComponent,
     UserProfileComponent,
