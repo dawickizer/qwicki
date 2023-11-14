@@ -17,14 +17,15 @@
     <mat-form-field class="full-width">
       <mat-label>Send Friend Request</mat-label>
       <input matInput [(ngModel)]="potentialFriend" name="sendFriendRequest" />
+      <span
+        *ngIf="potentialFriend"
+        matSuffix
+        matTooltip="Send Friend Request"
+        (click)="sendFriendRequest()"
+        class="material-icons"
+        >send</span
+      >
     </mat-form-field>
-    <button
-      mat-raised-button
-      color="primary"
-      type="submit"
-      [disabled]="!potentialFriend">
-      Send
-    </button>
   </form>
   <table mat-table [dataSource]="friendRequests" class="mat-elevation-z0">
     <ng-container matColumnDef="username">
