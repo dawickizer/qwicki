@@ -391,7 +391,7 @@ export class SocialOrchestratorService {
     );
 
     inbox.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
-      this.friendRequestService.receiveFriendRequest(friendRequest);
+      this.friendRequestService.receiveFriendRequest(friendRequest).subscribe();
     });
 
     inbox.onMessage('rejectFriendRequest', (friendRequest: FriendRequest) => {
