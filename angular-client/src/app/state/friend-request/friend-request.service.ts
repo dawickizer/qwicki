@@ -60,6 +60,12 @@ export class FriendRequestService {
     );
   }
 
+  receiveFriendRequest(
+    friendRequest: FriendRequest
+  ): Observable<FriendRequest> {
+    return this.friendRequestEffectService.receiveFriendRequest(friendRequest);
+  }
+
   setInitialState(): void {
     this.friendRequestStateService.setInitialState();
   }

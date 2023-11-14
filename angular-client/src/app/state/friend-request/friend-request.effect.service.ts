@@ -77,6 +77,21 @@ export class FriendRequestEffectService {
     );
   }
 
+  receiveFriendRequest(
+    friendRequest: FriendRequest
+  ): Observable<FriendRequest> {
+    this.friendRequestStateService.setIsLoading(true);
+    this.friendRequestStateService.addInboundFriendRequest(friendRequest);
+    this.friendRequestStateService.setIsLoading(false);
+    this.snackBar.open(
+      `${friendRequest.from.username} sent you a friend request!`,
+      'Dismiss',
+      { duration: 5000 }
+    );
+
+    return of(friendRequest);
+  }
+
   private handleError = (error: any): Observable<null> => {
     console.error(error);
     this.snackBar.open(error, 'Dismiss', { duration: 5000 });
