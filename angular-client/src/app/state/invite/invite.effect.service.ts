@@ -62,6 +62,19 @@ export class InviteEffectService {
     );
   }
 
+  receiveInvite(invite: Invite): Observable<Invite> {
+    this.inviteStateService.setIsLoading(true);
+    this.inviteStateService.addInboundInvite(invite);
+    this.inviteStateService.setIsLoading(false);
+    this.snackBar.open(
+      `${invite.from.username} sent you a ${invite.type} invite!`,
+      'Dismiss',
+      { duration: 5000 }
+    );
+
+    return of(invite);
+  }
+
   private handleError = (error: any): Observable<null> => {
     console.error(error);
     this.snackBar.open(error, 'Dismiss', { duration: 5000 });

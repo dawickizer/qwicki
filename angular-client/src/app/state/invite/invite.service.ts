@@ -50,6 +50,10 @@ export class InviteService {
     return this.inviteEffectService.rejectInvite(user, invite);
   }
 
+  receiveInvite(invite: Invite): Observable<Invite> {
+    return this.inviteEffectService.receiveInvite(invite);
+  }
+
   setInitialState(): void {
     this.inviteStateService.setInitialState();
   }
