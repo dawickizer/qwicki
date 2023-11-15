@@ -4,11 +4,11 @@ import { FriendRequest } from 'src/app/state/friend-request/friend-requests.mode
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
-  selector: 'app-inbound-friend-requests',
-  templateUrl: './inbound-friend-requests.component.html',
-  styleUrls: ['./inbound-friend-requests.component.css'],
+  selector: 'app-inbound-notifications',
+  templateUrl: './inbound-notifications.component.html',
+  styleUrls: ['./inbound-notifications.component.css'],
 })
-export class InboundFriendRequestsComponent {
+export class InboundNotificationsComponent {
   @Input() friendRequests: MatTableDataSource<FriendRequest>;
   friendRequestsDisplayedColumns: string[] = ['username', 'action'];
 

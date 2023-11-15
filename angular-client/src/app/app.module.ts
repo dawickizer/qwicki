@@ -54,7 +54,7 @@ import { HomeComponent } from './components/home/home.component';
 import { InactivityEffectService } from './state/inactivity/inactivity.effect.service';
 import { InactivityService } from './state/inactivity/inactivity.service';
 import { InactivityStateService } from './state/inactivity/inactivity.state.service';
-import { InboundFriendRequestsComponent } from './components/social/inbound-friend-requests/inbound-friend-requests.component';
+import { InboundNotificationsComponent } from './components/social/inbound-notifications/inbound-notifications.component';
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
@@ -98,7 +98,7 @@ import { UserStateService } from './state/user/user.state.service';
     GroupsListComponent,
     GroupsTabComponent,
     HomeComponent,
-    InboundFriendRequestsComponent,
+    InboundNotificationsComponent,
     IsTypingComponent,
     JoinGameComponent,
     LobbyComponent,

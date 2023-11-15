@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { InboundFriendRequestsComponent } from './inbound-friend-requests.component';
+import { InboundFriendRequestsComponent } from './inbound-notifications.component';
 
 describe('InboundFriendRequestsComponent', () => {
   let component: InboundFriendRequestsComponent;
