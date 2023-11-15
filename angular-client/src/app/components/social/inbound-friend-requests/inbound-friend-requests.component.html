@@ -13,20 +13,6 @@
         [count]="friendRequests.data.length"></app-notification-badge>
     </mat-panel-description>
   </mat-expansion-panel-header>
-  <form (ngSubmit)="sendFriendRequest()">
-    <mat-form-field class="full-width">
-      <mat-label>Send Friend Request</mat-label>
-      <input matInput [(ngModel)]="potentialFriend" name="sendFriendRequest" />
-      <span
-        *ngIf="potentialFriend"
-        matSuffix
-        matTooltip="Send Friend Request"
-        (click)="sendFriendRequest()"
-        class="material-icons"
-        >send</span
-      >
-    </mat-form-field>
-  </form>
   <table mat-table [dataSource]="friendRequests" class="mat-elevation-z0">
     <ng-container matColumnDef="username">
       <td mat-cell *matCellDef="let element">

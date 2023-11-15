@@ -1,8 +1,20 @@
 <div class="friends-tab">
-  <form>
+  <form (ngSubmit)="sendFriendRequest()">
     <mat-form-field class="full-width">
-      <mat-label>Search</mat-label>
-      <input matInput (keyup)="filter($event)" name="filter" />
+      <mat-label>Search/Add Friends</mat-label>
+      <input
+        matInput
+        (keyup)="filter()"
+        [(ngModel)]="potentialFriend"
+        name="search" />
+      <span
+        *ngIf="potentialFriend"
+        matSuffix
+        matTooltip="Search/Add Friends"
+        (click)="sendFriendRequest()"
+        class="material-icons"
+        >send</span
+      >
     </mat-form-field>
   </form>
   <app-inbound-friend-requests

@@ -4,6 +4,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { Message } from 'src/app/state/message/message.model';
+import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
   selector: 'app-friends-tab',
@@ -55,21 +56,35 @@ export class FriendsTabComponent {
 
   displayedColumns: string[] = ['username'];
 
-  filter(filterValue: any) {
+  potentialFriend = '';
+
+  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
+
+  filter() {
     this.friends.filterPredicate = (friend, filter) =>
       friend.username.trim().toLowerCase().includes(filter);
-    this.friends.filter = filterValue.target.value.trim().toLowerCase();
+    this.friends.filter = this.potentialFriend.trim().toLowerCase();
 
     this.inboundFriendRequests.filterPredicate = (friendRequest, filter) =>
       friendRequest.from.username.trim().toLowerCase().includes(filter);
-    this.inboundFriendRequests.filter = filterValue.target.value
+    this.inboundFriendRequests.filter = this.potentialFriend
       .trim()
       .toLowerCase();
 
     this.outboundFriendRequests.filterPredicate = (friendRequest, filter) =>
       friendRequest.to.username.trim().toLowerCase().includes(filter);
-    this.outboundFriendRequests.filter = filterValue.target.value
+    this.outboundFriendRequests.filter = this.potentialFriend
       .trim()
       .toLowerCase();
+  }
+
+  sendFriendRequest() {
+    this.socialOrchestratorService
+      .sendFriendRequest(this.potentialFriend)
+      .subscribe();
+    this.potentialFriend = '';
+    this.friends.filter = '';
+    this.inboundFriendRequests.filter = '';
+    this.outboundFriendRequests.filter = '';
   }
 }
