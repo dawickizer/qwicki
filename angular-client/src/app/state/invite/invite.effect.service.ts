@@ -5,7 +5,6 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { InviteApiService } from './invite.api.service';
 import { User } from '../user/user.model';
 import { InviteStateService } from './invite.state.service';
-import { Friend } from '../friend/friend.model';
 
 @Injectable({
   providedIn: 'root',

@@ -49,12 +49,17 @@ export class SocialSidenavComponent implements OnInit {
     this.combinedNotifications$ = combineLatest([
       this.unviewedMessages$,
       this.inboundFriendRequests$,
-      this.inboundInvites$
+      this.inboundInvites$,
     ]).pipe(
       map(([unviewedMessages, inboundFriendRequests, inboundInvites]) => ({
-        count: unviewedMessages.length + inboundFriendRequests.length + inboundInvites.length,
+        count:
+          unviewedMessages.length +
+          inboundFriendRequests.length +
+          inboundInvites.length,
         hasData:
-          unviewedMessages.length > 0 || inboundFriendRequests.length > 0 || inboundInvites.length > 0,
+          unviewedMessages.length > 0 ||
+          inboundFriendRequests.length > 0 ||
+          inboundInvites.length > 0,
       }))
     );
   }

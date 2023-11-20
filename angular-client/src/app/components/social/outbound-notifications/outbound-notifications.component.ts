@@ -27,8 +27,6 @@ export class OutboundNotificationsComponent {
   }
 
   revokeInvite(invite: Invite) {
-    this.socialOrchestratorService
-      .revokeInvite(invite)
-      .subscribe();
+    this.socialOrchestratorService.revokeInvite(invite).subscribe();
   }
 }

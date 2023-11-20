@@ -22,13 +22,8 @@ export class FriendsTabComponent {
     [] as FriendRequest[]
   );
 
-  inboundInvites = new MatTableDataSource<Invite>(
-    [] as Invite[]
-  );
-  outboundInvites = new MatTableDataSource<Invite>(
-    [] as Invite[]
-  );
-
+  inboundInvites = new MatTableDataSource<Invite>([] as Invite[]);
+  outboundInvites = new MatTableDataSource<Invite>([] as Invite[]);
 
   @Input() unviewedMessages: Message[];
 
@@ -96,17 +91,13 @@ export class FriendsTabComponent {
       .trim()
       .toLowerCase();
 
-      this.inboundInvites.filterPredicate = (invite, filter) =>
+    this.inboundInvites.filterPredicate = (invite, filter) =>
       invite.from.username.trim().toLowerCase().includes(filter);
-    this.inboundInvites.filter = this.potentialFriend
-      .trim()
-      .toLowerCase();
+    this.inboundInvites.filter = this.potentialFriend.trim().toLowerCase();
 
     this.outboundInvites.filterPredicate = (invite, filter) =>
       invite.to.username.trim().toLowerCase().includes(filter);
-    this.outboundInvites.filter = this.potentialFriend
-      .trim()
-      .toLowerCase();
+    this.outboundInvites.filter = this.potentialFriend.trim().toLowerCase();
   }
 
   sendFriendRequest() {

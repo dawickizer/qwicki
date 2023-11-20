@@ -122,13 +122,12 @@ export class SocialOrchestratorService {
   }
 
   inviteFriend(friend: Friend): Observable<Invite> {
-
-    let invite = new Invite();
+    const invite = new Invite();
     invite.to = friend;
     invite.type = 'party';
     invite.roomId = '123';
-    invite.metadata = "Domination";    
-  
+    invite.metadata = 'Domination';
+
     return this.inviteService.sendInvite(this.user, invite).pipe(
       tap(invite => {
         const friendsInbox = this.friendsInboxes.find(
@@ -144,20 +143,18 @@ export class SocialOrchestratorService {
   }
 
   revokeInvite(invite: Invite): Observable<Invite> {
-    return this.inviteService
-      .revokeInvite(this.user, invite)
-      .pipe(
-        tap(async invite => {
-          // const friendsInbox = this.friendsInboxes.find(
-          //   friendsInbox => friendsInbox.id === invite.to._id
-          // );
-          // if (friendsInbox) {
-          //   friendsInbox.send('revokeInviteToHost', invite);
-          // } else {
-          //   this.personalInbox.send('revokeInviteToUser', invite);
-          // }
-        })
-      );
+    return this.inviteService.revokeInvite(this.user, invite).pipe(
+      tap(async invite => {
+        // const friendsInbox = this.friendsInboxes.find(
+        //   friendsInbox => friendsInbox.id === invite.to._id
+        // );
+        // if (friendsInbox) {
+        //   friendsInbox.send('revokeInviteToHost', invite);
+        // } else {
+        //   this.personalInbox.send('revokeInviteToUser', invite);
+        // }
+      })
+    );
   }
 
   getAllMessagesBetween(friend: Friend): Observable<Map<string, Message[]>> {

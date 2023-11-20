@@ -6,10 +6,9 @@ import {
 } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
-import { Observable, throwError, of } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import { User } from '../user/user.model';
 import { Invite } from './invite.model';
-import { Friend } from '../friend/friend.model';
 
 @Injectable({
   providedIn: 'root',
@@ -43,13 +42,12 @@ export class InviteApiService {
   }
 
   create(user: User, invite: Invite): Observable<Invite> {
-
     const data = {
       to: invite.to._id,
       type: invite.type,
       roomId: invite.roomId,
-      metadata: invite.metadata
-    }
+      metadata: invite.metadata,
+    };
 
     return this.http
       .post<Invite>(`${this.API}${this.endpoint}/${user._id}/invites`, data)
