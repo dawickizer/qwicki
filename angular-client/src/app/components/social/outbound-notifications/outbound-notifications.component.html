@@ -29,4 +29,26 @@
       mat-row
       *matRowDef="let row; columns: friendRequestsDisplayedColumns"></tr>
   </table>
+
+  <table mat-table [dataSource]="invites" class="mat-elevation-z0">
+    <ng-container matColumnDef="username">
+      <td mat-cell *matCellDef="let element">
+        {{ element.to.username }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <td class="right-justify" mat-cell *matCellDef="let element">
+        <span
+          matTooltip="Revoke Invite"
+          (click)="revokeInvite(element)"
+          class="material-icons"
+          >close</span
+        >
+      </td>
+    </ng-container>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: invitesDisplayedColumns"></tr>
+  </table>
 </mat-expansion-panel>

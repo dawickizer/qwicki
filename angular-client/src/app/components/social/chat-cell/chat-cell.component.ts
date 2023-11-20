@@ -71,6 +71,6 @@ export class ChatCellComponent implements OnInit, OnDestroy {
   }
 
   inviteFriend() {
-    console.log('INVITE');
+    this.socialOrchestratorService.inviteFriend(this.friend).subscribe();
   }
 }

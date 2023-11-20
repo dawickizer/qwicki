@@ -72,7 +72,7 @@ import { NavbarComponent } from './components/layout/navbar/navbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
 import { OnlineStatusComponent } from './components/misc/online-status/online-status.component';
-import { OutboundFriendRequestsComponent } from './components/social/outbound-friend-requests/outbound-friend-requests.component';
+import { OutboundNotificationsComponent } from './components/social/outbound-notifications/outbound-notifications.component';
 import { PlayerService } from './services/player/player.service';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
@@ -108,7 +108,7 @@ import { UserStateService } from './state/user/user.state.service';
     NotFoundComponent,
     NotificationBadgeComponent,
     OnlineStatusComponent,
-    OutboundFriendRequestsComponent,
+    OutboundNotificationsComponent,
     SignupComponent,
     SocialSidenavComponent,
     UserProfileComponent,

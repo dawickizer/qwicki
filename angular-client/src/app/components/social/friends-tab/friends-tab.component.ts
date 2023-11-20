@@ -5,6 +5,7 @@ import { Friend } from 'src/app/state/friend/friend.model';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { Message } from 'src/app/state/message/message.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
+import { Invite } from 'src/app/state/invite/invite.model';
 
 @Component({
   selector: 'app-friends-tab',
@@ -20,6 +21,14 @@ export class FriendsTabComponent {
   outboundFriendRequests = new MatTableDataSource<FriendRequest>(
     [] as FriendRequest[]
   );
+
+  inboundInvites = new MatTableDataSource<Invite>(
+    [] as Invite[]
+  );
+  outboundInvites = new MatTableDataSource<Invite>(
+    [] as Invite[]
+  );
+
 
   @Input() unviewedMessages: Message[];
 
@@ -54,6 +63,16 @@ export class FriendsTabComponent {
     this.outboundFriendRequests.data = data;
   }
 
+  @Input()
+  set inboundInvitesData(data: Invite[]) {
+    this.inboundInvites.data = data;
+  }
+
+  @Input()
+  set outboundInvitesData(data: Invite[]) {
+    this.outboundInvites.data = data;
+  }
+
   displayedColumns: string[] = ['username'];
 
   potentialFriend = '';
@@ -74,6 +93,18 @@ export class FriendsTabComponent {
     this.outboundFriendRequests.filterPredicate = (friendRequest, filter) =>
       friendRequest.to.username.trim().toLowerCase().includes(filter);
     this.outboundFriendRequests.filter = this.potentialFriend
+      .trim()
+      .toLowerCase();
+
+      this.inboundInvites.filterPredicate = (invite, filter) =>
+      invite.from.username.trim().toLowerCase().includes(filter);
+    this.inboundInvites.filter = this.potentialFriend
+      .trim()
+      .toLowerCase();
+
+    this.outboundInvites.filterPredicate = (invite, filter) =>
+      invite.to.username.trim().toLowerCase().includes(filter);
+    this.outboundInvites.filter = this.potentialFriend
       .trim()
       .toLowerCase();
   }

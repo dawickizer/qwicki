@@ -4,6 +4,7 @@ import { Invite } from './invite.model';
 import { InviteEffectService } from './invite.effect.service';
 import { InviteStateService } from './invite.state.service';
 import { User } from '../user/user.model';
+import { Friend } from '../friend/friend.model';
 
 @Injectable({
   providedIn: 'root',
@@ -38,8 +39,8 @@ export class InviteService {
     private inviteStateService: InviteStateService
   ) {}
 
-  sendInvite(user: User, potentialFriend: string): Observable<Invite> {
-    return this.inviteEffectService.sendInvite(user, potentialFriend);
+  sendInvite(user: User, invite: Invite): Observable<Invite> {
+    return this.inviteEffectService.sendInvite(user, invite);
   }
 
   revokeInvite(user: User, invite: Invite): Observable<Invite> {

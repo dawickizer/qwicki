@@ -121,6 +121,45 @@ export class SocialOrchestratorService {
       );
   }
 
+  inviteFriend(friend: Friend): Observable<Invite> {
+
+    let invite = new Invite();
+    invite.to = friend;
+    invite.type = 'party';
+    invite.roomId = '123';
+    invite.metadata = "Domination";    
+  
+    return this.inviteService.sendInvite(this.user, invite).pipe(
+      tap(invite => {
+        const friendsInbox = this.friendsInboxes.find(
+          friendsInbox => friendsInbox.id === invite.to._id
+        );
+        if (friendsInbox) {
+          friendsInbox.send('sendInviteToHost', invite);
+        } else {
+          this.personalInbox.send('sendInviteToUser', invite);
+        }
+      })
+    );
+  }
+
+  revokeInvite(invite: Invite): Observable<Invite> {
+    return this.inviteService
+      .revokeInvite(this.user, invite)
+      .pipe(
+        tap(async invite => {
+          // const friendsInbox = this.friendsInboxes.find(
+          //   friendsInbox => friendsInbox.id === invite.to._id
+          // );
+          // if (friendsInbox) {
+          //   friendsInbox.send('revokeInviteToHost', invite);
+          // } else {
+          //   this.personalInbox.send('revokeInviteToUser', invite);
+          // }
+        })
+      );
+  }
+
   getAllMessagesBetween(friend: Friend): Observable<Map<string, Message[]>> {
     return this.messageService.getAllBetween(this.user, friend);
   }
@@ -417,8 +456,8 @@ export class SocialOrchestratorService {
       }
     );
 
-    inbox.onMessage('sendInvite', (invite: Invite) => {
-      console.log(invite);
+    inbox.onMessage('sendInviteToHost', (invite: Invite) => {
+      this.inviteService.receiveInvite(invite).subscribe();
     });
 
     inbox.onMessage('rejectInvite', (invite: Invite) => {
@@ -450,6 +489,10 @@ export class SocialOrchestratorService {
     inbox.onMessage('messageUser', (message: Message) => {
       this.messageService.addMessageToFriend(message.from, message);
       this.friendService.reorderFriend(message.from._id, 'front');
+    });
+
+    inbox.onMessage('sendInviteToUser', (invite: Invite) => {
+      this.inviteService.receiveInvite(invite).subscribe();
     });
 
     inbox.onMessage(
@@ -495,6 +538,7 @@ export class SocialOrchestratorService {
     this.friendRequestService.setOutboundFriendRequests(
       user.outboundFriendRequests
     );
+
     this.inviteService.setInboundInvites(user.inboundInvites);
     this.inviteService.setOutboundInvites(user.outboundInvites);
   }

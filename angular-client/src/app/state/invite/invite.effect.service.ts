@@ -5,6 +5,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { InviteApiService } from './invite.api.service';
 import { User } from '../user/user.model';
 import { InviteStateService } from './invite.state.service';
+import { Friend } from '../friend/friend.model';
 
 @Injectable({
   providedIn: 'root',
@@ -20,13 +21,13 @@ export class InviteEffectService {
     private snackBar: MatSnackBar
   ) {}
 
-  sendInvite(user: User, potentialFriend: string): Observable<Invite> {
+  sendInvite(user: User, invite: Invite): Observable<Invite> {
     this.inviteStateService.setIsLoading(true);
-    return this.inviteApiService.create(user, potentialFriend).pipe(
+    return this.inviteApiService.create(user, invite).pipe(
       tap(invite => {
         this.inviteStateService.addOutboundInvite(invite);
         this.inviteStateService.setIsLoading(false);
-        this.snackBar.open(`Invite sent to ${potentialFriend}`, 'Dismiss', {
+        this.snackBar.open(`Invite sent to ${invite.to.username}`, 'Dismiss', {
           duration: 5000,
         });
       }),
@@ -72,7 +73,7 @@ export class InviteEffectService {
     this.inviteStateService.addInboundInvite(invite);
     this.inviteStateService.setIsLoading(false);
     this.snackBar.open(
-      `${invite.from.username} sent you a ${invite.type} invite!`,
+      `${invite.from.username} sent you an invite!`,
       'Dismiss',
       { duration: 5000 }
     );

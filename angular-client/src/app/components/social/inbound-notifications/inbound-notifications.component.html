@@ -30,7 +30,7 @@
         >
         <span
           matTooltip="Accept Friend Request"
-          (click)="addNewFriend(element)"
+          (click)="acceptFriendRequest(element)"
           class="material-icons-outlined"
           >person_add_alt</span
         >
@@ -39,5 +39,33 @@
     <tr
       mat-row
       *matRowDef="let row; columns: friendRequestsDisplayedColumns"></tr>
+  </table>
+
+  <table mat-table [dataSource]="invites" class="mat-elevation-z0">
+    <ng-container matColumnDef="username">
+      <td mat-cell *matCellDef="let element">
+        {{ element.from.username }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="action">
+      <td class="right-justify" mat-cell *matCellDef="let element">
+        <span
+          matTooltip="Reject Invite"
+          (click)="rejectInvite(element)"
+          class="material-icons-outlined"
+          >person_remove</span
+        >
+        <span
+          matTooltip="Accept Invite"
+          (click)="acceptInvite(element)"
+          class="material-icons-outlined"
+          >person_add_alt</span
+        >
+      </td>
+    </ng-container>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: invitesDisplayedColumns"></tr>
   </table>
 </mat-expansion-panel>

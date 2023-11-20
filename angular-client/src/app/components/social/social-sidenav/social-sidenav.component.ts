@@ -8,6 +8,8 @@ import { FriendRequestService } from 'src/app/state/friend-request/friend-reques
 import { Friend } from 'src/app/state/friend/friend.model';
 import { FriendService } from 'src/app/state/friend/friend.service';
 import { Message } from 'src/app/state/message/message.model';
+import { Invite } from 'src/app/state/invite/invite.model';
+import { InviteService } from 'src/app/state/invite/invite.service';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -21,6 +23,8 @@ export class SocialSidenavComponent implements OnInit {
   friends$: Observable<Friend[]>;
   outboundFriendRequests$: Observable<FriendRequest[]>;
   inboundFriendRequests$: Observable<FriendRequest[]>;
+  outboundInvites$: Observable<Invite[]>;
+  inboundInvites$: Observable<Invite[]>;
   unviewedMessages$: Observable<Message[]>;
   unsubscribe$ = new Subject<void>();
 
@@ -28,6 +32,7 @@ export class SocialSidenavComponent implements OnInit {
     private userService: UserService,
     private friendService: FriendService,
     private friendRequestService: FriendRequestService,
+    private inviteService: InviteService,
     private messageService: MessageService
   ) {}
 
@@ -38,15 +43,18 @@ export class SocialSidenavComponent implements OnInit {
       this.friendRequestService.inboundFriendRequests$;
     this.outboundFriendRequests$ =
       this.friendRequestService.outboundFriendRequests$;
+    this.inboundInvites$ = this.inviteService.inboundInvites$;
+    this.outboundInvites$ = this.inviteService.outboundInvites$;
     this.unviewedMessages$ = this.messageService.unviewedMessages$;
     this.combinedNotifications$ = combineLatest([
       this.unviewedMessages$,
       this.inboundFriendRequests$,
+      this.inboundInvites$
     ]).pipe(
-      map(([unviewedMessages, inboundFriendRequests]) => ({
-        count: unviewedMessages.length + inboundFriendRequests.length,
+      map(([unviewedMessages, inboundFriendRequests, inboundInvites]) => ({
+        count: unviewedMessages.length + inboundFriendRequests.length + inboundInvites.length,
         hasData:
-          unviewedMessages.length > 0 || inboundFriendRequests.length > 0,
+          unviewedMessages.length > 0 || inboundFriendRequests.length > 0 || inboundInvites.length > 0,
       }))
     );
   }

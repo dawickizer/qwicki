@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
+import { Invite } from 'src/app/state/invite/invite.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 
 @Component({
@@ -12,11 +13,14 @@ export class InboundNotificationsComponent {
   @Input() friendRequests: MatTableDataSource<FriendRequest>;
   friendRequestsDisplayedColumns: string[] = ['username', 'action'];
 
+  @Input() invites: MatTableDataSource<Invite>;
+  invitesDisplayedColumns: string[] = ['username', 'action'];
+
   panelOpenState = false;
 
   constructor(private socialOrchestratorService: SocialOrchestratorService) {}
 
-  addNewFriend(friendRequest: FriendRequest) {
+  acceptFriendRequest(friendRequest: FriendRequest) {
     this.socialOrchestratorService.addNewFriend(friendRequest).subscribe();
   }
 
@@ -24,5 +28,15 @@ export class InboundNotificationsComponent {
     this.socialOrchestratorService
       .rejectFriendRequest(friendRequest)
       .subscribe();
+  }
+
+  acceptInvite(invite: Invite) {
+    //this.socialOrchestratorService.acceptInvite(invite).subscribe();
+  }
+
+  rejectInvite(invite: Invite) {
+    // this.socialOrchestratorService
+    //   .rejectInvite(invite)
+    //   .subscribe();
   }
 }

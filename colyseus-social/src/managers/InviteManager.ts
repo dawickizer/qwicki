@@ -1,3 +1,4 @@
+import { Client } from 'colyseus';
 import { Inbox } from '../rooms/Inbox';
 import { InboxManager } from './InboxManager';
 
@@ -8,8 +9,16 @@ export class InviteManager extends InboxManager {
   }
 
   setOnMessageListeners() {
-    this.inbox.onMessage('sendInvite', (client, invite) => {
-      this.inbox.hostClient.send('sendInvite', invite);
+    this.inbox.onMessage('sendInviteToHost', (client, invite) => {
+      this.inbox.hostClient.send('sendInviteToHost', invite);
+    });
+
+    this.inbox.onMessage('sendInviteToUser', (client, invite) => {
+      const user = this.inbox.getUserById(invite.to._id);
+      if (user) {
+        const userClient: Client = this.inbox.getClient(user);
+        userClient.send('sendInviteToUser', invite);
+      }
     });
 
     this.inbox.onMessage('acceptInvite', (client, invite) => {
