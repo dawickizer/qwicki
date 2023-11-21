@@ -70,7 +70,7 @@ export class ChatCellComponent implements OnInit, OnDestroy {
     this.socialOrchestratorService.deleteFriend(this.friend).subscribe();
   }
 
-  inviteFriend() {
-    this.socialOrchestratorService.inviteFriend(this.friend).subscribe();
+  sendInvite() {
+    this.socialOrchestratorService.sendInvite(this.friend).subscribe();
   }
 }

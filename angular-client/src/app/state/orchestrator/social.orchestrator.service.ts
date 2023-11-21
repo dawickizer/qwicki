@@ -121,7 +121,7 @@ export class SocialOrchestratorService {
       );
   }
 
-  inviteFriend(friend: Friend): Observable<Invite> {
+  sendInvite(friend: Friend): Observable<Invite> {
     const invite = new Invite();
     invite.to = friend;
     invite.type = 'party';
@@ -145,14 +145,46 @@ export class SocialOrchestratorService {
   revokeInvite(invite: Invite): Observable<Invite> {
     return this.inviteService.revokeInvite(this.user, invite).pipe(
       tap(async invite => {
-        // const friendsInbox = this.friendsInboxes.find(
-        //   friendsInbox => friendsInbox.id === invite.to._id
-        // );
-        // if (friendsInbox) {
-        //   friendsInbox.send('revokeInviteToHost', invite);
-        // } else {
-        //   this.personalInbox.send('revokeInviteToUser', invite);
-        // }
+        const friendsInbox = this.friendsInboxes.find(
+          friendsInbox => friendsInbox.id === invite.to._id
+        );
+        if (friendsInbox) {
+          friendsInbox.send('revokeInviteToHost', invite);
+        } else {
+          this.personalInbox.send('revokeInviteToUser', invite);
+        }
+      })
+    );
+  }
+
+  rejectInvite(invite: Invite): Observable<Invite> {
+    return this.inviteService.rejectInvite(this.user, invite).pipe(
+      tap(async invite => {
+        const friendsInbox = this.friendsInboxes.find(
+          friendsInbox => friendsInbox.id === invite.from._id
+        );
+
+        if (friendsInbox) {
+          friendsInbox.send('rejectInviteToHost', invite);
+        } else {
+          this.personalInbox.send('rejectInviteToUser', invite);
+        }
+      })
+    );
+  }
+
+  acceptInvite(invite: Invite): Observable<Invite> {
+    return this.inviteService.acceptInvite(this.user, invite).pipe(
+      tap(async invite => {
+        const friendsInbox = this.friendsInboxes.find(
+          friendsInbox => friendsInbox.id === invite.from._id
+        );
+
+        if (friendsInbox) {
+          friendsInbox.send('acceptInviteToHost', invite);
+        } else {
+          this.personalInbox.send('acceptInviteToUser', invite);
+        }
       })
     );
   }
@@ -457,16 +489,16 @@ export class SocialOrchestratorService {
       this.inviteService.receiveInvite(invite).subscribe();
     });
 
-    inbox.onMessage('rejectInvite', (invite: Invite) => {
-      console.log(invite);
+    inbox.onMessage('revokeInviteToHost', (invite: Invite) => {
+      this.inviteService.removeInboundInvite(invite);
     });
 
-    inbox.onMessage('revokeInvite', (invite: Invite) => {
-      console.log(invite);
+    inbox.onMessage('rejectInviteToHost', (invite: Invite) => {
+      this.inviteService.removeOutboundInvite(invite);
     });
 
-    inbox.onMessage('acceptInvite', (invite: Invite) => {
-      console.log(invite);
+    inbox.onMessage('acceptInviteToHost', (invite: Invite) => {
+      this.inviteService.removeOutboundInvite(invite);
     });
 
     inbox.onMessage('removeFriend', (friend: Friend) => {
@@ -490,6 +522,18 @@ export class SocialOrchestratorService {
 
     inbox.onMessage('sendInviteToUser', (invite: Invite) => {
       this.inviteService.receiveInvite(invite).subscribe();
+    });
+
+    inbox.onMessage('revokeInviteToUser', (invite: Invite) => {
+      this.inviteService.removeInboundInvite(invite);
+    });
+
+    inbox.onMessage('rejectInviteToUser', (invite: Invite) => {
+      this.inviteService.removeOutboundInvite(invite);
+    });
+
+    inbox.onMessage('acceptInviteToUser', (invite: Invite) => {
+      this.inviteService.removeOutboundInvite(invite);
     });
 
     inbox.onMessage(

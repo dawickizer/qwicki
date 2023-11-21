@@ -42,6 +42,10 @@ export class InviteService {
     return this.inviteEffectService.sendInvite(user, invite);
   }
 
+  acceptInvite(user: User, invite: Invite): Observable<Invite> {
+    return this.inviteEffectService.acceptInvite(user, invite);
+  }
+
   revokeInvite(user: User, invite: Invite): Observable<Invite> {
     return this.inviteEffectService.revokeInvite(user, invite);
   }

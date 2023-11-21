@@ -34,6 +34,24 @@ export class InviteEffectService {
     );
   }
 
+  acceptInvite(user: User, invite: Invite): Observable<Invite> {
+    this.inviteStateService.setIsLoading(true);
+    return this.inviteApiService.delete(user, invite._id).pipe(
+      tap(invite => {
+        this.inviteStateService.removeInboundInvite(invite);
+        this.inviteStateService.setIsLoading(false);
+        this.snackBar.open(
+          `Invite from ${invite.from.username} accepted`,
+          'Dismiss',
+          {
+            duration: 5000,
+          }
+        );
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   revokeInvite(user: User, invite: Invite): Observable<Invite> {
     this.inviteStateService.setIsLoading(true);
     return this.inviteApiService.delete(user, invite._id).pipe(

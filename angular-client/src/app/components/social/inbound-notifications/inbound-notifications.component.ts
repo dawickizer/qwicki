@@ -31,12 +31,10 @@ export class InboundNotificationsComponent {
   }
 
   acceptInvite(invite: Invite) {
-    //this.socialOrchestratorService.acceptInvite(invite).subscribe();
+    this.socialOrchestratorService.acceptInvite(invite).subscribe();
   }
 
   rejectInvite(invite: Invite) {
-    // this.socialOrchestratorService
-    //   .rejectInvite(invite)
-    //   .subscribe();
+    this.socialOrchestratorService.rejectInvite(invite).subscribe();
   }
 }

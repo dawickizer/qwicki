@@ -21,25 +21,40 @@ export class InviteManager extends InboxManager {
       }
     });
 
-    this.inbox.onMessage('acceptInvite', (client, invite) => {
+    this.inbox.onMessage('revokeInviteToHost', (client, invite) => {
+      this.inbox.hostClient.send('revokeInviteToHost', invite);
+    });
+
+    this.inbox.onMessage('revokeInviteToUser', (client, invite) => {
       const user = this.inbox.getUserById(invite.to._id);
-      if (user)
-        this.inbox.hostClient.send('acceptInvite', {
-          invite,
-          onlineStatus: user.onlineStatus,
-        });
+      if (user) {
+        const userClient: Client = this.inbox.getClient(user);
+        userClient.send('revokeInviteToUser', invite);
+      }
     });
 
-    this.inbox.onMessage('rejectInvite', (client, invite) => {
-      this.inbox.hostClient.send('rejectInvite', invite);
+    this.inbox.onMessage('rejectInviteToHost', (client, invite) => {
+      this.inbox.hostClient.send('rejectInviteToHost', invite);
     });
 
-    this.inbox.onMessage('revokeInvite', (client, invite) => {
-      this.inbox.hostClient.send('revokeInvite', invite);
+    this.inbox.onMessage('rejectInviteToUser', (client, invite) => {
+      const user = this.inbox.getUserById(invite.from._id);
+      if (user) {
+        const userClient: Client = this.inbox.getClient(user);
+        userClient.send('rejectInviteToUser', invite);
+      }
     });
 
-    this.inbox.onMessage('removeFriend', (client, friend) => {
-      this.inbox.hostClient.send('removeFriend', friend);
+    this.inbox.onMessage('acceptInviteToHost', (client, invite) => {
+      this.inbox.hostClient.send('acceptInviteToHost', invite);
+    });
+
+    this.inbox.onMessage('acceptInviteToUser', (client, invite) => {
+      const user = this.inbox.getUserById(invite.from._id);
+      if (user) {
+        const userClient: Client = this.inbox.getClient(user);
+        userClient.send('acceptInviteToUser', invite);
+      }
     });
   }
 }
