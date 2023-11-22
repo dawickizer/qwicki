@@ -21,7 +21,7 @@
       Friends
       <ng-container *ngIf="combinedNotifications$ | async as combinedNotif">
         <app-notification-badge
-          *ngIf="combinedNotif.hasData && activeTabIndex !== 0"
+          *ngIf="combinedNotif.hasData"
           [count]="combinedNotif.count"></app-notification-badge>
       </ng-container>
     </ng-template>
