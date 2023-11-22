@@ -9,8 +9,10 @@
     </mat-panel-title>
     <mat-panel-description>
       <app-notification-badge
-        *ngIf="(friendRequests.data.length > 0 || invites.data.length > 0)"
-        [count]="friendRequests.data.length + invites.data.length"></app-notification-badge>
+        *ngIf="friendRequests.data.length > 0 || invites.data.length > 0"
+        [count]="
+          friendRequests.data.length + invites.data.length
+        "></app-notification-badge>
     </mat-panel-description>
   </mat-expansion-panel-header>
   <table mat-table [dataSource]="friendRequests" class="mat-elevation-z0">
