@@ -19,12 +19,13 @@
     <ng-container matColumnDef="username">
       <td mat-cell *matCellDef="let element">
         {{ element.from.username }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="createdAt">
-      <td mat-cell *matCellDef="let element">
-        {{ element.createdAt | date: 'short' }}
+        <span
+          [ngClass]="{
+            'friend-request-label': isFriendRequest(element),
+            'invite-label': !isFriendRequest(element)
+          }">
+          {{ isFriendRequest(element) ? 'Friend Request' : 'Invite' }}
+        </span>
       </td>
     </ng-container>
 

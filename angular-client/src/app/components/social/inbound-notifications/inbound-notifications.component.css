@@ -31,3 +31,20 @@ table {
 .full-width {
   width: 100%;
 }
+
+/* Stylesheet (e.g., outbound-notifications.component.css) */
+.friend-request-label {
+  background-color: #4caf50; /* Green background for friend requests */
+  color: white;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.invite-label {
+  background-color: #2196f3; /* Blue background for invites */
+  color: white;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}

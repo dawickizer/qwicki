@@ -12,7 +12,7 @@ import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orc
 })
 export class OutboundNotificationsComponent {
   @Input() notifications: MatTableDataSource<Notification>;
-  notificationsDisplayedColumns: string[] = ['username', 'createdAt', 'action'];
+  notificationsDisplayedColumns: string[] = ['username', 'action'];
 
   panelOpenState = false;
 
