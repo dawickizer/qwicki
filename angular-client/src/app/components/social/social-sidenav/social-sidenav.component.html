@@ -27,10 +27,8 @@
     </ng-template>
     <app-friends-tab
       [friendsData]="friends$ | async"
-      [inboundFriendRequestsData]="inboundFriendRequests$ | async"
-      [outboundFriendRequestsData]="outboundFriendRequests$ | async"
-      [inboundInvitesData]="inboundInvites$ | async"
-      [outboundInvitesData]="outboundInvites$ | async"
+      [inboundNotificationsData]="inboundNotifications$ | async"
+      [outboundNotificationsData]="outboundNotifications$ | async"
       [unviewedMessages]="unviewedMessages$ | async">
     </app-friends-tab>
   </mat-tab>

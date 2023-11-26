@@ -1,16 +1,15 @@
+import { Notification } from 'src/app/models/notification/notification';
 import { Friend } from '../friend/friend.model';
 
-export class Invite {
+export class Invite extends Notification {
   _id?: string;
-  createdAt: Date;
-  from: Friend;
-  to: Friend;
   accepted: boolean;
-  type: 'party';
+  override type: 'party';
   roomId: string;
   metadata: any;
 
   constructor(invite?: Partial<Invite>) {
+    super();
     if (invite) {
       this._id = invite._id;
       this.createdAt = invite.createdAt;

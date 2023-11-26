@@ -10,6 +10,7 @@ import { FriendService } from 'src/app/state/friend/friend.service';
 import { Message } from 'src/app/state/message/message.model';
 import { Invite } from 'src/app/state/invite/invite.model';
 import { InviteService } from 'src/app/state/invite/invite.service';
+import { Notification } from 'src/app/models/notification/notification';
 
 @Component({
   selector: 'app-social-sidenav',
@@ -25,6 +26,8 @@ export class SocialSidenavComponent implements OnInit {
   inboundFriendRequests$: Observable<FriendRequest[]>;
   outboundInvites$: Observable<Invite[]>;
   inboundInvites$: Observable<Invite[]>;
+  outboundNotifications$: Observable<Notification[]>;
+  inboundNotifications$: Observable<Notification[]>;
   unviewedMessages$: Observable<Message[]>;
   unsubscribe$ = new Subject<void>();
 
@@ -45,6 +48,18 @@ export class SocialSidenavComponent implements OnInit {
       this.friendRequestService.outboundFriendRequests$;
     this.inboundInvites$ = this.inviteService.inboundInvites$;
     this.outboundInvites$ = this.inviteService.outboundInvites$;
+    this.outboundNotifications$ = combineLatest([
+      this.outboundFriendRequests$,
+      this.outboundInvites$,
+    ]).pipe(
+      map(([friendRequests, invites]) => [...friendRequests, ...invites])
+    );
+    this.inboundNotifications$ = combineLatest([
+      this.inboundFriendRequests$,
+      this.inboundInvites$,
+    ]).pipe(
+      map(([friendRequests, invites]) => [...friendRequests, ...invites])
+    );
     this.unviewedMessages$ = this.messageService.unviewedMessages$;
     this.combinedNotifications$ = combineLatest([
       this.unviewedMessages$,

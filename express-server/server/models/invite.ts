@@ -1,13 +1,10 @@
 import { Schema, model, Document } from 'mongoose';
+import { Notification } from './notification';
 
-interface Invite extends Document {
-  createdAt: Date;
-  updatedAt: Date;
-  from: Schema.Types.ObjectId;
-  to: Schema.Types.ObjectId;
+interface Invite extends Document, Notification {
   accepted: boolean;
-  type: 'party';
   roomId: string;
+  type: 'party';
   metadata: any;
 }
 

@@ -1,12 +1,10 @@
 import { Schema, model, Document } from 'mongoose';
+import { Notification } from './notification';
 
-interface Message extends Document {
-  createdAt: Date;
-  updatedAt: Date;
-  from: Schema.Types.ObjectId;
-  to: Schema.Types.ObjectId;
+interface Message extends Document, Notification {
   content: string;
   viewed: boolean;
+  type: 'message';
 }
 
 // create mongoose schema
@@ -16,6 +14,12 @@ const MessageSchema = new Schema<Message>(
     to: { type: Schema.Types.ObjectId, ref: 'User' },
     content: { type: String },
     viewed: { type: Boolean, default: false },
+    type: {
+      type: String,
+      enum: ['message'],
+      required: true,
+      default: 'message',
+    },
   },
   { timestamps: true }
 );

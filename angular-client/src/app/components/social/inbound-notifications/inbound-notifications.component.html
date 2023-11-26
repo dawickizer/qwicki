@@ -9,63 +9,60 @@
     </mat-panel-title>
     <mat-panel-description>
       <app-notification-badge
-        *ngIf="friendRequests.data.length > 0 || invites.data.length > 0"
-        [count]="
-          friendRequests.data.length + invites.data.length
-        "></app-notification-badge>
+        *ngIf="notifications.data.length > 0"
+        [count]="notifications.data.length">
+      </app-notification-badge>
     </mat-panel-description>
   </mat-expansion-panel-header>
-  <table mat-table [dataSource]="friendRequests" class="mat-elevation-z0">
+
+  <table mat-table [dataSource]="notifications" class="mat-elevation-z0">
     <ng-container matColumnDef="username">
       <td mat-cell *matCellDef="let element">
         {{ element.from.username }}
       </td>
     </ng-container>
 
-    <ng-container matColumnDef="action">
-      <td class="right-justify" mat-cell *matCellDef="let element">
-        <span
-          matTooltip="Reject Friend Request"
-          (click)="rejectFriendRequest(element)"
-          class="material-icons-outlined"
-          >person_remove</span
-        >
-        <span
-          matTooltip="Accept Friend Request"
-          (click)="acceptFriendRequest(element)"
-          class="material-icons-outlined"
-          >person_add_alt</span
-        >
+    <ng-container matColumnDef="createdAt">
+      <td mat-cell *matCellDef="let element">
+        {{ element.createdAt | date: 'short' }}
       </td>
     </ng-container>
+
+    <ng-container matColumnDef="action">
+      <td class="right-justify" mat-cell *matCellDef="let element">
+        <ng-container *ngIf="isFriendRequest(element); else inviteActions">
+          <span
+            matTooltip="Reject Friend Request"
+            (click)="rejectFriendRequest(element)"
+            class="material-icons-outlined"
+            >close</span
+          >
+          <span
+            matTooltip="Accept Friend Request"
+            (click)="acceptFriendRequest(element)"
+            class="material-icons-outlined"
+            >check</span
+          >
+        </ng-container>
+        <ng-template #inviteActions>
+          <span
+            matTooltip="Reject Invite"
+            (click)="rejectInvite(element)"
+            class="material-icons-outlined"
+            >close</span
+          >
+          <span
+            matTooltip="Accept Invite"
+            (click)="acceptInvite(element)"
+            class="material-icons-outlined"
+            >double_arrow</span
+          >
+        </ng-template>
+      </td>
+    </ng-container>
+
     <tr
       mat-row
-      *matRowDef="let row; columns: friendRequestsDisplayedColumns"></tr>
-  </table>
-
-  <table mat-table [dataSource]="invites" class="mat-elevation-z0">
-    <ng-container matColumnDef="username">
-      <td mat-cell *matCellDef="let element">
-        {{ element.from.username }}
-      </td>
-    </ng-container>
-
-    <ng-container matColumnDef="action">
-      <td class="right-justify" mat-cell *matCellDef="let element">
-        <span
-          matTooltip="Reject Invite"
-          (click)="rejectInvite(element)"
-          class="material-icons-outlined"
-          >person_remove</span
-        >
-        <span
-          matTooltip="Accept Invite"
-          (click)="acceptInvite(element)"
-          class="material-icons-outlined"
-          >person_add_alt</span
-        >
-      </td>
-    </ng-container>
-    <tr mat-row *matRowDef="let row; columns: invitesDisplayedColumns"></tr>
+      *matRowDef="let row; columns: notificationsDisplayedColumns"></tr>
   </table>
 </mat-expansion-panel>

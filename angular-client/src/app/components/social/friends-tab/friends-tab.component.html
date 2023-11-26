@@ -18,12 +18,10 @@
     </mat-form-field>
   </form>
   <app-inbound-notifications
-    [friendRequests]="inboundFriendRequests"
-    [invites]="inboundInvites"></app-inbound-notifications>
+    [notifications]="inboundNotifications"></app-inbound-notifications>
   <app-friends-list
     [friends]="friends"
     [unviewedMessages]="unviewedMessages"></app-friends-list>
   <app-outbound-notifications
-    [friendRequests]="outboundFriendRequests"
-    [invites]="outboundInvites"></app-outbound-notifications>
+    [notifications]="outboundNotifications"></app-outbound-notifications>
 </div>

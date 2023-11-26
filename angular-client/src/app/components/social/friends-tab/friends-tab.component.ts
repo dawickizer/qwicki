@@ -2,10 +2,9 @@ import { Component, ViewChild, Input } from '@angular/core';
 import { MatSidenav } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { Friend } from 'src/app/state/friend/friend.model';
-import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { Message } from 'src/app/state/message/message.model';
 import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
-import { Invite } from 'src/app/state/invite/invite.model';
+import { Notification } from 'src/app/models/notification/notification';
 
 @Component({
   selector: 'app-friends-tab',
@@ -15,15 +14,9 @@ import { Invite } from 'src/app/state/invite/invite.model';
 export class FriendsTabComponent {
   @ViewChild('drawer') drawer: MatSidenav;
   friends = new MatTableDataSource<Friend>([] as Friend[]);
-  inboundFriendRequests = new MatTableDataSource<FriendRequest>(
-    [] as FriendRequest[]
-  );
-  outboundFriendRequests = new MatTableDataSource<FriendRequest>(
-    [] as FriendRequest[]
-  );
 
-  inboundInvites = new MatTableDataSource<Invite>([] as Invite[]);
-  outboundInvites = new MatTableDataSource<Invite>([] as Invite[]);
+  outboundNotifications = new MatTableDataSource<Notification>([]);
+  inboundNotifications = new MatTableDataSource<Notification>([]);
 
   @Input() unviewedMessages: Message[];
 
@@ -49,23 +42,13 @@ export class FriendsTabComponent {
   }
 
   @Input()
-  set inboundFriendRequestsData(data: FriendRequest[]) {
-    this.inboundFriendRequests.data = data;
+  set inboundNotificationsData(data: Notification[]) {
+    this.inboundNotifications.data = data;
   }
 
   @Input()
-  set outboundFriendRequestsData(data: FriendRequest[]) {
-    this.outboundFriendRequests.data = data;
-  }
-
-  @Input()
-  set inboundInvitesData(data: Invite[]) {
-    this.inboundInvites.data = data;
-  }
-
-  @Input()
-  set outboundInvitesData(data: Invite[]) {
-    this.outboundInvites.data = data;
+  set outboundNotificationsData(data: Notification[]) {
+    this.outboundNotifications.data = data;
   }
 
   displayedColumns: string[] = ['username'];
@@ -79,25 +62,17 @@ export class FriendsTabComponent {
       friend.username.trim().toLowerCase().includes(filter);
     this.friends.filter = this.potentialFriend.trim().toLowerCase();
 
-    this.inboundFriendRequests.filterPredicate = (friendRequest, filter) =>
-      friendRequest.from.username.trim().toLowerCase().includes(filter);
-    this.inboundFriendRequests.filter = this.potentialFriend
-      .trim()
-      .toLowerCase();
-
-    this.outboundFriendRequests.filterPredicate = (friendRequest, filter) =>
-      friendRequest.to.username.trim().toLowerCase().includes(filter);
-    this.outboundFriendRequests.filter = this.potentialFriend
-      .trim()
-      .toLowerCase();
-
-    this.inboundInvites.filterPredicate = (invite, filter) =>
-      invite.from.username.trim().toLowerCase().includes(filter);
-    this.inboundInvites.filter = this.potentialFriend.trim().toLowerCase();
-
-    this.outboundInvites.filterPredicate = (invite, filter) =>
+    this.outboundNotifications.filterPredicate = (invite, filter) =>
       invite.to.username.trim().toLowerCase().includes(filter);
-    this.outboundInvites.filter = this.potentialFriend.trim().toLowerCase();
+    this.outboundNotifications.filter = this.potentialFriend
+      .trim()
+      .toLowerCase();
+
+    this.inboundNotifications.filterPredicate = (invite, filter) =>
+      invite.to.username.trim().toLowerCase().includes(filter);
+    this.inboundNotifications.filter = this.potentialFriend
+      .trim()
+      .toLowerCase();
   }
 
   sendFriendRequest() {
@@ -106,7 +81,7 @@ export class FriendsTabComponent {
       .subscribe();
     this.potentialFriend = '';
     this.friends.filter = '';
-    this.inboundFriendRequests.filter = '';
-    this.outboundFriendRequests.filter = '';
+    this.inboundNotifications.filter = '';
+    this.outboundNotifications.filter = '';
   }
 }
