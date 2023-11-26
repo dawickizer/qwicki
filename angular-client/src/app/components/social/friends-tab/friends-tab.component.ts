@@ -43,12 +43,18 @@ export class FriendsTabComponent {
 
   @Input()
   set inboundNotificationsData(data: Notification[]) {
-    this.inboundNotifications.data = data;
+    this.inboundNotifications.data = [...data].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
   @Input()
   set outboundNotificationsData(data: Notification[]) {
-    this.outboundNotifications.data = data;
+    this.outboundNotifications.data = [...data].sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
   displayedColumns: string[] = ['username'];
