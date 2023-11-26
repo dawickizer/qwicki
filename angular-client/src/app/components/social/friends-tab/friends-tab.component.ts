@@ -62,14 +62,14 @@ export class FriendsTabComponent {
       friend.username.trim().toLowerCase().includes(filter);
     this.friends.filter = this.potentialFriend.trim().toLowerCase();
 
-    this.outboundNotifications.filterPredicate = (invite, filter) =>
-      invite.to.username.trim().toLowerCase().includes(filter);
+    this.outboundNotifications.filterPredicate = (notification, filter) =>
+      notification.to.username.trim().toLowerCase().includes(filter);
     this.outboundNotifications.filter = this.potentialFriend
       .trim()
       .toLowerCase();
 
-    this.inboundNotifications.filterPredicate = (invite, filter) =>
-      invite.to.username.trim().toLowerCase().includes(filter);
+    this.inboundNotifications.filterPredicate = (notification, filter) =>
+      notification.from.username.trim().toLowerCase().includes(filter);
     this.inboundNotifications.filter = this.potentialFriend
       .trim()
       .toLowerCase();
