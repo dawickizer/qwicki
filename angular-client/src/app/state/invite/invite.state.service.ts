@@ -8,6 +8,7 @@ import {
   partyInvitesSelector,
 } from './invite.state.selectors';
 import { Invite } from './invite.model';
+import { Friend } from '../friend/friend.model';
 
 @Injectable({
   providedIn: 'root',
@@ -97,6 +98,30 @@ export class InviteStateService {
 
     this._inviteState.next({
       ...currentState,
+      outboundInvites: updatedOutboundInvites,
+    });
+  }
+
+  removeInvitesFromFriend(friend: Friend): void {
+    const currentState = this._inviteState.value;
+
+    // Check if we have any invites in the state to begin with
+    if (!currentState.inboundInvites || !currentState.outboundInvites) return;
+
+    // Filter out inbound invites where the friend's ID matches the from ID of the invite
+    const updatedInboundInvites = currentState.inboundInvites.filter(
+      inboundInvite => inboundInvite.from._id !== friend._id
+    );
+
+    // Filter out outbound invites where the friend's ID matches the to ID of the invite
+    const updatedOutboundInvites = currentState.outboundInvites.filter(
+      outboundInvite => outboundInvite.to._id !== friend._id
+    );
+
+    // Update the state with the new arrays
+    this._inviteState.next({
+      ...currentState,
+      inboundInvites: updatedInboundInvites,
       outboundInvites: updatedOutboundInvites,
     });
   }

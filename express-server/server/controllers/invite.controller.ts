@@ -50,9 +50,8 @@ export const deleteInviteById = async (
   next: NextFunction
 ): Promise<void> => {
   try {
-    const userId = req.params.userId;
     const inviteId = req.params.inviteId;
-    const invite = await inviteService.deleteInviteById(userId, inviteId);
+    const invite = await inviteService.deleteInviteById(inviteId);
     res.status(200).send(invite);
   } catch (error) {
     if (error instanceof CustomError)

@@ -244,6 +244,7 @@ export class SocialOrchestratorService {
     return this.friendService.deleteFriend(this.user, friend).pipe(
       switchMap(deletedFriend => {
         this.messageService.removeMessagesFromFriend(friend);
+        this.inviteService.removeInvitesFromFriend(friend);
         const friendsInbox = this.friendsInboxes.find(
           friendsInbox => friendsInbox.id === deletedFriend._id
         );
@@ -504,6 +505,7 @@ export class SocialOrchestratorService {
     inbox.onMessage('removeFriend', (friend: Friend) => {
       this.friendService.removeFriend(friend);
       this.messageService.removeMessagesFromFriend(friend);
+      this.inviteService.removeInvitesFromFriend(friend);
     });
 
     inbox.onError((code, message) =>

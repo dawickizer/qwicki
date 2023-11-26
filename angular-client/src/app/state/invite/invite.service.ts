@@ -4,6 +4,7 @@ import { Invite } from './invite.model';
 import { InviteEffectService } from './invite.effect.service';
 import { InviteStateService } from './invite.state.service';
 import { User } from '../user/user.model';
+import { Friend } from '../friend/friend.model';
 
 @Injectable({
   providedIn: 'root',
@@ -84,6 +85,10 @@ export class InviteService {
 
   removeOutboundInvite(invite: Invite): void {
     this.inviteStateService.removeOutboundInvite(invite);
+  }
+
+  removeInvitesFromFriend(friend: Friend): void {
+    this.inviteStateService.removeInvitesFromFriend(friend);
   }
 
   setIsLoading(isLoading: boolean): void {

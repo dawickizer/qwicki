@@ -1,6 +1,7 @@
 import { Schema } from 'mongoose';
 import * as userService from './user.service';
 import * as friendRequestService from './friend-request.service';
+import * as inviteService from './invite.service';
 import { User } from '../models/user';
 import NotFoundError from '../error/NotFoundError';
 import BadRequestError from '../error/BadRequestError';
@@ -55,6 +56,7 @@ export const removeFriend = async (
   await Promise.all([
     userService.removeFriend(userId, friendId),
     userService.removeFriend(friendId, userId),
+    inviteService.deleteInvitesByUserIdAndFriendId(userId, friendId),
   ]);
 
   return friend;

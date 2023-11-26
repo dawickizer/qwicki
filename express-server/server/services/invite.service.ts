@@ -90,7 +90,6 @@ export const createInvite = async (
 };
 
 export const deleteInviteById = async (
-  userId: string | Schema.Types.ObjectId,
   inviteId: string | Schema.Types.ObjectId
 ): Promise<User> => {
   const invite = await getInviteById(inviteId);
@@ -123,6 +122,57 @@ export const deleteInviteById = async (
     { path: 'to', select: 'username' },
     { path: 'from', select: 'username' },
   ]);
+};
+
+export const deleteInvitesByIds = async (
+  inviteIds: Array<string | Schema.Types.ObjectId>
+): Promise<Invite[]> => {
+  // Find invites to be deleted for returning them later
+  const invitesToDelete = await Invite.find({ _id: { $in: inviteIds } });
+
+  // If no invites are found, return an empty array
+  if (invitesToDelete.length === 0) return [];
+
+  // Remove inviteId from inbound and outbound invites of all users involved
+  const removalTasks = invitesToDelete.flatMap(invite => [
+    userService.removeInboundInvite(invite.from, invite._id),
+    userService.removeOutboundInvite(invite.from, invite._id),
+    userService.removeInboundInvite(invite.to, invite._id),
+    userService.removeOutboundInvite(invite.to, invite._id),
+  ]);
+
+  // Execute all removal tasks
+  await Promise.all(removalTasks);
+
+  // Delete the invites from the database
+  await Invite.deleteMany({ _id: { $in: inviteIds } });
+
+  // Return the list of invites that were deleted
+  return invitesToDelete;
+};
+
+export const deleteInvites = async (invites: Invite[]): Promise<Invite[]> => {
+  // If no invites are passed, return an empty array
+  if (invites.length === 0) return [];
+
+  // Extract the invite IDs and delete using deleteInvitesByIds
+  const inviteIds = invites.map(invite => invite._id);
+  return deleteInvitesByIds(inviteIds);
+};
+
+export const deleteInvitesByUserIdAndFriendId = async (
+  userId: string | Schema.Types.ObjectId,
+  friendId: string | Schema.Types.ObjectId
+): Promise<Invite[]> => {
+  // Find all invites between the two users
+  const invites = await Invite.find({
+    $or: [
+      { from: userId, to: friendId },
+      { from: friendId, to: userId },
+    ],
+  });
+
+  return deleteInvites(invites);
 };
 
 export const deleteManyInvitesByUserId = async (
