@@ -78,6 +78,7 @@ import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
+import { StatusBubbleComponent } from './components/misc/status-bubble/status-bubble.component';
 import { UserApiService } from './state/user/user.api.service';
 import { UserEffectService } from './state/user/user.effect.service';
 import { UserService } from './state/user/user.service';
@@ -111,6 +112,7 @@ import { UserStateService } from './state/user/user.state.service';
     OutboundNotificationsComponent,
     SignupComponent,
     SocialSidenavComponent,
+    StatusBubbleComponent,
     UserProfileComponent,
   ],
   imports: [

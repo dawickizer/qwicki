@@ -1,0 +1,7 @@
+<span
+  [matTooltip]="disableToolTip ? null : toolTipText"
+  [style.background-color]="color"
+  [ngClass]="{ 'status-label': true }"
+  [class.disabled-tooltip]="disableToolTip">
+  {{ statusText }}
+</span>

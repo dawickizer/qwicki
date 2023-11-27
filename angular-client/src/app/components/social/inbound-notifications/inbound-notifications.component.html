@@ -19,13 +19,11 @@
     <ng-container matColumnDef="username">
       <td mat-cell *matCellDef="let element">
         {{ element.from.username }}
-        <span
-          [ngClass]="{
-            'friend-request-label': isFriendRequest(element),
-            'invite-label': !isFriendRequest(element)
-          }">
-          {{ isFriendRequest(element) ? 'Friend Request' : 'Invite' }}
-        </span>
+        <app-status-bubble
+          [color]="isFriendRequest(element) ? '#4caf50' : '#2196f3'"
+          [statusText]="isFriendRequest(element) ? 'Friend Request' : 'Invite'"
+          [disableToolTip]="true">
+        </app-status-bubble>
       </td>
     </ng-container>
 

@@ -17,3 +17,7 @@ export type GameMap =
   | 'Fountain Of Dreams'
   | 'Final Destination'
   | 'Yoshi Story';
+
+('In Lobby (Ranked - Solo)');
+('Game Mode: Team Deathmatch');
+('Map: Fountain of Dreams');
