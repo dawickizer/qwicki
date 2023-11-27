@@ -14,7 +14,7 @@
       {{ friend.username }}
 
       <app-status-bubble
-        *ngIf="friend.onlineStatus === 'online'"
+        *ngIf="friend.onlineStatus === 'online' && !panelOpenState"
         class="status-bubble"
         [toolTipText]="'Custom Game - Squad 3/4'"
         [statusText]="'In Pregame Lobby'">

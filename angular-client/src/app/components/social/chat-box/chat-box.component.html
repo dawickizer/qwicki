@@ -39,12 +39,18 @@
         matSuffix
         matTooltip="Send Message"
         (click)="sendMessage()"
-        class="material-icons"
-        >send</span
-      >
-      <mat-hint class="hint" align="end"
-        >{{ input.value.length || 0 }}/250</mat-hint
-      >
+        class="material-icons send-icon">
+        send
+      </span>
     </mat-form-field>
+    <div class="status-and-hint-container">
+      <app-status-bubble
+        *ngIf="friend.onlineStatus === 'online'"
+        class="status-bubble"
+        [toolTipText]="'Custom Game - Squad 3/4'"
+        [statusText]="'In Pregame Lobby'">
+      </app-status-bubble>
+      <mat-hint class="hint"> {{ input.value.length || 0 }}/250 </mat-hint>
+    </div>
   </div>
 </div>

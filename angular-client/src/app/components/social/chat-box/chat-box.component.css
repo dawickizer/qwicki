@@ -70,3 +70,9 @@ textarea.mat-input-element {
 .is-typing {
   height: 20px;
 }
+
+.status-and-hint-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
