@@ -1,0 +1,10 @@
+.info-label {
+  color: white;
+  padding: 3px 6px;
+  border-radius: 8px;
+  font-size: 0.75rem;
+}
+
+.disabled-tooltip {
+  pointer-events: none;
+}

@@ -19,11 +19,11 @@
     <ng-container matColumnDef="username">
       <td mat-cell *matCellDef="let element">
         {{ element.from.username }}
-        <app-status-bubble
+        <app-info-bubble
           [color]="isFriendRequest(element) ? '#4caf50' : '#2196f3'"
-          [statusText]="isFriendRequest(element) ? 'Friend Request' : 'Invite'"
+          [infoText]="isFriendRequest(element) ? 'Friend Request' : 'Invite'"
           [disableToolTip]="true">
-        </app-status-bubble>
+        </app-info-bubble>
       </td>
     </ng-container>
 

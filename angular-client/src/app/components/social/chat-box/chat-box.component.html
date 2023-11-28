@@ -45,10 +45,9 @@
     </mat-form-field>
     <div class="status-and-hint-container">
       <app-status-bubble
-        *ngIf="friend.status.presence === 'Online'"
+        *ngIf="panelOpenState"
         class="status-bubble"
-        [toolTipText]="'Custom Game - Squad 3/4'"
-        [statusText]="'In Pregame Lobby'">
+        [status]="friend.status">
       </app-status-bubble>
       <mat-hint class="hint"> {{ input.value.length || 0 }}/250 </mat-hint>
     </div>

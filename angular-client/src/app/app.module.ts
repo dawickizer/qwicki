@@ -58,6 +58,7 @@ import { InboundNotificationsComponent } from './components/social/inbound-notif
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
+import { InfoBubbleComponent } from './components/misc/info-bubble/info-bubble.component';
 import { InviteEffectService } from './state/invite/invite.effect.service';
 import { InviteService } from './state/invite/invite.service';
 import { InviteStateService } from './state/invite/invite.state.service';
@@ -77,8 +78,8 @@ import { PresenceComponent } from './components/misc/presence/presence.component
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
-import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { StatusBubbleComponent } from './components/misc/status-bubble/status-bubble.component';
+import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
 import { UserEffectService } from './state/user/user.effect.service';
 import { UserService } from './state/user/user.service';
@@ -100,6 +101,7 @@ import { UserStateService } from './state/user/user.state.service';
     GroupsTabComponent,
     HomeComponent,
     InboundNotificationsComponent,
+    InfoBubbleComponent,
     IsTypingComponent,
     JoinGameComponent,
     LobbyComponent,
