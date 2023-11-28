@@ -1,20 +1,20 @@
-.status-indicator {
+.presence-indicator {
   display: inline-block;
   border-radius: 50%; /* This ensures the element is always a circle */
   vertical-align: middle; /* Aligns with adjacent text */
 }
-.status-indicator:hover {
+.presence-indicator:hover {
   cursor: pointer;
 }
 
-.status-indicator.online {
+.presence-indicator.Online {
   background-color: #3cb371; /* Green color for 'online' status */
 }
 
-.status-indicator.offline {
+.presence-indicator.Offline {
   background-color: #cd5c5c; /* Red color for 'offline' status */
 }
 
-.status-indicator.away {
+.presence-indicator.Away {
   background-color: #ffa500; /* Orange color for 'away' status */
 }

@@ -10,7 +10,7 @@ import {
 } from './friend.state.selectors';
 import { Friend } from './friend.model';
 import { Message } from '../message/message.model';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { Status } from 'src/app/models/status/status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -80,24 +80,58 @@ export class FriendStateService {
     });
   }
 
-  setFriendOnlineStatus(friendId: string, onlineStatus: OnlineStatus): void {
-    this.updateFriendOnlineStatus(friendId, onlineStatus);
-    if (onlineStatus === 'online') this.reorderFriend(friendId, 'front');
-    else if (onlineStatus === 'offline') this.reorderFriend(friendId, 'end');
+  setFriendStatus(friendId: string, status: Status): void {
+    this.setFriendStatusHelper(friendId, status);
+    if (status.presence === 'Online') this.reorderFriend(friendId, 'front');
+    else if (status.presence === 'Offline') this.reorderFriend(friendId, 'end');
   }
 
-  setFriendsOnlineStatus(
-    friendIds: string[],
-    onlineStatus: OnlineStatus
-  ): void {
+  setFriendsStatus(friendIds: string[], status: Status): void {
     friendIds.forEach(friendId => {
-      this.setFriendOnlineStatus(friendId, onlineStatus);
+      this.setFriendStatus(friendId, status);
     });
   }
 
-  private updateFriendOnlineStatus(
+  private setFriendStatusHelper(friendId: string, status: Status): void {
+    const currentState = this._friendState.value;
+    if (!currentState.friends) return;
+
+    const friendIndex = currentState.friends.findIndex(
+      friend => friend._id === friendId
+    );
+
+    if (friendIndex === -1) return; // if the friend with the given ID is not found
+
+    // Create a shallow copy of the friends array
+    const updatedFriends = [...currentState.friends];
+
+    // Update the status of the specified friend
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      status,
+    };
+
+    this._friendState.next({
+      ...currentState,
+      friends: updatedFriends.map(friend => new Friend(friend)),
+    });
+  }
+
+  updateFriendStatus(friendId: string, status: Partial<Status>): void {
+    this.updateFriendStatusHelper(friendId, status);
+    if (status.presence === 'Online') this.reorderFriend(friendId, 'front');
+    else if (status.presence === 'Offline') this.reorderFriend(friendId, 'end');
+  }
+
+  updateFriendsStatus(friendIds: string[], status: Partial<Status>): void {
+    friendIds.forEach(friendId => {
+      this.updateFriendStatus(friendId, status);
+    });
+  }
+
+  private updateFriendStatusHelper(
     friendId: string,
-    onlineStatus: OnlineStatus
+    status: Partial<Status>
   ): void {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
@@ -111,11 +145,17 @@ export class FriendStateService {
     // Create a shallow copy of the friends array
     const updatedFriends = [...currentState.friends];
 
-    // Update the online status of the specified friend
-    updatedFriends[friendIndex] = {
-      ...updatedFriends[friendIndex],
-      onlineStatus,
+    // Merge new status with existing status
+    const updatedStatus = {
+      ...updatedFriends[friendIndex].status,
+      ...status,
     };
+
+    // Update the status of the specified friend
+    updatedFriends[friendIndex] = new Friend({
+      ...updatedFriends[friendIndex],
+      status: updatedStatus,
+    });
 
     this._friendState.next({
       ...currentState,
@@ -172,17 +212,17 @@ export class FriendStateService {
 
       // Define a priority map
       const statusPriority = {
-        online: 1,
-        away: 2,
-        offline: 3,
+        Online: 1,
+        Away: 2,
+        Offline: 3,
       };
 
       // Calculate the sort priority
       const aPriority =
-        statusPriority[a.onlineStatus] * 10 +
+        statusPriority[a.status.presence] * 10 +
         (aUnviewedMessagesCount > 0 ? 0 : 1);
       const bPriority =
-        statusPriority[b.onlineStatus] * 10 +
+        statusPriority[b.status.presence] * 10 +
         (bUnviewedMessagesCount > 0 ? 0 : 1);
 
       return aPriority - bPriority;

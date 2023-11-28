@@ -1,22 +1,22 @@
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { Presence } from 'src/app/models/status/status.model';
 
 export interface InactivityState {
   isInactive: boolean;
   isTimedOut: boolean;
   isAway: boolean;
-  onlineStatus: OnlineStatus;
+  presence: Presence;
 }
 
 export const initialOfflineState: InactivityState = {
   isInactive: false,
   isTimedOut: false,
   isAway: false,
-  onlineStatus: 'offline',
+  presence: 'Offline',
 };
 
 export const initialOnlineState: InactivityState = {
   isInactive: false,
   isTimedOut: false,
   isAway: false,
-  onlineStatus: 'online',
+  presence: 'Online',
 };

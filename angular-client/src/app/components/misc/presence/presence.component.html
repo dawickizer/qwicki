@@ -1,0 +1,7 @@
+<span
+  [matTooltip]="presence"
+  class="presence-indicator"
+  [ngClass]="presence"
+  [ngStyle]="{ 'width.px': size, 'height.px': size }"
+  (click)="readOnly ? null : updatePresence()">
+</span>

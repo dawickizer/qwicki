@@ -22,10 +22,10 @@ import { Room } from 'colyseus.js';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { Message } from '../message/message.model';
 import { MessageService } from '../message/message.service';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
 import { InactivityService } from '../inactivity/inactivity.service';
 import { InviteService } from '../invite/invite.service';
 import { Invite } from '../invite/invite.model';
+import { Status } from 'src/app/models/status/status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -74,14 +74,14 @@ export class SocialOrchestratorService {
       connectedInboxes => (this.connectedInboxes = connectedInboxes)
     );
 
-    // There is a potential race condition here but the way my logic is coded its not happening. If the inactivity onlineStatus ever gets updaetd before the user does...there could be a scenario where the setUserOnlineStatus doesnt fire off
-    this.inactivityService.onlineStatus$.subscribe(onlineStatus => {
+    // There is a potential race condition here but the way my logic is coded its not happening. If the inactivity presence ever gets updaetd before the user does...there could be a scenario where the updateUserStatus doesnt fire off
+    this.inactivityService.presence$.subscribe(presence => {
       if (
         !this.user ||
-        (this.user.onlineStatus === 'offline' && onlineStatus === 'away')
+        (this.user.status.presence === 'Offline' && presence === 'Away')
       )
         return;
-      this.setUserOnlineStatus(onlineStatus).subscribe();
+      this.updateUserStatus({ presence }).subscribe();
     });
   }
 
@@ -272,7 +272,7 @@ export class SocialOrchestratorService {
         this.inboxService
           .joinExistingInboxIfPresent(friendRequest.from._id, {
             jwt: this.jwt,
-            onlineStatus: this.user.onlineStatus,
+            status: this.user.status,
           })
           .pipe(
             tap(inbox => {
@@ -282,17 +282,17 @@ export class SocialOrchestratorService {
                 inbox.onStateChange.once(state => {
                   inbox.send('acceptFriendRequest', friendRequest);
                   inbox = this.setFriendInboxListeners(inbox);
-                  this.friendService.setFriendOnlineStatus(
+                  this.friendService.updateFriendStatus(
                     friendRequest.from._id,
-                    state.host.onlineStatus
+                    state.host.status
                   );
                   this.inboxService.updateConnectedInbox(inbox);
                 });
               } else {
-                this.friendService.setFriendOnlineStatus(
-                  friendRequest.from._id,
-                  'offline'
-                );
+                this.friendService.updateFriendStatus(friendRequest.from._id, {
+                  presence: 'Offline',
+                  activity: 'In Lobby',
+                });
               }
             }),
             map(() => user)
@@ -359,11 +359,11 @@ export class SocialOrchestratorService {
     return this.inboxService
       .createInbox(this.decodedJwt._id, {
         jwt: this.jwt,
-        onlineStatus: 'online',
+        status: { presence: 'Online', activity: 'In Lobby' },
       })
       .pipe(
         tap(inbox => {
-          this.userService.setOnlineStatus('online');
+          this.userService.updateStatus({ presence: 'Online' });
           inbox = this.setPersonalInboxListeners(inbox);
           this.inboxService.setPersonalInbox(inbox);
         })
@@ -376,7 +376,7 @@ export class SocialOrchestratorService {
     return this.inboxService
       .joinExistingInboxesIfPresent(friendIds, {
         jwt: this.jwt,
-        onlineStatus: this.user.onlineStatus,
+        status: this.user.status,
       })
       .pipe(
         mergeMap(inboxes => {
@@ -389,10 +389,10 @@ export class SocialOrchestratorService {
           const statusObservables = inboxes.map(inbox => {
             return new Observable<Room<any>>(subscriber => {
               // Immediately use the current state if it's available.
-              const currentStatus = inbox.state.host.onlineStatus;
+              const currentStatus = inbox.state.host.status;
               if (currentStatus) {
                 inbox = this.setFriendInboxListeners(inbox);
-                this.friendService.setFriendOnlineStatus(
+                this.friendService.updateFriendStatus(
                   inbox.state.host._id,
                   currentStatus
                 );
@@ -403,9 +403,9 @@ export class SocialOrchestratorService {
                 // Set up the .once() listener if the state is not yet available.
                 inbox.onStateChange.once(state => {
                   inbox = this.setFriendInboxListeners(inbox);
-                  this.friendService.setFriendOnlineStatus(
+                  this.friendService.updateFriendStatus(
                     state.host._id,
-                    state.host.onlineStatus
+                    state.host.status
                   );
                   this.inboxService.updateConnectedInbox(inbox);
                   subscriber.next(inbox);
@@ -421,17 +421,17 @@ export class SocialOrchestratorService {
       );
   }
 
-  setUserOnlineStatus(onlineStatus: OnlineStatus): Observable<OnlineStatus> {
+  updateUserStatus(status: Partial<Status>): Observable<Status> {
     return new Observable(subscriber => {
-      this.personalInbox.send('setHostOnlineStatus', onlineStatus);
+      this.personalInbox.send('updateHostStatus', status);
       this.friendsInboxes.forEach(friendsInbox => {
-        friendsInbox.send('notifyHostOnlineStatus', {
+        friendsInbox.send('notifyHostStatus', {
           id: this.user._id,
-          onlineStatus,
+          status,
         });
       });
-      this.userService.setOnlineStatus(onlineStatus);
-      subscriber.next(onlineStatus);
+      this.userService.updateStatus(status);
+      subscriber.next(status as Status);
       subscriber.complete();
     });
   }
@@ -449,15 +449,9 @@ export class SocialOrchestratorService {
       }
     );
 
-    inbox.onMessage(
-      'onlineStatus',
-      (friend: { id: string; onlineStatus: OnlineStatus }) => {
-        this.friendService.setFriendOnlineStatus(
-          friend.id,
-          friend.onlineStatus
-        );
-      }
-    );
+    inbox.onMessage('status', (friend: { id: string; status: Status }) => {
+      this.friendService.updateFriendStatus(friend.id, friend.status);
+    });
 
     inbox.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
       this.friendRequestService.receiveFriendRequest(friendRequest).subscribe();
@@ -473,14 +467,14 @@ export class SocialOrchestratorService {
 
     inbox.onMessage(
       'acceptFriendRequest',
-      (data: { friendRequest: FriendRequest; onlineStatus: OnlineStatus }) => {
+      (data: { friendRequest: FriendRequest; status: Status }) => {
         this.friendRequestService.removeOutboundFriendRequest(
           data.friendRequest
         );
         this.friendService.addFriend(data.friendRequest.to);
-        this.friendService.setFriendOnlineStatus(
+        this.friendService.updateFriendStatus(
           data.friendRequest.to._id,
-          data.onlineStatus
+          data.status
         );
         this.getAllMessagesBetween(data.friendRequest.to).subscribe();
       }
@@ -538,15 +532,9 @@ export class SocialOrchestratorService {
       this.inviteService.removeOutboundInvite(invite);
     });
 
-    inbox.onMessage(
-      'onlineStatus',
-      (friend: { id: string; onlineStatus: OnlineStatus }) => {
-        this.friendService.setFriendOnlineStatus(
-          friend.id,
-          friend.onlineStatus
-        );
-      }
-    );
+    inbox.onMessage('status', (friend: { id: string; status: Status }) => {
+      this.friendService.updateFriendStatus(friend.id, friend.status);
+    });
 
     inbox.onMessage(
       'hostIsTyping',
@@ -562,7 +550,7 @@ export class SocialOrchestratorService {
     });
 
     inbox.onMessage('dispose', (inboxId: string) => {
-      this.friendService.setFriendOnlineStatus(inboxId, 'offline');
+      this.friendService.updateFriendStatus(inboxId, { presence: 'Offline' });
       this.inboxService.removeConnectedInboxById(inboxId);
     });
     inbox.onError((code, message) =>

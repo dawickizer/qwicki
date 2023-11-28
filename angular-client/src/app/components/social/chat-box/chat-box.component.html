@@ -45,7 +45,7 @@
     </mat-form-field>
     <div class="status-and-hint-container">
       <app-status-bubble
-        *ngIf="friend.onlineStatus === 'online'"
+        *ngIf="friend.status.presence === 'Online'"
         class="status-bubble"
         [toolTipText]="'Custom Game - Squad 3/4'"
         [statusText]="'In Pregame Lobby'">

@@ -18,7 +18,7 @@ export class FriendManager extends InboxManager {
       if (user)
         this.inbox.hostClient.send('acceptFriendRequest', {
           friendRequest,
-          onlineStatus: user.onlineStatus,
+          status: user.status,
         });
     });
 

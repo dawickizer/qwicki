@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { InactivityStateService } from './inactivity.state.service';
 import { InactivityEffectService } from './inactivity.effect.service';
 import { InactivityState } from './inactivity.state';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { Presence } from 'src/app/models/status/status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,8 +25,8 @@ export class InactivityService {
     return this.inactivityStateService.isTimedOut$;
   }
 
-  get onlineStatus$(): Observable<OnlineStatus> {
-    return this.inactivityStateService.onlineStatus$;
+  get presence$(): Observable<Presence> {
+    return this.inactivityStateService.presence$;
   }
 
   constructor(
@@ -62,7 +62,7 @@ export class InactivityService {
     this.inactivityStateService.setIsTimedOut(isTimedOut);
   }
 
-  setOnlineStatus(onlineStatus: OnlineStatus) {
-    this.inactivityStateService.setOnlineStatus(onlineStatus);
+  setPresence(presence: Presence) {
+    this.inactivityStateService.setPresence(presence);
   }
 }

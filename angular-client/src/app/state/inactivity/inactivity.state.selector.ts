@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { InactivityState } from './inactivity.state';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { Presence } from 'src/app/models/status/status.model';
 
 export const isAwaySelector = (
   inactivityState$: Observable<InactivityState>
@@ -27,10 +27,10 @@ export const isTimedOutSelector = (
     distinctUntilChanged()
   );
 
-export const onlineStatusSelector = (
+export const presenceSelector = (
   inactivityState$: Observable<InactivityState>
-): Observable<OnlineStatus> =>
+): Observable<Presence> =>
   inactivityState$.pipe(
-    map(state => state.onlineStatus),
+    map(state => state.presence),
     distinctUntilChanged()
   );

@@ -1,5 +1,5 @@
-import { OnlineStatus } from '../model/online-status';
 import { Inbox } from '../rooms/Inbox';
+import { Status } from '../schemas/Status';
 import { User } from '../schemas/User';
 import { InboxManager } from './InboxManager';
 
@@ -9,10 +9,10 @@ export class PresenceManager extends InboxManager {
     this.setOnMessageListeners();
   }
 
-  notifyHostUserOnlineStatus(user: User, onlineStatus?: OnlineStatus) {
-    this.inbox.hostClient.send('onlineStatus', {
+  notifyHostUserStatus(user: User, status?: Partial<Status>) {
+    this.inbox.hostClient.send('status', {
       id: user._id,
-      onlineStatus: onlineStatus ? onlineStatus : user.onlineStatus,
+      status: status ? status : user.status,
     });
   }
 
@@ -23,27 +23,24 @@ export class PresenceManager extends InboxManager {
   }
 
   setOnMessageListeners() {
-    this.inbox.onMessage(
-      'setHostOnlineStatus',
-      (client, onlineStatus: OnlineStatus) => {
-        this.inbox.state.host.onlineStatus = onlineStatus;
-        this.inbox.broadcast(
-          'onlineStatus',
-          {
-            id: this.inbox.state.host._id,
-            onlineStatus: this.inbox.state.host.onlineStatus,
-          },
-          { except: this.inbox.hostClient }
-        );
-      }
-    );
+    this.inbox.onMessage('updateHostStatus', (client, status: Status) => {
+      this.inbox.state.host.status = new Status(status);
+      this.inbox.broadcast(
+        'status',
+        {
+          id: this.inbox.state.host._id,
+          status: this.inbox.state.host.status,
+        },
+        { except: this.inbox.hostClient }
+      );
+    });
 
     this.inbox.onMessage(
-      'notifyHostOnlineStatus',
-      (client, friend: { id: string; onlineStatus: OnlineStatus }) => {
+      'notifyHostStatus',
+      (client, friend: { id: string; status: Status }) => {
         const user = this.inbox.getUserById(friend.id);
-        user.onlineStatus = friend.onlineStatus;
-        this.notifyHostUserOnlineStatus(user);
+        user.status = new Status(friend.status);
+        this.notifyHostUserStatus(user);
       }
     );
   }

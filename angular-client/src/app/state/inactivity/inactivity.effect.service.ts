@@ -78,7 +78,7 @@ export class InactivityEffectService {
     this.logoutTimerSubscription.unsubscribe();
     this.logoutTimerSubscription = this.logoutTimer.subscribe(() => {
       this.inactivityStateService.setIsTimedOut(true);
-      this.inactivityStateService.setOnlineStatus('offline');
+      this.inactivityStateService.setPresence('Offline');
       this.snackBarRef = this.snackBar.open(
         'You were logged out due to inactivity',
         'Dismiss'
@@ -90,7 +90,7 @@ export class InactivityEffectService {
     this.awayTimerSubscription.unsubscribe();
     this.awayTimerSubscription = this.awayTimer.subscribe(() => {
       this.inactivityStateService.setIsAway(true);
-      this.inactivityStateService.setOnlineStatus('away');
+      this.inactivityStateService.setPresence('Away');
     });
   }
 }

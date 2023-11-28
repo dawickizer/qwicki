@@ -6,7 +6,7 @@ import { Room } from 'colyseus.js';
 import { AuthService } from '../auth/auth.service';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { InboxStateService } from './inbox.state.service';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { Status } from 'src/app/models/status/status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class InboxEffectService {
 
   createInbox(
     inboxId: string,
-    options: { jwt: string; onlineStatus: OnlineStatus }
+    options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(this.colyseusService.createRoom(inboxId, options)).pipe(
@@ -36,7 +36,7 @@ export class InboxEffectService {
 
   connectToInbox(
     inboxId: string,
-    options: { jwt: string; onlineStatus: OnlineStatus }
+    options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(this.colyseusService.connectToRoom(inboxId, options)).pipe(
@@ -47,7 +47,7 @@ export class InboxEffectService {
 
   connectToInboxes(
     inboxIds: string[],
-    options: { jwt: string; onlineStatus: OnlineStatus }
+    options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
     return from(this.colyseusService.connectToRooms(inboxIds, options)).pipe(
@@ -58,7 +58,7 @@ export class InboxEffectService {
 
   joinExistingInboxIfPresent(
     inboxId: string,
-    options: { jwt: string; onlineStatus: OnlineStatus }
+    options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(
@@ -68,7 +68,7 @@ export class InboxEffectService {
 
   joinExistingInboxesIfPresent(
     inboxIds: string[],
-    options: { jwt: string; onlineStatus: OnlineStatus }
+    options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
     return from(

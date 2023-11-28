@@ -71,9 +71,9 @@ import { MatchMakingService } from './services/match-making/match-making.service
 import { NavbarComponent } from './components/layout/navbar/navbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
-import { OnlineStatusComponent } from './components/misc/online-status/online-status.component';
 import { OutboundNotificationsComponent } from './components/social/outbound-notifications/outbound-notifications.component';
 import { PlayerService } from './services/player/player.service';
+import { PresenceComponent } from './components/misc/presence/presence.component';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
@@ -108,8 +108,8 @@ import { UserStateService } from './state/user/user.state.service';
     NavbarComponent,
     NotFoundComponent,
     NotificationBadgeComponent,
-    OnlineStatusComponent,
     OutboundNotificationsComponent,
+    PresenceComponent,
     SignupComponent,
     SocialSidenavComponent,
     StatusBubbleComponent,

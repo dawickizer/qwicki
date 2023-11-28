@@ -8,13 +8,13 @@
   <mat-expansion-panel-header>
     <mat-panel-title
       [style]="panelOpenState ? 'color:#7b1fa2' : 'color:aliceblue'">
-      <app-online-status
-        class="online-status"
-        [status]="friend.onlineStatus"></app-online-status>
+      <app-presence
+        class="presence"
+        [presence]="friend.status.presence"></app-presence>
       {{ friend.username }}
 
       <app-status-bubble
-        *ngIf="friend.onlineStatus === 'online' && !panelOpenState"
+        *ngIf="friend.status.presence === 'Online' && !panelOpenState"
         class="status-bubble"
         [toolTipText]="'Custom Game - Squad 3/4'"
         [statusText]="'In Pregame Lobby'">

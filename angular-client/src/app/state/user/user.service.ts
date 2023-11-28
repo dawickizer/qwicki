@@ -3,7 +3,13 @@ import { Observable } from 'rxjs';
 import { UserStateService } from './user.state.service';
 import { User } from './user.model';
 import { UserEffectService } from './user.effect.service';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import {
+  Activity,
+  GameType,
+  Presence,
+  QueueType,
+  Status,
+} from 'src/app/models/status/status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,8 +27,24 @@ export class UserService {
     return this.userStateService.user$;
   }
 
-  get onlineStatus$(): Observable<OnlineStatus | null> {
-    return this.userStateService.onlineStatus$;
+  get status$(): Observable<Status | null> {
+    return this.userStateService.status$;
+  }
+
+  get presence$(): Observable<Presence | null> {
+    return this.userStateService.presence$;
+  }
+
+  get activity$(): Observable<Activity | null> {
+    return this.userStateService.activity$;
+  }
+
+  get queueType$(): Observable<QueueType | null> {
+    return this.userStateService.queueType$;
+  }
+
+  get gameType$(): Observable<GameType | null> {
+    return this.userStateService.gameType$;
   }
 
   constructor(
@@ -53,8 +75,12 @@ export class UserService {
     this.userStateService.setUser(user);
   }
 
-  setOnlineStatus(onlineStatus: OnlineStatus): void {
-    this.userStateService.setOnlineStatus(onlineStatus);
+  setStatus(status: Status): void {
+    this.userStateService.setStatus(status);
+  }
+
+  updateStatus(status: Partial<Status>): void {
+    this.userStateService.updateStatus(status);
   }
 
   setIsLoading(isLoading: boolean): void {

@@ -9,9 +9,9 @@ import {
   isInactiveSelector,
   isTimedOutSelector,
   isAwaySelector,
-  onlineStatusSelector,
+  presenceSelector,
 } from './inactivity.state.selector';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import { Presence } from 'src/app/models/status/status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class InactivityStateService {
   public isAway$ = isAwaySelector(this.inactivityState$);
   public isInactive$ = isInactiveSelector(this.inactivityState$);
   public isTimedOut$ = isTimedOutSelector(this.inactivityState$);
-  public onlineStatus$ = onlineStatusSelector(this.inactivityState$);
+  public presence$ = presenceSelector(this.inactivityState$);
 
   setInitialOfflineState() {
     this._inactivityState.next({ ...initialOfflineState });
@@ -47,10 +47,10 @@ export class InactivityStateService {
     this._inactivityState.next({ ...this._inactivityState.value, isTimedOut });
   }
 
-  setOnlineStatus(onlineStatus: OnlineStatus) {
+  setPresence(presence: Presence) {
     this._inactivityState.next({
       ...this._inactivityState.value,
-      onlineStatus,
+      presence,
     });
   }
 }

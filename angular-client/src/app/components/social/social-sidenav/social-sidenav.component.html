@@ -7,11 +7,11 @@
   >
   <ng-container *ngIf="user$ | async as user">
     <h1>{{ user.username }}</h1>
-    <app-online-status
-      class="online-status"
+    <app-presence
+      class="presence"
       [size]="15"
       [readOnly]="false"
-      [status]="user.onlineStatus"></app-online-status>
+      [presence]="user.status.presence"></app-presence>
   </ng-container>
 </div>
 <mat-divider></mat-divider>

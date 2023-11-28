@@ -6,6 +6,7 @@ import { FriendManager } from '../managers/FriendManager';
 import { ChatManager } from '../managers/ChatManager';
 import { PresenceManager } from '../managers/PresenceManager';
 import { InviteManager } from '../managers/InviteManager';
+import { Status } from '../schemas/Status';
 
 export class Inbox extends Room<InboxState> {
   hostClient: Client;
@@ -31,17 +32,16 @@ export class Inbox extends Room<InboxState> {
   }
 
   onJoin(client: Client, options: any, auth: any) {
-    const user: User = new User(
-      auth._id,
-      client.sessionId,
-      auth.username,
-      options.onlineStatus
-    );
+    const user: User = new User({
+      _id: auth._id,
+      sessionId: client.sessionId,
+      username: auth.username,
+      status: options.status,
+    });
     this.determineHost(user);
     this.addUser(user);
     this.logUsers();
-    if (!this.isHost(client))
-      this.presenceManager.notifyHostUserOnlineStatus(user);
+    if (!this.isHost(client)) this.presenceManager.notifyHostUserStatus(user);
   }
 
   onLeave(client: Client) {
@@ -60,7 +60,7 @@ export class Inbox extends Room<InboxState> {
   removeClient(client: Client) {
     const user: User = this.getUser(client);
     if (this.hostClient && user)
-      this.presenceManager.notifyHostUserOnlineStatus(user, 'offline');
+      this.presenceManager.notifyHostUserStatus(user, new Status());
     this.deleteUser(user);
     this.logUsers();
   }
@@ -99,7 +99,7 @@ export class Inbox extends Room<InboxState> {
   logUsers() {
     console.log('Users in the chat:');
     this.state.users.forEach(user =>
-      console.log(`${user.username} - ${user.onlineStatus}`)
+      console.log(`${user.username} - ${user.status.presence}`)
     );
   }
 

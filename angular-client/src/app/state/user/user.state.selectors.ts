@@ -3,7 +3,13 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { UserState } from './user.state';
 import { isEqual } from 'lodash';
 import { User } from './user.model';
-import { OnlineStatus } from 'src/app/models/online-status/online-status';
+import {
+  Activity,
+  GameType,
+  Presence,
+  QueueType,
+  Status,
+} from 'src/app/models/status/status.model';
 
 export const userSelector = (
   userState$: Observable<UserState>
@@ -21,10 +27,42 @@ export const isLoadingSelector = (
     distinctUntilChanged()
   );
 
-export const onlineStatusSelector = (
+export const statusSelector = (
   user$: Observable<User | null>
-): Observable<OnlineStatus | null> =>
+): Observable<Status | null> =>
   user$.pipe(
-    map(user => (user ? user.onlineStatus : null)),
+    map(user => (user ? user.status : null)),
+    distinctUntilChanged()
+  );
+
+export const presenceSelector = (
+  status$: Observable<Status | null>
+): Observable<Presence | null> =>
+  status$.pipe(
+    map(status => (status ? status.presence : null)),
+    distinctUntilChanged()
+  );
+
+export const activitySelector = (
+  status$: Observable<Status | null>
+): Observable<Activity | null> =>
+  status$.pipe(
+    map(status => (status ? status.activity : null)),
+    distinctUntilChanged()
+  );
+
+export const queueTypeSelector = (
+  status$: Observable<Status | null>
+): Observable<QueueType | null> =>
+  status$.pipe(
+    map(status => (status ? status.queueType : null)),
+    distinctUntilChanged()
+  );
+
+export const gameTypeSelector = (
+  status$: Observable<Status | null>
+): Observable<GameType | null> =>
+  status$.pipe(
+    map(status => (status ? status.gameType : null)),
     distinctUntilChanged()
   );

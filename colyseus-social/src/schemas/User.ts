@@ -1,5 +1,5 @@
 import { Schema, type } from '@colyseus/schema';
-import { OnlineStatus } from '../model/online-status';
+import { Status } from './Status';
 
 export class User extends Schema {
   @type('string')
@@ -11,19 +11,14 @@ export class User extends Schema {
   @type('string')
   username: string;
 
-  @type('string')
-  onlineStatus: OnlineStatus;
+  @type(Status)
+  status: Status;
 
-  constructor(
-    _id: string,
-    sessionId: string,
-    username: string,
-    onlineStatus: OnlineStatus
-  ) {
+  constructor(user?: Partial<User>) {
     super();
-    this._id = _id;
-    this.sessionId = sessionId;
-    this.username = username;
-    this.onlineStatus = onlineStatus ?? 'offline';
+    this._id = user?._id ?? '';
+    this.sessionId = user?.sessionId ?? '';
+    this.username = user?.username ?? '';
+    this.status = user?.status ? new Status(user.status) : new Status();
   }
 }
