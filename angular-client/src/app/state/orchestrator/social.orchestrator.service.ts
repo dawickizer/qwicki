@@ -130,13 +130,15 @@ export class SocialOrchestratorService {
 
     return this.inviteService.sendInvite(this.user, invite).pipe(
       tap(invite => {
-        const friendsInbox = this.friendsInboxes.find(
-          friendsInbox => friendsInbox.id === invite.to._id
-        );
-        if (friendsInbox) {
-          friendsInbox.send('sendInviteToHost', invite);
-        } else {
-          this.personalInbox.send('sendInviteToUser', invite);
+        if (invite) {
+          const friendsInbox = this.friendsInboxes.find(
+            friendsInbox => friendsInbox.id === invite.to._id
+          );
+          if (friendsInbox) {
+            friendsInbox.send('sendInviteToHost', invite);
+          } else {
+            this.personalInbox.send('sendInviteToUser', invite);
+          }
         }
       })
     );
@@ -309,13 +311,15 @@ export class SocialOrchestratorService {
       .sendFriendRequest(this.user, potentialFriend)
       .pipe(
         tap(async friendRequest => {
-          const inbox = await this.colyseusService.joinExistingRoomIfPresent(
-            friendRequest.to._id,
-            { jwt: this.jwt }
-          );
-          if (inbox) {
-            inbox.send('sendFriendRequest', friendRequest);
-            this.colyseusService.leaveRoom(inbox);
+          if (friendRequest) {
+            const inbox = await this.colyseusService.joinExistingRoomIfPresent(
+              friendRequest.to._id,
+              { jwt: this.jwt }
+            );
+            if (inbox) {
+              inbox.send('sendFriendRequest', friendRequest);
+              this.colyseusService.leaveRoom(inbox);
+            }
           }
         })
       );
