@@ -24,7 +24,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AuthApiService } from './state/auth/auth.api.service';
 import { AuthGuardService } from './state/auth/auth.guard.service';
 import { AuthInterceptor } from './state/auth/auth.interceptor.service';
-import { AuthOrchestratorService } from './state/orchestrator/auth.orchestrator.service';
+import { AuthOrchestratorService } from './state/auth/auth.orchestrator.service';
 import { AuthService } from './state/auth/auth.service';
 import { AuthStateService } from './state/auth/auth.state.service';
 import { BabylonjsComponent } from './components/game/babylonjs/babylonjs.component';
@@ -86,7 +86,6 @@ import { OutboundNotificationsComponent } from './components/social/outbound-not
 import { PlayerService } from './services/player/player.service';
 import { PresenceComponent } from './components/misc/presence/presence.component';
 import { SignupComponent } from './components/auth/signup/signup.component';
-import { SocialOrchestratorService } from './state/orchestrator/social.orchestrator.service';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
 import { StatusBubbleComponent } from './components/misc/status-bubble/status-bubble.component';
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
@@ -191,7 +190,6 @@ import { UserStateService } from './state/user/user.state.service';
     MessageService,
     MessageStateService,
     PlayerService,
-    SocialOrchestratorService,
     UserApiService,
     UserEffectService,
     UserOrchestratorService,

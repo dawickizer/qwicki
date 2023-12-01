@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Credentials } from 'src/app/state/auth/credentials.model';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { AuthOrchestratorService } from 'src/app/state/auth/auth.orchestrator.service';
 
 @Component({
   selector: 'app-login',

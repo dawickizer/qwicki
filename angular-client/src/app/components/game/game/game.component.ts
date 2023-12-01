@@ -32,7 +32,7 @@ import { MatchMakingService } from 'src/app/services/match-making/match-making.s
 import { Player } from 'src/app/models/player/player';
 import { PlayerService } from 'src/app/services/player/player.service';
 import { AuthService } from 'src/app/state/auth/auth.service';
-import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { AuthOrchestratorService } from 'src/app/state/auth/auth.orchestrator.service';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({

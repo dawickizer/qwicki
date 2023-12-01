@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 
 import { firstValueFrom } from 'rxjs';
-import { AuthOrchestratorService } from '../orchestrator/auth.orchestrator.service';
+import { AuthOrchestratorService } from './auth.orchestrator.service';
 
 @Injectable()
 export class AuthGuardService {

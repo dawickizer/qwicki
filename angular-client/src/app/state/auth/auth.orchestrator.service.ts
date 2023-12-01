@@ -1,23 +1,20 @@
 import { Injectable } from '@angular/core';
-import {
-  Observable,
-  tap,
-  switchMap,
-  of,
-  forkJoin,
-  mergeMap,
-  defaultIfEmpty,
-} from 'rxjs';
-import { User } from '../user/user.model';
-import { FriendService } from '../friend/friend.service';
-import { AuthService } from '../auth/auth.service';
-import { UserService } from '../user/user.service';
-import { FriendRequestService } from '../friend-request/friend-request.service';
-import { InboxService } from '../inbox/inbox.service';
+import { NavigationExtras, Router } from '@angular/router';
+import { defaultIfEmpty, mergeMap, switchMap, tap } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { Credentials } from 'src/app/state/auth/credentials.model';
+import { User } from 'src/app/state/user/user.model';
+import { AuthService } from './auth.service';
+import { DecodedJwt } from './decoded-jwt.model';
+import { MatchMakingService } from 'src/app/services/match-making/match-making.service';
+import { InactivityService } from '../inactivity/inactivity.service';
 import { Friend } from '../friend/friend.model';
-import { Room } from 'colyseus.js';
-import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { Message } from '../message/message.model';
+import { Room } from 'colyseus.js';
+import { FriendService } from '../friend/friend.service';
+import { FriendRequestService } from '../friend-request/friend-request.service';
+import { UserService } from '../user/user.service';
+import { InboxService } from '../inbox/inbox.service';
 import { MessageService } from '../message/message.service';
 import { InviteService } from '../invite/invite.service';
 import { InboxOnMessageService } from '../inbox/inbox.on-message.service';
@@ -25,7 +22,7 @@ import { InboxOnMessageService } from '../inbox/inbox.on-message.service';
 @Injectable({
   providedIn: 'root',
 })
-export class SocialOrchestratorService {
+export class AuthOrchestratorService {
   private user: User;
   private friends: Friend[];
   private unviewedMessages: Message[];
@@ -34,16 +31,65 @@ export class SocialOrchestratorService {
   private connectedInboxes: Room<any>[];
 
   constructor(
+    private authService: AuthService,
+    private inactivityService: InactivityService,
+    private matchMakingService: MatchMakingService,
     private friendRequestService: FriendRequestService,
     private friendService: FriendService,
     private userService: UserService,
-    private authService: AuthService,
     private inboxService: InboxService,
     private messageService: MessageService,
     private inviteService: InviteService,
-    private inboxOnMessageService: InboxOnMessageService
+    private inboxOnMessageService: InboxOnMessageService,
+    private router: Router
   ) {
     this.subscribeToState();
+  }
+
+  login(credentials: Credentials, returnPath: string): Observable<DecodedJwt> {
+    const authObservable = this.authService.login(credentials);
+    return this.authenticationFlow(authObservable, returnPath);
+  }
+
+  signup(user: User, returnPath: string): Observable<DecodedJwt> {
+    const authObservable = this.authService.signup(user);
+    return this.authenticationFlow(authObservable, returnPath);
+  }
+
+  logout(
+    options: { extras?: NavigationExtras; makeBackendCall?: boolean } = {}
+  ): Observable<any> {
+    const { extras } = options;
+    return this.authService.logout(options).pipe(
+      tap(() => {
+        this.inactivityService.stop();
+        this.matchMakingService.leaveGameRoom(); // update to state logic
+        this.setInitialState();
+        this.router.navigate(['auth/login'], extras);
+      })
+    );
+  }
+
+  isLoggedIn(): Observable<boolean> {
+    return this.authService.isLoggedIn().pipe(
+      tap(isLoggedIn => {
+        if (isLoggedIn) {
+          this.inactivityService.start();
+        }
+      })
+    );
+  }
+
+  private setInitialState() {
+    this.inboxService
+      .leaveInboxes(this.connectedInboxes, this.decodedJwt)
+      .subscribe();
+    this.inboxService.setInitialState();
+    this.userService.setInitialState();
+    this.friendService.setInitialState();
+    this.friendRequestService.setInitialState();
+    this.messageService.setInitialState();
+    this.inviteService.setInitialState();
   }
 
   private subscribeToState() {
@@ -59,21 +105,35 @@ export class SocialOrchestratorService {
     this.inboxService.connectedInboxes$.subscribe(
       connectedInboxes => (this.connectedInboxes = connectedInboxes)
     );
+    this.inactivityService.isTimedOut$.subscribe(isTimedOut => {
+      if (isTimedOut) this.logout().subscribe();
+    });
   }
 
-  setInitialState() {
-    this.inboxService
-      .leaveInboxes(this.connectedInboxes, this.decodedJwt)
-      .subscribe();
-    this.inboxService.setInitialState();
-    this.userService.setInitialState();
-    this.friendService.setInitialState();
-    this.friendRequestService.setInitialState();
-    this.messageService.setInitialState();
-    this.inviteService.setInitialState();
+  private setSocials(user: User) {
+    this.friendService.setFriends(user.friends);
+    this.friendRequestService.setInboundFriendRequests(
+      user.inboundFriendRequests
+    );
+    this.friendRequestService.setOutboundFriendRequests(
+      user.outboundFriendRequests
+    );
+
+    this.inviteService.setInboundInvites(user.inboundInvites);
+    this.inviteService.setOutboundInvites(user.outboundInvites);
   }
 
-  connect(decodedJwt: DecodedJwt): Observable<any> {
+  private authenticationFlow(
+    authObservable: Observable<DecodedJwt>,
+    returnPath: string
+  ): Observable<DecodedJwt> {
+    return authObservable.pipe(
+      switchMap(decodedJwt => this.connect(decodedJwt)),
+      tap(() => this.router.navigate([returnPath]))
+    );
+  }
+
+  private connect(decodedJwt: DecodedJwt): Observable<any> {
     return this.userService
       .getUser(decodedJwt._id, {
         friends: true,
@@ -101,7 +161,7 @@ export class SocialOrchestratorService {
       );
   }
 
-  createPersonalInbox(): Observable<Room<any>> {
+  private createPersonalInbox(): Observable<Room<any>> {
     return this.inboxService
       .createInbox(this.decodedJwt._id, {
         jwt: this.jwt,
@@ -116,7 +176,7 @@ export class SocialOrchestratorService {
       );
   }
 
-  joinFriendsInboxesIfPresent(): Observable<Room<any>[]> {
+  private joinFriendsInboxesIfPresent(): Observable<Room<any>[]> {
     const friendIds = this.friends.map(friend => friend._id);
 
     return this.inboxService
@@ -167,18 +227,5 @@ export class SocialOrchestratorService {
           return forkJoin(statusObservables);
         })
       );
-  }
-
-  private setSocials(user: User) {
-    this.friendService.setFriends(user.friends);
-    this.friendRequestService.setInboundFriendRequests(
-      user.inboundFriendRequests
-    );
-    this.friendRequestService.setOutboundFriendRequests(
-      user.outboundFriendRequests
-    );
-
-    this.inviteService.setInboundInvites(user.inboundInvites);
-    this.inviteService.setOutboundInvites(user.outboundInvites);
   }
 }

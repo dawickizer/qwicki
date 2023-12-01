@@ -30,7 +30,7 @@ import { Subject } from 'rxjs';
 // Services/Models
 import { FpsService } from 'src/app/services/fps/fps.service';
 import { KeyBindService } from 'src/app/services/key-bind/key-bind.service';
-import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { AuthOrchestratorService } from 'src/app/state/auth/auth.orchestrator.service';
 import { AuthService } from 'src/app/state/auth/auth.service';
 
 @Component({

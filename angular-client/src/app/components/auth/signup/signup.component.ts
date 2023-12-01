@@ -1,6 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subject } from 'rxjs';
-import { AuthOrchestratorService } from 'src/app/state/orchestrator/auth.orchestrator.service';
+import { AuthOrchestratorService } from 'src/app/state/auth/auth.orchestrator.service';
 import { User } from 'src/app/state/user/user.model';
 
 @Component({
