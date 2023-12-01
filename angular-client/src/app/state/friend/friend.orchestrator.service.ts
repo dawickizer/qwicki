@@ -14,6 +14,7 @@ import { MessageService } from '../message/message.service';
 import { InviteService } from '../invite/invite.service';
 import { Invite } from '../invite/invite.model';
 import { Status } from 'src/app/models/status/status.model';
+import { DecodedJwt } from '../auth/decoded-jwt.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,7 @@ import { Status } from 'src/app/models/status/status.model';
 export class FriendOrchestratorService {
   private user: User;
   private jwt: string;
+  private decodedJwt: DecodedJwt;
   private friendsInboxes: Room<any>[];
   private personalInbox: Room<any>;
 
@@ -38,6 +40,9 @@ export class FriendOrchestratorService {
 
   private subscribeToState() {
     this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
+    this.authService.decodedJwt$.subscribe(
+      decodedJwt => (this.decodedJwt = decodedJwt)
+    );
     this.userService.user$.subscribe(user => (this.user = user));
     this.inboxService.friendsInboxes$.subscribe(
       friendsInboxes => (this.friendsInboxes = friendsInboxes)
@@ -62,7 +67,7 @@ export class FriendOrchestratorService {
         if (friendsInbox) {
           friendsInbox.send('removeFriend', this.user);
           return this.inboxService
-            .leaveInbox(friendsInbox)
+            .leaveInbox(friendsInbox, this.decodedJwt)
             .pipe(map(() => deletedFriend));
         } else {
           this.personalInbox.send('disconnectFriend', friend);

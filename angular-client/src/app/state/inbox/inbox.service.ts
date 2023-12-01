@@ -4,6 +4,7 @@ import { InboxEffectService } from './inbox.effect.service';
 import { Room } from 'colyseus.js';
 import { Observable } from 'rxjs';
 import { Status } from 'src/app/models/status/status.model';
+import { DecodedJwt } from '../auth/decoded-jwt.model';
 
 @Injectable({
   providedIn: 'root',
@@ -58,12 +59,12 @@ export class InboxService {
     return this.inboxEffectService.joinExistingInboxIfPresent(inboxId, options);
   }
 
-  leaveInboxes(inboxes: Room[]): Observable<number[]> {
-    return this.inboxEffectService.leaveInboxes(inboxes);
+  leaveInboxes(inboxes: Room[], decodedJwt: DecodedJwt): Observable<number[]> {
+    return this.inboxEffectService.leaveInboxes(inboxes, decodedJwt);
   }
 
-  leaveInbox(inbox: Room): Observable<number> {
-    return this.inboxEffectService.leaveInbox(inbox);
+  leaveInbox(inbox: Room, decodedJwt: DecodedJwt): Observable<number> {
+    return this.inboxEffectService.leaveInbox(inbox, decodedJwt);
   }
 
   setInitialState(): void {

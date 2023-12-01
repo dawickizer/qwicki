@@ -63,7 +63,9 @@ export class SocialOrchestratorService {
   }
 
   setInitialState() {
-    this.inboxService.leaveInboxes(this.connectedInboxes).subscribe();
+    this.inboxService
+      .leaveInboxes(this.connectedInboxes, this.decodedJwt)
+      .subscribe();
     this.inboxService.setInitialState();
     this.userService.setInitialState();
     this.friendService.setInitialState();
