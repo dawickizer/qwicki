@@ -551,6 +551,7 @@ export class SocialOrchestratorService {
       this.friendService.removeFriend(disconnectedFriend);
       this.inboxService.removeConnectedInboxById(disconnectedFriend._id);
       this.messageService.removeMessagesFromFriend(disconnectedFriend);
+      this.inviteService.removeInvitesFromFriend(disconnectedFriend);
     });
 
     inbox.onMessage('dispose', (inboxId: string) => {
