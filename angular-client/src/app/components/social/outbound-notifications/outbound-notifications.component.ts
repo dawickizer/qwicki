@@ -1,9 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Notification } from 'src/app/models/notification/notification';
+import { FriendRequestOrchestratorService } from 'src/app/state/friend-request/friend-request.orchestrator.service';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { Invite } from 'src/app/state/invite/invite.model';
-import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
+import { InviteOrchestratorService } from 'src/app/state/invite/invite.orchestrator.service';
 
 @Component({
   selector: 'app-outbound-notifications',
@@ -16,16 +17,19 @@ export class OutboundNotificationsComponent {
 
   panelOpenState = false;
 
-  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
+  constructor(
+    private friendRequestOrchestratorService: FriendRequestOrchestratorService,
+    private inviteOrchestratorService: InviteOrchestratorService
+  ) {}
 
   revokeFriendRequest(friendRequest: FriendRequest) {
-    this.socialOrchestratorService
+    this.friendRequestOrchestratorService
       .revokeFriendRequest(friendRequest)
       .subscribe();
   }
 
   revokeInvite(invite: Invite) {
-    this.socialOrchestratorService.revokeInvite(invite).subscribe();
+    this.inviteOrchestratorService.revokeInvite(invite).subscribe();
   }
 
   isFriendRequest(notification: Notification) {

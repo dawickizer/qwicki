@@ -1,9 +1,9 @@
 import { Component, Input, ElementRef, ViewChild } from '@angular/core';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
-import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 import { Subject } from 'rxjs';
 import { debounceTime } from 'rxjs/operators';
+import { MessageOrchestratorService } from 'src/app/state/message/message.orchestrator';
 
 @Component({
   selector: 'app-chat-box',
@@ -39,7 +39,7 @@ export class ChatBoxComponent {
   isTyping = false;
   typing = new Subject<void>();
 
-  constructor(private socialOrchestratorService: SocialOrchestratorService) {
+  constructor(private messageOrchestratorService: MessageOrchestratorService) {
     this.setupDebounce();
   }
 
@@ -51,7 +51,7 @@ export class ChatBoxComponent {
       )
       .subscribe(() => {
         this.isTyping = false;
-        this.socialOrchestratorService
+        this.messageOrchestratorService
           .notifyFriendUserIsTyping(this.friend, false)
           .subscribe();
       });
@@ -60,7 +60,7 @@ export class ChatBoxComponent {
   onKeyPress(): void {
     if (!this.isTyping) {
       this.isTyping = true;
-      this.socialOrchestratorService
+      this.messageOrchestratorService
         .notifyFriendUserIsTyping(this.friend, true)
         .subscribe();
     }
@@ -85,14 +85,14 @@ export class ChatBoxComponent {
       const message: Message = new Message();
       message.content = this.newMessage;
       message.to = this.friend;
-      this.socialOrchestratorService
+      this.messageOrchestratorService
         .sendMessage(this.friend, message)
         .subscribe();
 
       // Immediately set isTyping to false and notify that the user has stopped typing
       this.isTyping = false;
       this.typing.complete(); // Complete the current subject
-      this.socialOrchestratorService
+      this.messageOrchestratorService
         .notifyFriendUserIsTyping(this.friend, false)
         .subscribe();
 

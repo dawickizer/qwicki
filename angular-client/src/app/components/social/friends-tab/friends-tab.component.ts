@@ -3,8 +3,8 @@ import { MatSidenav } from '@angular/material/sidenav';
 import { MatTableDataSource } from '@angular/material/table';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
-import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 import { Notification } from 'src/app/models/notification/notification';
+import { FriendRequestOrchestratorService } from 'src/app/state/friend-request/friend-request.orchestrator.service';
 
 @Component({
   selector: 'app-friends-tab',
@@ -70,7 +70,9 @@ export class FriendsTabComponent {
 
   potentialFriend = '';
 
-  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
+  constructor(
+    private friendRequestOrchestratorService: FriendRequestOrchestratorService
+  ) {}
 
   filter() {
     this.friends.filterPredicate = (friend, filter) =>
@@ -91,7 +93,7 @@ export class FriendsTabComponent {
   }
 
   sendFriendRequest() {
-    this.socialOrchestratorService
+    this.friendRequestOrchestratorService
       .sendFriendRequest(this.potentialFriend)
       .subscribe();
     this.potentialFriend = '';

@@ -3,13 +3,11 @@ import {
   Observable,
   tap,
   switchMap,
-  map,
   of,
   forkJoin,
   mergeMap,
   defaultIfEmpty,
 } from 'rxjs';
-import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { User } from '../user/user.model';
 import { FriendService } from '../friend/friend.service';
 import { AuthService } from '../auth/auth.service';
@@ -22,7 +20,6 @@ import { Room } from 'colyseus.js';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { Message } from '../message/message.model';
 import { MessageService } from '../message/message.service';
-import { InactivityService } from '../inactivity/inactivity.service';
 import { InviteService } from '../invite/invite.service';
 import { Invite } from '../invite/invite.model';
 import { Status } from 'src/app/models/status/status.model';
@@ -36,9 +33,7 @@ export class SocialOrchestratorService {
   private unviewedMessages: Message[];
   private jwt: string;
   private decodedJwt: DecodedJwt;
-  private friendsInboxes: Room<any>[];
   private connectedInboxes: Room<any>[];
-  private personalInbox: Room<any>;
 
   constructor(
     private friendRequestService: FriendRequestService,
@@ -46,10 +41,8 @@ export class SocialOrchestratorService {
     private userService: UserService,
     private authService: AuthService,
     private inboxService: InboxService,
-    private inactivityService: InactivityService,
     private messageService: MessageService,
-    private inviteService: InviteService,
-    private colyseusService: ColyseusService
+    private inviteService: InviteService
   ) {
     this.subscribeToState();
   }
@@ -64,25 +57,9 @@ export class SocialOrchestratorService {
     this.messageService.unviewedMessages$.subscribe(
       unviewedMessages => (this.unviewedMessages = unviewedMessages)
     );
-    this.inboxService.friendsInboxes$.subscribe(
-      friendsInboxes => (this.friendsInboxes = friendsInboxes)
-    );
-    this.inboxService.personalInbox$.subscribe(
-      personalInbox => (this.personalInbox = personalInbox)
-    );
     this.inboxService.connectedInboxes$.subscribe(
       connectedInboxes => (this.connectedInboxes = connectedInboxes)
     );
-
-    // There is a potential race condition here but the way my logic is coded its not happening. If the inactivity presence ever gets updaetd before the user does...there could be a scenario where the updateUserStatus doesnt fire off
-    this.inactivityService.presence$.subscribe(presence => {
-      if (
-        !this.user ||
-        (this.user.status.presence === 'Offline' && presence === 'Away')
-      )
-        return;
-      this.updateUserStatus({ presence }).subscribe();
-    });
   }
 
   setInitialState() {
@@ -107,7 +84,9 @@ export class SocialOrchestratorService {
         switchMap(user => {
           if (user.friends.length > 0)
             return forkJoin(
-              user.friends.map(friend => this.getAllMessagesBetween(friend))
+              user.friends.map(friend =>
+                this.messageService.getAllBetween(this.user, friend)
+              )
             );
           else return of(null).pipe(defaultIfEmpty(null)); // Emit a default value when there are no friends.
         }),
@@ -118,244 +97,6 @@ export class SocialOrchestratorService {
             this.unviewedMessages
           )
         )
-      );
-  }
-
-  sendInvite(friend: Friend): Observable<Invite> {
-    const invite = new Invite();
-    invite.to = friend;
-    invite.type = 'party';
-    invite.roomId = '123';
-    invite.metadata = 'Domination';
-
-    return this.inviteService.sendInvite(this.user, invite).pipe(
-      tap(invite => {
-        if (invite) {
-          const friendsInbox = this.friendsInboxes.find(
-            friendsInbox => friendsInbox.id === invite.to._id
-          );
-          if (friendsInbox) {
-            friendsInbox.send('sendInviteToHost', invite);
-          } else {
-            this.personalInbox.send('sendInviteToUser', invite);
-          }
-        }
-      })
-    );
-  }
-
-  revokeInvite(invite: Invite): Observable<Invite> {
-    return this.inviteService.revokeInvite(this.user, invite).pipe(
-      tap(async invite => {
-        const friendsInbox = this.friendsInboxes.find(
-          friendsInbox => friendsInbox.id === invite.to._id
-        );
-        if (friendsInbox) {
-          friendsInbox.send('revokeInviteToHost', invite);
-        } else {
-          this.personalInbox.send('revokeInviteToUser', invite);
-        }
-      })
-    );
-  }
-
-  rejectInvite(invite: Invite): Observable<Invite> {
-    return this.inviteService.rejectInvite(this.user, invite).pipe(
-      tap(async invite => {
-        const friendsInbox = this.friendsInboxes.find(
-          friendsInbox => friendsInbox.id === invite.from._id
-        );
-
-        if (friendsInbox) {
-          friendsInbox.send('rejectInviteToHost', invite);
-        } else {
-          this.personalInbox.send('rejectInviteToUser', invite);
-        }
-      })
-    );
-  }
-
-  acceptInvite(invite: Invite): Observable<Invite> {
-    return this.inviteService.acceptInvite(this.user, invite).pipe(
-      tap(async invite => {
-        const friendsInbox = this.friendsInboxes.find(
-          friendsInbox => friendsInbox.id === invite.from._id
-        );
-
-        if (friendsInbox) {
-          friendsInbox.send('acceptInviteToHost', invite);
-        } else {
-          this.personalInbox.send('acceptInviteToUser', invite);
-        }
-      })
-    );
-  }
-
-  getAllMessagesBetween(friend: Friend): Observable<Map<string, Message[]>> {
-    return this.messageService.getAllBetween(this.user, friend);
-  }
-
-  sendMessage(friend: Friend, message: Message): Observable<Message> {
-    return this.messageService.send(this.user, friend, message).pipe(
-      tap(message => {
-        const friendsInbox = this.friendsInboxes.find(
-          friendsInbox => friendsInbox.id === message.to._id
-        );
-
-        if (friendsInbox) {
-          friendsInbox.send('messageHost', message);
-        } else {
-          this.personalInbox.send('messageUser', message);
-        }
-      })
-    );
-  }
-
-  notifyFriendUserIsTyping(friend: Friend, isTyping: boolean): Observable<any> {
-    return new Observable(subscriber => {
-      const friendsInbox = this.friendsInboxes.find(
-        friendsInbox => friendsInbox.id === friend._id
-      );
-
-      if (friendsInbox) {
-        friendsInbox.send('userIsTyping', {
-          friendId: this.user._id,
-          isTyping,
-        });
-        subscriber.next({ success: true });
-        subscriber.complete();
-      } else {
-        this.personalInbox.send('hostIsTyping', {
-          friendId: friend._id,
-          isTyping,
-        });
-        subscriber.next({ success: true });
-        subscriber.complete();
-      }
-    });
-  }
-
-  markMessagesAsViewed(
-    friend: Friend,
-    messages: Message[]
-  ): Observable<Message[]> {
-    return this.messageService.markAsViewed(this.user, friend, messages);
-  }
-
-  deleteFriend(friend: Friend): Observable<Friend> {
-    return this.friendService.deleteFriend(this.user, friend).pipe(
-      switchMap(deletedFriend => {
-        this.messageService.removeMessagesFromFriend(friend);
-        this.inviteService.removeInvitesFromFriend(friend);
-        const friendsInbox = this.friendsInboxes.find(
-          friendsInbox => friendsInbox.id === deletedFriend._id
-        );
-        if (friendsInbox) {
-          friendsInbox.send('removeFriend', this.user);
-          return this.inboxService
-            .leaveInbox(friendsInbox)
-            .pipe(map(() => deletedFriend));
-        } else {
-          this.personalInbox.send('disconnectFriend', friend);
-          return of(deletedFriend);
-        }
-      })
-    );
-  }
-
-  addNewFriend(friendRequest: FriendRequest): Observable<User> {
-    return this.friendService.addNewFriend(this.user, friendRequest).pipe(
-      tap(user => {
-        this.friendRequestService.setInboundFriendRequests(
-          user.inboundFriendRequests
-        );
-      }),
-      switchMap(user =>
-        this.inboxService
-          .joinExistingInboxIfPresent(friendRequest.from._id, {
-            jwt: this.jwt,
-            status: this.user.status,
-          })
-          .pipe(
-            tap(inbox => {
-              // keep in mind that this logic is async and the tap will proceed while this is lagging behind
-              // for now that is fine since nothing after this really depends on the logic inside of onStateChange()
-              if (inbox) {
-                inbox.onStateChange.once(state => {
-                  inbox.send('acceptFriendRequest', friendRequest);
-                  inbox = this.setFriendInboxListeners(inbox);
-                  this.friendService.updateFriendStatus(
-                    friendRequest.from._id,
-                    state.host.status
-                  );
-                  this.inboxService.updateConnectedInbox(inbox);
-                });
-              } else {
-                this.friendService.updateFriendStatus(friendRequest.from._id, {
-                  presence: 'Offline',
-                  activity: 'In Lobby',
-                });
-              }
-            }),
-            map(() => user)
-          )
-      ),
-      switchMap(user =>
-        this.getAllMessagesBetween(friendRequest.from).pipe(map(() => user))
-      )
-    );
-  }
-
-  sendFriendRequest(potentialFriend: string): Observable<FriendRequest> {
-    return this.friendRequestService
-      .sendFriendRequest(this.user, potentialFriend)
-      .pipe(
-        tap(async friendRequest => {
-          if (friendRequest) {
-            const inbox = await this.colyseusService.joinExistingRoomIfPresent(
-              friendRequest.to._id,
-              { jwt: this.jwt }
-            );
-            if (inbox) {
-              inbox.send('sendFriendRequest', friendRequest);
-              this.colyseusService.leaveRoom(inbox);
-            }
-          }
-        })
-      );
-  }
-
-  revokeFriendRequest(friendRequest: FriendRequest): Observable<FriendRequest> {
-    return this.friendRequestService
-      .revokeFriendRequest(this.user, friendRequest)
-      .pipe(
-        tap(async friendRequest => {
-          const inbox = await this.colyseusService.joinExistingRoomIfPresent(
-            friendRequest.to._id,
-            { jwt: this.jwt }
-          );
-          if (inbox) {
-            inbox.send('revokeFriendRequest', friendRequest);
-            this.colyseusService.leaveRoom(inbox);
-          }
-        })
-      );
-  }
-
-  rejectFriendRequest(friendRequest: FriendRequest): Observable<FriendRequest> {
-    return this.friendRequestService
-      .rejectFriendRequest(this.user, friendRequest)
-      .pipe(
-        tap(async friendRequest => {
-          const inbox = await this.colyseusService.joinExistingRoomIfPresent(
-            friendRequest.from._id,
-            { jwt: this.jwt }
-          );
-          if (inbox) {
-            inbox.send('rejectFriendRequest', friendRequest);
-            this.colyseusService.leaveRoom(inbox);
-          }
-        })
       );
   }
 
@@ -425,21 +166,6 @@ export class SocialOrchestratorService {
       );
   }
 
-  updateUserStatus(status: Partial<Status>): Observable<Status> {
-    return new Observable(subscriber => {
-      this.personalInbox.send('updateHostStatus', status);
-      this.friendsInboxes.forEach(friendsInbox => {
-        friendsInbox.send('notifyHostStatus', {
-          id: this.user._id,
-          status,
-        });
-      });
-      this.userService.updateStatus(status);
-      subscriber.next(status as Status);
-      subscriber.complete();
-    });
-  }
-
   private setPersonalInboxListeners(inbox: Room): Room {
     inbox.onMessage('messageHost', (message: Message) => {
       this.messageService.addMessageToFriend(message.from, message);
@@ -480,7 +206,10 @@ export class SocialOrchestratorService {
           data.friendRequest.to._id,
           data.status
         );
-        this.getAllMessagesBetween(data.friendRequest.to).subscribe();
+
+        this.messageService
+          .getAllBetween(this.user, data.friendRequest.to)
+          .subscribe();
       }
     );
 

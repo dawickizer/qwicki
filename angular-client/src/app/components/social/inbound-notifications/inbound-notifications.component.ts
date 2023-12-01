@@ -1,9 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { MatTableDataSource } from '@angular/material/table';
 import { Notification } from 'src/app/models/notification/notification';
+import { FriendRequestOrchestratorService } from 'src/app/state/friend-request/friend-request.orchestrator.service';
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
+import { FriendOrchestratorService } from 'src/app/state/friend/friend.orchestrator.service';
 import { Invite } from 'src/app/state/invite/invite.model';
-import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
+import { InviteOrchestratorService } from 'src/app/state/invite/invite.orchestrator.service';
 
 @Component({
   selector: 'app-inbound-notifications',
@@ -16,24 +18,28 @@ export class InboundNotificationsComponent {
 
   panelOpenState = false;
 
-  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
+  constructor(
+    private friendRequestOrchestratorService: FriendRequestOrchestratorService,
+    private friendOrchestratorService: FriendOrchestratorService,
+    private inviteOrchestratorService: InviteOrchestratorService
+  ) {}
 
   acceptFriendRequest(friendRequest: FriendRequest) {
-    this.socialOrchestratorService.addNewFriend(friendRequest).subscribe();
+    this.friendOrchestratorService.addNewFriend(friendRequest).subscribe();
   }
 
   rejectFriendRequest(friendRequest: FriendRequest) {
-    this.socialOrchestratorService
+    this.friendRequestOrchestratorService
       .rejectFriendRequest(friendRequest)
       .subscribe();
   }
 
   acceptInvite(invite: Invite) {
-    this.socialOrchestratorService.acceptInvite(invite).subscribe();
+    this.inviteOrchestratorService.acceptInvite(invite).subscribe();
   }
 
   rejectInvite(invite: Invite) {
-    this.socialOrchestratorService.rejectInvite(invite).subscribe();
+    this.inviteOrchestratorService.rejectInvite(invite).subscribe();
   }
 
   isFriendRequest(notification: Notification) {

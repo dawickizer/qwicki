@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { Presence } from 'src/app/models/status/status.model';
-import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
+import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
 
 @Component({
   selector: 'app-presence',
@@ -12,7 +12,7 @@ export class PresenceComponent {
   @Input() readOnly = true;
   @Input() size = 10;
 
-  constructor(private socialOrchestratorService: SocialOrchestratorService) {}
+  constructor(private userOrchestratorService: UserOrchestratorService) {}
 
   updatePresence() {
     if (this.readOnly) return;
@@ -29,7 +29,7 @@ export class PresenceComponent {
       default:
         this.presence = 'Online';
     }
-    this.socialOrchestratorService
+    this.userOrchestratorService
       .updateUserStatus({ presence: this.presence })
       .subscribe();
   }

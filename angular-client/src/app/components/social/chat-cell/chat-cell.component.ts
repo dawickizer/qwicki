@@ -2,8 +2,10 @@ import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { Message } from 'src/app/state/message/message.model';
 import { MessageService } from 'src/app/state/message/message.service';
-import { SocialOrchestratorService } from 'src/app/state/orchestrator/social.orchestrator.service';
 import { Subject, takeUntil } from 'rxjs';
+import { MessageOrchestratorService } from 'src/app/state/message/message.orchestrator';
+import { FriendOrchestratorService } from 'src/app/state/friend/friend.orchestrator.service';
+import { InviteOrchestratorService } from 'src/app/state/invite/invite.orchestrator.service';
 
 @Component({
   selector: 'app-chat-cell',
@@ -19,7 +21,9 @@ export class ChatCellComponent implements OnInit, OnDestroy {
   unsubscribe$ = new Subject<void>();
 
   constructor(
-    private socialOrchestratorService: SocialOrchestratorService,
+    private friendOrchestratorService: FriendOrchestratorService,
+    private inviteOrchestratorService: InviteOrchestratorService,
+    private messageOrchestratorService: MessageOrchestratorService,
     private messageService: MessageService
   ) {}
 
@@ -60,17 +64,17 @@ export class ChatCellComponent implements OnInit, OnDestroy {
 
   markMessagesAsViewed() {
     if (this.panelOpenState && this.unviewedMessages.length > 0) {
-      this.socialOrchestratorService
+      this.messageOrchestratorService
         .markMessagesAsViewed(this.friend, this.unviewedMessages)
         .subscribe();
     }
   }
 
   removeFriend() {
-    this.socialOrchestratorService.deleteFriend(this.friend).subscribe();
+    this.friendOrchestratorService.deleteFriend(this.friend).subscribe();
   }
 
   sendInvite() {
-    this.socialOrchestratorService.sendInvite(this.friend).subscribe();
+    this.inviteOrchestratorService.sendInvite(this.friend).subscribe();
   }
 }

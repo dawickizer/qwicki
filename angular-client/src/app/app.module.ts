@@ -37,8 +37,10 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { FpsService } from './services/fps/fps.service';
 import { FriendApiService } from './state/friend/friend.api.service';
 import { FriendEffectService } from './state/friend/friend.effect.service';
+import { FriendOrchestratorService } from './state/friend/friend.orchestrator.service';
 import { FriendRequestApiService } from './state/friend-request/friend-request.api.service';
 import { FriendRequestEffectService } from './state/friend-request/friend-request.effect.service';
+import { FriendRequestOrchestratorService } from './state/friend-request/friend-request.orchestrator.service';
 import { FriendRequestService } from './state/friend-request/friend-request.service';
 import { FriendRequestStateService } from './state/friend-request/friend-request.state.service';
 import { FriendService } from './state/friend/friend.service';
@@ -59,7 +61,9 @@ import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
 import { InfoBubbleComponent } from './components/misc/info-bubble/info-bubble.component';
+import { InviteApiService } from './state/invite/invite.api.service';
 import { InviteEffectService } from './state/invite/invite.effect.service';
+import { InviteOrchestratorService } from './state/invite/invite.orchestrator.service';
 import { InviteService } from './state/invite/invite.service';
 import { InviteStateService } from './state/invite/invite.state.service';
 import { IsTypingComponent } from './components/misc/is-typing/is-typing.component';
@@ -69,6 +73,11 @@ import { LobbyComponent } from './components/match-making/lobby/lobby.component'
 import { LoginComponent } from './components/auth/login/login.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { MatchMakingService } from './services/match-making/match-making.service';
+import { MessageApiService } from './state/message/message.api.service';
+import { MessageEffectService } from './state/message/message.effect.service';
+import { MessageOrchestratorService } from './state/message/message.orchestrator';
+import { MessageService } from './state/message/message.service';
+import { MessageStateService } from './state/message/message.state.service';
 import { NavbarComponent } from './components/layout/navbar/navbar.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
@@ -82,6 +91,7 @@ import { StatusBubbleComponent } from './components/misc/status-bubble/status-bu
 import { UserProfileComponent } from './components/user/user-profile/user-profile.component';
 import { UserApiService } from './state/user/user.api.service';
 import { UserEffectService } from './state/user/user.effect.service';
+import { UserOrchestratorService } from './state/user/user.orchestrator.service';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
 
@@ -150,8 +160,10 @@ import { UserStateService } from './state/user/user.state.service';
     FpsService,
     FriendApiService,
     FriendEffectService,
+    FriendOrchestratorService,
     FriendRequestApiService,
     FriendRequestEffectService,
+    FriendRequestOrchestratorService,
     FriendRequestService,
     FriendRequestStateService,
     FriendService,
@@ -164,15 +176,23 @@ import { UserStateService } from './state/user/user.state.service';
     InboxEffectService,
     InboxService,
     InboxStateService,
+    InviteApiService,
     InviteEffectService,
+    InviteOrchestratorService,
     InviteService,
     InviteStateService,
     KeyBindService,
     MatchMakingService,
+    MessageApiService,
+    MessageEffectService,
+    MessageOrchestratorService,
+    MessageService,
+    MessageStateService,
     PlayerService,
     SocialOrchestratorService,
     UserApiService,
     UserEffectService,
+    UserOrchestratorService,
     UserService,
     UserStateService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
