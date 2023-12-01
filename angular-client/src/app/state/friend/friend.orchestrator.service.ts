@@ -9,12 +9,10 @@ import { InboxService } from '../inbox/inbox.service';
 import { Friend } from '../friend/friend.model';
 import { FriendRequest } from '../friend-request/friend-requests.model';
 import { Room } from 'colyseus.js';
-import { Message } from '../message/message.model';
 import { MessageService } from '../message/message.service';
 import { InviteService } from '../invite/invite.service';
-import { Invite } from '../invite/invite.model';
-import { Status } from 'src/app/models/status/status.model';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
+import { InboxOnMessageService } from '../inbox/inbox.on-message.service';
 
 @Injectable({
   providedIn: 'root',
@@ -33,7 +31,8 @@ export class FriendOrchestratorService {
     private authService: AuthService,
     private inboxService: InboxService,
     private messageService: MessageService,
-    private inviteService: InviteService
+    private inviteService: InviteService,
+    private inboxOnMessageService: InboxOnMessageService
   ) {
     this.subscribeToState();
   }
@@ -97,7 +96,8 @@ export class FriendOrchestratorService {
               if (inbox) {
                 inbox.onStateChange.once(state => {
                   inbox.send('acceptFriendRequest', friendRequest);
-                  inbox = this.setFriendInboxListeners(inbox);
+                  inbox =
+                    this.inboxOnMessageService.setFriendInboxListeners(inbox);
                   this.friendService.updateFriendStatus(
                     friendRequest.from._id,
                     state.host.status
@@ -120,57 +120,5 @@ export class FriendOrchestratorService {
           .pipe(map(() => user))
       )
     );
-  }
-
-  private setFriendInboxListeners(inbox: Room): Room {
-    inbox.onMessage('messageUser', (message: Message) => {
-      this.messageService.addMessageToFriend(message.from, message);
-      this.friendService.reorderFriend(message.from._id, 'front');
-    });
-
-    inbox.onMessage('sendInviteToUser', (invite: Invite) => {
-      this.inviteService.receiveInvite(invite).subscribe();
-    });
-
-    inbox.onMessage('revokeInviteToUser', (invite: Invite) => {
-      this.inviteService.removeInboundInvite(invite);
-    });
-
-    inbox.onMessage('rejectInviteToUser', (invite: Invite) => {
-      this.inviteService.removeOutboundInvite(invite);
-    });
-
-    inbox.onMessage('acceptInviteToUser', (invite: Invite) => {
-      this.inviteService.removeOutboundInvite(invite);
-    });
-
-    inbox.onMessage('status', (friend: { id: string; status: Status }) => {
-      this.friendService.updateFriendStatus(friend.id, friend.status);
-    });
-
-    inbox.onMessage(
-      'hostIsTyping',
-      (data: { friendId: string; isTyping: boolean }) => {
-        this.friendService.setFriendIsTyping(data.friendId, data.isTyping);
-      }
-    );
-
-    inbox.onMessage('disconnectFriend', (disconnectedFriend: Friend) => {
-      this.friendService.removeFriend(disconnectedFriend);
-      this.inboxService.removeConnectedInboxById(disconnectedFriend._id);
-      this.messageService.removeMessagesFromFriend(disconnectedFriend);
-      this.inviteService.removeInvitesFromFriend(disconnectedFriend);
-    });
-
-    inbox.onMessage('dispose', (inboxId: string) => {
-      this.friendService.updateFriendStatus(inboxId, { presence: 'Offline' });
-      this.inboxService.removeConnectedInboxById(inboxId);
-    });
-    inbox.onError((code, message) =>
-      console.log(
-        `An error occurred with the inbox. Error Code: ${code} | Message: ${message}`
-      )
-    );
-    return inbox;
   }
 }

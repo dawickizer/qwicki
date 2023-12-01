@@ -58,6 +58,7 @@ import { InactivityService } from './state/inactivity/inactivity.service';
 import { InactivityStateService } from './state/inactivity/inactivity.state.service';
 import { InboundNotificationsComponent } from './components/social/inbound-notifications/inbound-notifications.component';
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
+import { InboxOnMessageService } from './state/inbox/inbox.on-message.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
 import { InfoBubbleComponent } from './components/misc/info-bubble/info-bubble.component';
@@ -174,6 +175,7 @@ import { UserStateService } from './state/user/user.state.service';
     InactivityService,
     InactivityStateService,
     InboxEffectService,
+    InboxOnMessageService,
     InboxService,
     InboxStateService,
     InviteApiService,
