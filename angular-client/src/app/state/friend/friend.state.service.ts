@@ -176,7 +176,7 @@ export class FriendStateService {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
-    const updatedFriends = [friend, ...currentState.friends];
+    const updatedFriends = [new Friend(friend), ...currentState.friends];
     this._friendState.next({
       ...currentState,
       friends: updatedFriends,

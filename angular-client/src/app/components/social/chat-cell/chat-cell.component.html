@@ -10,7 +10,7 @@
       [style]="panelOpenState ? 'color:#7b1fa2' : 'color:aliceblue'">
       <app-presence
         class="presence"
-        [presence]="friend.status.presence"></app-presence>
+        [presence]="friend?.status?.presence"></app-presence>
       {{ friend.username }}
 
       <app-status-bubble

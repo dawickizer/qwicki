@@ -28,17 +28,17 @@ export class FriendsTabComponent {
       const existingFriend = this.friends.data.find(f => f._id === friend._id);
       if (existingFriend) {
         // Check if onlineIndex or offlineIndex have changed
-        if (existingFriend.status.presence !== friend.status.presence) {
-          existingFriend.status.presence = friend.status.presence;
+        if (existingFriend.status?.presence !== friend.status?.presence) {
+          existingFriend.status.presence = friend.status?.presence;
         }
-        if (existingFriend.status.activity !== friend.status.activity) {
-          existingFriend.status.activity = friend.status.activity;
+        if (existingFriend.status?.activity !== friend.status?.activity) {
+          existingFriend.status.activity = friend.status?.activity;
         }
-        if (existingFriend.status.queueType !== friend.status.queueType) {
-          existingFriend.status.queueType = friend.status.queueType;
+        if (existingFriend.status?.queueType !== friend.status?.queueType) {
+          existingFriend.status.queueType = friend.status?.queueType;
         }
-        if (existingFriend.status.gameType !== friend.status.gameType) {
-          existingFriend.status.gameType = friend.status.gameType;
+        if (existingFriend.status?.gameType !== friend.status?.gameType) {
+          existingFriend.status.gameType = friend.status?.gameType;
         }
         if (existingFriend.isTyping !== friend.isTyping) {
           existingFriend.isTyping = friend.isTyping;
