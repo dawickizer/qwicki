@@ -1,1 +1,17 @@
-<p>dashboard works!</p>
+<mat-tab-group>
+  <mat-tab label="Lobby">
+    <div class="dashboard-container">
+      <div class="app-container">
+        <mat-grid-list cols="5" rowHeight="100%">
+          <mat-grid-tile
+            *ngFor="let tile of tiles"
+            [style.background]="tile.color">
+            {{ tile.text }}
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
+      <div class="action-container"></div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Settings">...</mat-tab>
+</mat-tab-group>
