@@ -10,6 +10,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatInputModule } from '@angular/material/input';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
@@ -80,6 +81,7 @@ import { MessageOrchestratorService } from './state/message/message.orchestrator
 import { MessageService } from './state/message/message.service';
 import { MessageStateService } from './state/message/message.state.service';
 import { NavbarComponent } from './components/layout/navbar/navbar.component';
+import { NavigationMenuComponent } from './components/misc/navigation-menu/navigation-menu.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
 import { OutboundNotificationsComponent } from './components/social/outbound-notifications/outbound-notifications.component';
@@ -118,6 +120,7 @@ import { UserStateService } from './state/user/user.state.service';
     LoginComponent,
     MainLayoutComponent,
     NavbarComponent,
+    NavigationMenuComponent,
     NotFoundComponent,
     NotificationBadgeComponent,
     OutboundNotificationsComponent,
@@ -141,6 +144,7 @@ import { UserStateService } from './state/user/user.state.service';
     MatExpansionModule,
     MatGridListModule,
     MatInputModule,
+    MatMenuModule,
     MatSelectModule,
     MatSidenavModule,
     MatSliderModule,

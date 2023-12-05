@@ -1,16 +1,21 @@
 <mat-drawer-container class="example-container" autosize>
   <mat-drawer #drawer class="example-sidenav" mode="over">
+    <span routerLink="/" matTooltip="Home" class="material-icons profile-icon"
+      >home</span
+    >
     <h1>Settings</h1>
     <mat-divider></mat-divider>
     <br />
     <br />
     Sensitivity
     <mat-slider
+      name="cameraSensitivity"
       min="200"
       max="20000"
-      [(ngModel)]="cameraSensitivity"
-      (change)="setCameraSensitivity(cameraSensitivity)"
-      thumbLabel="true"></mat-slider>
+      [discrete]="true"
+      (change)="setCameraSensitivity(cameraSensitivity)">
+      <input matSliderThumb [(ngModel)]="cameraSensitivity" #slider />
+    </mat-slider>
     <span class="material-icons">mouse</span>
     <br />
     <br />

@@ -188,8 +188,10 @@ export class BabylonjsComponent implements AfterViewInit, OnDestroy {
     this.keyBindService.setKeyBind('keydown', event => {
       if (event.code == 'Tab') {
         event.preventDefault();
-        if (this.drawer.opened) this.canvas.nativeElement.requestPointerLock();
-        else document.exitPointerLock();
+        if (this.drawer.opened) {
+          this.canvas.nativeElement.requestPointerLock();
+          this.canvas.nativeElement.requestFullscreen();
+        } else document.exitPointerLock();
         if (document.fullscreenElement) document.exitFullscreen();
         this.drawer.toggle();
       }

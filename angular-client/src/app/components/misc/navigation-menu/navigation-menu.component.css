@@ -1,0 +1,7 @@
+.menu-icon {
+  margin-right: 8px;
+}
+
+::ng-deep .menu .mat-mdc-menu-content {
+  background: var(--dark);
+}

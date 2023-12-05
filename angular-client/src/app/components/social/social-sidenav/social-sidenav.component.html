@@ -1,9 +1,6 @@
 <div class="profile-section">
-  <span
-    routerLink="/user-profile"
-    matTooltip="Go to User Profile"
-    class="material-icons profile-icon"
-    >account_circle</span
+  <span routerLink="/" matTooltip="Home" class="material-icons profile-icon"
+    >home</span
   >
   <ng-container *ngIf="user$ | async as user">
     <h1>{{ user.username }}</h1>
@@ -13,6 +10,8 @@
       [readOnly]="false"
       [presence]="user?.status?.presence"></app-presence>
   </ng-container>
+  <div class="flex-spacer"></div>
+  <app-navigation-menu class="navigation-menu"></app-navigation-menu>
 </div>
 <mat-divider></mat-divider>
 <mat-tab-group class="tab-group" (selectedIndexChange)="onTabChanged($event)">

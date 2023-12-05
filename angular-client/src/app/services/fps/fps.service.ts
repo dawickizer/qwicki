@@ -718,9 +718,10 @@ export class FpsService {
   handlePointerEvents() {
     // Hide and lock mouse cursor when scene is clicked
     this.scene.onPointerDown = event => {
-      if (!this.isSceneLocked)
+      if (!this.isSceneLocked) {
         this.canvas.nativeElement.requestPointerLock(); // lock the screen if left mouse clicked and screen not locked
-      else if (this.isSceneLocked && event.button == 0) this.fireWeapon(); // screen is locked...fire weapon
+        this.canvas.nativeElement.requestFullscreen();
+      } else if (this.isSceneLocked && event.button == 0) this.fireWeapon(); // screen is locked...fire weapon
     };
 
     this.scene.onPointerUp = event => {

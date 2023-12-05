@@ -36,10 +36,6 @@ const routes: Routes = [
         component: GameComponent,
       },
       {
-        path: 'babylonjs',
-        component: BabylonjsComponent,
-      },
-      {
         path: 'user-profile',
         component: UserProfileComponent,
       },
@@ -47,6 +43,11 @@ const routes: Routes = [
     ],
   },
   // routes defined outside the layout
+  {
+    path: 'babylonjs',
+    canActivate: [AuthGuardService],
+    component: BabylonjsComponent,
+  },
   {
     path: 'auth',
     children: [

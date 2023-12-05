@@ -1,1 +1,19 @@
-<p>Party lobby!</p>
+<mat-tab-group>
+  <mat-tab label="Lobby">
+    <div class="lobby-container">
+      <div class="app-container">
+        <mat-grid-list cols="5" rowHeight="100%">
+          <mat-grid-tile
+            *ngFor="let tile of tiles"
+            [style.background]="tile.color">
+            {{ tile.text }}
+          </mat-grid-tile>
+        </mat-grid-list>
+      </div>
+      <div class="action-container">
+        <button (click)="toggleFullScreen()">Toggle Full Screen</button>
+      </div>
+    </div>
+  </mat-tab>
+  <mat-tab label="Settings">...</mat-tab>
+</mat-tab-group>

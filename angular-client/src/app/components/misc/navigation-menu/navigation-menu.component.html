@@ -1,0 +1,29 @@
+<span
+  [matMenuTriggerFor]="menu"
+  matTooltip="Menu"
+  class="material-icons menu-icon"
+  >menu</span
+>
+<mat-menu #menu="matMenu" class="menu">
+  <button mat-menu-item routerLink="/">
+    <span class="material-icons menu-icon">home</span>
+    <span>Home</span>
+  </button>
+  <button mat-menu-item routerLink="/user-profile">
+    <span class="material-icons menu-icon">account_circle</span>
+    <span>User Profile</span>
+  </button>
+  <button mat-menu-item routerLink="/babylonjs">
+    <span class="material-icons menu-icon">sports_esports</span>
+    <span>Game</span>
+  </button>
+  <button mat-menu-item routerLink="/settings">
+    <span class="material-icons menu-icon">settings</span>
+    <span>Settings</span>
+  </button>
+  <mat-divider></mat-divider>
+  <button mat-menu-item (click)="logout()">
+    <span class="material-icons menu-icon">logout</span>
+    <span>Logout</span>
+  </button>
+</mat-menu>
