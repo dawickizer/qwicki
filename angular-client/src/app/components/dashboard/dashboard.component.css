@@ -1,24 +1,30 @@
-html,
-body {
-  margin: 0;
-  padding: 0;
+.grid-container {
+  height: 80%;
+  background: rgb(131, 14, 121);
+}
+
+.bottom-div {
+  height: 20%;
+}
+
+.group-chat-box {
+  height: 100%;
+  width: 100%;
+}
+
+::ng-deep .start .mat-grid-tile-content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   height: 100%;
 }
 
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  height: 100vh;
-}
-
-.app-container {
-  flex: 1; /* Takes up all available space */
-  overflow: auto;
-}
-
-.action-container {
-  /* Set the height as required */
-  height: 200px; /* Example height, adjust as needed */
+.start-button {
   width: 100%;
-  /* Add more styling as needed */
+}
+
+.queue-controls {
+  height: 100%;
+  width: 100%;
 }

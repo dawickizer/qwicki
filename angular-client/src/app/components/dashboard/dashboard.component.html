@@ -1,17 +1,29 @@
-<mat-tab-group>
-  <mat-tab label="Lobby">
-    <div class="dashboard-container">
-      <div class="app-container">
-        <mat-grid-list cols="5" rowHeight="100%">
-          <mat-grid-tile
-            *ngFor="let tile of tiles"
-            [style.background]="tile.color">
-            {{ tile.text }}
-          </mat-grid-tile>
-        </mat-grid-list>
-      </div>
-      <div class="action-container"></div>
-    </div>
-  </mat-tab>
-  <mat-tab label="Settings">...</mat-tab>
-</mat-tab-group>
+<div class="grid-container">
+  <mat-grid-list cols="5" rowHeight="100%">
+    <mat-grid-tile *ngFor="let tile of tiles" [style.background]="tile.color">
+      {{ tile.text }}
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>
+<div class="bottom-div">
+  <mat-grid-list cols="3" rowHeight="100%">
+    <mat-grid-tile class="chat">
+      <app-group-chat-box class="group-chat-box"></app-group-chat-box>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="start">
+      <button
+        class="start-button"
+        mat-raised-button
+        color="primary"
+        routerLink="/babylonjs"
+        (click)="start()">
+        Start
+      </button>
+    </mat-grid-tile>
+
+    <mat-grid-tile class="queue">
+      <app-queue-controls class="queue-controls"></app-queue-controls>
+    </mat-grid-tile>
+  </mat-grid-list>
+</div>

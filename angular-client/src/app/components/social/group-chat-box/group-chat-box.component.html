@@ -1,0 +1,31 @@
+<div class="chat-box">
+  <div class="message-area" #scrollable>
+    <div *ngFor="let message of messages">
+      <span class="username">{{ message.from.username }}</span>
+      <span class="timestamp"
+        >[{{ message.createdAt | date: 'mediumTime' }}]</span
+      >:
+      <span class="message-content">{{ message.content }}</span>
+    </div>
+  </div>
+  <div class="input-area">
+    <mat-form-field class="input-field">
+      <mat-label>Chat</mat-label>
+      <input
+        [(ngModel)]="newMessage"
+        (keydown.enter)="sendMessage($event)"
+        cdkTextareaAutosize
+        matInput
+        maxlength="250"
+        #input />
+      <span
+        *ngIf="newMessage"
+        matSuffix
+        matTooltip="Send Message"
+        (click)="sendMessage()"
+        class="material-icons send-icon">
+        send
+      </span>
+    </mat-form-field>
+  </div>
+</div>

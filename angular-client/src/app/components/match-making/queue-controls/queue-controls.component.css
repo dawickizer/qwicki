@@ -1,0 +1,13 @@
+.queue-controls {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  /* align-items: center; */
+  justify-content: center;
+  color: var(--title-text-color);
+}
+
+.queue-controls mat-label {
+  font-size: 1.2em;
+}

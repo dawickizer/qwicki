@@ -1,0 +1,39 @@
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  color: var(--title-text-color);
+}
+
+.message-area {
+  flex: 1;
+  padding: 8px;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.username {
+  color: #007bff;
+  font-weight: bold;
+}
+
+.timestamp {
+  color: #6c757d;
+  margin: 0 4px;
+}
+
+.message-content {
+  color: aliceblue;
+}
+
+.input-area {
+  height: 30%;
+}
+
+.input-field {
+  width: 100%;
+  max-width: 100%;
+}

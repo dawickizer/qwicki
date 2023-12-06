@@ -3,9 +3,10 @@ import { BrowserModule } from '@angular/platform-browser';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
-import { MatCardModule } from '@angular/material/card';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
+import { MatCardModule } from '@angular/material/card';
+import { MatChipsModule } from '@angular/material/chips';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
@@ -50,6 +51,7 @@ import { FriendsTabComponent } from './components/social/friends-tab/friends-tab
 import { FriendStateService } from './state/friend/friend.state.service';
 import { GameComponent } from './components/game/game/game.component';
 import { GameService } from './services/game/game.service';
+import { GroupChatBoxComponent } from './components/social/group-chat-box/group-chat-box.component';
 import { GroupsListComponent } from './components/social/groups-list/groups-list.component';
 import { GroupsTabComponent } from './components/social/groups-tab/groups-tab.component';
 import { GunService } from './services/gun/gun.service';
@@ -87,6 +89,7 @@ import { NotificationBadgeComponent } from './components/misc/notification-badge
 import { OutboundNotificationsComponent } from './components/social/outbound-notifications/outbound-notifications.component';
 import { PlayerService } from './services/player/player.service';
 import { PresenceComponent } from './components/misc/presence/presence.component';
+import { QueueControlsComponent } from './components/match-making/queue-controls/queue-controls.component';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
 import { StatusBubbleComponent } from './components/misc/status-bubble/status-bubble.component';
@@ -109,6 +112,7 @@ import { UserStateService } from './state/user/user.state.service';
     FriendsListComponent,
     FriendsTabComponent,
     GameComponent,
+    GroupChatBoxComponent,
     GroupsListComponent,
     GroupsTabComponent,
     HomeComponent,
@@ -125,6 +129,7 @@ import { UserStateService } from './state/user/user.state.service';
     NotificationBadgeComponent,
     OutboundNotificationsComponent,
     PresenceComponent,
+    QueueControlsComponent,
     SignupComponent,
     SocialSidenavComponent,
     StatusBubbleComponent,
@@ -140,6 +145,7 @@ import { UserStateService } from './state/user/user.state.service';
     MatBadgeModule,
     MatButtonModule,
     MatCardModule,
+    MatChipsModule,
     MatDividerModule,
     MatExpansionModule,
     MatGridListModule,

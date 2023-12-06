@@ -13,4 +13,8 @@ export class DashboardComponent {
     { text: 'Four', color: '#DDBDF1' },
     { text: 'Five', color: 'red' },
   ];
+
+  start() {
+    console.log('start');
+  }
 }
