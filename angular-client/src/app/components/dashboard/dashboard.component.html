@@ -1,7 +1,11 @@
 <div class="grid-container">
   <mat-grid-list cols="5" rowHeight="100%">
-    <mat-grid-tile *ngFor="let tile of tiles" [style.background]="tile.color">
-      {{ tile.text }}
+    <mat-grid-tile
+      *ngFor="let panel of panels"
+      [style.background]="panel.color">
+      <app-lobby-panel
+        class="lobby-panel"
+        [friend]="panel.friend"></app-lobby-panel>
     </mat-grid-tile>
   </mat-grid-list>
 </div>
@@ -10,7 +14,6 @@
     <mat-grid-tile class="chat">
       <app-group-chat-box class="group-chat-box"></app-group-chat-box>
     </mat-grid-tile>
-
     <mat-grid-tile class="start">
       <button
         class="start-button"
@@ -21,7 +24,6 @@
         Start
       </button>
     </mat-grid-tile>
-
     <mat-grid-tile class="queue">
       <app-queue-controls class="queue-controls"></app-queue-controls>
     </mat-grid-tile>

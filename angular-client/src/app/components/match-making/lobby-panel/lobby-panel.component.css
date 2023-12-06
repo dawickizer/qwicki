@@ -1,0 +1,62 @@
+.lobby-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background: var(--dark);
+  border-radius: 10px;
+}
+
+.friend-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.5em;
+}
+
+.friend-info img {
+  width: calc(10vw); /* 10% of the viewport width */
+  height: calc(10vw); /* Same as width to maintain a circle */
+  max-width: 100px; /* Maximum size */
+  max-height: 100px; /* Maximum size */
+  border-radius: 50%; /* Circular shape */
+}
+
+.friend-controls button {
+  margin: 5px;
+}
+
+.empty-icon {
+  width: calc(10vw); /* 10% of the viewport width */
+  height: calc(10vw); /* Same as width to maintain a circle */
+  max-width: 100px; /* Maximum size */
+  max-height: 100px; /* Maximum size */
+  border-radius: 50%; /* Circular shape */
+
+  border: 2px solid var(--purple); /* Border to represent the outline */
+  margin-bottom: 10px; /* Space between the icon and the invite text */
+  cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-icon:hover {
+  transform: scale(1.1); /* Slight zoom effect on hover */
+  color: #9c27b0; /* A slightly darker shade on hover */
+}
+
+.invite-panel {
+  opacity: 0.3; /* Reduce opacity */
+  transition: opacity 0.3s; /* Smooth transition for hover effect */
+}
+
+.invite-panel:hover {
+  opacity: 1; /* Full opacity on hover */
+}
+
+.active-panel {
+  border-bottom: 8px solid var(--purple); /* Bottom border for active panels */
+}

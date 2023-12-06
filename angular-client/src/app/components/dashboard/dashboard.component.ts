@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Friend } from 'src/app/state/friend/friend.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -6,12 +7,12 @@ import { Component } from '@angular/core';
   styleUrls: ['./dashboard.component.css'],
 })
 export class DashboardComponent {
-  tiles = [
-    { text: 'One', color: 'lightblue' },
-    { text: 'Two', color: 'lightgreen' },
-    { text: 'Three', color: 'lightpink' },
-    { text: 'Four', color: '#DDBDF1' },
-    { text: 'Five', color: 'red' },
+  panels = [
+    { friend: null, color: 'none' },
+    { friend: new Friend({ username: 'Senjoku' }), color: 'none' },
+    { friend: new Friend({ username: 'MintOwl' }), color: 'none' },
+    { friend: null, color: 'none' },
+    { friend: null, color: 'none' },
   ];
 
   start() {

@@ -1,0 +1,26 @@
+<div
+  class="lobby-panel"
+  [ngClass]="{ 'invite-panel': !friend, 'active-panel': friend }">
+  <ng-container *ngIf="friend; else invitePanel">
+    <div class="friend-info">
+      <img src="/assets/qwicki-coin.png" alt="{{ friend.username }}" />
+      <span>{{ friend.username }}</span>
+    </div>
+    <div class="friend-controls">
+      <span
+        matTooltip="Kick Friend"
+        (click)="kick(friend)"
+        class="material-icons-outlined"
+        aria-label="Kick friend">
+        group_remove
+      </span>
+    </div>
+  </ng-container>
+  <ng-template #invitePanel>
+    <div matTooltip="Invite Friend" class="empty-icon" (click)="invite()">
+      <span class="material-icons-outlined" aria-label="Invite friend">
+        add
+      </span>
+    </div>
+  </ng-template>
+</div>

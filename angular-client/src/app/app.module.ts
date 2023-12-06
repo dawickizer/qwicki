@@ -99,6 +99,7 @@ import { UserEffectService } from './state/user/user.effect.service';
 import { UserOrchestratorService } from './state/user/user.orchestrator.service';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
+import { LobbyPanelComponent } from './components/match-making/lobby-panel/lobby-panel.component';
 
 @NgModule({
   declarations: [
@@ -134,6 +135,7 @@ import { UserStateService } from './state/user/user.state.service';
     SocialSidenavComponent,
     StatusBubbleComponent,
     UserProfileComponent,
+    LobbyPanelComponent,
   ],
   imports: [
     AppRoutingModule,

@@ -1,10 +1,16 @@
 .grid-container {
   height: 80%;
-  background: rgb(131, 14, 121);
 }
 
 .bottom-div {
   height: 20%;
+}
+
+.lobby-panel {
+  height: 100%;
+  width: 100%;
+  padding: 8px;
+  padding-top: 16px;
 }
 
 .group-chat-box {
