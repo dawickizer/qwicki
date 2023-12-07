@@ -25,9 +25,9 @@
     <div class="friends-list">
       <button
         mat-menu-item
-        *ngFor="let friend of filteredFriends | async"
+        *ngFor="let friend of filteredFriends$ | async"
         (click)="invite(friend)">
-        {{ friend }}
+        {{ friend.username }}
       </button>
     </div>
   </div>

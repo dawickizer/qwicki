@@ -1,8 +1,10 @@
 import { Component, ViewChild, ElementRef, Input, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatMenuTrigger } from '@angular/material/menu';
-import { Observable, map, startWith } from 'rxjs';
+import { Observable, combineLatest, map, startWith } from 'rxjs';
 import { Friend } from 'src/app/state/friend/friend.model';
+import { FriendService } from 'src/app/state/friend/friend.service';
+import { InviteOrchestratorService } from 'src/app/state/invite/invite.orchestrator.service';
 
 @Component({
   selector: 'app-invite-friend-menu',
@@ -16,27 +18,20 @@ export class InviteFriendMenuComponent implements OnInit {
   @Input() toolTipText: string | null = 'Invite Friend';
 
   friendSearchCtrl = new FormControl();
-  filteredFriends: Observable<string[]>;
-  allFriends: string[] = [
-    'Friend 1',
-    'Friend 2',
-    'Friend 3',
-    'Friend 1',
-    'Friend 2',
-    'Friend 3',
-    'Friend 1',
-    'Friend 2',
-    'Friend 3',
-    'Friend 1',
-    'Friend 2',
-    'Friend 3',
-  ];
+  filteredFriends$: Observable<Friend[]>;
+
+  constructor(
+    private friendService: FriendService,
+    private inviteOrchestatorService: InviteOrchestratorService
+  ) {}
 
   ngOnInit() {
-    this.filteredFriends = this.friendSearchCtrl.valueChanges.pipe(
-      startWith(''),
-      map(friend =>
-        friend ? this._filterFriends(friend) : this.allFriends.slice()
+    this.filteredFriends$ = combineLatest([
+      this.friendService.friends$,
+      this.friendSearchCtrl.valueChanges.pipe(startWith('')),
+    ]).pipe(
+      map(([friends, search]) =>
+        search ? this._filterFriends(friends, search) : friends
       )
     );
   }
@@ -48,8 +43,8 @@ export class InviteFriendMenuComponent implements OnInit {
     }
   }
 
-  invite(friend: Friend | string) {
-    console.log(friend);
+  invite(friend: Friend) {
+    this.inviteOrchestatorService.sendInvite(friend).subscribe();
   }
 
   onMenuOpened() {
@@ -61,10 +56,10 @@ export class InviteFriendMenuComponent implements OnInit {
     this.friendSearchCtrl.reset();
   }
 
-  private _filterFriends(value: string): string[] {
+  private _filterFriends(friends: Friend[], value: string): Friend[] {
     const filterValue = value.toLowerCase();
-    return this.allFriends.filter(friend =>
-      friend.toLowerCase().includes(filterValue)
+    return friends.filter(
+      friend => friend.username?.toLowerCase().includes(filterValue)
     );
   }
 }
