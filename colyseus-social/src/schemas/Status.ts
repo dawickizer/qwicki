@@ -2,10 +2,10 @@ import { Schema, type } from '@colyseus/schema';
 
 export class Status extends Schema {
   @type('string')
-  presence: Presence = 'Offline';
+  presence: Presence;
 
   @type('string')
-  activity: Activity = 'In Lobby';
+  activity: Activity;
 
   @type('string')
   queueType?: QueueType;

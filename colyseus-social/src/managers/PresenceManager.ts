@@ -24,7 +24,11 @@ export class PresenceManager extends InboxManager {
 
   setOnMessageListeners() {
     this.inbox.onMessage('updateHostStatus', (client, status: Status) => {
-      this.inbox.state.host.status = new Status(status);
+      const mergedStatus = status
+        ? { ...this.inbox.state.host.status, ...status }
+        : new Status();
+
+      this.inbox.state.host.status = new Status(mergedStatus);
       this.inbox.broadcast(
         'status',
         {
@@ -39,7 +43,10 @@ export class PresenceManager extends InboxManager {
       'notifyHostStatus',
       (client, friend: { id: string; status: Status }) => {
         const user = this.inbox.getUserById(friend.id);
-        user.status = new Status(friend.status);
+        const mergedStatus = friend.status
+          ? { ...user.status, ...friend.status }
+          : new Status();
+        user.status = new Status(mergedStatus);
         this.notifyHostUserStatus(user);
       }
     );
