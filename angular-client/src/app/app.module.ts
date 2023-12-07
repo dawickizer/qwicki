@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatBadgeModule } from '@angular/material/badge';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -100,6 +101,7 @@ import { UserOrchestratorService } from './state/user/user.orchestrator.service'
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
 import { LobbyPanelComponent } from './components/match-making/lobby-panel/lobby-panel.component';
+import { InviteFriendMenuComponent } from './components/match-making/invite-friend-menu/invite-friend-menu.component';
 
 @NgModule({
   declarations: [
@@ -136,6 +138,7 @@ import { LobbyPanelComponent } from './components/match-making/lobby-panel/lobby
     StatusBubbleComponent,
     UserProfileComponent,
     LobbyPanelComponent,
+    InviteFriendMenuComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -144,6 +147,7 @@ import { LobbyPanelComponent } from './components/match-making/lobby-panel/lobby
     DragDropModule,
     FormsModule,
     HttpClientModule,
+    MatAutocompleteModule,
     MatBadgeModule,
     MatButtonModule,
     MatCardModule,

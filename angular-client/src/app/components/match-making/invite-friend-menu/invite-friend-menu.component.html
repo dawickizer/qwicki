@@ -1,0 +1,34 @@
+<span
+  [matTooltip]="toolTipText"
+  class="material-icons-outlined"
+  aria-label="Invite friend"
+  #trigger="matMenuTrigger"
+  [matMenuTriggerFor]="menu"
+  (click)="onMenuOpened()">
+  add
+</span>
+
+<mat-menu #menu="matMenu" (closed)="onMenuClosed()" class="menu">
+  <div class="menu-content">
+    <div class="search-bar">
+      <mat-form-field
+        class="example-full-width"
+        (click)="$event.stopPropagation()">
+        <input
+          matInput
+          placeholder="Search"
+          [formControl]="friendSearchCtrl"
+          (keydown)="$event.stopPropagation()"
+          #searchInput />
+      </mat-form-field>
+    </div>
+    <div class="friends-list">
+      <button
+        mat-menu-item
+        *ngFor="let friend of filteredFriends | async"
+        (click)="invite(friend)">
+        {{ friend }}
+      </button>
+    </div>
+  </div>
+</mat-menu>

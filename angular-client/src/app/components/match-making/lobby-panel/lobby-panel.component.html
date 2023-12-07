@@ -17,10 +17,13 @@
     </div>
   </ng-container>
   <ng-template #invitePanel>
-    <div matTooltip="Invite Friend" class="empty-icon" (click)="invite()">
-      <span class="material-icons-outlined" aria-label="Invite friend">
-        add
-      </span>
+    <div
+      matTooltip="Invite Friend"
+      class="empty-icon"
+      (click)="inviteFriendMenu.openMenu()">
+      <app-invite-friend-menu
+        [toolTipText]="null"
+        #inviteFriendMenu></app-invite-friend-menu>
     </div>
   </ng-template>
 </div>

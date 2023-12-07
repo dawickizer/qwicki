@@ -9,12 +9,8 @@ import { Friend } from 'src/app/state/friend/friend.model';
 export class LobbyPanelComponent {
   @Input() friend: Friend;
 
-  invite() {
-    console.log('INVITE');
-  }
-
   kick(friend: Friend) {
-    console.log(friend)
+    console.log(friend);
     this.friend = null;
   }
 }

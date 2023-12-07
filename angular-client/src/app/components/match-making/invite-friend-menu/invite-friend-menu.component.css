@@ -1,0 +1,29 @@
+.menu-icon {
+  margin-right: 8px;
+}
+
+::ng-deep .menu .mat-mdc-menu-content {
+  background: var(--dark);
+}
+
+.menu-content {
+  display: flex;
+  flex-direction: column;
+  max-height: 300px; /* Adjust based on your preference */
+  overflow-y: auto;
+}
+
+.search-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.friends-list {
+  overflow-y: auto;
+  max-height: 250px; /* Adjust to control the scrollable area height */
+}
+
+.example-full-width {
+  width: 100%;
+}
