@@ -199,7 +199,7 @@ export class AuthOrchestratorService {
               if (currentStatus) {
                 inbox =
                   this.inboxOnMessageService.setFriendInboxListeners(inbox);
-                this.friendService.updateFriendStatus(
+                this.friendService.setFriendStatus(
                   inbox.state.host._id,
                   currentStatus
                 );
@@ -211,7 +211,7 @@ export class AuthOrchestratorService {
                 inbox.onStateChange.once(state => {
                   inbox =
                     this.inboxOnMessageService.setFriendInboxListeners(inbox);
-                  this.friendService.updateFriendStatus(
+                  this.friendService.setFriendStatus(
                     state.host._id,
                     state.host.status
                   );

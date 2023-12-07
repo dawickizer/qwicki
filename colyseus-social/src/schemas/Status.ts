@@ -25,13 +25,13 @@ export class Status extends Schema {
   constructor(status?: Partial<Status>) {
     super();
     if (status) {
-      this.presence = status.presence ?? this.presence;
-      this.activity = status.activity ?? this.activity;
-      this.queueType = status.queueType ?? this.queueType;
-      this.gameType = status.gameType ?? this.gameType;
-      this.gameMode = status.gameMode ?? this.gameMode;
-      this.gameMap = status.gameMap ?? this.gameMap;
-      this.metadata = status.metadata ?? this.metadata;
+      this.presence = status.presence;
+      this.activity = status.activity;
+      this.queueType = status.queueType;
+      this.gameType = status.gameType;
+      this.gameMode = status.gameMode;
+      this.gameMap = status.gameMap;
+      this.metadata = status.metadata;
     }
   }
 }

@@ -82,8 +82,6 @@ export class FriendStateService {
 
   setFriendStatus(friendId: string, status: Status): void {
     this.setFriendStatusHelper(friendId, status);
-    if (status.presence === 'Online') this.reorderFriend(friendId, 'front');
-    else if (status.presence === 'Offline') this.reorderFriend(friendId, 'end');
   }
 
   setFriendsStatus(friendIds: string[], status: Status): void {
@@ -105,20 +103,36 @@ export class FriendStateService {
     // Create a shallow copy of the friends array
     const updatedFriends = [...currentState.friends];
 
+    // check if presence has changed or not..if so mark it as stale for sorting logic
+    const isPresenceStale =
+      updatedFriends[friendIndex].status.presence !== status.presence;
+
     // Update the status of the specified friend
     updatedFriends[friendIndex] = {
       ...updatedFriends[friendIndex],
-      status,
+      status:
+        Object.keys(status).length === 0
+          ? new Status({ presence: 'Offline' })
+          : status,
     };
 
     this._friendState.next({
       ...currentState,
       friends: updatedFriends.map(friend => new Friend(friend)),
     });
+
+    if (isPresenceStale) {
+      if (updatedFriends[friendIndex].status.presence === 'Online')
+        this.reorderFriend(friendId, 'front');
+      else if (updatedFriends[friendIndex].status.presence === 'Offline')
+        this.reorderFriend(friendId, 'end');
+    }
   }
 
   updateFriendStatus(friendId: string, status: Partial<Status>): void {
     this.updateFriendStatusHelper(friendId, status);
+
+    // just note for setFriendStatus we moved the logic to the helper function and added some stale checks...for now its probably ok to leave this code as is since it acts as an update as opposed to a set...but keep an eye on this
     if (status.presence === 'Online') this.reorderFriend(friendId, 'front');
     else if (status.presence === 'Offline') this.reorderFriend(friendId, 'end');
   }

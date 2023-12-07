@@ -48,7 +48,7 @@ export class InboxOnMessageService {
     );
 
     inbox.onMessage('status', (friend: { id: string; status: Status }) => {
-      this.friendService.updateFriendStatus(friend.id, friend.status);
+      this.friendService.setFriendStatus(friend.id, friend.status);
     });
 
     inbox.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
@@ -70,7 +70,7 @@ export class InboxOnMessageService {
           data.friendRequest
         );
         this.friendService.addFriend(data.friendRequest.to);
-        this.friendService.updateFriendStatus(
+        this.friendService.setFriendStatus(
           data.friendRequest.to._id,
           data.status
         );
@@ -134,7 +134,7 @@ export class InboxOnMessageService {
     });
 
     inbox.onMessage('status', (friend: { id: string; status: Status }) => {
-      this.friendService.updateFriendStatus(friend.id, friend.status);
+      this.friendService.setFriendStatus(friend.id, friend.status);
     });
 
     inbox.onMessage(
@@ -152,7 +152,10 @@ export class InboxOnMessageService {
     });
 
     inbox.onMessage('dispose', (inboxId: string) => {
-      this.friendService.updateFriendStatus(inboxId, { presence: 'Offline' });
+      this.friendService.setFriendStatus(
+        inboxId,
+        new Status({ presence: 'Offline' })
+      );
       this.inboxService.removeConnectedInboxById(inboxId);
     });
     inbox.onError((code, message) =>

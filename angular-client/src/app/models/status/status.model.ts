@@ -9,8 +9,8 @@ export class Status {
 
   constructor(status?: Partial<Status>) {
     if (status) {
-      this.presence = status.presence ?? 'Offline';
-      this.activity = status.activity ?? 'In Lobby';
+      this.presence = status.presence;
+      this.activity = status.activity;
       this.queueType = status.queueType;
       this.gameType = status.gameType;
       this.gameMode = status.gameMode;

@@ -98,14 +98,14 @@ export class FriendOrchestratorService {
                   inbox.send('acceptFriendRequest', friendRequest);
                   inbox =
                     this.inboxOnMessageService.setFriendInboxListeners(inbox);
-                  this.friendService.updateFriendStatus(
+                  this.friendService.setFriendStatus(
                     friendRequest.from._id,
                     state.host.status
                   );
                   this.inboxService.updateConnectedInbox(inbox);
                 });
               } else {
-                this.friendService.updateFriendStatus(friendRequest.from._id, {
+                this.friendService.setFriendStatus(friendRequest.from._id, {
                   presence: 'Offline',
                   activity: 'In Lobby',
                 });
