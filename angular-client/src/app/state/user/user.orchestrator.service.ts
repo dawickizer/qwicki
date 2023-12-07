@@ -39,7 +39,7 @@ export class UserOrchestratorService {
         (this.user.status.presence === 'Offline' && presence === 'Away')
       )
         return;
-      this.updateUserStatus({ presence }).subscribe();
+      this.updateStatus({ presence }).subscribe();
     });
   }
 
@@ -47,7 +47,7 @@ export class UserOrchestratorService {
     this.userService.setInitialState();
   }
 
-  updateUserStatus(status: Partial<Status>): Observable<Status> {
+  updateStatus(status: Partial<Status>): Observable<Status> {
     return new Observable(subscriber => {
       this.personalInbox.send('updateHostStatus', status);
       this.friendsInboxes.forEach(friendsInbox => {

@@ -1,14 +1,19 @@
 <div class="queue-controls">
   <mat-label>Queue Type</mat-label>
-  <mat-chip-listbox aria-label="Queue type">
-    <mat-chip-option *ngFor="let queueType of queueTypes" [value]="queueType">{{
-      queueType
-    }}</mat-chip-option>
+  <mat-chip-listbox
+    aria-label="Queue type"
+    (change)="onQueueTypeChange($event.value)">
+    <mat-chip-option *ngFor="let queueType of queueTypes" [value]="queueType">
+      {{ queueType }}
+    </mat-chip-option>
   </mat-chip-listbox>
+
   <mat-label>Game Type</mat-label>
-  <mat-chip-listbox aria-label="Game type">
-    <mat-chip-option *ngFor="let gameType of gameTypes" [value]="gameType">{{
-      gameType
-    }}</mat-chip-option>
+  <mat-chip-listbox
+    aria-label="Game type"
+    (change)="onGameTypeChange($event.value)">
+    <mat-chip-option *ngFor="let gameType of gameTypes" [value]="gameType">
+      {{ gameType }}
+    </mat-chip-option>
   </mat-chip-listbox>
 </div>

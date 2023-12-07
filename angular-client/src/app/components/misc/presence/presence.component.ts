@@ -30,7 +30,7 @@ export class PresenceComponent {
         this.presence = 'Online';
     }
     this.userOrchestratorService
-      .updateUserStatus({ presence: this.presence })
+      .updateStatus({ presence: this.presence })
       .subscribe();
   }
 }
