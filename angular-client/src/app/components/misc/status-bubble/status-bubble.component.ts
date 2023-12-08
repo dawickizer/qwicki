@@ -10,4 +10,12 @@ export class StatusBubbleComponent {
   @Input() color = 'var(--purple)';
   @Input() status: Status;
   @Input() disableToolTip = false;
+
+  get toolTipText(): string {
+    const gameType = this.status?.gameType;
+    const queueType = this.status?.queueType;
+    return gameType && queueType
+      ? `${gameType} - ${queueType}`
+      : gameType ?? queueType ?? '';
+  }
 }

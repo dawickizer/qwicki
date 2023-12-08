@@ -1,19 +1,27 @@
-<div class="queue-controls">
-  <mat-label>Queue Type</mat-label>
-  <mat-chip-listbox
-    aria-label="Queue type"
-    (change)="onQueueTypeChange($event.value)">
-    <mat-chip-option *ngFor="let queueType of queueTypes" [value]="queueType">
-      {{ queueType }}
-    </mat-chip-option>
-  </mat-chip-listbox>
+<ng-container *ngIf="user$ | async as user">
+  <div class="queue-controls">
+    <mat-label>Queue Type</mat-label>
+    <mat-chip-listbox
+      aria-label="Queue type"
+      (change)="onQueueTypeChange($event.value)">
+      <mat-chip-option
+        *ngFor="let qType of queueTypes"
+        [value]="qType"
+        [selected]="qType === user.status.queueType">
+        {{ qType }}
+      </mat-chip-option>
+    </mat-chip-listbox>
 
-  <mat-label>Game Type</mat-label>
-  <mat-chip-listbox
-    aria-label="Game type"
-    (change)="onGameTypeChange($event.value)">
-    <mat-chip-option *ngFor="let gameType of gameTypes" [value]="gameType">
-      {{ gameType }}
-    </mat-chip-option>
-  </mat-chip-listbox>
-</div>
+    <mat-label>Game Type</mat-label>
+    <mat-chip-listbox
+      aria-label="Game type"
+      (change)="onGameTypeChange($event.value)">
+      <mat-chip-option
+        *ngFor="let gType of gameTypes"
+        [value]="gType"
+        [selected]="gType === user.status.gameType">
+        {{ gType }}
+      </mat-chip-option>
+    </mat-chip-listbox>
+  </div>
+</ng-container>

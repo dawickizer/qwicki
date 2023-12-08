@@ -1,7 +1,7 @@
 <span
   [matTooltip]="disableToolTip ? null : toolTipText"
   [style.background-color]="color"
-  [ngClass]="{ 'info-label': true }"
-  [class.disabled-tooltip]="disableToolTip">
-  {{ infoText }}
+  class="info-label"
+  [class.disabled-tooltip]="disableToolTip"
+  >{{ infoText }}
 </span>

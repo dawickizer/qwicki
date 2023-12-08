@@ -1,6 +1,6 @@
 export class Status {
   presence: Presence = 'Offline';
-  activity: Activity = 'In Lobby';
+  activity: Activity;
   queueType?: QueueType;
   gameType?: GameType;
   gameMode?: GameMode;

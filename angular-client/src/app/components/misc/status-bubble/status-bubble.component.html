@@ -1,7 +1,7 @@
 <app-info-bubble
   *ngIf="status?.presence === 'Online'"
   class="status-bubble"
-  [toolTipText]="status?.gameType"
+  [toolTipText]="toolTipText"
   [infoText]="status?.activity"
   [color]="color">
 </app-info-bubble>

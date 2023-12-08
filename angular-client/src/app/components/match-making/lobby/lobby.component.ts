@@ -19,7 +19,9 @@ export class LobbyComponent implements OnInit {
   constructor(private userOrchestratorService: UserOrchestratorService) {}
 
   ngOnInit(): void {
-    this.userOrchestratorService.updateStatus({ activity: 'In Lobby' });
+    this.userOrchestratorService
+      .updateStatus({ activity: 'In Lobby' })
+      .subscribe();
   }
 
   simulateFriendJoin() {
