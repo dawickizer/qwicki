@@ -39,6 +39,7 @@ export class FriendRequestOrchestratorService {
         tap(async friendRequest => {
           if (friendRequest) {
             const inbox = await this.colyseusService.joinExistingRoomIfPresent(
+              'social',
               friendRequest.to._id,
               { jwt: this.jwt }
             );
@@ -57,6 +58,7 @@ export class FriendRequestOrchestratorService {
       .pipe(
         tap(async friendRequest => {
           const inbox = await this.colyseusService.joinExistingRoomIfPresent(
+            'social',
             friendRequest.to._id,
             { jwt: this.jwt }
           );
@@ -74,6 +76,7 @@ export class FriendRequestOrchestratorService {
       .pipe(
         tap(async friendRequest => {
           const inbox = await this.colyseusService.joinExistingRoomIfPresent(
+            'social',
             friendRequest.from._id,
             { jwt: this.jwt }
           );

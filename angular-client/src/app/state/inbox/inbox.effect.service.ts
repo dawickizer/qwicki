@@ -22,10 +22,9 @@ export class InboxEffectService {
     options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
-    return from(this.colyseusService.createRoom(inboxId, options)).pipe(
-      tap(this.handleConnectedInboxSuccess),
-      catchError(this.handleError)
-    );
+    return from(
+      this.colyseusService.createRoom('social', 'inbox', inboxId, options)
+    ).pipe(tap(this.handleConnectedInboxSuccess), catchError(this.handleError));
   }
 
   connectToInbox(
@@ -33,10 +32,9 @@ export class InboxEffectService {
     options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
-    return from(this.colyseusService.connectToRoom(inboxId, options)).pipe(
-      tap(this.handleConnectedInboxSuccess),
-      catchError(this.handleError)
-    );
+    return from(
+      this.colyseusService.connectToRoom('social', inboxId, options)
+    ).pipe(tap(this.handleConnectedInboxSuccess), catchError(this.handleError));
   }
 
   connectToInboxes(
@@ -44,7 +42,9 @@ export class InboxEffectService {
     options: { jwt: string; status: Partial<Status> }
   ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
-    return from(this.colyseusService.connectToRooms(inboxIds, options)).pipe(
+    return from(
+      this.colyseusService.connectToRooms('social', inboxIds, options)
+    ).pipe(
       tap(this.handleConnectedInboxesSuccess),
       catchError(this.handleError)
     );
@@ -56,7 +56,7 @@ export class InboxEffectService {
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(
-      this.colyseusService.joinExistingRoomIfPresent(inboxId, options)
+      this.colyseusService.joinExistingRoomIfPresent('social', inboxId, options)
     ).pipe(tap(this.handleConnectedInboxSuccess), catchError(this.handleError));
   }
 
@@ -66,7 +66,11 @@ export class InboxEffectService {
   ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
     return from(
-      this.colyseusService.joinExistingRoomsIfPresent(inboxIds, options)
+      this.colyseusService.joinExistingRoomsIfPresent(
+        'social',
+        inboxIds,
+        options
+      )
     ).pipe(
       tap(this.handleConnectedInboxesSuccess),
       catchError(this.handleError)
