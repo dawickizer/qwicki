@@ -4,7 +4,7 @@ import { Friend } from '../friend/friend.model';
 export class Invite extends Notification {
   _id?: string;
   accepted: boolean;
-  override type: 'party';
+  override type: InviteType;
   roomId: string;
   metadata: any;
 
@@ -22,3 +22,5 @@ export class Invite extends Notification {
     }
   }
 }
+
+export type InviteType = 'party';

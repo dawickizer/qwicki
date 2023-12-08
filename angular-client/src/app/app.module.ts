@@ -52,7 +52,6 @@ import { FriendsTabComponent } from './components/social/friends-tab/friends-tab
 import { FriendStateService } from './state/friend/friend.state.service';
 import { GameComponent } from './components/game/game/game.component';
 import { GameService } from './services/game/game.service';
-import { GroupChatBoxComponent } from './components/social/group-chat-box/group-chat-box.component';
 import { GroupsListComponent } from './components/social/groups-list/groups-list.component';
 import { GroupsTabComponent } from './components/social/groups-tab/groups-tab.component';
 import { GunService } from './services/gun/gun.service';
@@ -74,6 +73,7 @@ import { InviteStateService } from './state/invite/invite.state.service';
 import { IsTypingComponent } from './components/misc/is-typing/is-typing.component';
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
+import { LobbyChatBoxComponent } from './components/match-making/lobby-chat-box/lobby-chat-box.component';
 import { LobbyComponent } from './components/match-making/lobby/lobby.component';
 import { LoginComponent } from './components/auth/login/login.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
@@ -115,7 +115,6 @@ import { InviteFriendMenuComponent } from './components/match-making/invite-frie
     FriendsListComponent,
     FriendsTabComponent,
     GameComponent,
-    GroupChatBoxComponent,
     GroupsListComponent,
     GroupsTabComponent,
     HomeComponent,
@@ -123,6 +122,7 @@ import { InviteFriendMenuComponent } from './components/match-making/invite-frie
     InfoBubbleComponent,
     IsTypingComponent,
     JoinGameComponent,
+    LobbyChatBoxComponent,
     LobbyComponent,
     LoginComponent,
     MainLayoutComponent,

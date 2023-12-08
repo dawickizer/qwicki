@@ -3,11 +3,11 @@ import { Message } from 'src/app/state/message/message.model';
 import { Friend } from 'src/app/state/friend/friend.model';
 
 @Component({
-  selector: 'app-group-chat-box',
-  templateUrl: './group-chat-box.component.html',
-  styleUrls: ['./group-chat-box.component.css'],
+  selector: 'app-lobby-chat-box',
+  templateUrl: './lobby-chat-box.component.html',
+  styleUrls: ['./lobby-chat-box.component.css'],
 })
-export class GroupChatBoxComponent {
+export class LobbyChatBoxComponent {
   @ViewChild('scrollable') scrollable: ElementRef;
 
   messages: Message[] = [];
