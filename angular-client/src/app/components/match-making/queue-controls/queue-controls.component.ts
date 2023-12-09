@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GameType, QueueType } from 'src/app/models/status/status.model';
-import { User } from 'src/app/state/user/user.model';
 import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
 import { UserService } from 'src/app/state/user/user.service';
 
@@ -13,8 +12,8 @@ import { UserService } from 'src/app/state/user/user.service';
 export class QueueControlsComponent implements OnInit {
   queueTypes: QueueType[] = ['Solo', 'Duo', 'Squad'];
   gameTypes: GameType[] = ['Normal', 'Ranked', 'Money Match', 'Custom'];
-
-  user$: Observable<User>;
+  queueType$: Observable<QueueType>;
+  gameType$: Observable<GameType>;
 
   constructor(
     private userOrchestratorService: UserOrchestratorService,
@@ -22,7 +21,8 @@ export class QueueControlsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.user$ = this.userService.user$;
+    this.queueType$ = this.userService.queueType$;
+    this.gameType$ = this.userService.gameType$;
   }
 
   onQueueTypeChange(queueType: QueueType) {
