@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Friend } from 'src/app/state/friend/friend.model';
+import { Member } from 'src/app/models/member/member';
 
 @Component({
   selector: 'app-lobby-panel',
@@ -7,10 +7,10 @@ import { Friend } from 'src/app/state/friend/friend.model';
   styleUrls: ['./lobby-panel.component.css'],
 })
 export class LobbyPanelComponent {
-  @Input() friend: Friend;
+  @Input() member: Member;
 
-  kick(friend: Friend) {
-    console.log(friend);
-    this.friend = null;
+  kick(member: Member) {
+    console.log(member);
+    this.member = null;
   }
 }

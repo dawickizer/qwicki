@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap } from 'rxjs';
+import { Observable, tap, switchMap, map } from 'rxjs';
 import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { InboxService } from '../inbox/inbox.service';
@@ -7,6 +7,9 @@ import { Friend } from '../friend/friend.model';
 import { Room } from 'colyseus.js';
 import { InviteService } from '../invite/invite.service';
 import { Invite } from '../invite/invite.model';
+import { LobbyService } from '../lobby/lobby.service';
+import { Lobby } from '../lobby/lobby.model';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root',
@@ -15,10 +18,14 @@ export class InviteOrchestratorService {
   private user: User;
   private friendsInboxes: Room<any>[];
   private personalInbox: Room<any>;
+  private lobby: Lobby;
+  private jwt: string;
 
   constructor(
     private userService: UserService,
     private inboxService: InboxService,
+    private lobbyService: LobbyService,
+    private authService: AuthService,
     private inviteService: InviteService
   ) {
     this.subscribeToState();
@@ -32,17 +39,16 @@ export class InviteOrchestratorService {
     this.inboxService.personalInbox$.subscribe(
       personalInbox => (this.personalInbox = personalInbox)
     );
-  }
-
-  setInitialState() {
-    this.inviteService.setInitialState();
+    // potentially just get the relevant slice instead of the entire lobby
+    this.lobbyService.lobby$.subscribe(lobby => (this.lobby = lobby));
+    this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
   }
 
   sendInvite(friend: Friend): Observable<Invite> {
     const invite = new Invite();
     invite.to = friend;
     invite.type = 'party';
-    invite.roomId = '123';
+    invite.roomId = this.lobby._id;
     invite.metadata = 'Domination';
 
     return this.inviteService.sendInvite(this.user, invite).pipe(
@@ -104,7 +110,12 @@ export class InviteOrchestratorService {
         } else {
           this.personalInbox.send('acceptInviteToUser', invite);
         }
-      })
+      }),
+      switchMap(invite =>
+        this.lobbyService
+          .connectToLobby(invite.roomId, { jwt: this.jwt })
+          .pipe(map(() => invite))
+      )
     );
   }
 }

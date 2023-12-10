@@ -4,7 +4,8 @@ import { monitor } from '@colyseus/monitor';
 /**
  * Import your Room files
  */
-import { GameRoom } from './rooms/GameRoom';
+import { Game } from './rooms/Game';
+import { Lobby } from './rooms/Lobby';
 
 export default Arena({
   getId: () => 'Qwicki',
@@ -13,7 +14,8 @@ export default Arena({
     /**
      * Define your room handlers:
      */
-    gameServer.define('game_room', GameRoom);
+    gameServer.define('game', Game);
+    gameServer.define('lobby', Lobby);
   },
 
   initializeExpress: app => {

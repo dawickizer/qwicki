@@ -9,14 +9,14 @@
   border-radius: 10px;
 }
 
-.friend-info {
+.member-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 1.5em;
 }
 
-.friend-info img {
+.member-info img {
   width: calc(10vw); /* 10% of the viewport width */
   height: calc(10vw); /* Same as width to maintain a circle */
   max-width: 100px; /* Maximum size */
@@ -24,7 +24,7 @@
   border-radius: 50%; /* Circular shape */
 }
 
-.friend-controls button {
+.member-controls button {
   margin: 5px;
 }
 

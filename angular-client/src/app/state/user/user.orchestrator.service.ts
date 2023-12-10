@@ -43,10 +43,6 @@ export class UserOrchestratorService {
     });
   }
 
-  setInitialState() {
-    this.userService.setInitialState();
-  }
-
   updateStatus(status: Partial<Status>): Observable<Status> {
     return new Observable(subscriber => {
       this.personalInbox.send('updateHostStatus', status);

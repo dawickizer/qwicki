@@ -118,7 +118,7 @@ export class ColyseusService {
   }
 
   leaveRoom(room: Colyseus.Room): Promise<number> {
-    return room.leave();
+    return room ? room.leave() : Promise.resolve(-1);
   }
 
   leaveRooms(rooms: Colyseus.Room[]): Promise<number[]> {

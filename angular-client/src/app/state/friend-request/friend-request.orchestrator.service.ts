@@ -28,10 +28,6 @@ export class FriendRequestOrchestratorService {
     this.userService.user$.subscribe(user => (this.user = user));
   }
 
-  setInitialState() {
-    this.friendRequestService.setInitialState();
-  }
-
   sendFriendRequest(potentialFriend: string): Observable<FriendRequest> {
     return this.friendRequestService
       .sendFriendRequest(this.user, potentialFriend)

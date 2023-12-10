@@ -18,6 +18,8 @@ import { InboxService } from '../inbox/inbox.service';
 import { MessageService } from '../message/message.service';
 import { InviteService } from '../invite/invite.service';
 import { InboxOnMessageService } from '../inbox/inbox.on-message.service';
+import { LobbyService } from '../lobby/lobby.service';
+import { Lobby } from '../lobby/lobby.model';
 
 @Injectable({
   providedIn: 'root',
@@ -29,6 +31,7 @@ export class AuthOrchestratorService {
   private jwt: string;
   private decodedJwt: DecodedJwt;
   private connectedInboxes: Room<any>[];
+  private lobby: Lobby;
 
   constructor(
     private authService: AuthService,
@@ -38,6 +41,7 @@ export class AuthOrchestratorService {
     private friendService: FriendService,
     private userService: UserService,
     private inboxService: InboxService,
+    private lobbyService: LobbyService,
     private messageService: MessageService,
     private inviteService: InviteService,
     private inboxOnMessageService: InboxOnMessageService,
@@ -84,7 +88,9 @@ export class AuthOrchestratorService {
     this.inboxService
       .leaveInboxes(this.connectedInboxes, this.decodedJwt)
       .subscribe();
+    this.lobbyService.leaveLobby(this.lobby?.room).subscribe();
     this.inboxService.setInitialState();
+    this.lobbyService.setInitialState();
     this.userService.setInitialState();
     this.friendService.setInitialState();
     this.friendRequestService.setInitialState();
@@ -105,6 +111,7 @@ export class AuthOrchestratorService {
     this.inboxService.connectedInboxes$.subscribe(
       connectedInboxes => (this.connectedInboxes = connectedInboxes)
     );
+    this.lobbyService.lobby$.subscribe(lobby => (this.lobby = lobby));
     this.inactivityService.isTimedOut$.subscribe(isTimedOut => {
       if (isTimedOut) this.logout().subscribe();
     });

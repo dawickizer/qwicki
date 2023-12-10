@@ -51,10 +51,6 @@ export class FriendOrchestratorService {
     );
   }
 
-  setInitialState() {
-    this.friendService.setInitialState();
-  }
-
   deleteFriend(friend: Friend): Observable<Friend> {
     return this.friendService.deleteFriend(this.user, friend).pipe(
       switchMap(deletedFriend => {

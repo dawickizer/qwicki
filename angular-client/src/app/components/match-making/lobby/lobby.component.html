@@ -1,11 +1,9 @@
 <div class="grid-container">
   <mat-grid-list cols="5" rowHeight="100%">
-    <mat-grid-tile
-      *ngFor="let panel of panels"
-      [style.background]="panel.color">
+    <mat-grid-tile *ngFor="let panel of panels">
       <app-lobby-panel
         class="lobby-panel"
-        [friend]="panel.friend"></app-lobby-panel>
+        [member]="panel.member"></app-lobby-panel>
     </mat-grid-tile>
   </mat-grid-list>
 </div>
@@ -15,13 +13,6 @@
       <app-lobby-chat-box class="lobby-chat-box"></app-lobby-chat-box>
     </mat-grid-tile>
     <mat-grid-tile class="start">
-      <button
-        class="start-button"
-        mat-raised-button
-        color="primary"
-        (click)="simulateFriendJoin()">
-        Simulate Friend Join
-      </button>
       <button
         class="start-button"
         mat-raised-button

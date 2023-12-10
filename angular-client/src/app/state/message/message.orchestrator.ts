@@ -34,10 +34,6 @@ export class MessageOrchestratorService {
     );
   }
 
-  setInitialState() {
-    this.messageService.setInitialState();
-  }
-
   getAllMessagesBetween(friend: Friend): Observable<Map<string, Message[]>> {
     return this.messageService.getAllBetween(this.user, friend);
   }

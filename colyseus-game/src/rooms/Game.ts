@@ -1,13 +1,13 @@
 import { Room, Client } from 'colyseus';
 import { isAuthenticatedJWT } from '../middleware/auth';
-import { Player } from '../schemas/Player';
-import { GameRoomState } from '../schemas/GameRoomState';
+import { Player } from '../schemas/game/Player';
+import { GameState } from '../schemas/game/GameState';
 
-export class GameRoom extends Room<GameRoomState> {
+export class Game extends Room<GameState> {
   private _hostJoined: boolean = false;
 
   onCreate() {
-    this.setState(new GameRoomState());
+    this.setState(new GameState());
 
     this.onMessage('move', (client: Client, message: any) => {
       const player: Player = this.state.players.get(client.sessionId);
