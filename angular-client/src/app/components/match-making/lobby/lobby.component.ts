@@ -41,24 +41,23 @@ export class LobbyComponent implements OnInit {
     if (!members) return;
 
     const memberArray = Array.from(members.values());
-    const hostIndex = 2; // Host always in the middle
+    const host = memberArray.find(member => member.isHost);
 
     // Place host in the center panel
-    this.panels[hostIndex] = {
-      member: memberArray.find(member => member.isHost) ?? null,
-    };
+    this.panels[2] = { member: host ?? null };
 
-    // Fill remaining panels with non-host members
+    // Define the order for non-host members
+    const populateOrder = [1, 3, 0, 4];
     const nonHosts = memberArray.filter(member => !member.isHost);
 
-    // Place non-host members around the host
-    nonHosts.forEach((member, index) => {
-      if (index < hostIndex) {
-        this.panels[index] = { member };
-      } else if (index >= hostIndex && index + 1 < this.panels.length) {
-        this.panels[index + 1] = { member };
-      }
-    });
+    // Populate non-host members based on the defined order
+    for (
+      let i = 0, j = 0;
+      i < nonHosts.length && j < populateOrder.length;
+      i++, j++
+    ) {
+      this.panels[populateOrder[j]] = { member: nonHosts[i] };
+    }
   }
 
   start() {
