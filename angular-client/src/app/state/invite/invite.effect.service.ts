@@ -11,7 +11,7 @@ import { InviteStateService } from './invite.state.service';
 })
 export class InviteEffectService {
   private receivedInviteAudio = new Audio(
-    'assets/notifications/sounds/mixkit-magic-notification-ring-2344.wav'
+    'assets/notifications/sounds/invite-received.mp3'
   );
 
   constructor(

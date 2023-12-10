@@ -17,11 +17,11 @@
 }
 
 .member-info img {
-  width: calc(10vw); /* 10% of the viewport width */
-  height: calc(10vw); /* Same as width to maintain a circle */
-  max-width: 100px; /* Maximum size */
-  max-height: 100px; /* Maximum size */
-  border-radius: 50%; /* Circular shape */
+  width: calc(10vw); 
+  height: calc(10vw);
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 50%;
 }
 
 .member-controls button {
@@ -29,34 +29,176 @@
 }
 
 .empty-icon {
-  width: calc(10vw); /* 10% of the viewport width */
-  height: calc(10vw); /* Same as width to maintain a circle */
-  max-width: 100px; /* Maximum size */
-  max-height: 100px; /* Maximum size */
-  border-radius: 50%; /* Circular shape */
+  width: calc(10vw);
+  height: calc(10vw);
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 50%;
 
-  border: 2px solid var(--purple); /* Border to represent the outline */
-  margin-bottom: 10px; /* Space between the icon and the invite text */
-  cursor: pointer; /* Change cursor to pointer to indicate it's clickable */
+  border: 2px solid var(--purple);
+  margin-bottom: 10px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .empty-icon:hover {
-  transform: scale(1.1); /* Slight zoom effect on hover */
-  color: #9c27b0; /* A slightly darker shade on hover */
+  transform: scale(1.1);
+  color: #9c27b0; 
 }
 
 .invite-panel {
-  opacity: 0.3; /* Reduce opacity */
-  transition: opacity 0.3s; /* Smooth transition for hover effect */
+  opacity: 0.3; 
+  transition: opacity 0.3s; 
 }
 
 .invite-panel:hover {
-  opacity: 1; /* Full opacity on hover */
+  opacity: 1;
 }
 
 .active-panel {
-  border-bottom: 8px solid var(--purple); /* Bottom border for active panels */
+  border-bottom: 8px solid var(--purple);
+}
+
+
+
+
+
+
+.active-panel {
+  border-bottom: 8px solid transparent;
+  animation: slideInBorder 1s forwards, pulseData 1s ease-out;
+}
+
+@keyframes slideInBorder {
+  from {
+    border-bottom-color: transparent;
+  }
+  to {
+    border-bottom-color: var(--purple);
+  }
+}
+
+@keyframes pulseData {
+  0%, 100% { transform: scale(1); }
+  25% { transform: scale(1.1); }
+  50% { transform: scale(0.9); }
+  75% { transform: scale(1.05); }
+}
+
+.active-panel .member-info, .active-panel .member-controls {
+  animation: pulseData 1s ease-out;
+}
+
+.active-panel {
+  position: relative;
+  border-bottom: 8px solid transparent; 
+}
+
+.active-panel::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 8px;
+  background-color: var(--purple);
+  transition: width 0.5s ease-out;
+}
+
+.active-panel:hover::before,
+.active-panel::before {
+  width: 100%;
+}
+
+.lobby-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  background: var(--dark);
+  border-radius: 10px;
+  position: relative;
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 1.5em;
+}
+
+.member-info img {
+  width: calc(10vw);
+  height: calc(10vw); 
+  max-width: 100px;
+  max-height: 100px;
+  border-radius: 50%;
+}
+
+.member-controls button {
+  margin: 5px;
+}
+
+.empty-icon {
+  width: calc(10vw);
+  height: calc(10vw);
+  max-width: 100px; 
+  max-height: 100px;
+  border-radius: 50%;
+  border: 2px solid var(--purple); 
+  margin-bottom: 10px; 
+  cursor: pointer; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-icon:hover {
+  transform: scale(1.1); 
+  color: #9c27b0; 
+}
+
+.invite-panel {
+  opacity: 0.3; 
+  transition: opacity 0.3s; 
+}
+
+.invite-panel:hover {
+  opacity: 1; 
+}
+
+.active-panel {
+  border-bottom: 8px solid transparent; 
+  animation: slideInBorder 1s forwards;
+}
+
+.active-panel::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%; 
+  height: 8px;
+  background-color: var(--purple);
+  transform: scaleX(0);
+  animation: expandBorder 0.5s ease-out forwards;
+}
+
+@keyframes slideInBorder {
+  from {
+    border-bottom-color: transparent;
+  }
+  to {
+    border-bottom-color: var(--purple);
+  }
+}
+
+@keyframes expandBorder {
+  to {
+    transform: scaleX(1);
+  }
 }

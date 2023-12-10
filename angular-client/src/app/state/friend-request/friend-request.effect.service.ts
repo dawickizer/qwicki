@@ -11,7 +11,7 @@ import { FriendRequestStateService } from './friend-request.state.service';
 })
 export class FriendRequestEffectService {
   private receivedFriendRequestAudio = new Audio(
-    'assets/notifications/sounds/mixkit-long-pop-2358.wav'
+    'assets/notifications/sounds/friend-request-received.wav'
   );
 
   constructor(

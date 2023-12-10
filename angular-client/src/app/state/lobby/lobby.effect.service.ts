@@ -13,6 +13,13 @@ import { Status } from 'src/app/models/status/status.model';
   providedIn: 'root',
 })
 export class LobbyEffectService {
+  private joinLobbyAudio = new Audio(
+    'assets/notifications/sounds/join.mp3'
+  );
+  private leaveLobbyAudio = new Audio(
+    'assets/notifications/sounds/leave.mp3'
+  );
+
   constructor(
     private lobbyStateService: LobbyStateService,
     private colyseusService: ColyseusService,
@@ -104,20 +111,16 @@ export class LobbyEffectService {
       this.lobbyStateService.setLobby(lobby);
 
       lobby.room.state.host.onChange = () => {
-        console.log('state.host.onChange');
-        console.log(lobby.room.state.host);
         this.lobbyStateService.setHost(lobby.room.state.host);
       };
 
       lobby.room.state.members.onAdd = (member: Member, key: string) => {
-        console.log('state.members.onAdd');
-        console.log(member.username, 'has been added at', key);
+        this.joinLobbyAudio.play();
         this.lobbyStateService.addMember(member);
       };
 
       lobby.room.state.members.onRemove = (member: Member, key: string) => {
-        console.log('state.members.onRemove');
-        console.log(member.username, 'has been removed at', key);
+        this.leaveLobbyAudio.play();
         this.lobbyStateService.removeMember(member);
       };
     }
