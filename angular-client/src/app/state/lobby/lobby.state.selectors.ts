@@ -10,9 +10,9 @@ import {
   QueueType,
   Status,
 } from 'src/app/models/status/status.model';
-import { Message } from '../message/message.model';
-import { Member } from 'src/app/models/member/member';
+import { Member } from 'src/app/state/lobby/member.model';
 import { Invite } from '../invite/invite.model';
+import { LobbyMessage } from './lobby-message.model';
 
 export const lobbySelector = (
   lobbyState$: Observable<LobbyState>
@@ -88,7 +88,7 @@ export const membersSelector = (
 
 export const messagesSelector = (
   lobby$: Observable<Lobby | null>
-): Observable<Message[] | null> =>
+): Observable<LobbyMessage[] | null> =>
   lobby$.pipe(
     map(lobby => (lobby ? lobby.messages : null)),
     distinctUntilChanged(isEqual)

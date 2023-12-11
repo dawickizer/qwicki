@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Member } from 'src/app/models/member/member';
+import { Member } from 'src/app/state/lobby/member.model';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
 import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
@@ -25,8 +25,10 @@ export class LobbyComponent implements OnInit {
       .updateStatus({ activity: 'In Lobby' })
       .subscribe();
 
-    // need to figure out how to only do this once and not every time the component inits..perhaps sonmehow use lobby$
+    // TODO: need to figure out how to only do this once and not every time the component inits..perhaps sonmehow use lobby$
     this.lobbyOrchestratorService.createLobby().subscribe();
+
+    // TODO: dont forget to manage this subscription and unsubscribe when component destroys
     this.lobbyService.members$.subscribe(members => {
       console.log(members);
       this.updatePanels(members);

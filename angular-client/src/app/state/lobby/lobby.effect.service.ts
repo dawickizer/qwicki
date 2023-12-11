@@ -6,8 +6,10 @@ import { LobbyStateService } from './lobby.state.service';
 import { Lobby } from './lobby.model';
 import { Room } from 'colyseus.js';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-import { Member } from 'src/app/models/member/member';
+import { Member } from 'src/app/state/lobby/member.model';
 import { Status } from 'src/app/models/status/status.model';
+import { LobbyMessage } from './lobby-message.model';
+import { LobbyApiService } from './lobby.api.service';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +20,7 @@ export class LobbyEffectService {
 
   constructor(
     private lobbyStateService: LobbyStateService,
+    private lobbyApiService: LobbyApiService,
     private colyseusService: ColyseusService,
     private snackBar: MatSnackBar
   ) {}
@@ -102,6 +105,15 @@ export class LobbyEffectService {
     );
   }
 
+  sendMessage(message: LobbyMessage): Observable<LobbyMessage> {
+    return this.lobbyApiService.sendMessage(message).pipe(
+      tap(message => {
+        this.lobbyStateService.addMessage(message);
+      }),
+      catchError(this.handleError)
+    );
+  }
+
   private handleConnectedLobbySuccess = (lobby: Lobby) => {
     if (lobby?.room) {
       this.lobbyStateService.setLobby(lobby);
@@ -118,6 +130,11 @@ export class LobbyEffectService {
       lobby.room.state.members.onRemove = (member: Member) => {
         this.leaveLobbyAudio.play();
         this.lobbyStateService.removeMember(member);
+      };
+
+      lobby.room.state.messages.onAdd = (message: LobbyMessage) => {
+        console.log(message.content);
+        this.lobbyStateService.addMessage(message);
       };
     }
     this.lobbyStateService.setIsLoading(false);

@@ -2,7 +2,6 @@ import { Notification } from 'src/app/models/notification/notification';
 import { Friend } from '../friend/friend.model';
 
 export class Invite extends Notification {
-  _id?: string;
   accepted: boolean;
   override type: InviteType;
   roomId: string;

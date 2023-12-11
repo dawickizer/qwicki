@@ -1,8 +1,8 @@
 import { Invite } from '../invite/invite.model';
 import { Status } from 'src/app/models/status/status.model';
-import { Member } from 'src/app/models/member/member';
-import { Message } from '../message/message.model';
+import { Member } from 'src/app/state/lobby/member.model';
 import { Room } from 'colyseus.js';
+import { LobbyMessage } from './lobby-message.model';
 
 export class Lobby {
   _id?: string;
@@ -10,7 +10,7 @@ export class Lobby {
   status: Status;
   host: Member;
   members: Map<string, Member>;
-  messages: Message[];
+  messages: LobbyMessage[];
   outboundInvites: Invite[];
 
   constructor(lobby?: Partial<Lobby>) {

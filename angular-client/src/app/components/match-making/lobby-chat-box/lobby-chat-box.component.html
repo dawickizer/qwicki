@@ -13,7 +13,7 @@
       <mat-label>Chat</mat-label>
       <input
         [(ngModel)]="newMessage"
-        (keydown.enter)="sendMessage($event)"
+        (keydown.enter)="sendMessage()"
         cdkTextareaAutosize
         matInput
         maxlength="250"

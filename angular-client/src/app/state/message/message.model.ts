@@ -2,7 +2,6 @@ import { Notification } from 'src/app/models/notification/notification';
 import { Friend } from '../friend/friend.model';
 
 export class Message extends Notification {
-  _id?: string;
   content: string;
   viewed: boolean;
   override type: 'message';

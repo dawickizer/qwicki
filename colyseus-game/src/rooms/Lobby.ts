@@ -2,9 +2,12 @@ import { Room, Client } from 'colyseus';
 import { isAuthenticatedJWT } from '../middleware/auth';
 import LobbyState from '../schemas/lobby/LobbyState';
 import { Member } from '../schemas/lobby/Member';
+import { LobbyManager } from '../managers/LobbyManager';
 
 export class Lobby extends Room<LobbyState> {
   hostClient: Client;
+
+  lobbyManager: LobbyManager;
 
   onCreate(options: any) {
     this.setState(new LobbyState());
@@ -100,6 +103,6 @@ export class Lobby extends Room<LobbyState> {
   }
 
   private setManagers() {
-    // this.manager = new Manager(this);
+    this.lobbyManager = new LobbyManager(this);
   }
 }

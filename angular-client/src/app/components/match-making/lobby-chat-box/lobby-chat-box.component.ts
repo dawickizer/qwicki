@@ -1,6 +1,8 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
-import { Message } from 'src/app/state/message/message.model';
-import { Friend } from 'src/app/state/friend/friend.model';
+import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
+import { LobbyService } from 'src/app/state/lobby/lobby.service';
+import { LobbyMessage } from 'src/app/state/lobby/lobby-message.model';
+
 
 @Component({
   selector: 'app-lobby-chat-box',
@@ -10,8 +12,22 @@ import { Friend } from 'src/app/state/friend/friend.model';
 export class LobbyChatBoxComponent {
   @ViewChild('scrollable') scrollable: ElementRef;
 
-  messages: Message[] = [];
+  messages: LobbyMessage[] = [];
   newMessage = '';
+
+  constructor(
+    private lobbyOrchestratorService: LobbyOrchestratorService,
+    private lobbyService: LobbyService
+  ) {}
+
+  ngOnInit() {
+    // TODO: dont forget to manage this subscription
+    this.lobbyService.messages$.subscribe(messages => {
+      console.log(messages);
+      this.messages = messages;
+      this.setScrollHeight();
+    });
+  }
 
   setScrollHeight() {
     // wait 10ms to allow elementrefs to refresh..else the scroll height will be wrong
@@ -23,17 +39,12 @@ export class LobbyChatBoxComponent {
     );
   }
 
-  sendMessage(event?: any) {
-    // Prevent that text area from causing an expand event
-    if (event) event.preventDefault();
+  sendMessage() {
     if (this.newMessage.trim() !== '') {
-      const message: Message = new Message();
-      message.content = this.newMessage;
-      message.from = new Friend({ username: 'MintOwl' }); // remove this as backend will take care of it
-      message.createdAt = new Date(); // remove this as backend will take care of it
-      this.messages.push(message);
+      this.lobbyOrchestratorService
+        .sendMessage(new LobbyMessage({ content: this.newMessage }))
+        .subscribe();
       this.newMessage = '';
-      this.setScrollHeight(); // remove this later and make it happen on message update (like if other users send messages)
     }
   }
 }

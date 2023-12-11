@@ -74,7 +74,12 @@ import { IsTypingComponent } from './components/misc/is-typing/is-typing.compone
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
 import { LobbyChatBoxComponent } from './components/match-making/lobby-chat-box/lobby-chat-box.component';
+import { LobbyApiService } from './state/lobby/lobby.api.service';
 import { LobbyComponent } from './components/match-making/lobby/lobby.component';
+import { LobbyEffectService } from './state/lobby/lobby.effect.service';
+import { LobbyOrchestratorService } from './state/lobby/lobby.orchestrator.service';
+import { LobbyService } from './state/lobby/lobby.service';
+import { LobbyStateService } from './state/lobby/lobby.state.service';
 import { LoginComponent } from './components/auth/login/login.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { MatchMakingService } from './services/match-making/match-making.service';
@@ -199,6 +204,11 @@ import { InviteFriendMenuComponent } from './components/match-making/invite-frie
     InviteService,
     InviteStateService,
     KeyBindService,
+    LobbyApiService,
+    LobbyEffectService,
+    LobbyOrchestratorService,
+    LobbyService,
+    LobbyStateService,
     MatchMakingService,
     MessageApiService,
     MessageEffectService,

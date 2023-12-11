@@ -16,7 +16,8 @@ import {
 } from './lobby.state.selectors';
 import { Lobby } from './lobby.model';
 import { Status } from 'src/app/models/status/status.model';
-import { Member } from 'src/app/models/member/member';
+import { Member } from 'src/app/state/lobby/member.model';
+import { LobbyMessage } from './lobby-message.model';
 
 @Injectable({
   providedIn: 'root',
@@ -111,6 +112,35 @@ export class LobbyStateService {
     this._lobbyState.next({
       ...currentState,
       lobby: new Lobby({ ...currentState.lobby, members: updatedMembers }),
+    });
+  }
+
+  setMessages(messages: LobbyMessage[]): void {
+    const currentState = this._lobbyState.value;
+    if (!currentState.lobby) return;
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({
+        ...currentState.lobby,
+        messages: [...messages].map(message => new LobbyMessage(message)),
+      }),
+    });
+  }
+
+  addMessage(message: LobbyMessage): void {
+    const currentState = this._lobbyState.value;
+    if (!currentState.lobby) return;
+
+    const updatedMessages = [
+      ...currentState.lobby.messages,
+      new LobbyMessage(message),
+    ];
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({
+        ...currentState.lobby,
+        messages: updatedMessages.map(message => new LobbyMessage(message)),
+      }),
     });
   }
 

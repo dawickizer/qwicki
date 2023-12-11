@@ -11,9 +11,9 @@ import {
   Status,
 } from 'src/app/models/status/status.model';
 import { Invite } from '../invite/invite.model';
-import { Message } from '../message/message.model';
-import { Member } from 'src/app/models/member/member';
+import { Member } from 'src/app/state/lobby/member.model';
 import { Room } from 'colyseus.js';
+import { LobbyMessage } from './lobby-message.model';
 
 @Injectable({
   providedIn: 'root',
@@ -59,7 +59,7 @@ export class LobbyService {
     return this.lobbyStateService.members$;
   }
 
-  get messages$(): Observable<Message[] | null> {
+  get messages$(): Observable<LobbyMessage[] | null> {
     return this.lobbyStateService.messages$;
   }
 
@@ -91,6 +91,10 @@ export class LobbyService {
     return this.lobbyEffectService.joinExistingLobbyIfPresent(lobbyId, options);
   }
 
+  sendMessage(message: LobbyMessage): Observable<LobbyMessage> {
+    return this.lobbyEffectService.sendMessage(message);
+  }
+
   setInitialState(): void {
     this.lobbyStateService.setInitialState();
   }
@@ -111,17 +115,25 @@ export class LobbyService {
     this.lobbyStateService.setHost(host);
   }
 
-  // setMembers(members: Member[]): void {
-  //   this.lobbyStateService.setMembers(members);
-  // }
+  setMembers(members: Map<string, Member>): void {
+    this.lobbyStateService.setMembers(members);
+  }
 
-  // addMember(member: Member): void {
-  //   this.lobbyStateService.addMember(member);
-  // }
+  addMember(member: Member): void {
+    this.lobbyStateService.addMember(member);
+  }
 
-  // removeMember(member: Member): void {
-  //   this.lobbyStateService.removeMember(member);
-  // }
+  removeMember(member: Member): void {
+    this.lobbyStateService.removeMember(member);
+  }
+
+  setMessages(messages: LobbyMessage[]): void {
+    this.lobbyStateService.setMessages(messages);
+  }
+
+  addMessage(message: LobbyMessage): void {
+    this.lobbyStateService.addMessage(message);
+  }
 
   setIsLoading(isLoading: boolean): void {
     this.lobbyStateService.setIsLoading(isLoading);

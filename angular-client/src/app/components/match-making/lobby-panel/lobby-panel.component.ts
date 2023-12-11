@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Member } from 'src/app/models/member/member';
+import { Member } from 'src/app/state/lobby/member.model';
 
 @Component({
   selector: 'app-lobby-panel',
