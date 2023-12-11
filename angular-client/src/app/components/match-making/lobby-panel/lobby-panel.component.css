@@ -17,7 +17,7 @@
 }
 
 .member-info img {
-  width: calc(10vw); 
+  width: calc(10vw);
   height: calc(10vw);
   max-width: 100px;
   max-height: 100px;
@@ -45,12 +45,12 @@
 
 .empty-icon:hover {
   transform: scale(1.1);
-  color: #9c27b0; 
+  color: #9c27b0;
 }
 
 .invite-panel {
-  opacity: 0.3; 
-  transition: opacity 0.3s; 
+  opacity: 0.3;
+  transition: opacity 0.3s;
 }
 
 .invite-panel:hover {
@@ -63,7 +63,8 @@
   position: relative;
 }
 
-.active-panel .member-info, .active-panel .member-controls {
+.active-panel .member-info,
+.active-panel .member-controls {
   animation: pulseData 1s ease-out;
 }
 
@@ -72,7 +73,7 @@
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 100%; 
+  width: 100%;
   height: 8px;
   background-color: var(--purple);
   transform: scaleX(0);
@@ -80,10 +81,19 @@
 }
 
 @keyframes pulseData {
-  0%, 100% { transform: scale(1); }
-  25% { transform: scale(1.1); }
-  50% { transform: scale(0.9); }
-  75% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1);
+  }
+  50% {
+    transform: scale(0.9);
+  }
+  75% {
+    transform: scale(1.05);
+  }
 }
 
 @keyframes slideInBorder {

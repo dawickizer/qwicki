@@ -13,12 +13,8 @@ import { Status } from 'src/app/models/status/status.model';
   providedIn: 'root',
 })
 export class LobbyEffectService {
-  private joinLobbyAudio = new Audio(
-    'assets/notifications/sounds/join.mp3'
-  );
-  private leaveLobbyAudio = new Audio(
-    'assets/notifications/sounds/leave.mp3'
-  );
+  private joinLobbyAudio = new Audio('assets/notifications/sounds/join.mp3');
+  private leaveLobbyAudio = new Audio('assets/notifications/sounds/leave.mp3');
 
   constructor(
     private lobbyStateService: LobbyStateService,
@@ -114,12 +110,12 @@ export class LobbyEffectService {
         this.lobbyStateService.setHost(lobby.room.state.host);
       };
 
-      lobby.room.state.members.onAdd = (member: Member, key: string) => {
+      lobby.room.state.members.onAdd = (member: Member) => {
         this.joinLobbyAudio.play();
         this.lobbyStateService.addMember(member);
       };
 
-      lobby.room.state.members.onRemove = (member: Member, key: string) => {
+      lobby.room.state.members.onRemove = (member: Member) => {
         this.leaveLobbyAudio.play();
         this.lobbyStateService.removeMember(member);
       };
