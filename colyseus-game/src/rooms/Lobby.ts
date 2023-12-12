@@ -31,10 +31,11 @@ export class Lobby extends Room<LobbyState> {
       sessionId: client.sessionId,
       username: auth.username,
       isHost: false,
+      color: '#FFFFFF',
     });
     this.determineHost(member);
-    this.addMember(member);
-    this.logMembers();
+    this.state.addMember(member);
+    this.state.logMembers();
   }
 
   onLeave(client: Client) {
@@ -51,9 +52,9 @@ export class Lobby extends Room<LobbyState> {
   }
 
   removeClient(client: Client) {
-    const member: Member = this.getMember(client);
-    this.deleteMember(member);
-    this.logMembers();
+    const member: Member = this.state.getMember(client);
+    this.state.deleteMember(member);
+    this.state.logMembers();
   }
 
   determineHost(member: Member) {
@@ -63,34 +64,6 @@ export class Lobby extends Room<LobbyState> {
       this.hostClient = this.getClient(this.state.host);
       console.log(`${this.state.host.username} is the host`);
     }
-  }
-
-  addMember(member: Member) {
-    this.state.members.set(member.sessionId, member);
-    console.log(`${member.username} joined`);
-  }
-
-  deleteMember(member: Member) {
-    this.state.members.delete(member.sessionId);
-    console.log(`${member.username} left`);
-  }
-
-  getMember(client: Client): Member {
-    return this.state.members.get(client.sessionId);
-  }
-
-  getMemberById(id: string) {
-    for (const member of this.state.members.values()) {
-      if (member._id === id) {
-        return member;
-      }
-    }
-    return null;
-  }
-
-  logMembers() {
-    console.log('Members in the chat:');
-    this.state.members.forEach(member => console.log(`${member.username}`));
   }
 
   disconnectRoom() {

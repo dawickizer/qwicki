@@ -3,6 +3,7 @@ export class Member {
   sessionId: string;
   username: string;
   isHost: boolean;
+  color: string;
 
   constructor(member?: Partial<Member>) {
     if (member) {
@@ -10,6 +11,7 @@ export class Member {
       this.sessionId = member.sessionId;
       this.username = member.username;
       this.isHost = member.isHost;
+      this.color = member.color ?? '#FFFFFF';
     }
   }
 }

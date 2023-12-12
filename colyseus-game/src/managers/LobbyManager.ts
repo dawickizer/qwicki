@@ -1,5 +1,4 @@
 import { Lobby } from '../rooms/Lobby';
-import { Member } from '../schemas/lobby/Member';
 import { Message } from '../schemas/lobby/Message';
 import { generateRandomUUID } from '../utils/generateRandomUUID';
 
@@ -12,17 +11,16 @@ export class LobbyManager {
   }
 
   setOnMessageListeners() {
-    // TODO: Consider all kinds of logic around confirming sender
     this.lobby.onMessage('sendMessage', (client, message) => {
       message = new Message({
         _id: generateRandomUUID(),
         createdAt: new Date().getTime(),
         type: 'lobby-message',
         to: this.lobby.roomId,
-        from: new Member(message.from),
+        from: this.lobby.state.getMember(client),
         content: message.content,
       });
-      this.lobby.state.messages.push(message);
+      this.lobby.state.addMessage(message);
     });
   }
 }
