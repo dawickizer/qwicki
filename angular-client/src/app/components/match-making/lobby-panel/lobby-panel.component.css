@@ -21,16 +21,15 @@
   height: 100%;
   width: 100%;
   align-items: center;
-  justify-content: space-between; /* Evenly distribute space */
+  justify-content: space-between;
   background: var(--dark);
   border-radius: 10px;
   position: relative;
-  padding: 20px 0; /* Add padding to the top and bottom */
+  padding: 20px 0;
   border-bottom: 8px solid transparent;
   animation: slideInBorder 1s forwards;
 }
 
-/* Adjust the .crown-container to position it correctly */
 .crown-container {
   position: absolute;
   left: 50%;
@@ -44,14 +43,13 @@
   cursor: pointer;
 }
 
-/* Adjust the .member-info container */
 .member-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 1.5em;
-  flex-grow: 1; /* Allow it to grow and push other elements */
-  justify-content: center; /* Center its content vertically */
+  flex-grow: 1;
+  justify-content: center;
 }
 
 .member-info img {
