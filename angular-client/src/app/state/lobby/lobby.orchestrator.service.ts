@@ -6,7 +6,6 @@ import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { AuthService } from '../auth/auth.service';
 import { LobbyMessage } from './lobby-message.model';
 
-
 @Injectable({
   providedIn: 'root',
 })

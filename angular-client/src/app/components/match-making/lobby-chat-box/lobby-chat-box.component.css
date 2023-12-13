@@ -37,3 +37,11 @@
   width: 100%;
   max-width: 100%;
 }
+
+.party-leader-icon {
+  width: 20px;
+  height: auto;
+  vertical-align: middle;
+  margin-bottom: 1px;
+  cursor: pointer;
+}
