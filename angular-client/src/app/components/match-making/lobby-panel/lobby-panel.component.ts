@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { Member } from 'src/app/state/lobby/member.model';
 
 @Component({
@@ -9,8 +10,9 @@ import { Member } from 'src/app/state/lobby/member.model';
 export class LobbyPanelComponent {
   @Input() member: Member;
 
+  constructor(private lobbyOrchestratorService: LobbyOrchestratorService) {}
+
   kick(member: Member) {
-    console.log(member);
-    this.member = null;
+    this.lobbyOrchestratorService.kickMember(member).subscribe();
   }
 }

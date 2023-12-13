@@ -36,7 +36,10 @@ export class LobbyComponent implements OnInit {
   }
 
   updatePanels(members: Map<string, Member> | null | undefined) {
-    if (!members) return;
+    if (!members) {
+      this.panels = Array.from({ length: 5 }, () => ({ member: null }));
+      return;
+    }
 
     // Initialize panels if they haven't been initialized yet
     if (this.panels.length === 0) {

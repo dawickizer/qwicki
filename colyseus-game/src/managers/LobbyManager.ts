@@ -22,5 +22,12 @@ export class LobbyManager {
       });
       this.lobby.state.addMessage(message);
     });
+
+    this.lobby.onMessage('kickMember', (client, member) => {
+      if (this.lobby.isHost(client)) {
+        this.lobby.getClient(member).leave();
+        this.lobby.state.deleteMember(member);
+      }
+    });
   }
 }

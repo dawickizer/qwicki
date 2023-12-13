@@ -5,6 +5,7 @@ import { LobbyService } from './lobby.service';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { AuthService } from '../auth/auth.service';
 import { LobbyMessage } from './lobby-message.model';
+import { Member } from './member.model';
 
 @Injectable({
   providedIn: 'root',
@@ -44,5 +45,10 @@ export class LobbyOrchestratorService {
         this.lobby.room.send('sendMessage', message);
       })
     );
+  }
+
+  kickMember(member: Member): Observable<Member> {
+    this.lobby.room.send('kickMember', member);
+    return of(member);
   }
 }

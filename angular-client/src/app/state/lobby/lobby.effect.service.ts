@@ -133,9 +133,12 @@ export class LobbyEffectService {
       };
 
       lobby.room.state.messages.onAdd = (message: LobbyMessage) => {
-        console.log(message.content);
         this.lobbyStateService.addMessage(message);
       };
+
+      lobby.room.onLeave(() => {
+        this.lobbyStateService.setInitialState();
+      });
     }
     this.lobbyStateService.setIsLoading(false);
   };
