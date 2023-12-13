@@ -2,13 +2,13 @@
   <div class="message-area" #scrollable>
     <div *ngFor="let message of messages">
       <span class="username" [ngStyle]="{ color: message.from.color }">
+        {{ message.from.username }}
         <img
           *ngIf="message.from.isHost"
           matTooltip="Party Leader"
           src="/assets/party-leader/party-leader.png"
           alt="party-leader"
           class="party-leader-icon" />
-        {{ message.from.username }}
       </span>
       <span class="timestamp"
         >[{{ message.createdAt | date: 'mediumTime' }}]:</span

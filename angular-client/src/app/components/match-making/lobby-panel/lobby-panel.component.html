@@ -2,6 +2,14 @@
   class="lobby-panel"
   [ngClass]="{ 'invite-panel': !member, 'active-panel': member }">
   <ng-container *ngIf="member; else invitePanel">
+    <div class="crown-container">
+      <img
+        *ngIf="member.isHost"
+        matTooltip="Party Leader"
+        src="/assets/party-leader/party-leader-crown.png"
+        alt="party-leader"
+        class="party-leader" />
+    </div>
     <div class="member-info">
       <img src="/assets/qwicki-coin.png" alt="{{ member.username }}" />
       <span>{{ member.username }}</span>

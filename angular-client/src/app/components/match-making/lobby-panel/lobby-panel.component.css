@@ -1,4 +1,4 @@
-.lobby-panel {
+.invite-panel {
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -7,13 +7,51 @@
   justify-content: center;
   background: var(--dark);
   border-radius: 10px;
+  opacity: 0.3;
+  transition: opacity 0.3s;
 }
 
+.invite-panel:hover {
+  opacity: 1;
+}
+
+.active-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between; /* Evenly distribute space */
+  background: var(--dark);
+  border-radius: 10px;
+  position: relative;
+  padding: 20px 0; /* Add padding to the top and bottom */
+  border-bottom: 8px solid transparent;
+  animation: slideInBorder 1s forwards;
+}
+
+/* Adjust the .crown-container to position it correctly */
+.crown-container {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.party-leader {
+  width: 60px;
+  height: auto;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
+/* Adjust the .member-info container */
 .member-info {
   display: flex;
   flex-direction: column;
   align-items: center;
   font-size: 1.5em;
+  flex-grow: 1; /* Allow it to grow and push other elements */
+  justify-content: center; /* Center its content vertically */
 }
 
 .member-info img {
@@ -48,23 +86,9 @@
   color: #9c27b0;
 }
 
-.invite-panel {
-  opacity: 0.3;
-  transition: opacity 0.3s;
-}
-
-.invite-panel:hover {
-  opacity: 1;
-}
-
-.active-panel {
-  border-bottom: 8px solid transparent;
-  animation: slideInBorder 1s forwards;
-  position: relative;
-}
-
 .active-panel .member-info,
-.active-panel .member-controls {
+.active-panel .member-controls,
+.active-panel .party-leader {
   animation: pulseData 1s ease-out;
 }
 
