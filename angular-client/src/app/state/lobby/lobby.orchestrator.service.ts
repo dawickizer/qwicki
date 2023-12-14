@@ -45,6 +45,7 @@ export class LobbyOrchestratorService {
     this.lobby.room.send('sendMessage', message);
     return of(null);
 
+    // TODO: handle API/DB persistence of lobby messages if i want
     return this.lobbyService.sendMessage(message).pipe(
       tap(message => {
         this.lobby.room.send('sendMessage', message);
