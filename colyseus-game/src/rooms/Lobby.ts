@@ -39,8 +39,21 @@ export class Lobby extends Room<LobbyState> {
   }
 
   onLeave(client: Client) {
-    if (this.isHost(client)) this.disconnectRoom();
-    else this.removeClient(client);
+    if (this.isHost(client)) {
+      const remainingMembers = Array.from(this.state.members.values()).filter(
+        m => m.sessionId !== client.sessionId
+      );
+      if (remainingMembers.length > 0) {
+        this.transferHost(
+          this.clients.find(c => c.sessionId === remainingMembers[0].sessionId)
+        );
+        this.removeClient(client);
+      } else {
+        this.disconnectRoom();
+      }
+    } else {
+      this.removeClient(client);
+    }
   }
 
   onDispose() {
@@ -66,13 +79,24 @@ export class Lobby extends Room<LobbyState> {
     }
   }
 
-  disconnectRoom() {
-    console.log('HOST IS LEAVING...disconnecting room');
-    this.disconnect();
+  transferHost(newHostClient: Client) {
+    console.log(
+      `Transfering host from ${
+        this.state.getMember(this.hostClient).username
+      } to ${this.state.getMember(newHostClient).username}`
+    );
+    this.hostClient = newHostClient;
+    this.state.setHost(newHostClient);
+    console.log(`${this.state.host.username} is the host`);
   }
 
   isHost(client: Client): boolean {
     return this.hostClient.sessionId === client.sessionId;
+  }
+
+  disconnectRoom() {
+    console.log('HOST IS LEAVING...disconnecting room');
+    this.disconnect();
   }
 
   private setManagers() {

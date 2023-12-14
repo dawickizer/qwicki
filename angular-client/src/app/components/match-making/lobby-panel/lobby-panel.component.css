@@ -60,8 +60,14 @@
   border-radius: 50%;
 }
 
-.member-controls button {
-  margin: 5px;
+.member-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the icons horizontally */
+}
+
+.member-controls .material-icons-outlined {
+  margin: 0 5px; /* 10px margin on the left and right of each icon */
 }
 
 .empty-icon {

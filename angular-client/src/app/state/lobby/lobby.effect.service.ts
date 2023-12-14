@@ -10,6 +10,7 @@ import { Member } from 'src/app/state/lobby/member.model';
 import { Status } from 'src/app/models/status/status.model';
 import { LobbyMessage } from './lobby-message.model';
 import { LobbyApiService } from './lobby.api.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +23,7 @@ export class LobbyEffectService {
     private lobbyStateService: LobbyStateService,
     private lobbyApiService: LobbyApiService,
     private colyseusService: ColyseusService,
+    private router: Router,
     private snackBar: MatSnackBar
   ) {}
 
@@ -122,7 +124,18 @@ export class LobbyEffectService {
         this.lobbyStateService.setHost(lobby.room.state.host);
       };
 
-      lobby.room.state.members.onAdd = (member: Member) => {
+      lobby.room.state.members.onAdd = (member: Member | any) => {
+        // TODO: little sketch sometimes as it fires off if someone joins after a host change
+        member.listen('isHost', (current: boolean) => {
+          if (member.isHost)
+            this.snackBar.open(
+              `${member.username} is now the host!`,
+              'Dismiss',
+              { duration: 5000 }
+            );
+          this.lobbyStateService.setMemberIsHost(member, current);
+        });
+
         this.joinLobbyAudio.play();
         this.lobbyStateService.addMember(member);
       };
@@ -137,7 +150,20 @@ export class LobbyEffectService {
       };
 
       lobby.room.onLeave(() => {
+        // TODO:
+        // I leave my own lobby (I am host)
+        // I need to transfer host if others in my lobby (backend)
+        // I need to remove the lobby from my state (frontend)
+        // I need to create and connect to my own lobby (frontend)
+        // I leave someone elses lobby (I am not host)
+        // I need to remove the lobby from my state (frontend)
+        // I need to create and connect to my own lobby (frontend)
+        // I get kicked from someone elses lobby
+        // I need to remove the lobby from my state (frontend)
+        // I need to create and connect to my own lobby (frontend)
+
         this.lobbyStateService.setInitialState();
+        this.router.navigate(['/dashboard']);
       });
     }
     this.lobbyStateService.setIsLoading(false);

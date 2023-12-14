@@ -16,11 +16,18 @@
     </div>
     <div class="member-controls">
       <span
-        matTooltip="Kick Friend"
-        (click)="kick(member)"
+        matTooltip="Kick Member"
+        (click)="kickMember(member)"
         class="material-icons-outlined"
-        aria-label="Kick member">
+        aria-label="Kick Member">
         group_remove
+      </span>
+      <span
+        matTooltip="Transfer Host"
+        (click)="transferHost(member)"
+        class="material-icons-outlined"
+        aria-label="Transfer Host">
+        swap_horiz
       </span>
     </div>
   </ng-container>

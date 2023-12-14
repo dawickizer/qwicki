@@ -26,7 +26,12 @@ export class LobbyManager {
     this.lobby.onMessage('kickMember', (client, member) => {
       if (this.lobby.isHost(client)) {
         this.lobby.getClient(member).leave();
-        this.lobby.state.deleteMember(member);
+      }
+    });
+
+    this.lobby.onMessage('transferHost', (client, member) => {
+      if (this.lobby.isHost(client)) {
+        this.lobby.transferHost(this.lobby.getClient(member));
       }
     });
   }

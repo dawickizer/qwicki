@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap, switchMap, map } from 'rxjs';
+import { Observable, tap, switchMap, map, concatMap } from 'rxjs';
 import { User } from '../user/user.model';
 import { UserService } from '../user/user.service';
 import { InboxService } from '../inbox/inbox.service';
@@ -111,6 +111,9 @@ export class InviteOrchestratorService {
           this.personalInbox.send('acceptInviteToUser', invite);
         }
       }),
+      concatMap(invite =>
+        this.lobbyService.leaveLobby(this.lobby.room).pipe(map(() => invite))
+      ),
       switchMap(invite =>
         this.lobbyService
           .connectToLobby(invite.roomId, { jwt: this.jwt })

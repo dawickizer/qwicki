@@ -127,6 +127,10 @@ export class LobbyService {
     this.lobbyStateService.removeMember(member);
   }
 
+  setMemberIsHost(member: Member, isHost: boolean): void {
+    this.lobbyStateService.setMemberIsHost(member, isHost);
+  }
+
   setMessages(messages: LobbyMessage[]): void {
     this.lobbyStateService.setMessages(messages);
   }

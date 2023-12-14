@@ -115,6 +115,27 @@ export class LobbyStateService {
     });
   }
 
+  setMemberIsHost(member: Member, isHost: boolean): void {
+    const currentState = this._lobbyState.value;
+
+    // Deep copy the members and update the member's isHost property
+    const updatedMembers = new Map<string, Member>();
+    currentState.lobby.members.forEach((m, sessionId) => {
+      updatedMembers.set(
+        sessionId,
+        sessionId === member.sessionId
+          ? new Member({ ...m, isHost })
+          : new Member(m)
+      );
+    });
+
+    // Update the state with a new Lobby instance
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({ ...currentState.lobby, members: updatedMembers }),
+    });
+  }
+
   setMessages(messages: LobbyMessage[]): void {
     const currentState = this._lobbyState.value;
     if (!currentState.lobby) return;

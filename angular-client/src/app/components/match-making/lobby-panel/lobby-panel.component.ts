@@ -12,7 +12,11 @@ export class LobbyPanelComponent {
 
   constructor(private lobbyOrchestratorService: LobbyOrchestratorService) {}
 
-  kick(member: Member) {
+  kickMember(member: Member) {
     this.lobbyOrchestratorService.kickMember(member).subscribe();
+  }
+
+  transferHost(member: Member) {
+    this.lobbyOrchestratorService.transferHost(member).subscribe();
   }
 }

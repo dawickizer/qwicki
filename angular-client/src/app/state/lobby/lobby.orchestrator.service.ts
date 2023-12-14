@@ -31,6 +31,11 @@ export class LobbyOrchestratorService {
   }
 
   createLobby(): Observable<Lobby> {
+    if (this.lobby?.room) {
+      console.log('ALREADY A LOBBY...returning it');
+      console.log(this.lobby);
+      return of(this.lobby);
+    }
     return this.lobbyService.createLobby(this.decodedJwt._id, {
       jwt: this.jwt,
     });
@@ -49,6 +54,11 @@ export class LobbyOrchestratorService {
 
   kickMember(member: Member): Observable<Member> {
     this.lobby.room.send('kickMember', member);
+    return of(member);
+  }
+
+  transferHost(member: Member): Observable<Member> {
+    this.lobby.room.send('transferHost', member);
     return of(member);
   }
 }

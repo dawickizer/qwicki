@@ -61,13 +61,20 @@ export class LobbyState extends Schema {
     return null;
   }
 
+  logMembers() {
+    console.log('Members in the lobby:');
+    this.members.forEach(member => console.log(`${member.username}`));
+  }
+
   addMessage(message: Message) {
     this.messages.push(message);
   }
 
-  logMembers() {
-    console.log('Members in the lobby:');
-    this.members.forEach(member => console.log(`${member.username}`));
+  setHost(hostClient: Client) {
+    this.host = new Member(this.members.get(hostClient.sessionId));
+    this.members.forEach(member => {
+      member.isHost = member.sessionId === hostClient.sessionId;
+    });
   }
 
   assignColor(memberId: string) {
