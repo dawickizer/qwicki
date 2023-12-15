@@ -125,14 +125,7 @@ export class LobbyEffectService {
       };
 
       lobby.room.state.members.onAdd = (member: Member | any) => {
-        // TODO: little sketch sometimes as it fires off if someone joins after a host change
         member.listen('isHost', (current: boolean) => {
-          if (member.isHost)
-            this.snackBar.open(
-              `${member.username} is now the host!`,
-              'Dismiss',
-              { duration: 5000 }
-            );
           this.lobbyStateService.setMemberIsHost(member, current);
         });
 
@@ -164,6 +157,21 @@ export class LobbyEffectService {
 
         this.lobbyStateService.setInitialState();
         this.router.navigate(['/dashboard']);
+      });
+
+      lobby.room.onMessage('transferHost', (host: Member) => {
+        this.joinLobbyAudio.play();
+        this.snackBar.open(`${host.username} is now the host!`, 'Dismiss', {
+          duration: 5000,
+        });
+      });
+
+      lobby.room.onMessage('kickMember', (member: Member) => {
+        this.snackBar.open(
+          `${member.username} was kicked from the lobby!`,
+          'Dismiss',
+          { duration: 5000 }
+        );
       });
     }
     this.lobbyStateService.setIsLoading(false);

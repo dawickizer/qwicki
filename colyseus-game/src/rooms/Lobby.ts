@@ -87,6 +87,7 @@ export class Lobby extends Room<LobbyState> {
     );
     this.hostClient = newHostClient;
     this.state.setHost(newHostClient);
+    this.lobbyManager.broadcastTransferHost();
     console.log(`${this.state.host.username} is the host`);
   }
 
