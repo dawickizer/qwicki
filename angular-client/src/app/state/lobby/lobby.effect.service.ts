@@ -27,11 +27,9 @@ export class LobbyEffectService {
     private snackBar: MatSnackBar
   ) {}
 
-  createLobby(lobbyId: string, options: { jwt: string }): Observable<Lobby> {
+  createLobby(options: { jwt: string }): Observable<Lobby> {
     this.lobbyStateService.setIsLoading(true);
-    return from(
-      this.colyseusService.createRoom('game', 'lobby', lobbyId, options)
-    ).pipe(
+    return from(this.colyseusService.createRoom('game', 'lobby', options)).pipe(
       map(
         lobby =>
           new Lobby({

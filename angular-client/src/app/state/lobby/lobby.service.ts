@@ -72,8 +72,8 @@ export class LobbyService {
     private lobbyStateService: LobbyStateService
   ) {}
 
-  createLobby(lobbyId: string, options: { jwt: string }): Observable<Lobby> {
-    return this.lobbyEffectService.createLobby(lobbyId, options);
+  createLobby(options: { jwt: string }): Observable<Lobby> {
+    return this.lobbyEffectService.createLobby(options);
   }
 
   leaveLobby(lobby: Room): Observable<number> {

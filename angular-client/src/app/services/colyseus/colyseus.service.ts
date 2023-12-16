@@ -16,7 +16,7 @@ export class ColyseusService {
     this._clients.set('game', new Colyseus.Client(environment.COLYSEUS_GAME));
   }
 
-  async createRoom(
+  async createRoomWithId(
     clientType: ClientType,
     roomName: RoomName,
     roomId: string,
@@ -32,6 +32,21 @@ export class ColyseusService {
       if (!room) {
         room = await client.create(roomName, options);
       }
+      return room;
+    } catch (e) {
+      console.error('join error', e);
+      return null;
+    }
+  }
+
+  async createRoom(
+    clientType: ClientType,
+    roomName: RoomName,
+    options: any
+  ): Promise<Colyseus.Room> {
+    try {
+      const client = this.getClient(clientType);
+      const room = await client.create(roomName, options);
       return room;
     } catch (e) {
       console.error('join error', e);

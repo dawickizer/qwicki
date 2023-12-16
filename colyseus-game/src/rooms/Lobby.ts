@@ -9,9 +9,8 @@ export class Lobby extends Room<LobbyState> {
 
   lobbyManager: LobbyManager;
 
-  onCreate(options: any) {
+  onCreate() {
     this.setState(new LobbyState());
-    this.roomId = isAuthenticatedJWT(options.jwt)._id;
     this.maxClients = 5;
     this.setManagers();
     console.log(`Room ${this.roomId} created`);
@@ -71,7 +70,7 @@ export class Lobby extends Room<LobbyState> {
   }
 
   determineHost(member: Member) {
-    if (member._id === this.roomId) {
+    if (!this.hostClient) {
       this.state.host = member;
       this.state.host.isHost = true;
       this.hostClient = this.getClient(this.state.host);

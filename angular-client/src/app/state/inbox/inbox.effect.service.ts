@@ -23,7 +23,7 @@ export class InboxEffectService {
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(
-      this.colyseusService.createRoom('social', 'inbox', inboxId, options)
+      this.colyseusService.createRoomWithId('social', 'inbox', inboxId, options)
     ).pipe(tap(this.handleConnectedInboxSuccess), catchError(this.handleError));
   }
 

@@ -36,9 +36,7 @@ export class LobbyOrchestratorService {
       console.log(this.lobby);
       return of(this.lobby);
     }
-    return this.lobbyService.createLobby(this.decodedJwt._id, {
-      jwt: this.jwt,
-    });
+    return this.lobbyService.createLobby({ jwt: this.jwt });
   }
 
   sendMessage(message: LobbyMessage): Observable<LobbyMessage> {
