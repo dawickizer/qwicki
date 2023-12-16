@@ -49,8 +49,6 @@ export class LobbyComponent implements OnInit {
     const memberArray = Array.from(members.values());
     const host = memberArray.find(member => member.isHost);
 
-    console.log(host?.username);
-
     // Update the host in the center panel
     this.updateHostPanel(host);
 

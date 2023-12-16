@@ -2,21 +2,21 @@ import { Injectable } from '@angular/core';
 import { Observable, tap, of } from 'rxjs';
 import { Lobby } from './lobby.model';
 import { LobbyService } from './lobby.service';
-import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { AuthService } from '../auth/auth.service';
 import { LobbyMessage } from './lobby-message.model';
 import { Member } from './member.model';
+import { LobbyManagerService } from './lobby.manager.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LobbyOrchestratorService {
   private lobby: Lobby;
-  private decodedJwt: DecodedJwt;
   private jwt: string;
 
   constructor(
     private lobbyService: LobbyService,
+    private lobbyManagerService: LobbyManagerService,
     private authService: AuthService
   ) {
     this.subscribeToState();
@@ -24,9 +24,6 @@ export class LobbyOrchestratorService {
 
   private subscribeToState() {
     this.lobbyService.lobby$.subscribe(lobby => (this.lobby = lobby));
-    this.authService.decodedJwt$.subscribe(
-      decodedJwt => (this.decodedJwt = decodedJwt)
-    );
     this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
   }
 
@@ -36,7 +33,13 @@ export class LobbyOrchestratorService {
       console.log(this.lobby);
       return of(this.lobby);
     }
-    return this.lobbyService.createLobby({ jwt: this.jwt });
+    return this.lobbyService.createLobby({ jwt: this.jwt }).pipe(
+      tap(lobby => {
+        if (lobby?.room) {
+          this.lobbyManagerService.setListeners(lobby);
+        }
+      })
+    );
   }
 
   sendMessage(message: LobbyMessage): Observable<LobbyMessage> {

@@ -10,6 +10,7 @@ import { Invite } from '../invite/invite.model';
 import { LobbyService } from '../lobby/lobby.service';
 import { Lobby } from '../lobby/lobby.model';
 import { AuthService } from '../auth/auth.service';
+import { LobbyManagerService } from '../lobby/lobby.manager.service';
 
 @Injectable({
   providedIn: 'root',
@@ -26,7 +27,8 @@ export class InviteOrchestratorService {
     private inboxService: InboxService,
     private lobbyService: LobbyService,
     private authService: AuthService,
-    private inviteService: InviteService
+    private inviteService: InviteService,
+    private lobbyManagerService: LobbyManagerService
   ) {
     this.subscribeToState();
   }
@@ -98,7 +100,7 @@ export class InviteOrchestratorService {
     );
   }
 
-  acceptInvite(invite: Invite): Observable<Invite> {
+  acceptInvite(invite: Invite): Observable<Lobby> {
     return this.inviteService.acceptInvite(this.user, invite).pipe(
       tap(async invite => {
         const friendsInbox = this.friendsInboxes.find(
@@ -115,10 +117,13 @@ export class InviteOrchestratorService {
         this.lobbyService.leaveLobby(this.lobby.room).pipe(map(() => invite))
       ),
       switchMap(invite =>
-        this.lobbyService
-          .connectToLobby(invite.roomId, { jwt: this.jwt })
-          .pipe(map(() => invite))
-      )
+        this.lobbyService.connectToLobby(invite.roomId, { jwt: this.jwt })
+      ),
+      tap(lobby => {
+        if (lobby?.room) {
+          this.lobbyManagerService.setListeners(lobby);
+        }
+      })
     );
   }
 }

@@ -77,6 +77,7 @@ import { LobbyChatBoxComponent } from './components/match-making/lobby-chat-box/
 import { LobbyApiService } from './state/lobby/lobby.api.service';
 import { LobbyComponent } from './components/match-making/lobby/lobby.component';
 import { LobbyEffectService } from './state/lobby/lobby.effect.service';
+import { LobbyManagerService } from './state/lobby/lobby.manager.service';
 import { LobbyOrchestratorService } from './state/lobby/lobby.orchestrator.service';
 import { LobbyService } from './state/lobby/lobby.service';
 import { LobbyStateService } from './state/lobby/lobby.state.service';
@@ -206,6 +207,7 @@ import { InviteFriendMenuComponent } from './components/match-making/invite-frie
     KeyBindService,
     LobbyApiService,
     LobbyEffectService,
+    LobbyManagerService,
     LobbyOrchestratorService,
     LobbyService,
     LobbyStateService,
