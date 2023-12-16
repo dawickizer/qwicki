@@ -44,10 +44,6 @@ export class LobbyEffectService {
   leaveLobby(lobby: Room): Observable<number> {
     this.lobbyStateService.setIsLoading(true);
     return from(this.colyseusService.leaveRoom(lobby)).pipe(
-      tap(() => {
-        this.lobbyStateService.setLobby(null);
-        this.lobbyStateService.setIsLoading(false);
-      }),
       catchError(this.handleError)
     );
   }
@@ -109,8 +105,6 @@ export class LobbyEffectService {
   }
 
   private handleConnectedLobbySuccess = (lobby: Lobby) => {
-    console.log('Successfully connected to lobby');
-    console.log(lobby);
     this.lobbyStateService.setLobby(lobby);
     this.lobbyStateService.setIsLoading(false);
   };

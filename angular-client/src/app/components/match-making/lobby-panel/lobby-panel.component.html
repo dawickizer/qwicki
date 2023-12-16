@@ -15,20 +15,40 @@
       <span>{{ member.username }}</span>
     </div>
     <div class="member-controls">
-      <span
-        matTooltip="Kick Member"
-        (click)="kickMember(member)"
-        class="material-icons-outlined"
-        aria-label="Kick Member">
-        group_remove
-      </span>
-      <span
-        matTooltip="Transfer Host"
-        (click)="transferHost(member)"
-        class="material-icons-outlined"
-        aria-label="Transfer Host">
-        swap_horiz
-      </span>
+      <ng-container *ngIf="decodedJwt$ | async as decodedJwt">
+        <ng-container *ngIf="host$ | async as host">
+          <!-- Display 'Leave Lobby' icon if the current member is the user -->
+          <span
+            *ngIf="member._id === decodedJwt._id"
+            matTooltip="Leave Lobby"
+            (click)="leaveLobby()"
+            class="material-icons-outlined"
+            aria-label="Leave Lobby">
+            exit_to_app
+          </span>
+
+          <!-- Display 'Kick Member' and 'Transfer Host' icons only if the logged-in user is the host and viewing other members' panels -->
+          <ng-container
+            *ngIf="
+              host._id === decodedJwt._id && member._id !== decodedJwt._id
+            ">
+            <span
+              matTooltip="Kick Member"
+              (click)="kickMember(member)"
+              class="material-icons-outlined"
+              aria-label="Kick Member">
+              group_remove
+            </span>
+            <span
+              matTooltip="Transfer Host"
+              (click)="transferHost(member)"
+              class="material-icons-outlined"
+              aria-label="Transfer Host">
+              swap_horiz
+            </span>
+          </ng-container>
+        </ng-container>
+      </ng-container>
     </div>
   </ng-container>
   <ng-template #invitePanel>
