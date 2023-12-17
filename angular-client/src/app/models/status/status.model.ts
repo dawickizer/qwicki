@@ -29,3 +29,28 @@ export type GameMap =
   | 'Fountain Of Dreams'
   | 'Final Destination'
   | 'Yoshi Story';
+
+export const presences: Presence[] = ['Online', 'Offline', 'Away'];
+export const activities: Activity[] = [
+  'In Lobby',
+  'In Queue',
+  'In Pregame Lobby',
+  'In Game',
+];
+export const queueTypes: QueueType[] = ['Solo', 'Duo', 'Squad'];
+export const gameTypes: GameType[] = [
+  'Ranked',
+  'Normal',
+  'Custom',
+  'Money Match',
+];
+export const gameModes: GameMode[] = [
+  'Free For All',
+  'Team Deathmatch',
+  'Domination',
+];
+export const gameMaps: GameMap[] = [
+  'Fountain Of Dreams',
+  'Final Destination',
+  'Yoshi Story',
+];

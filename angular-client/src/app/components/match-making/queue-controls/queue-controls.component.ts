@@ -1,6 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GameType, QueueType } from 'src/app/models/status/status.model';
+import {
+  GameType,
+  QueueType,
+  gameTypes,
+  queueTypes,
+} from 'src/app/models/status/status.model';
 import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
 import { UserService } from 'src/app/state/user/user.service';
 
@@ -10,8 +15,8 @@ import { UserService } from 'src/app/state/user/user.service';
   styleUrls: ['./queue-controls.component.css'],
 })
 export class QueueControlsComponent implements OnInit {
-  queueTypes: QueueType[] = ['Solo', 'Duo', 'Squad'];
-  gameTypes: GameType[] = ['Normal', 'Ranked', 'Money Match', 'Custom'];
+  queueTypes: QueueType[] = queueTypes;
+  gameTypes: GameType[] = gameTypes;
   queueType$: Observable<QueueType>;
   gameType$: Observable<GameType>;
 
