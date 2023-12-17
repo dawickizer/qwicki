@@ -44,6 +44,7 @@ export class LobbyEffectService {
   leaveLobby(lobby: Room): Observable<number> {
     this.lobbyStateService.setIsLoading(true);
     return from(this.colyseusService.leaveRoom(lobby)).pipe(
+      tap(() => this.lobbyStateService.setIsLoading(false)),
       catchError(this.handleError)
     );
   }

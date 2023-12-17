@@ -36,6 +36,6 @@ export class LobbyPanelComponent implements OnInit {
   }
 
   leaveLobby() {
-    console.log('LEAVE LOBBY');
+    this.lobbyOrchestratorService.leaveLobby().subscribe();
   }
 }

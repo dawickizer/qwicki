@@ -40,6 +40,11 @@ export class LobbyManager {
       }
     });
 
+    this.lobby.onMessage('leaveLobby', (client: Client) => {
+      client.send('leaveLobby');
+      client.leave();
+    });
+
     this.lobby.onMessage('transferHost', (client: Client, member: Member) => {
       if (this.lobby.isHost(client)) {
         this.lobby.transferHost(this.lobby.getClient(member));

@@ -12,6 +12,7 @@ export class Lobby extends Room<LobbyState> {
   onCreate() {
     this.setState(new LobbyState());
     this.maxClients = 5;
+    this.setPrivate(true);
     this.setManagers();
     console.log(`Room ${this.roomId} created`);
   }

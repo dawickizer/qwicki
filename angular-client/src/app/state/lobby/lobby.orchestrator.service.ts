@@ -59,6 +59,11 @@ export class LobbyOrchestratorService {
     return of(member);
   }
 
+  leaveLobby(): Observable<boolean> {
+    this.lobby.room.send('leaveLobby');
+    return of(true);
+  }
+
   transferHost(member: Member): Observable<Member> {
     this.lobby.room.send('transferHost', member);
     return of(member);

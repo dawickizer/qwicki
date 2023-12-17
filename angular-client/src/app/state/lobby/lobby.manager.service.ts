@@ -34,6 +34,7 @@ export class LobbyManagerService {
 
   setListeners(lobby: Lobby) {
     let wasKicked = false;
+    let wasSelfInitiated = false;
 
     lobby.room.state.host.onChange = () => {
       this.lobbyService.setHost(lobby.room.state.host);
@@ -59,7 +60,7 @@ export class LobbyManagerService {
 
     lobby.room.onLeave(() => {
       this.lobbyService.setInitialState();
-      if (wasKicked) {
+      if (wasKicked || wasSelfInitiated) {
         this.lobbyService
           .createLobby({ jwt: this.jwt })
           .pipe(
@@ -71,6 +72,7 @@ export class LobbyManagerService {
           )
           .subscribe();
         wasKicked = false;
+        wasSelfInitiated = false;
       }
     });
 
@@ -87,6 +89,12 @@ export class LobbyManagerService {
         message = 'You were kicked from the lobby!';
         wasKicked = true;
       }
+      this.snackBar.open(message, 'Dismiss', { duration: 5000 });
+    });
+
+    lobby.room.onMessage('leaveLobby', () => {
+      const message = `You left the lobby!`;
+      wasSelfInitiated = true;
       this.snackBar.open(message, 'Dismiss', { duration: 5000 });
     });
   }
