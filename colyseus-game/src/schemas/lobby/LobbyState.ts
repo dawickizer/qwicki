@@ -57,6 +57,7 @@ export class LobbyState extends Schema {
       })
     );
     console.log(`${member.username} joined`);
+    this.logMembers();
   }
 
   deleteMember(member: Member) {
@@ -73,6 +74,7 @@ export class LobbyState extends Schema {
       })
     );
     console.log(`${member.username} left`);
+    this.logMembers();
   }
 
   getMember(client: Client): Member {

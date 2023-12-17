@@ -35,7 +35,6 @@ export class Lobby extends Room<LobbyState> {
     });
     this.state.addMember(member);
     this.determineHost(member);
-    this.state.logMembers();
   }
 
   onLeave(client: Client) {
@@ -67,7 +66,6 @@ export class Lobby extends Room<LobbyState> {
   removeClient(client: Client) {
     const member: Member = this.state.getMember(client);
     this.state.deleteMember(member);
-    this.state.logMembers();
   }
 
   determineHost(member: Member) {
