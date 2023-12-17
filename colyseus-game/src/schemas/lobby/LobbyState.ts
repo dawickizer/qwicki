@@ -117,6 +117,14 @@ export class LobbyState extends Schema {
     console.log(`${this.host.username} is the host`);
   }
 
+  setStatus(status: Status) {
+    this.status = new Status(status);
+  }
+
+  updateStatus(status: Partial<Status>) {
+    this.status = new Status({ ...this.status, ...status });
+  }
+
   assignColor(memberId: string) {
     if (!this.colorAssignments.has(memberId)) {
       const color = this.availableColors.shift() ?? '';

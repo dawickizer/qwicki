@@ -3,6 +3,7 @@ import { Lobby } from '../rooms/Lobby';
 import { Member } from '../schemas/lobby/Member';
 import { Message } from '../schemas/lobby/Message';
 import { generateRandomUUID } from '../utils/generateRandomUUID';
+import { Status } from '../schemas/lobby/Status';
 
 export class LobbyManager {
   lobby: Lobby;
@@ -60,5 +61,14 @@ export class LobbyManager {
         this.lobby.transferHost(this.lobby.getClient(member));
       }
     });
+
+    this.lobby.onMessage(
+      'updateStatus',
+      (client: Client, status: Partial<Status>) => {
+        if (this.lobby.isHost(client)) {
+          this.lobby.state.updateStatus(status);
+        }
+      }
+    );
   }
 }

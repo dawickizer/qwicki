@@ -6,6 +6,7 @@ import { AuthService } from '../auth/auth.service';
 import { LobbyMessage } from './lobby-message.model';
 import { Member } from './member.model';
 import { LobbyManagerService } from './lobby.manager.service';
+import { Status } from 'src/app/models/status/status.model';
 
 @Injectable({
   providedIn: 'root',
@@ -67,5 +68,10 @@ export class LobbyOrchestratorService {
   transferHost(member: Member): Observable<Member> {
     this.lobby.room.send('transferHost', member);
     return of(member);
+  }
+
+  updateStatus(status: Partial<Status>): Observable<Status> {
+    this.lobby.room.send('updateStatus', status);
+    return of(status as Status);
   }
 }

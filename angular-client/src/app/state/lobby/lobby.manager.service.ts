@@ -40,6 +40,10 @@ export class LobbyManagerService {
       this.lobbyService.setHost(lobby.room.state.host);
     };
 
+    lobby.room.state.status.onChange = () => {
+      this.lobbyService.updateStatus(lobby.room.state.status);
+    };
+
     lobby.room.state.members.onAdd = (member: Member | any) => {
       member.listen('isHost', (current: boolean) => {
         this.lobbyService.setMemberIsHost(member, current);
