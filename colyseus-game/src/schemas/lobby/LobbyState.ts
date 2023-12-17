@@ -16,7 +16,7 @@ export class LobbyState extends Schema {
 
   chatBot: Member = new Member({
     _id: generateRandomUUID(),
-    username: 'System Log',
+    username: '',
     color: '#008080',
   });
 
