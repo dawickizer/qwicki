@@ -5,7 +5,7 @@ export class LobbyMessage {
   createdAt: Date;
   from: Member;
   to: string;
-  type: 'lobby-message';
+  type: 'lobby-message' | 'system-message';
   content: string;
 
   constructor(message?: Partial<LobbyMessage>) {

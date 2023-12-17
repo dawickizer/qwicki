@@ -10,7 +10,7 @@ export class Lobby extends Room<LobbyState> {
   lobbyManager: LobbyManager;
 
   onCreate() {
-    this.setState(new LobbyState());
+    this.setState(new LobbyState({ _id: this.roomId }));
     this.maxClients = 5;
     this.setPrivate(true);
     this.setManagers();
@@ -33,8 +33,8 @@ export class Lobby extends Room<LobbyState> {
       isHost: false,
       color: '#FFFFFF',
     });
-    this.determineHost(member);
     this.state.addMember(member);
+    this.determineHost(member);
     this.state.logMembers();
   }
 
@@ -72,10 +72,8 @@ export class Lobby extends Room<LobbyState> {
 
   determineHost(member: Member) {
     if (!this.hostClient) {
-      this.state.host = member;
-      this.state.host.isHost = true;
-      this.hostClient = this.getClient(this.state.host);
-      console.log(`${this.state.host.username} is the host`);
+      this.hostClient = this.getClient(member);
+      this.state.setHost(this.hostClient);
     }
   }
 
@@ -88,7 +86,6 @@ export class Lobby extends Room<LobbyState> {
     this.hostClient = newHostClient;
     this.state.setHost(newHostClient);
     this.lobbyManager.broadcastTransferHost();
-    console.log(`${this.state.host.username} is the host`);
   }
 
   isHost(client: Client): boolean {

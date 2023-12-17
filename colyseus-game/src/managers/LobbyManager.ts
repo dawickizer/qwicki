@@ -36,6 +36,16 @@ export class LobbyManager {
     this.lobby.onMessage('kickMember', (client: Client, member: Member) => {
       if (this.lobby.isHost(client)) {
         this.broadcastKickMember(member);
+        this.lobby.state.addMessage(
+          new Message({
+            _id: generateRandomUUID(),
+            createdAt: new Date().getTime(),
+            type: 'system-message',
+            to: this.lobby.state._id,
+            from: this.lobby.state.chatBot,
+            content: `${member.username} was kicked`,
+          })
+        );
         this.lobby.getClient(member).leave();
       }
     });

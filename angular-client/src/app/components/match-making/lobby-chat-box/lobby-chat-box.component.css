@@ -29,6 +29,11 @@
   color: aliceblue;
 }
 
+.system-message {
+  font-style: italic;
+  color: #6c757d;
+}
+
 .input-area {
   height: 30%;
 }
@@ -39,6 +44,14 @@
 }
 
 .party-leader-icon {
+  width: 20px;
+  height: auto;
+  vertical-align: middle;
+  margin-bottom: 1px;
+  cursor: pointer;
+}
+
+.qwicki-bot-icon {
   width: 20px;
   height: auto;
   vertical-align: middle;

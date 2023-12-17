@@ -9,11 +9,21 @@
           src="/assets/party-leader/party-leader.png"
           alt="party-leader"
           class="party-leader-icon" />
+        <img
+          *ngIf="message.type === 'system-message'"
+          matTooltip="Qwicki Bot"
+          src="/assets/qwicki-bot/qwicki-bot.png"
+          alt="qwicki-bot"
+          class="qwicki-bot-icon" />
       </span>
       <span class="timestamp"
         >[{{ message.createdAt | date: 'mediumTime' }}]:</span
       >
-      <span class="message-content">{{ message.content }}</span>
+      <span
+        class="message-content"
+        [ngClass]="{ 'system-message': message.type === 'system-message' }"
+        >{{ message.content }}</span
+      >
     </div>
   </div>
   <div class="input-area">

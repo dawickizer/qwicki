@@ -6,7 +6,7 @@ export class Message extends Schema {
   @type('number') createdAt: number;
   @type(Member) from: Member;
   @type('string') to: string;
-  @type('string') type: 'lobby-message';
+  @type('string') type: 'lobby-message' | 'system-message';
   @type('string') content: string;
 
   constructor(message?: Partial<Message>) {

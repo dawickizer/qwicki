@@ -4,6 +4,7 @@ import { Member } from './Member';
 import { Message } from './Message';
 import { Invite } from './Invite';
 import { Client } from 'colyseus';
+import { generateRandomUUID } from '../../utils/generateRandomUUID';
 
 export class LobbyState extends Schema {
   @type('string') _id: string;
@@ -12,6 +13,12 @@ export class LobbyState extends Schema {
   @type({ map: Member }) members = new MapSchema<Member>();
   @type([Message]) messages = new ArraySchema<Message>();
   @type([Invite]) outboundInvites = new ArraySchema<Invite>();
+
+  chatBot: Member = new Member({
+    _id: generateRandomUUID(),
+    username: 'System Log',
+    color: '#008080',
+  });
 
   private availableColors = [
     '#007bff',
@@ -39,12 +46,32 @@ export class LobbyState extends Schema {
   addMember(member: Member) {
     this.members.set(member.sessionId, member);
     this.assignColor(member.sessionId);
+    this.addMessage(
+      new Message({
+        _id: generateRandomUUID(),
+        createdAt: new Date().getTime(),
+        type: 'system-message',
+        to: this._id,
+        from: this.chatBot,
+        content: `${member.username} joined`,
+      })
+    );
     console.log(`${member.username} joined`);
   }
 
   deleteMember(member: Member) {
     this.freeUpColor(member.sessionId);
     this.members.delete(member.sessionId);
+    this.addMessage(
+      new Message({
+        _id: generateRandomUUID(),
+        createdAt: new Date().getTime(),
+        type: 'system-message',
+        to: this._id,
+        from: this.chatBot,
+        content: `${member.username} left`,
+      })
+    );
     console.log(`${member.username} left`);
   }
 
@@ -75,6 +102,17 @@ export class LobbyState extends Schema {
     this.members.forEach(member => {
       member.isHost = member.sessionId === hostClient.sessionId;
     });
+    this.addMessage(
+      new Message({
+        _id: generateRandomUUID(),
+        createdAt: new Date().getTime(),
+        type: 'system-message',
+        to: this._id,
+        from: this.chatBot,
+        content: `${this.host.username} is the host`,
+      })
+    );
+    console.log(`${this.host.username} is the host`);
   }
 
   assignColor(memberId: string) {
