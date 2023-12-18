@@ -17,7 +17,7 @@
     <div class="member-controls">
       <ng-container *ngIf="decodedJwt$ | async as decodedJwt">
         <ng-container *ngIf="host$ | async as host">
-          <!-- Display 'Leave Lobby' icon if the current member is the user -->
+          <!-- Current member panel controls -->
           <span
             *ngIf="member._id === decodedJwt._id"
             matTooltip="Leave Lobby"
@@ -27,7 +27,7 @@
             exit_to_app
           </span>
 
-          <!-- Display 'Kick Member' and 'Transfer Host' icons only if the logged-in user is the host and viewing other members' panels -->
+          <!-- Host controls for other member panels -->
           <ng-container
             *ngIf="
               host._id === decodedJwt._id && member._id !== decodedJwt._id
@@ -47,6 +47,16 @@
               swap_horiz
             </span>
           </ng-container>
+
+          <!-- Member controls for other member panels -->
+          <span
+            *ngIf="
+              !(
+                member._id === decodedJwt._id ||
+                (host._id === decodedJwt._id && member._id !== decodedJwt._id)
+              )
+            "
+            class="member-controls-placeholder"></span>
         </ng-container>
       </ng-container>
     </div>

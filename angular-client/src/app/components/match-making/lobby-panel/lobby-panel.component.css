@@ -66,6 +66,13 @@
   justify-content: center; /* Center the icons horizontally */
 }
 
+.member-controls-placeholder {
+  display: inline-block;
+  width: 24px; /* Width of your icons */
+  height: 24px; /* Height of your icons */
+  visibility: hidden; /* Makes the placeholder invisible */
+}
+
 .member-controls .material-icons-outlined {
   margin: 0 5px; /* 10px margin on the left and right of each icon */
 }
