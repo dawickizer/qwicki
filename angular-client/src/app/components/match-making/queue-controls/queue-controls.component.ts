@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, combineLatest, map } from 'rxjs';
 import {
   GameType,
   QueueType,
   gameTypes,
   queueTypes,
 } from 'src/app/models/status/status.model';
+import { AuthService } from 'src/app/state/auth/auth.service';
+import { DecodedJwt } from 'src/app/state/auth/decoded-jwt.model';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
+import { Member } from 'src/app/state/lobby/member.model';
 import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
-import { UserService } from 'src/app/state/user/user.service';
 
 @Component({
   selector: 'app-queue-controls',
@@ -21,21 +23,25 @@ export class QueueControlsComponent implements OnInit {
   gameTypes: GameType[] = gameTypes;
   queueType$: Observable<QueueType>;
   gameType$: Observable<GameType>;
+  decodedJwt$: Observable<DecodedJwt>;
+  host$: Observable<Member>;
+  isDisabled$: Observable<boolean>;
 
   constructor(
     private userOrchestratorService: UserOrchestratorService,
     private lobbyOrchestratorService: LobbyOrchestratorService,
-    private userService: UserService,
-    private lobbyService: LobbyService
+    private lobbyService: LobbyService,
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
-    this.queueType$ = this.userService.queueType$;
-    this.gameType$ = this.userService.gameType$;
-
-    this.lobbyService.status$.subscribe(s => console.log(s));
-    this.lobbyService.queueType$.subscribe(qt => console.log(qt));
-    this.lobbyService.gameType$.subscribe(gt => console.log(gt));
+    this.queueType$ = this.lobbyService.queueType$;
+    this.gameType$ = this.lobbyService.gameType$;
+    this.decodedJwt$ = this.authService.decodedJwt$;
+    this.host$ = this.lobbyService.host$;
+    this.isDisabled$ = combineLatest([this.host$, this.decodedJwt$]).pipe(
+      map(([host, decodedJwt]) => host?._id !== decodedJwt?._id)
+    );
   }
 
   onQueueTypeChange(queueType: QueueType) {

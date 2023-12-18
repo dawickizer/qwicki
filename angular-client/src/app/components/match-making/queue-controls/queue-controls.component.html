@@ -1,6 +1,7 @@
 <div class="queue-controls">
   <mat-label>Queue Type</mat-label>
   <mat-chip-listbox
+    [disabled]="isDisabled$ | async"
     aria-label="Queue type"
     (change)="onQueueTypeChange($event.value)">
     <mat-chip-option
@@ -13,6 +14,7 @@
 
   <mat-label>Game Type</mat-label>
   <mat-chip-listbox
+    [disabled]="isDisabled$ | async"
     aria-label="Game type"
     (change)="onGameTypeChange($event.value)">
     <mat-chip-option
