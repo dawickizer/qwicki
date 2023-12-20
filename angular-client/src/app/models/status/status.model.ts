@@ -35,8 +35,8 @@ export const activities: Activity[] = [
 ];
 export const queueTypes: QueueType[] = ['Solo', 'Duo', 'Squad'];
 export const gameTypes: GameType[] = [
-  'Ranked',
   'Normal',
+  'Ranked',
   'Custom',
   'Money Match',
 ];
