@@ -24,6 +24,10 @@
   max-height: 250px; /* Adjust to control the scrollable area height */
 }
 
-.example-full-width {
+.full-width {
   width: 100%;
+}
+
+.status-bubble {
+  margin-left: 7px;
 }

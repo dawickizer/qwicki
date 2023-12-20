@@ -11,9 +11,7 @@
 <mat-menu #menu="matMenu" (closed)="onMenuClosed()" class="menu">
   <div class="menu-content">
     <div class="search-bar">
-      <mat-form-field
-        class="example-full-width"
-        (click)="$event.stopPropagation()">
+      <mat-form-field class="full-width" (click)="$event.stopPropagation()">
         <input
           matInput
           placeholder="Search"
@@ -31,6 +29,10 @@
           class="presence"
           [presence]="friend?.presence"></app-presence>
         {{ friend.username }}
+        <app-status-bubble
+          class="status-bubble"
+          [status]="friend.status"
+          [presence]="friend.presence"></app-status-bubble>
       </button>
     </div>
   </div>
