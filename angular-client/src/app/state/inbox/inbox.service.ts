@@ -38,7 +38,7 @@ export class InboxService {
 
   createInbox(
     inboxId: string,
-    options: { jwt: string; presence: Presence; status: Partial<Status> }
+    options: { jwt: string; presence: Presence }
   ): Observable<Room<any>> {
     return this.inboxEffectService.createInbox(inboxId, options);
   }

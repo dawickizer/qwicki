@@ -20,7 +20,7 @@ export class InboxEffectService {
 
   createInbox(
     inboxId: string,
-    options: { jwt: string; presence: Presence; status: Partial<Status> }
+    options: { jwt: string; presence: Presence }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(

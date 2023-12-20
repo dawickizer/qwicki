@@ -30,8 +30,6 @@ export class LobbyOrchestratorService {
 
   createLobby(): Observable<Lobby> {
     if (this.lobby?.room) {
-      console.log('ALREADY A LOBBY...returning it');
-      console.log(this.lobby);
       return of(this.lobby);
     }
     return this.lobbyService.createLobby({ jwt: this.jwt }).pipe(

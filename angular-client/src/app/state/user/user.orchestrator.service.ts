@@ -5,7 +5,6 @@ import { UserService } from '../user/user.service';
 import { InboxService } from '../inbox/inbox.service';
 import { Room } from 'colyseus.js';
 import { InactivityService } from '../inactivity/inactivity.service';
-import { Status } from 'src/app/models/status/status.model';
 import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
@@ -55,21 +54,6 @@ export class UserOrchestratorService {
       });
       this.userService.updatePresence(presence);
       subscriber.next(presence);
-      subscriber.complete();
-    });
-  }
-
-  updateStatus(status: Partial<Status>): Observable<Status> {
-    return new Observable(subscriber => {
-      this.personalInbox.send('updateHostStatus', status);
-      this.friendsInboxes.forEach(friendsInbox => {
-        friendsInbox.send('notifyHostStatus', {
-          id: this.user._id,
-          status,
-        });
-      });
-      this.userService.updateStatus(status);
-      subscriber.next(status as Status);
       subscriber.complete();
     });
   }

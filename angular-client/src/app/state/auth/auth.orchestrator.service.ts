@@ -174,7 +174,6 @@ export class AuthOrchestratorService {
       .createInbox(this.decodedJwt._id, {
         jwt: this.jwt,
         presence: 'Online',
-        status: { activity: 'In Lobby' },
       })
       .pipe(
         tap(inbox => {

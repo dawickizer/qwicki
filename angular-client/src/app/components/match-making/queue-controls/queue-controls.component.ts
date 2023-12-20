@@ -11,7 +11,6 @@ import { DecodedJwt } from 'src/app/state/auth/decoded-jwt.model';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
 import { Member } from 'src/app/state/lobby/member.model';
-import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
 
 @Component({
   selector: 'app-queue-controls',
@@ -28,7 +27,6 @@ export class QueueControlsComponent implements OnInit {
   isDisabled$: Observable<boolean>;
 
   constructor(
-    private userOrchestratorService: UserOrchestratorService,
     private lobbyOrchestratorService: LobbyOrchestratorService,
     private lobbyService: LobbyService,
     private authService: AuthService
@@ -45,12 +43,10 @@ export class QueueControlsComponent implements OnInit {
   }
 
   onQueueTypeChange(queueType: QueueType) {
-    this.userOrchestratorService.updateStatus({ queueType }).subscribe();
     this.lobbyOrchestratorService.updateStatus({ queueType }).subscribe();
   }
 
   onGameTypeChange(gameType: GameType) {
-    this.userOrchestratorService.updateStatus({ gameType }).subscribe();
     this.lobbyOrchestratorService.updateStatus({ gameType }).subscribe();
   }
 }

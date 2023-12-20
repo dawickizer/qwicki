@@ -59,7 +59,10 @@ export class LobbyStateService {
     if (!currentState.lobby) return;
 
     // Merge new status with existing status
-    const updatedStatus = { ...currentState.lobby.status, ...status };
+    const updatedStatus = new Status({
+      ...currentState.lobby.status,
+      ...status,
+    });
 
     // Update the lobby with the new status
     const updatedLobby = new Lobby({

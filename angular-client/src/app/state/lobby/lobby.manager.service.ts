@@ -7,6 +7,10 @@ import { LobbyMessage } from './lobby-message.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { tap } from 'rxjs';
+import { UserService } from '../user/user.service';
+import { Status } from 'src/app/models/status/status.model';
+import { Room } from 'colyseus.js';
+import { InboxService } from '../inbox/inbox.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +18,16 @@ import { tap } from 'rxjs';
 export class LobbyManagerService {
   private jwt: string;
   private decodedJwt: DecodedJwt;
+  private friendsInboxes: Room<any>[];
+  private personalInbox: Room<any>;
   private joinLobbyAudio = new Audio('assets/notifications/sounds/join.mp3');
   private leaveLobbyAudio = new Audio('assets/notifications/sounds/leave.mp3');
 
   constructor(
     private lobbyService: LobbyService,
+    private userService: UserService,
     private authService: AuthService,
+    private inboxService: InboxService,
     private snackBar: MatSnackBar
   ) {
     this.subscribeToState();
@@ -29,6 +37,12 @@ export class LobbyManagerService {
     this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
     this.authService.decodedJwt$.subscribe(
       decodedJwt => (this.decodedJwt = decodedJwt)
+    );
+    this.inboxService.friendsInboxes$.subscribe(
+      friendsInboxes => (this.friendsInboxes = friendsInboxes)
+    );
+    this.inboxService.personalInbox$.subscribe(
+      personalInbox => (this.personalInbox = personalInbox)
     );
   }
 
@@ -41,7 +55,18 @@ export class LobbyManagerService {
     };
 
     lobby.room.state.status.onChange = () => {
-      this.lobbyService.updateStatus(lobby.room.state.status);
+      const updatedStatus = new Status(lobby.room.state.status);
+      this.lobbyService.updateStatus(updatedStatus);
+      this.userService.updateStatus(updatedStatus);
+
+      // notify friends of status change
+      this.personalInbox.send('updateHostStatus', updatedStatus);
+      this.friendsInboxes.forEach(friendsInbox => {
+        friendsInbox.send('notifyHostStatus', {
+          id: this.decodedJwt._id,
+          status: updatedStatus,
+        });
+      });
     };
 
     lobby.room.state.members.onAdd = (member: Member | any) => {
