@@ -6,10 +6,10 @@ import { User } from './user.model';
 import {
   Activity,
   GameType,
-  Presence,
   QueueType,
   Status,
 } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 export const userSelector = (
   userState$: Observable<UserState>
@@ -36,10 +36,10 @@ export const statusSelector = (
   );
 
 export const presenceSelector = (
-  status$: Observable<Status | null>
+  user$: Observable<User | null>
 ): Observable<Presence | null> =>
-  status$.pipe(
-    map(status => (status ? status.presence : null)),
+  user$.pipe(
+    map(user => (user ? user.presence : null)),
     distinctUntilChanged()
   );
 

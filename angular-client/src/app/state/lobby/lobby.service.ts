@@ -6,7 +6,6 @@ import { LobbyEffectService } from './lobby.effect.service';
 import {
   Activity,
   GameType,
-  Presence,
   QueueType,
   Status,
 } from 'src/app/models/status/status.model';
@@ -33,10 +32,6 @@ export class LobbyService {
 
   get status$(): Observable<Status | null> {
     return this.lobbyStateService.status$;
-  }
-
-  get presence$(): Observable<Presence | null> {
-    return this.lobbyStateService.presence$;
   }
 
   get activity$(): Observable<Activity | null> {

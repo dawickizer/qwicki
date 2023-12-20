@@ -12,6 +12,7 @@ import {
 } from './user.state.selectors';
 import { User } from './user.model';
 import { Status } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +24,7 @@ export class UserStateService {
   public isLoading$ = isLoadingSelector(this.userState$);
   public user$ = userSelector(this.userState$);
   public status$ = statusSelector(this.user$);
-  public presence$ = presenceSelector(this.status$);
+  public presence$ = presenceSelector(this.user$);
   public activity$ = activitySelector(this.status$);
   public queueType$ = queueTypeSelector(this.status$);
   public gameType$ = gameTypeSelector(this.status$);
@@ -63,6 +64,14 @@ export class UserStateService {
     this._userState.next({
       ...currentState,
       user: updatedUser,
+    });
+  }
+
+  updatePresence(presence: Presence): void {
+    const currentState = this._userState.value;
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, presence }),
     });
   }
 

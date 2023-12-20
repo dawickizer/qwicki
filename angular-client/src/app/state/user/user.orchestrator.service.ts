@@ -6,6 +6,7 @@ import { InboxService } from '../inbox/inbox.service';
 import { Room } from 'colyseus.js';
 import { InactivityService } from '../inactivity/inactivity.service';
 import { Status } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -36,10 +37,25 @@ export class UserOrchestratorService {
     this.inactivityService.presence$.subscribe(presence => {
       if (
         !this.user ||
-        (this.user.status.presence === 'Offline' && presence === 'Away')
+        (this.user.presence === 'Offline' && presence === 'Away')
       )
         return;
-      this.updateStatus({ presence }).subscribe();
+      this.updatePresence(presence).subscribe();
+    });
+  }
+
+  updatePresence(presence: Presence): Observable<Presence> {
+    return new Observable(subscriber => {
+      this.personalInbox.send('updateHostPresence', presence);
+      this.friendsInboxes.forEach(friendsInbox => {
+        friendsInbox.send('notifyHostPresence', {
+          id: this.user._id,
+          presence,
+        });
+      });
+      this.userService.updatePresence(presence);
+      subscriber.next(presence);
+      subscriber.complete();
     });
   }
 

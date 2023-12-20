@@ -1,7 +1,7 @@
 import { Observable } from 'rxjs';
 import { map, distinctUntilChanged } from 'rxjs/operators';
 import { InactivityState } from './inactivity.state';
-import { Presence } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 export const isAwaySelector = (
   inactivityState$: Observable<InactivityState>

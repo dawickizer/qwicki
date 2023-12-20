@@ -37,11 +37,15 @@ export class Inbox extends Room<InboxState> {
       sessionId: client.sessionId,
       username: auth.username,
       status: options.status,
+      presence: options.presence,
     });
     this.determineHost(user);
     this.addUser(user);
     this.logUsers();
-    if (!this.isHost(client)) this.presenceManager.notifyHostUserStatus(user);
+    if (!this.isHost(client)) {
+      this.presenceManager.notifyHostUserStatus(user);
+      this.presenceManager.notifyHostUserPresence(user);
+    }
   }
 
   onLeave(client: Client) {
@@ -59,8 +63,10 @@ export class Inbox extends Room<InboxState> {
 
   removeClient(client: Client) {
     const user: User = this.getUser(client);
-    if (this.hostClient && user)
+    if (this.hostClient && user) {
       this.presenceManager.notifyHostUserStatus(user, new Status());
+      this.presenceManager.notifyHostUserPresence(user, 'Offline');
+    }
     this.deleteUser(user);
     this.logUsers();
   }
@@ -99,7 +105,7 @@ export class Inbox extends Room<InboxState> {
   logUsers() {
     console.log('Users in the chat:');
     this.state.users.forEach(user =>
-      console.log(`${user.username} - ${user.status.presence}`)
+      console.log(`${user.username} - ${user?.presence}`)
     );
   }
 

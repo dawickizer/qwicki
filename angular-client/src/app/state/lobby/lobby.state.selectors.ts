@@ -6,7 +6,6 @@ import { Lobby } from './lobby.model';
 import {
   Activity,
   GameType,
-  Presence,
   QueueType,
   Status,
 } from 'src/app/models/status/status.model';
@@ -35,14 +34,6 @@ export const statusSelector = (
 ): Observable<Status | null> =>
   lobby$.pipe(
     map(lobby => (lobby ? lobby.status : null)),
-    distinctUntilChanged()
-  );
-
-export const presenceSelector = (
-  status$: Observable<Status | null>
-): Observable<Presence | null> =>
-  status$.pipe(
-    map(status => (status ? status.presence : null)),
     distinctUntilChanged()
   );
 

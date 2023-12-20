@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { Presence } from 'src/app/models/presence/presence';
 import { Status } from 'src/app/models/status/status.model';
 
 @Component({
@@ -8,6 +9,7 @@ import { Status } from 'src/app/models/status/status.model';
 })
 export class StatusBubbleComponent {
   @Input() color = 'var(--purple)';
+  @Input() presence: Presence;
   @Input() status: Status;
   @Input() disableToolTip = false;
 

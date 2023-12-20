@@ -21,7 +21,6 @@ export class Status extends Schema {
   }
 }
 
-export type Presence = 'Online' | 'Offline' | 'Away';
 export type Activity = 'In Lobby' | 'In Queue' | 'In Pregame Lobby' | 'In Game';
 export type QueueType = 'Solo' | 'Duo' | 'Squad';
 export type GameType = 'Ranked' | 'Normal' | 'Custom' | 'Money Match';

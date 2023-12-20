@@ -11,7 +11,7 @@ import {
   isAwaySelector,
   presenceSelector,
 } from './inactivity.state.selector';
-import { Presence } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',

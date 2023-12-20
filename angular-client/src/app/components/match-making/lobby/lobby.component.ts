@@ -1,38 +1,33 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Member } from 'src/app/state/lobby/member.model';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
-import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-lobby',
   templateUrl: './lobby.component.html',
   styleUrls: ['./lobby.component.css'],
 })
-export class LobbyComponent implements OnInit {
+export class LobbyComponent implements OnInit, OnDestroy {
   panels: { member: Member | null }[] = [];
 
   members: Map<string, Member>;
-
+  membersSubscription: Subscription;
   constructor(
-    private userOrchestratorService: UserOrchestratorService,
     private lobbyOrchestratorService: LobbyOrchestratorService,
     private lobbyService: LobbyService
   ) {}
 
   ngOnInit(): void {
-    this.userOrchestratorService
-      .updateStatus({ activity: 'In Lobby' })
-      .subscribe();
-
-    // TODO: need to figure out how to only do this once and not every time the component inits..perhaps sonmehow use lobby$
     this.lobbyOrchestratorService.createLobby().subscribe();
+    this.membersSubscription = this.lobbyService.members$.subscribe(members =>
+      this.updatePanels(members)
+    );
+  }
 
-    // TODO: dont forget to manage this subscription and unsubscribe when component destroys
-    this.lobbyService.members$.subscribe(members => {
-      console.log(members);
-      this.updatePanels(members);
-    });
+  ngOnDestroy() {
+    this.membersSubscription.unsubscribe();
   }
 
   updatePanels(members: Map<string, Member> | null | undefined) {

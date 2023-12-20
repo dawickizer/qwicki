@@ -5,7 +5,6 @@ import {
   activitySelector,
   gameTypeSelector,
   isLoadingSelector,
-  presenceSelector,
   queueTypeSelector,
   statusSelector,
   lobbySelector,
@@ -29,7 +28,6 @@ export class LobbyStateService {
   public isLoading$ = isLoadingSelector(this.lobbyState$);
   public lobby$ = lobbySelector(this.lobbyState$);
   public status$ = statusSelector(this.lobby$);
-  public presence$ = presenceSelector(this.status$);
   public activity$ = activitySelector(this.status$);
   public queueType$ = queueTypeSelector(this.status$);
   public gameType$ = gameTypeSelector(this.status$);

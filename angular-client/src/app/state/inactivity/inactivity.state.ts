@@ -1,4 +1,4 @@
-import { Presence } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 export interface InactivityState {
   isInactive: boolean;

@@ -5,6 +5,7 @@ import { Room } from 'colyseus.js';
 import { Observable } from 'rxjs';
 import { Status } from 'src/app/models/status/status.model';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -37,14 +38,14 @@ export class InboxService {
 
   createInbox(
     inboxId: string,
-    options: { jwt: string; status: Partial<Status> }
+    options: { jwt: string; presence: Presence; status: Partial<Status> }
   ): Observable<Room<any>> {
     return this.inboxEffectService.createInbox(inboxId, options);
   }
 
   joinExistingInboxesIfPresent(
     inboxIds: string[],
-    options: { jwt: string; status: Partial<Status> }
+    options: { jwt: string; presence: Presence; status: Partial<Status> }
   ): Observable<Room<any>[]> {
     return this.inboxEffectService.joinExistingInboxesIfPresent(
       inboxIds,
@@ -54,7 +55,7 @@ export class InboxService {
 
   joinExistingInboxIfPresent(
     inboxId: string,
-    options: { jwt: string; status: Partial<Status> }
+    options: { jwt: string; presence: Presence; status: Partial<Status> }
   ): Observable<Room<any>> {
     return this.inboxEffectService.joinExistingInboxIfPresent(inboxId, options);
   }

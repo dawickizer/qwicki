@@ -6,6 +6,7 @@ import { Room } from 'colyseus.js';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { InboxStateService } from './inbox.state.service';
 import { Status } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,7 @@ export class InboxEffectService {
 
   createInbox(
     inboxId: string,
-    options: { jwt: string; status: Partial<Status> }
+    options: { jwt: string; presence: Presence; status: Partial<Status> }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(

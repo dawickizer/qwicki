@@ -6,10 +6,10 @@ import { UserEffectService } from './user.effect.service';
 import {
   Activity,
   GameType,
-  Presence,
   QueueType,
   Status,
 } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -81,6 +81,10 @@ export class UserService {
 
   updateStatus(status: Partial<Status>): void {
     this.userStateService.updateStatus(status);
+  }
+
+  updatePresence(presence: Presence): void {
+    this.userStateService.updatePresence(presence);
   }
 
   setIsLoading(isLoading: boolean): void {

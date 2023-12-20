@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Presence } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 import { UserOrchestratorService } from 'src/app/state/user/user.orchestrator.service';
 
 @Component({
@@ -29,8 +29,6 @@ export class PresenceComponent {
       default:
         this.presence = 'Online';
     }
-    this.userOrchestratorService
-      .updateStatus({ presence: this.presence })
-      .subscribe();
+    this.userOrchestratorService.updatePresence(this.presence).subscribe();
   }
 }

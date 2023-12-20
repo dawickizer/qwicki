@@ -11,6 +11,7 @@ import {
 import { Friend } from './friend.model';
 import { Message } from '../message/message.model';
 import { Status } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -103,38 +104,20 @@ export class FriendStateService {
     // Create a shallow copy of the friends array
     const updatedFriends = [...currentState.friends];
 
-    // check if presence has changed or not..if so mark it as stale for sorting logic
-    const isPresenceStale =
-      updatedFriends[friendIndex].status.presence !== status.presence;
-
     // Update the status of the specified friend
     updatedFriends[friendIndex] = {
       ...updatedFriends[friendIndex],
-      status:
-        Object.keys(status).length === 0
-          ? new Status({ presence: 'Offline' })
-          : status,
+      status: Object.keys(status).length === 0 ? new Status() : status,
     };
 
     this._friendState.next({
       ...currentState,
       friends: updatedFriends.map(friend => new Friend(friend)),
     });
-
-    if (isPresenceStale) {
-      if (updatedFriends[friendIndex].status.presence === 'Online')
-        this.reorderFriend(friendId, 'front');
-      else if (updatedFriends[friendIndex].status.presence === 'Offline')
-        this.reorderFriend(friendId, 'end');
-    }
   }
 
   updateFriendStatus(friendId: string, status: Partial<Status>): void {
     this.updateFriendStatusHelper(friendId, status);
-
-    // just note for setFriendStatus we moved the logic to the helper function and added some stale checks...for now its probably ok to leave this code as is since it acts as an update as opposed to a set...but keep an eye on this
-    if (status.presence === 'Online') this.reorderFriend(friendId, 'front');
-    else if (status.presence === 'Offline') this.reorderFriend(friendId, 'end');
   }
 
   updateFriendsStatus(friendIds: string[], status: Partial<Status>): void {
@@ -170,6 +153,46 @@ export class FriendStateService {
       ...updatedFriends[friendIndex],
       status: updatedStatus,
     });
+
+    this._friendState.next({
+      ...currentState,
+      friends: updatedFriends.map(friend => new Friend(friend)),
+    });
+  }
+
+  updateFriendPresence(friendId: string, presence: Presence): void {
+    this.updateFriendPresenceHelper(friendId, presence);
+    if (presence === 'Online') this.reorderFriend(friendId, 'front');
+    else if (presence === 'Offline') this.reorderFriend(friendId, 'end');
+  }
+
+  updateFriendsPresence(friendIds: string[], presence: Presence): void {
+    friendIds.forEach(friendId => {
+      this.updateFriendPresence(friendId, presence);
+    });
+  }
+
+  private updateFriendPresenceHelper(
+    friendId: string,
+    presence: Presence
+  ): void {
+    const currentState = this._friendState.value;
+    if (!currentState.friends) return;
+
+    const friendIndex = currentState.friends.findIndex(
+      friend => friend._id === friendId
+    );
+
+    if (friendIndex === -1) return; // if the friend with the given ID is not found
+
+    // Create a shallow copy of the friends array
+    const updatedFriends = [...currentState.friends];
+
+    // Update the presence of the specified friend
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      presence: presence ? presence : 'Offline',
+    };
 
     this._friendState.next({
       ...currentState,
@@ -233,11 +256,9 @@ export class FriendStateService {
 
       // Calculate the sort priority
       const aPriority =
-        statusPriority[a.status.presence] * 10 +
-        (aUnviewedMessagesCount > 0 ? 0 : 1);
+        statusPriority[a.presence] * 10 + (aUnviewedMessagesCount > 0 ? 0 : 1);
       const bPriority =
-        statusPriority[b.status.presence] * 10 +
-        (bUnviewedMessagesCount > 0 ? 0 : 1);
+        statusPriority[b.presence] * 10 + (bUnviewedMessagesCount > 0 ? 0 : 1);
 
       return aPriority - bPriority;
     });

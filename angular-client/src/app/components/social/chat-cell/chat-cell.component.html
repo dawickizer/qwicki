@@ -10,13 +10,14 @@
       [style]="panelOpenState ? 'color:#7b1fa2' : 'color:aliceblue'">
       <app-presence
         class="presence"
-        [presence]="friend?.status?.presence"></app-presence>
+        [presence]="friend?.presence"></app-presence>
       {{ friend.username }}
 
       <app-status-bubble
         *ngIf="!panelOpenState"
         class="status-bubble"
-        [status]="friend.status">
+        [status]="friend.status"
+        [presence]="friend.presence">
       </app-status-bubble>
     </mat-panel-title>
     <mat-panel-description>

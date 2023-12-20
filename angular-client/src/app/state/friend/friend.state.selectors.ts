@@ -24,9 +24,7 @@ export const onlineFriendsSelector = (
   friends$: Observable<Friend[] | null>
 ): Observable<Friend[] | null> =>
   friends$.pipe(
-    map(friends =>
-      friends.filter(friend => friend.status.presence === 'Online')
-    ),
+    map(friends => friends.filter(friend => friend.presence === 'Online')),
     distinctUntilChanged(isEqual)
   );
 
@@ -34,9 +32,7 @@ export const offlineFriendsSelector = (
   friends$: Observable<Friend[] | null>
 ): Observable<Friend[] | null> =>
   friends$.pipe(
-    map(friends =>
-      friends.filter(friend => friend.status.presence === 'Offline')
-    ),
+    map(friends => friends.filter(friend => friend.presence === 'Offline')),
     distinctUntilChanged(isEqual)
   );
 
@@ -44,6 +40,6 @@ export const awayFriendsSelector = (
   friends$: Observable<Friend[] | null>
 ): Observable<Friend[] | null> =>
   friends$.pipe(
-    map(friends => friends.filter(friend => friend.status.presence === 'Away')),
+    map(friends => friends.filter(friend => friend.presence === 'Away')),
     distinctUntilChanged(isEqual)
   );

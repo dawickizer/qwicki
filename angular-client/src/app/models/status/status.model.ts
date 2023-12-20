@@ -1,5 +1,4 @@
 export class Status {
-  presence: Presence = 'Offline';
   activity: Activity;
   queueType?: QueueType;
   gameType?: GameType;
@@ -9,7 +8,6 @@ export class Status {
 
   constructor(status?: Partial<Status>) {
     if (status) {
-      this.presence = status.presence;
       this.activity = status.activity;
       this.queueType = status.queueType;
       this.gameType = status.gameType;
@@ -20,7 +18,6 @@ export class Status {
   }
 }
 
-export type Presence = 'Online' | 'Offline' | 'Away';
 export type Activity = 'In Lobby' | 'In Queue' | 'In Pregame Lobby' | 'In Game';
 export type QueueType = 'Solo' | 'Duo' | 'Squad';
 export type GameType = 'Ranked' | 'Normal' | 'Custom' | 'Money Match';
@@ -30,7 +27,6 @@ export type GameMap =
   | 'Final Destination'
   | 'Yoshi Story';
 
-export const presences: Presence[] = ['Online', 'Offline', 'Away'];
 export const activities: Activity[] = [
   'In Lobby',
   'In Queue',

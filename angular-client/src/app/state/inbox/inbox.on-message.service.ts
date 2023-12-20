@@ -12,6 +12,7 @@ import { FriendRequest } from '../friend-request/friend-requests.model';
 import { FriendRequestService } from '../friend-request/friend-request.service';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -51,6 +52,13 @@ export class InboxOnMessageService {
       this.friendService.setFriendStatus(friend.id, friend.status);
     });
 
+    inbox.onMessage(
+      'presence',
+      (friend: { id: string; presence: Presence }) => {
+        this.friendService.updateFriendPresence(friend.id, friend.presence);
+      }
+    );
+
     inbox.onMessage('sendFriendRequest', (friendRequest: FriendRequest) => {
       this.friendRequestService.receiveFriendRequest(friendRequest).subscribe();
     });
@@ -65,7 +73,11 @@ export class InboxOnMessageService {
 
     inbox.onMessage(
       'acceptFriendRequest',
-      (data: { friendRequest: FriendRequest; status: Status }) => {
+      (data: {
+        friendRequest: FriendRequest;
+        presence: Presence;
+        status: Status;
+      }) => {
         this.friendRequestService.removeOutboundFriendRequest(
           data.friendRequest
         );
@@ -73,6 +85,10 @@ export class InboxOnMessageService {
         this.friendService.setFriendStatus(
           data.friendRequest.to._id,
           data.status
+        );
+        this.friendService.updateFriendPresence(
+          data.friendRequest.to._id,
+          data.presence
         );
 
         this.messageService
@@ -138,6 +154,13 @@ export class InboxOnMessageService {
     });
 
     inbox.onMessage(
+      'presence',
+      (friend: { id: string; presence: Presence }) => {
+        this.friendService.updateFriendPresence(friend.id, friend.presence);
+      }
+    );
+
+    inbox.onMessage(
       'hostIsTyping',
       (data: { friendId: string; isTyping: boolean }) => {
         this.friendService.setFriendIsTyping(data.friendId, data.isTyping);
@@ -152,10 +175,8 @@ export class InboxOnMessageService {
     });
 
     inbox.onMessage('dispose', (inboxId: string) => {
-      this.friendService.setFriendStatus(
-        inboxId,
-        new Status({ presence: 'Offline' })
-      );
+      this.friendService.setFriendStatus(inboxId, new Status());
+      this.friendService.updateFriendPresence(inboxId, 'Offline');
       this.inboxService.removeConnectedInboxById(inboxId);
     });
     inbox.onError((code, message) =>

@@ -7,6 +7,7 @@ import { User } from '../user/user.model';
 import { FriendRequest } from '../friend-request/friend-requests.model';
 import { Message } from '../message/message.model';
 import { Status } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/models/presence/presence';
 
 @Injectable({
   providedIn: 'root',
@@ -75,6 +76,14 @@ export class FriendService {
 
   updateFriendsStatus(friendIds: string[], status: Partial<Status>): void {
     this.friendStateService.updateFriendsStatus(friendIds, status);
+  }
+
+  updateFriendPresence(friendId: string, presence: Presence): void {
+    this.friendStateService.updateFriendPresence(friendId, presence);
+  }
+
+  updateFriendsPresence(friendIds: string[], presence: Presence): void {
+    this.friendStateService.updateFriendsPresence(friendIds, presence);
   }
 
   addFriend(friend: Friend): void {

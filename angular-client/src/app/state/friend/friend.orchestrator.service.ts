@@ -83,6 +83,7 @@ export class FriendOrchestratorService {
         this.inboxService
           .joinExistingInboxIfPresent(friendRequest.from._id, {
             jwt: this.jwt,
+            presence: this.user.presence,
             status: this.user.status,
           })
           .pipe(
@@ -98,13 +99,20 @@ export class FriendOrchestratorService {
                     friendRequest.from._id,
                     state.host.status
                   );
+                  this.friendService.updateFriendPresence(
+                    friendRequest.from._id,
+                    state.host.presence
+                  );
                   this.inboxService.updateConnectedInbox(inbox);
                 });
               } else {
                 this.friendService.setFriendStatus(friendRequest.from._id, {
-                  presence: 'Offline',
                   activity: 'In Lobby',
                 });
+                this.friendService.updateFriendPresence(
+                  friendRequest.from._id,
+                  'Offline'
+                );
               }
             }),
             map(() => user)

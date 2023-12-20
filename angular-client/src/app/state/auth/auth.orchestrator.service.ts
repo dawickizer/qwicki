@@ -168,15 +168,17 @@ export class AuthOrchestratorService {
       );
   }
 
+  // TODO: might not need to set status and presence as that should be the lobby responsability
   private createPersonalInbox(): Observable<Room<any>> {
     return this.inboxService
       .createInbox(this.decodedJwt._id, {
         jwt: this.jwt,
-        status: { presence: 'Online', activity: 'In Lobby' },
+        presence: 'Online',
+        status: { activity: 'In Lobby' },
       })
       .pipe(
         tap(inbox => {
-          this.userService.updateStatus({ presence: 'Online' });
+          this.userService.updatePresence('Online');
           inbox = this.inboxOnMessageService.setPersonalInboxListeners(inbox);
           this.inboxService.setPersonalInbox(inbox);
         })
@@ -189,6 +191,7 @@ export class AuthOrchestratorService {
     return this.inboxService
       .joinExistingInboxesIfPresent(friendIds, {
         jwt: this.jwt,
+        presence: this.user.presence,
         status: this.user.status,
       })
       .pipe(
@@ -203,12 +206,17 @@ export class AuthOrchestratorService {
             return new Observable<Room<any>>(subscriber => {
               // Immediately use the current state if it's available.
               const currentStatus = inbox.state.host.status;
-              if (currentStatus) {
+              const currentPresence = inbox.state.host.presence;
+              if (currentStatus && currentPresence) {
                 inbox =
                   this.inboxOnMessageService.setFriendInboxListeners(inbox);
                 this.friendService.setFriendStatus(
                   inbox.state.host._id,
                   currentStatus
+                );
+                this.friendService.updateFriendPresence(
+                  inbox.state.host._id,
+                  currentPresence
                 );
                 this.inboxService.updateConnectedInbox(inbox);
                 subscriber.next(inbox);
@@ -221,6 +229,10 @@ export class AuthOrchestratorService {
                   this.friendService.setFriendStatus(
                     state.host._id,
                     state.host.status
+                  );
+                  this.friendService.updateFriendPresence(
+                    state.host._id,
+                    state.host.presence
                   );
                   this.inboxService.updateConnectedInbox(inbox);
                   subscriber.next(inbox);
