@@ -68,9 +68,8 @@
 
 .member-controls-placeholder {
   display: inline-block;
-  width: 24px; /* Width of your icons */
+  width: 0px; /* Width of your icons */
   height: 24px; /* Height of your icons */
-  visibility: hidden; /* Makes the placeholder invisible */
 }
 
 .member-controls .material-icons-outlined {

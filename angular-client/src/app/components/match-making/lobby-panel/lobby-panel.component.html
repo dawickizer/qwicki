@@ -57,6 +57,18 @@
               )
             "
             class="member-controls-placeholder"></span>
+
+          <!-- Controls for other member panels regardless of member type -->
+          <ng-container *ngIf="member._id !== decodedJwt._id">
+            <span
+              *ngIf="(isFriend(member) | async) === false"
+              matTooltip="Send Friend Request"
+              (click)="sendFriendRequest(member)"
+              class="material-icons-outlined"
+              aria-label="Send Friend Request">
+              person_add
+            </span>
+          </ng-container>
         </ng-container>
       </ng-container>
     </div>
