@@ -36,17 +36,6 @@ export class LobbyPanelComponent implements OnInit {
     this.isReady$ = this.lobbyService.isReadyByMemberSessionId$(
       this.member?.sessionId
     );
-
-    this.lobbyService
-      .isReadyByMemberSessionId$(this.member?.sessionId)
-      .subscribe(isReady => console.log('isReady state changed: ', isReady));
-  }
-
-  ngOnChanges(changes: any) {
-    if (changes.member) {
-      console.log('logging from panel...member input changed:');
-      console.log(changes.member.currentValue);
-    }
   }
 
   kickMember(member: Member) {

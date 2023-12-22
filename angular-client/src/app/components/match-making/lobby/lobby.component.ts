@@ -61,6 +61,10 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.panels[2] = { member: host ?? null };
   }
 
+  // just note that this logic will prevent the lobby-panel from rerendering...thus the @Input member prop will remain
+  // stale if it deviates from state. This was done to prevent the animations of the panel from playing if the member
+  // was not affected by any joins/leaves. This logic could maybe be revisited but for now its working. Inside the
+  // lobby-panel I am using state like isReady instead of member.isReady to get around this
   updateNonHostPanels(nonHosts: Member[], populateOrder: number[]) {
     populateOrder.forEach((position, index) => {
       const existingMember = this.panels[position].member;
