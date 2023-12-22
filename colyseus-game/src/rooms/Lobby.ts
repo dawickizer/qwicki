@@ -14,6 +14,7 @@ export class Lobby extends Room<LobbyState> {
     this.setState(
       new LobbyState({
         _id: this.roomId,
+        isReady: false,
         status: new Status({ activity: 'In Lobby' }),
       })
     );

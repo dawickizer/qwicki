@@ -13,6 +13,7 @@ export class LobbyState extends Schema {
   @type({ map: Member }) members = new MapSchema<Member>();
   @type([Message]) messages = new ArraySchema<Message>();
   @type([Invite]) outboundInvites = new ArraySchema<Invite>();
+  @type('boolean') isReady: boolean;
 
   chatBot: Member = new Member({
     _id: generateRandomUUID(),
@@ -41,6 +42,7 @@ export class LobbyState extends Schema {
     this.outboundInvites = new ArraySchema<Invite>(
       ...(lobbyState?.outboundInvites ?? [])
     );
+    this.isReady = lobbyState.isReady;
   }
 
   addMember(member: Member) {
@@ -56,6 +58,7 @@ export class LobbyState extends Schema {
         content: `${member.username} joined`,
       })
     );
+    this.determineIsReady();
     console.log(`${member.username} joined`);
     this.logMembers();
   }
@@ -73,6 +76,7 @@ export class LobbyState extends Schema {
         content: `${member.username} left`,
       })
     );
+    this.determineIsReady();
     console.log(`${member.username} left`);
     this.logMembers();
   }
@@ -129,6 +133,25 @@ export class LobbyState extends Schema {
     this.members.get(member.sessionId).isReady = !this.members.get(
       member.sessionId
     ).isReady;
+    this.determineIsReady();
+  }
+
+  determineIsReady(): boolean {
+    let allReady = true;
+    if (this.members.size === 1) {
+      this.isReady = allReady;
+      return allReady;
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    for (const [sessionId, member] of this.members) {
+      if (!member.isReady) {
+        allReady = false;
+        break;
+      }
+    }
+    this.isReady = allReady; // state update
+    return allReady;
   }
 
   assignColor(memberId: string) {

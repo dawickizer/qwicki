@@ -3,6 +3,7 @@
     <mat-grid-tile *ngFor="let panel of panels">
       <app-lobby-panel
         class="lobby-panel"
+        [hideIsReady]="panel.hideIsReady"
         [member]="panel.member"></app-lobby-panel>
     </mat-grid-tile>
   </mat-grid-list>
@@ -13,14 +14,27 @@
       <app-lobby-chat-box class="lobby-chat-box"></app-lobby-chat-box>
     </mat-grid-tile>
     <mat-grid-tile class="start">
-      <button
-        class="start-button"
-        mat-raised-button
-        color="primary"
-        routerLink="/babylonjs"
-        (click)="start()">
-        Start
-      </button>
+      <ng-container *ngIf="{ isReady: isReady$ | async } as data">
+        <div
+          class="start-button"
+          [matTooltip]="
+            !isHost()
+              ? 'You are not the host'
+              : !data.isReady
+              ? 'Not all members are ready'
+              : null
+          ">
+          <button
+            [disabled]="!isHost() || !data.isReady"
+            class="start-button"
+            mat-raised-button
+            color="primary"
+            routerLink="/babylonjs"
+            (click)="start()">
+            Start
+          </button>
+        </div>
+      </ng-container>
     </mat-grid-tile>
     <mat-grid-tile class="queue">
       <app-queue-controls class="queue-controls"></app-queue-controls>

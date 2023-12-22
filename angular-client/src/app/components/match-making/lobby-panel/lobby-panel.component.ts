@@ -16,6 +16,7 @@ import { FriendRequestOrchestratorService } from 'src/app/state/friend-request/f
 })
 export class LobbyPanelComponent implements OnInit {
   @Input() member: Member;
+  @Input() hideIsReady: boolean;
   friends$: Observable<Friend[]>;
   decodedJwt$: Observable<DecodedJwt>;
   host$: Observable<Member>;
@@ -64,5 +65,9 @@ export class LobbyPanelComponent implements OnInit {
 
   onReadyChange(member: Member) {
     this.lobbyOrchestratorService.toggleReady(member).subscribe();
+  }
+
+  isHost(): boolean {
+    return this.lobbyOrchestratorService.isHost();
   }
 }

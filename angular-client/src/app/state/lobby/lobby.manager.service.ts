@@ -54,6 +54,10 @@ export class LobbyManagerService {
       this.lobbyService.setHost(lobby.room.state.host);
     };
 
+    lobby.room.state.listen('isReady', (current: boolean) => {
+      this.lobbyService.setIsReady(current);
+    });
+
     lobby.room.state.status.onChange = () => {
       const updatedStatus = new Status(lobby.room.state.status);
       this.lobbyService.updateStatus(updatedStatus);

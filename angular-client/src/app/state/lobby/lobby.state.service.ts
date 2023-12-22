@@ -13,6 +13,7 @@ import {
   messagesSelector,
   outboundInvitesSelector,
   isReadyByMemberSessionIdSelector,
+  isReadySelector,
 } from './lobby.state.selectors';
 import { Lobby } from './lobby.model';
 import { Status } from 'src/app/models/status/status.model';
@@ -29,6 +30,7 @@ export class LobbyStateService {
   public isLoading$ = isLoadingSelector(this.lobbyState$);
   public lobby$ = lobbySelector(this.lobbyState$);
   public status$ = statusSelector(this.lobby$);
+  public isReady$ = isReadySelector(this.lobby$);
   public activity$ = activitySelector(this.status$);
   public queueType$ = queueTypeSelector(this.status$);
   public gameType$ = gameTypeSelector(this.status$);
@@ -79,6 +81,14 @@ export class LobbyStateService {
     this._lobbyState.next({
       ...currentState,
       lobby: updatedLobby,
+    });
+  }
+
+  setIsReady(isReady: boolean): void {
+    const currentState = this._lobbyState.value;
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({ ...currentState.lobby, isReady }),
     });
   }
 

@@ -7,6 +7,7 @@ import { LobbyMessage } from './lobby-message.model';
 import { Member } from './member.model';
 import { LobbyManagerService } from './lobby.manager.service';
 import { Status } from 'src/app/models/status/status.model';
+import { DecodedJwt } from '../auth/decoded-jwt.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +15,7 @@ import { Status } from 'src/app/models/status/status.model';
 export class LobbyOrchestratorService {
   private lobby: Lobby;
   private jwt: string;
+  private decodedJwt: DecodedJwt;
 
   constructor(
     private lobbyService: LobbyService,
@@ -26,6 +28,9 @@ export class LobbyOrchestratorService {
   private subscribeToState() {
     this.lobbyService.lobby$.subscribe(lobby => (this.lobby = lobby));
     this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
+    this.authService.decodedJwt$.subscribe(
+      decodedJwt => (this.decodedJwt = decodedJwt)
+    );
   }
 
   createLobby(): Observable<Lobby> {
@@ -73,8 +78,12 @@ export class LobbyOrchestratorService {
     return of(status as Status);
   }
 
-  toggleReady(member: Member) {
+  toggleReady(member: Member): Observable<Member> {
     this.lobby.room.send('toggleReady', member);
     return of(member);
+  }
+
+  isHost(): boolean {
+    return this.decodedJwt._id === this.lobby?.host?._id;
   }
 }

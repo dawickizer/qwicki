@@ -37,6 +37,14 @@ export const statusSelector = (
     distinctUntilChanged()
   );
 
+export const isReadySelector = (
+  lobby$: Observable<Lobby | null>
+): Observable<boolean | null> =>
+  lobby$.pipe(
+    map(lobby => (lobby ? lobby.isReady : null)),
+    distinctUntilChanged(isEqual)
+  );
+
 export const activitySelector = (
   status$: Observable<Status | null>
 ): Observable<Activity | null> =>

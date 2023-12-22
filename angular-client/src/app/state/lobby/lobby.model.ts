@@ -8,6 +8,7 @@ export class Lobby {
   _id?: string;
   room: Room;
   status: Status;
+  isReady: boolean;
   host: Member;
   members: Map<string, Member>;
   messages: LobbyMessage[];
@@ -18,6 +19,7 @@ export class Lobby {
       this._id = lobby._id;
       this.room = lobby.room;
       this.status = lobby.status;
+      this.isReady = lobby.isReady ?? false;
       this.host = lobby.host;
       this.members = lobby.members;
       this.messages = lobby.messages;

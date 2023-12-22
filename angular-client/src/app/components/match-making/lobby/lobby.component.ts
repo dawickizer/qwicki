@@ -2,7 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Member } from 'src/app/state/lobby/member.model';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
-import { Subscription } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
+import { DecodedJwt } from 'src/app/state/auth/decoded-jwt.model';
+import { AuthService } from 'src/app/state/auth/auth.service';
 
 @Component({
   selector: 'app-lobby',
@@ -10,12 +12,14 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./lobby.component.css'],
 })
 export class LobbyComponent implements OnInit, OnDestroy {
-  panels: { member: Member | null }[] = [];
-
-  members: Map<string, Member>;
+  panels: { member: Member | null; hideIsReady?: boolean }[] = [];
   membersSubscription: Subscription;
+  decodedJwt$: Observable<DecodedJwt>;
+  host$: Observable<Member>;
+  isReady$: Observable<boolean>;
   constructor(
     private lobbyOrchestratorService: LobbyOrchestratorService,
+    private authService: AuthService,
     private lobbyService: LobbyService
   ) {}
 
@@ -24,6 +28,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.membersSubscription = this.lobbyService.members$.subscribe(members =>
       this.updatePanels(members)
     );
+    this.decodedJwt$ = this.authService.decodedJwt$;
+    this.host$ = this.lobbyService.host$;
+    this.isReady$ = this.lobbyService.isReady$;
   }
 
   ngOnDestroy() {
@@ -45,7 +52,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
     const host = memberArray.find(member => member.isHost);
 
     // Update the host in the center panel
-    this.updateHostPanel(host);
+    this.updateHostPanel(host, members);
 
     // Define the order for non-host members
     const populateOrder = [1, 3, 0, 4];
@@ -55,10 +62,16 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.updateNonHostPanels(nonHosts, populateOrder);
   }
 
-  updateHostPanel(host: Member | undefined) {
+  updateHostPanel(
+    host: Member | undefined,
+    members: Map<string, Member> | null | undefined
+  ) {
     const hostPanel = this.panels[2];
-    if (hostPanel.member && hostPanel.member._id === host?._id) return;
-    this.panels[2] = { member: host ?? null };
+    if (hostPanel.member && hostPanel.member._id === host?._id) {
+      this.panels[2].hideIsReady = members?.size <= 1;
+      return;
+    }
+    this.panels[2] = { member: host ?? null, hideIsReady: members?.size <= 1 };
   }
 
   // just note that this logic will prevent the lobby-panel from rerendering...thus the @Input member prop will remain
@@ -82,5 +95,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
   start() {
     console.log('start');
+  }
+
+  isHost(): boolean {
+    return this.lobbyOrchestratorService.isHost();
   }
 }

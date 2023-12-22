@@ -34,6 +34,10 @@ export class LobbyService {
     return this.lobbyStateService.status$;
   }
 
+  get isReady$(): Observable<boolean | null> {
+    return this.lobbyStateService.isReady$;
+  }
+
   get activity$(): Observable<Activity | null> {
     return this.lobbyStateService.activity$;
   }
@@ -108,6 +112,10 @@ export class LobbyService {
 
   updateStatus(status: Partial<Status>): void {
     this.lobbyStateService.updateStatus(status);
+  }
+
+  setIsReady(isReady: boolean): void {
+    this.lobbyStateService.setIsReady(isReady);
   }
 
   setHost(host: Member): void {

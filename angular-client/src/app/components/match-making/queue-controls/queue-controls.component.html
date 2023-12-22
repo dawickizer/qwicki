@@ -1,27 +1,31 @@
 <div class="queue-controls">
   <mat-label>Queue Type</mat-label>
   <mat-chip-listbox
-    [disabled]="isDisabled$ | async"
+    [disabled]="!isHost()"
     aria-label="Queue type"
     (change)="onQueueTypeChange($event.value)">
-    <mat-chip-option
-      *ngFor="let qType of queueTypes"
-      [value]="qType"
-      [selected]="qType === (queueType$ | async)">
-      {{ qType }}
-    </mat-chip-option>
+    <div [matTooltip]="!isHost() ? 'You are not the host' : null">
+      <mat-chip-option
+        *ngFor="let qType of queueTypes"
+        [value]="qType"
+        [selected]="qType === (queueType$ | async)">
+        {{ qType }}
+      </mat-chip-option>
+    </div>
   </mat-chip-listbox>
 
   <mat-label>Game Type</mat-label>
   <mat-chip-listbox
-    [disabled]="isDisabled$ | async"
+    [disabled]="!isHost()"
     aria-label="Game type"
     (change)="onGameTypeChange($event.value)">
-    <mat-chip-option
-      *ngFor="let gType of gameTypes"
-      [value]="gType"
-      [selected]="gType === (gameType$ | async)">
-      {{ gType }}
-    </mat-chip-option>
+    <div [matTooltip]="!isHost() ? 'You are not the host' : null">
+      <mat-chip-option
+        *ngFor="let gType of gameTypes"
+        [value]="gType"
+        [selected]="gType === (gameType$ | async)">
+        {{ gType }}
+      </mat-chip-option>
+    </div>
   </mat-chip-listbox>
 </div>
