@@ -12,6 +12,7 @@ import {
   membersSelector,
   messagesSelector,
   outboundInvitesSelector,
+  isReadyByMemberSessionIdSelector,
 } from './lobby.state.selectors';
 import { Lobby } from './lobby.model';
 import { Status } from 'src/app/models/status/status.model';
@@ -35,6 +36,10 @@ export class LobbyStateService {
   public members$ = membersSelector(this.lobby$);
   public messages$ = messagesSelector(this.lobby$);
   public outboundInvites$ = outboundInvitesSelector(this.lobby$);
+
+  isReadyByMemberSessionId$(sessionId: string): Observable<boolean> {
+    return isReadyByMemberSessionIdSelector(this.members$, sessionId);
+  }
 
   setInitialState() {
     this._lobbyState.next(initialState);
@@ -126,6 +131,27 @@ export class LobbyStateService {
         sessionId,
         sessionId === member.sessionId
           ? new Member({ ...m, isHost })
+          : new Member(m)
+      );
+    });
+
+    // Update the state with a new Lobby instance
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({ ...currentState.lobby, members: updatedMembers }),
+    });
+  }
+
+  setMemberIsReady(member: Member, isReady: boolean): void {
+    const currentState = this._lobbyState.value;
+
+    // Deep copy the members and update the member's isReady property
+    const updatedMembers = new Map<string, Member>();
+    currentState.lobby.members.forEach((m, sessionId) => {
+      updatedMembers.set(
+        sessionId,
+        sessionId === member.sessionId
+          ? new Member({ ...m, isReady })
           : new Member(m)
       );
     });

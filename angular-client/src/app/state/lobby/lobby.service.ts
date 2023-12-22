@@ -62,6 +62,10 @@ export class LobbyService {
     return this.lobbyStateService.outboundInvites$;
   }
 
+  isReadyByMemberSessionId$(sessionId: string): Observable<boolean> {
+    return this.lobbyStateService.isReadyByMemberSessionId$(sessionId);
+  }
+
   constructor(
     private lobbyEffectService: LobbyEffectService,
     private lobbyStateService: LobbyStateService
@@ -124,6 +128,10 @@ export class LobbyService {
 
   setMemberIsHost(member: Member, isHost: boolean): void {
     this.lobbyStateService.setMemberIsHost(member, isHost);
+  }
+
+  setMemberIsReady(member: Member, isReady: boolean): void {
+    this.lobbyStateService.setMemberIsReady(member, isReady);
   }
 
   setMessages(messages: LobbyMessage[]): void {

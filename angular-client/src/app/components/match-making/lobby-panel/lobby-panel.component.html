@@ -1,22 +1,37 @@
 <div
   class="lobby-panel"
   [ngClass]="{ 'invite-panel': !member, 'active-panel': member }">
-  <ng-container *ngIf="member; else invitePanel">
-    <div class="crown-container">
-      <img
-        *ngIf="member.isHost"
-        matTooltip="Party Leader"
-        src="/assets/party-leader/party-leader-crown.png"
-        alt="party-leader"
-        class="party-leader" />
-    </div>
-    <div class="member-info">
-      <img src="/assets/qwicki-coin.png" alt="{{ member.username }}" />
-      <span>{{ member.username }}</span>
-    </div>
-    <div class="member-controls">
-      <ng-container *ngIf="decodedJwt$ | async as decodedJwt">
-        <ng-container *ngIf="host$ | async as host">
+  <ng-container *ngIf="decodedJwt$ | async as decodedJwt">
+    <ng-container *ngIf="host$ | async as host">
+      <ng-container *ngIf="member; else invitePanel">
+        <div class="crown-container">
+          <img
+            *ngIf="member.isHost"
+            matTooltip="Party Leader"
+            src="/assets/party-leader/party-leader-crown.png"
+            alt="party-leader"
+            class="party-leader" />
+        </div>
+        <div class="member-info">
+          <img src="/assets/qwicki-coin.png" alt="{{ member.username }}" />
+          <span>{{ member.username }}</span>
+        </div>
+        <ng-container *ngIf="{ isReady: isReady$ | async } as data">
+          <mat-chip-option
+            [disabled]="member._id !== decodedJwt._id"
+            aria-label="Ready"
+            (click)="onReadyChange(member)"
+            [selected]="data.isReady"
+            [value]="data.isReady"
+            class="ready-status"
+            [ngClass]="{
+              'ready-chip': data.isReady,
+              'not-ready-chip': !data.isReady
+            }">
+            {{ data.isReady ? 'Ready' : 'Not Ready' }}
+          </mat-chip-option>
+        </ng-container>
+        <div class="member-controls">
           <!-- Current member panel controls -->
           <span
             *ngIf="member._id === decodedJwt._id"
@@ -69,18 +84,18 @@
               person_add
             </span>
           </ng-container>
-        </ng-container>
+        </div>
       </ng-container>
-    </div>
+      <ng-template #invitePanel>
+        <div
+          matTooltip="Invite Friend"
+          class="empty-icon"
+          (click)="inviteFriendMenu.openMenu()">
+          <app-invite-friend-menu
+            [toolTipText]="null"
+            #inviteFriendMenu></app-invite-friend-menu>
+        </div>
+      </ng-template>
+    </ng-container>
   </ng-container>
-  <ng-template #invitePanel>
-    <div
-      matTooltip="Invite Friend"
-      class="empty-icon"
-      (click)="inviteFriendMenu.openMenu()">
-      <app-invite-friend-menu
-        [toolTipText]="null"
-        #inviteFriendMenu></app-invite-friend-menu>
-    </div>
-  </ng-template>
 </div>

@@ -19,6 +19,7 @@ export class LobbyPanelComponent implements OnInit {
   friends$: Observable<Friend[]>;
   decodedJwt$: Observable<DecodedJwt>;
   host$: Observable<Member>;
+  isReady$: Observable<boolean>;
 
   constructor(
     private lobbyOrchestratorService: LobbyOrchestratorService,
@@ -32,6 +33,20 @@ export class LobbyPanelComponent implements OnInit {
     this.friends$ = this.friendService.friends$;
     this.decodedJwt$ = this.authService.decodedJwt$;
     this.host$ = this.lobbyService.host$;
+    this.isReady$ = this.lobbyService.isReadyByMemberSessionId$(
+      this.member?.sessionId
+    );
+
+    this.lobbyService
+      .isReadyByMemberSessionId$(this.member?.sessionId)
+      .subscribe(isReady => console.log('isReady state changed: ', isReady));
+  }
+
+  ngOnChanges(changes: any) {
+    if (changes.member) {
+      console.log('logging from panel...member input changed:');
+      console.log(changes.member.currentValue);
+    }
   }
 
   kickMember(member: Member) {
@@ -56,5 +71,9 @@ export class LobbyPanelComponent implements OnInit {
     this.friendRequestOrchestratorService
       .sendFriendRequest(member.username)
       .subscribe();
+  }
+
+  onReadyChange(member: Member) {
+    this.lobbyOrchestratorService.toggleReady(member).subscribe();
   }
 }

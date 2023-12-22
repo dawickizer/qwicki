@@ -60,6 +60,20 @@
   border-radius: 50%;
 }
 
+.ready-status {
+  margin-bottom: 10px;
+}
+
+.ready-chip {
+  background-color: #28a745 !important;
+  color: white;
+}
+
+.not-ready-chip {
+  background-color: #dc3545 !important;
+  color: white;
+}
+
 .member-controls {
   display: flex;
   align-items: center;

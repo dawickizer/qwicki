@@ -77,6 +77,15 @@ export const membersSelector = (
     distinctUntilChanged(isEqual)
   );
 
+export const isReadyByMemberSessionIdSelector = (
+  members$: Observable<Map<string, Member> | null>,
+  sessionId: string
+): Observable<boolean> =>
+  members$.pipe(
+    map(members => members?.get(sessionId)?.isReady),
+    distinctUntilChanged(isEqual)
+  );
+
 export const messagesSelector = (
   lobby$: Observable<Lobby | null>
 ): Observable<LobbyMessage[] | null> =>

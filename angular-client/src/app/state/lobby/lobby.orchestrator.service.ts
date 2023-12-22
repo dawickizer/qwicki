@@ -72,4 +72,9 @@ export class LobbyOrchestratorService {
     this.lobby.room.send('updateStatus', status);
     return of(status as Status);
   }
+
+  toggleReady(member: Member) {
+    this.lobby.room.send('toggleReady', member);
+    return of(member);
+  }
 }

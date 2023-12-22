@@ -4,6 +4,7 @@ export class Member {
   username: string;
   isHost: boolean;
   color: string;
+  isReady: boolean;
 
   constructor(member?: Partial<Member>) {
     if (member) {
@@ -12,6 +13,7 @@ export class Member {
       this.username = member.username;
       this.isHost = member.isHost;
       this.color = member.color ?? '#FFFFFF';
+      this.isReady = member.isReady ?? false;
     }
   }
 }

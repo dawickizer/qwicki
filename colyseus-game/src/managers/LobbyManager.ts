@@ -70,5 +70,11 @@ export class LobbyManager {
         }
       }
     );
+
+    this.lobby.onMessage('toggleReady', (client: Client, member: Member) => {
+      if (client.sessionId === member.sessionId) {
+        this.lobby.state.toggleReady(member);
+      }
+    });
   }
 }

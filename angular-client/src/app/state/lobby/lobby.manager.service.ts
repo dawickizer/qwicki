@@ -74,6 +74,10 @@ export class LobbyManagerService {
         this.lobbyService.setMemberIsHost(member, current);
       });
 
+      member.listen('isReady', (current: boolean) => {
+        this.lobbyService.setMemberIsReady(member, current);
+      });
+
       this.joinLobbyAudio.play();
       this.lobbyService.addMember(member);
     };

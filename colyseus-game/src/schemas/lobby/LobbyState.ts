@@ -125,6 +125,12 @@ export class LobbyState extends Schema {
     this.status = new Status({ ...this.status, ...status });
   }
 
+  toggleReady(member: Member) {
+    this.members.get(member.sessionId).isReady = !this.members.get(
+      member.sessionId
+    ).isReady;
+  }
+
   assignColor(memberId: string) {
     if (!this.colorAssignments.has(memberId)) {
       const color = this.availableColors.shift() ?? '';

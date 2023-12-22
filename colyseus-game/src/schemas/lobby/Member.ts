@@ -5,6 +5,7 @@ export class Member extends Schema {
   @type('string') sessionId: string;
   @type('string') username: string;
   @type('boolean') isHost: boolean;
+  @type('boolean') isReady: boolean;
   @type('string') color: string;
 
   constructor(member?: Partial<Member>) {
@@ -13,6 +14,7 @@ export class Member extends Schema {
     this.sessionId = member?.sessionId ?? '';
     this.username = member?.username ?? '';
     this.isHost = member?.isHost ?? false;
+    this.isReady = member?.isReady ?? false;
     this.color = member?.color ?? '#FFFFFF';
   }
 }
