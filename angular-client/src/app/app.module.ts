@@ -36,8 +36,8 @@ import { ChatBoxComponent } from './components/social/chat-box/chat-box.componen
 import { ChatCellComponent } from './components/social/chat-cell/chat-cell.component';
 import { ColyseusService } from './services/colyseus/colyseus.service';
 import { CreateGameComponent } from './components/match-making/create-game/create-game.component';
+import { CustomGameMatchMakingComponent } from './components/match-making/custom-game-match-making/custom-game-match-making.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { FpsService } from './services/fps/fps.service';
 import { FriendApiService } from './state/friend/friend.api.service';
 import { FriendEffectService } from './state/friend/friend.effect.service';
 import { FriendOrchestratorService } from './state/friend/friend.orchestrator.service';
@@ -47,9 +47,10 @@ import { FriendRequestOrchestratorService } from './state/friend-request/friend-
 import { FriendRequestService } from './state/friend-request/friend-request.service';
 import { FriendRequestStateService } from './state/friend-request/friend-request.state.service';
 import { FriendService } from './state/friend/friend.service';
+import { FriendStateService } from './state/friend/friend.state.service';
 import { FriendsListComponent } from './components/social/friends-list/friends-list.component';
 import { FriendsTabComponent } from './components/social/friends-tab/friends-tab.component';
-import { FriendStateService } from './state/friend/friend.state.service';
+import { FpsService } from './services/fps/fps.service';
 import { GameComponent } from './components/game/game/game.component';
 import { GameService } from './services/game/game.service';
 import { GroupsListComponent } from './components/social/groups-list/groups-list.component';
@@ -59,44 +60,50 @@ import { HomeComponent } from './components/home/home.component';
 import { InactivityEffectService } from './state/inactivity/inactivity.effect.service';
 import { InactivityService } from './state/inactivity/inactivity.service';
 import { InactivityStateService } from './state/inactivity/inactivity.state.service';
-import { InboundNotificationsComponent } from './components/social/inbound-notifications/inbound-notifications.component';
 import { InboxEffectService } from './state/inbox/inbox.effect.service';
 import { InboxOnMessageService } from './state/inbox/inbox.on-message.service';
 import { InboxService } from './state/inbox/inbox.service';
 import { InboxStateService } from './state/inbox/inbox.state.service';
 import { InfoBubbleComponent } from './components/misc/info-bubble/info-bubble.component';
+import { InboundNotificationsComponent } from './components/social/inbound-notifications/inbound-notifications.component';
 import { InviteApiService } from './state/invite/invite.api.service';
 import { InviteEffectService } from './state/invite/invite.effect.service';
+import { InviteFriendMenuComponent } from './components/match-making/invite-friend-menu/invite-friend-menu.component';
 import { InviteOrchestratorService } from './state/invite/invite.orchestrator.service';
 import { InviteService } from './state/invite/invite.service';
 import { InviteStateService } from './state/invite/invite.state.service';
 import { IsTypingComponent } from './components/misc/is-typing/is-typing.component';
 import { JoinGameComponent } from './components/match-making/join-game/join-game.component';
 import { KeyBindService } from './services/key-bind/key-bind.service';
-import { LobbyChatBoxComponent } from './components/match-making/lobby-chat-box/lobby-chat-box.component';
 import { LobbyApiService } from './state/lobby/lobby.api.service';
+import { LobbyChatBoxComponent } from './components/match-making/lobby-chat-box/lobby-chat-box.component';
 import { LobbyComponent } from './components/match-making/lobby/lobby.component';
 import { LobbyEffectService } from './state/lobby/lobby.effect.service';
 import { LobbyManagerService } from './state/lobby/lobby.manager.service';
 import { LobbyOrchestratorService } from './state/lobby/lobby.orchestrator.service';
+import { LobbyPanelComponent } from './components/match-making/lobby-panel/lobby-panel.component';
 import { LobbyService } from './state/lobby/lobby.service';
 import { LobbyStateService } from './state/lobby/lobby.state.service';
 import { LoginComponent } from './components/auth/login/login.component';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { MatchMakingService } from './services/match-making/match-making.service';
+import { MatchMakingSidenavComponent } from './components/match-making/match-making-sidenav/match-making-sidenav.component';
 import { MessageApiService } from './state/message/message.api.service';
 import { MessageEffectService } from './state/message/message.effect.service';
 import { MessageOrchestratorService } from './state/message/message.orchestrator';
 import { MessageService } from './state/message/message.service';
 import { MessageStateService } from './state/message/message.state.service';
+import { MoneyMatchGameMatchMakingComponent } from './components/match-making/money-match-game-match-making/money-match-game-match-making.component';
 import { NavbarComponent } from './components/layout/navbar/navbar.component';
 import { NavigationMenuComponent } from './components/misc/navigation-menu/navigation-menu.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
+import { NormalGameMatchMakingComponent } from './components/match-making/normal-game-match-making/normal-game-match-making.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
 import { OutboundNotificationsComponent } from './components/social/outbound-notifications/outbound-notifications.component';
 import { PlayerService } from './services/player/player.service';
 import { PresenceComponent } from './components/misc/presence/presence.component';
 import { QueueControlsComponent } from './components/match-making/queue-controls/queue-controls.component';
+import { RankedGameMatchMakingComponent } from './components/match-making/ranked-game-match-making/ranked-game-match-making.component';
 import { SignupComponent } from './components/auth/signup/signup.component';
 import { SocialSidenavComponent } from './components/social/social-sidenav/social-sidenav.component';
 import { StatusBubbleComponent } from './components/misc/status-bubble/status-bubble.component';
@@ -106,8 +113,6 @@ import { UserEffectService } from './state/user/user.effect.service';
 import { UserOrchestratorService } from './state/user/user.orchestrator.service';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
-import { LobbyPanelComponent } from './components/match-making/lobby-panel/lobby-panel.component';
-import { InviteFriendMenuComponent } from './components/match-making/invite-friend-menu/invite-friend-menu.component';
 
 @NgModule({
   declarations: [
@@ -117,6 +122,7 @@ import { InviteFriendMenuComponent } from './components/match-making/invite-frie
     ChatBoxComponent,
     ChatCellComponent,
     CreateGameComponent,
+    CustomGameMatchMakingComponent,
     DashboardComponent,
     FriendsListComponent,
     FriendsTabComponent,
@@ -126,25 +132,29 @@ import { InviteFriendMenuComponent } from './components/match-making/invite-frie
     HomeComponent,
     InboundNotificationsComponent,
     InfoBubbleComponent,
+    InviteFriendMenuComponent,
     IsTypingComponent,
     JoinGameComponent,
     LobbyChatBoxComponent,
     LobbyComponent,
+    LobbyPanelComponent,
     LoginComponent,
     MainLayoutComponent,
+    MatchMakingSidenavComponent,
+    MoneyMatchGameMatchMakingComponent,
     NavbarComponent,
     NavigationMenuComponent,
     NotFoundComponent,
+    NormalGameMatchMakingComponent,
     NotificationBadgeComponent,
     OutboundNotificationsComponent,
     PresenceComponent,
     QueueControlsComponent,
+    RankedGameMatchMakingComponent,
     SignupComponent,
     SocialSidenavComponent,
     StatusBubbleComponent,
     UserProfileComponent,
-    LobbyPanelComponent,
-    InviteFriendMenuComponent,
   ],
   imports: [
     AppRoutingModule,

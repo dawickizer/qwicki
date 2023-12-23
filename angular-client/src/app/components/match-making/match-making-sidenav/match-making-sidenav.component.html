@@ -1,0 +1,10 @@
+<app-normal-game-match-making
+  *ngIf="(gameType$ | async) === 'Normal'"></app-normal-game-match-making>
+<app-ranked-game-match-making
+  *ngIf="(gameType$ | async) === 'Ranked'"></app-ranked-game-match-making>
+<app-custom-game-match-making
+  *ngIf="(gameType$ | async) === 'Custom'"></app-custom-game-match-making>
+<app-money-match-game-match-making
+  *ngIf="
+    (gameType$ | async) === 'Money Match'
+  "></app-money-match-game-match-making>

@@ -1,0 +1,12 @@
+<div class="header">
+  <h1>Money Match</h1>
+</div>
+<mat-divider></mat-divider>
+<mat-tab-group class="tab-group" (selectedIndexChange)="onTabChanged($event)">
+  <mat-tab>
+    <ng-template mat-tab-label> Create </ng-template>
+  </mat-tab>
+  <mat-tab>
+    <ng-template mat-tab-label> Join </ng-template>
+  </mat-tab>
+</mat-tab-group>
