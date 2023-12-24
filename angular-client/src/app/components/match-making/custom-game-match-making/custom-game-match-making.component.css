@@ -1,4 +1,68 @@
 .header {
+  background-color: purple;
+  height: 5%;
+}
+
+.top-div {
+  background-color: blue;
+  height: 75%;
+}
+
+::ng-deep .team1 .mat-grid-tile-content {
+  background-color: maroon;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  padding: 8px;
+  padding-left: 16px;
+}
+
+::ng-deep .team2 .mat-grid-tile-content {
+  background-color: mediumaquamarine;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  padding-right: 16px;
+}
+
+.player-row {
+  background-color: deeppink;
+  width: 100%;
+  margin: 8px;
+}
+
+.bottom-div {
+  background-color: red;
+  height: 20%;
+}
+
+.lobby-panel {
+  height: 100%;
+  width: 100%;
+  padding: 8px;
+  padding-top: 16px;
+}
+
+.lobby-chat-box {
+  background-color: green;
+  height: 100%;
+  width: 100%;
+}
+
+::ng-deep .custom-start .mat-grid-tile-content {
+  background-color: orange;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+
+.start-button {
+  width: 100%;
+}
+
+.map {
+  background-color: pink;
+  height: 100%;
+  width: 100%;
 }

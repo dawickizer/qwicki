@@ -34,6 +34,36 @@ export class JoinGameComponent implements OnInit {
   async getAvailableGameRooms() {
     this.availableGameRooms.data =
       await this.matchMakingService.getAvailableGameRooms();
+
+    this.availableGameRooms.data = [
+      {
+        metadata: {
+          name: 'Space Adventure',
+          mode: 'Survival',
+          map: 'Galaxy',
+          createdBy: { username: 'User1' },
+          createdAt: new Date(2022, 6, 24, 15, 30), // Date format: year, monthIndex, day, hours, minutes
+        },
+      },
+      {
+        metadata: {
+          name: 'Jungle Escape',
+          mode: 'Exploration',
+          map: 'Forest',
+          createdBy: { username: 'User2' },
+          createdAt: new Date(2022, 6, 25, 10, 45),
+        },
+      },
+      {
+        metadata: {
+          name: 'Desert Rally',
+          mode: 'Race',
+          map: 'Sahara',
+          createdBy: { username: 'User3' },
+          createdAt: new Date(2022, 6, 26, 20, 20),
+        },
+      },
+    ] as any;
   }
 
   async joinGameRoom(game: Colyseus.RoomAvailable) {

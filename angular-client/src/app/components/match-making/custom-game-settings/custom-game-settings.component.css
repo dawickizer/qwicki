@@ -1,0 +1,47 @@
+.header {
+  display: flex;
+  align-items: center;
+}
+
+.header-divider {
+  margin-bottom: 20px;
+}
+
+.game-name {
+  width: 100%;
+}
+
+.game-name-hint {
+  color: aliceblue;
+}
+
+::ng-deep .select.mat-mdc-select-panel {
+  background-color: var(--dark);
+}
+
+.game-mode {
+  width: 100%;
+}
+
+.game-map {
+  width: 100%;
+}
+
+.game-player-count {
+  width: 100%;
+}
+
+.visibility {
+  display: flex;
+  flex-direction: column;
+  margin: 15px 0;
+  align-items: flex-start;
+}
+
+.visibility-radio-button {
+  margin: 5px;
+}
+
+::ng-deep .visibility-radio-button label {
+  margin-bottom: 0px;
+}

@@ -9,6 +9,7 @@ import { GameComponent } from './components/game/game/game.component';
 import { AuthGuardService } from './state/auth/auth.guard.service';
 import { MainLayoutComponent } from './components/layout/main-layout/main-layout.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { CustomGameMatchMakingComponent } from './components/match-making/custom-game-match-making/custom-game-match-making.component';
 
 const routes: Routes = [
   {
@@ -25,6 +26,10 @@ const routes: Routes = [
       {
         path: 'dashboard',
         component: DashboardComponent,
+      },
+      {
+        path: 'custom-game',
+        component: CustomGameMatchMakingComponent,
       },
       {
         path: 'game',

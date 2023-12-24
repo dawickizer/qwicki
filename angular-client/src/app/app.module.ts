@@ -13,6 +13,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatInputModule } from '@angular/material/input';
 import { MatMenuModule } from '@angular/material/menu';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatSliderModule } from '@angular/material/slider';
@@ -113,6 +114,7 @@ import { UserEffectService } from './state/user/user.effect.service';
 import { UserOrchestratorService } from './state/user/user.orchestrator.service';
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
+import { CustomGameSettingsComponent } from './components/match-making/custom-game-settings/custom-game-settings.component';
 
 @NgModule({
   declarations: [
@@ -155,6 +157,7 @@ import { UserStateService } from './state/user/user.state.service';
     SocialSidenavComponent,
     StatusBubbleComponent,
     UserProfileComponent,
+    CustomGameSettingsComponent,
   ],
   imports: [
     AppRoutingModule,
@@ -173,6 +176,7 @@ import { UserStateService } from './state/user/user.state.service';
     MatGridListModule,
     MatInputModule,
     MatMenuModule,
+    MatRadioModule,
     MatSelectModule,
     MatSidenavModule,
     MatSliderModule,

@@ -21,8 +21,13 @@ export class Status {
 export type Activity = 'In Lobby' | 'In Queue' | 'In Pregame Lobby' | 'In Game';
 export type QueueType = 'Solo' | 'Duo' | 'Squad';
 export type GameType = 'Ranked' | 'Normal' | 'Custom' | 'Money Match';
-export type GameMode = 'Free For All' | 'Team Deathmatch' | 'Domination';
+export type GameMode =
+  | 'Any'
+  | 'Free For All'
+  | 'Team Deathmatch'
+  | 'Domination';
 export type GameMap =
+  | 'Any'
   | 'Fountain Of Dreams'
   | 'Final Destination'
   | 'Yoshi Story';
@@ -41,11 +46,13 @@ export const gameTypes: GameType[] = [
   'Money Match',
 ];
 export const gameModes: GameMode[] = [
+  'Any',
   'Free For All',
   'Team Deathmatch',
   'Domination',
 ];
 export const gameMaps: GameMap[] = [
+  'Any',
   'Fountain Of Dreams',
   'Final Destination',
   'Yoshi Story',
