@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 import { Status } from 'src/app/models/status/status.model';
 
 @Component({

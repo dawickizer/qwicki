@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import {
-  GameType,
-  QueueType,
-  gameTypes,
-  queueTypes,
-} from 'src/app/models/status/status.model';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
+import { GameType, gameTypes } from 'src/app/types/game-type/game-type.type';
+import {
+  QueueType,
+  queueTypes,
+} from 'src/app/types/queue-type/queue-type.type';
 
 @Component({
   selector: 'app-queue-controls',

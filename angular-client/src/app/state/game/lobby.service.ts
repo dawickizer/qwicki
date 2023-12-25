@@ -1,16 +1,18 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LobbyStateService } from './lobby.state.service';
-import { Lobby } from './lobby.model';
+import { Lobby } from './game.model';
 import { LobbyEffectService } from './lobby.effect.service';
+import {
+  Activity,
+  GameType,
+  QueueType,
+  Status,
+} from 'src/app/models/status/status.model';
 import { Invite } from '../invite/invite.model';
 import { Member } from 'src/app/state/lobby/member.model';
 import { Room } from 'colyseus.js';
 import { LobbyMessage } from './lobby-message.model';
-import { Status } from 'src/app/models/status/status.model';
-import { Activity } from 'src/app/types/activity/activity.type';
-import { QueueType } from 'src/app/types/queue-type/queue-type.type';
-import { GameType } from 'src/app/types/game-type/game-type.type';
 
 @Injectable({
   providedIn: 'root',

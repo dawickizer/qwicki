@@ -11,7 +11,7 @@ import {
 import { Friend } from './friend.model';
 import { Message } from '../message/message.model';
 import { Status } from 'src/app/models/status/status.model';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 
 @Injectable({
   providedIn: 'root',

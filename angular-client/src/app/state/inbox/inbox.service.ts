@@ -5,7 +5,7 @@ import { Room } from 'colyseus.js';
 import { Observable } from 'rxjs';
 import { Status } from 'src/app/models/status/status.model';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 
 @Injectable({
   providedIn: 'root',

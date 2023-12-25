@@ -3,13 +3,11 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { UserState } from './user.state';
 import { isEqual } from 'lodash';
 import { User } from './user.model';
-import {
-  Activity,
-  GameType,
-  QueueType,
-  Status,
-} from 'src/app/models/status/status.model';
-import { Presence } from 'src/app/models/presence/presence';
+import { Status } from 'src/app/models/status/status.model';
+import { Presence } from 'src/app/types/presence/presence.type';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
 
 export const userSelector = (
   userState$: Observable<UserState>

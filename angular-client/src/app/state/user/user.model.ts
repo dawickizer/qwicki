@@ -2,7 +2,7 @@ import { FriendRequest } from 'src/app/state/friend-request/friend-requests.mode
 import { Friend } from '../friend/friend.model';
 import { Invite } from '../invite/invite.model';
 import { Status } from 'src/app/models/status/status.model';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 
 export class User {
   _id?: string;

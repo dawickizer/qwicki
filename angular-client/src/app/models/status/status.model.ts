@@ -1,3 +1,9 @@
+import { Activity } from 'src/app/types/activity/activity.type';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+
 export class Status {
   activity: Activity;
   queueType?: QueueType;
@@ -17,43 +23,3 @@ export class Status {
     }
   }
 }
-
-export type Activity = 'In Lobby' | 'In Queue' | 'In Pregame Lobby' | 'In Game';
-export type QueueType = 'Solo' | 'Duo' | 'Squad';
-export type GameType = 'Ranked' | 'Normal' | 'Custom' | 'Money Match';
-export type GameMode =
-  | 'Any'
-  | 'Free For All'
-  | 'Team Deathmatch'
-  | 'Domination';
-export type GameMap =
-  | 'Any'
-  | 'Fountain Of Dreams'
-  | 'Final Destination'
-  | 'Yoshi Story';
-
-export const activities: Activity[] = [
-  'In Lobby',
-  'In Queue',
-  'In Pregame Lobby',
-  'In Game',
-];
-export const queueTypes: QueueType[] = ['Solo', 'Duo', 'Squad'];
-export const gameTypes: GameType[] = [
-  'Normal',
-  'Ranked',
-  'Custom',
-  'Money Match',
-];
-export const gameModes: GameMode[] = [
-  'Any',
-  'Free For All',
-  'Team Deathmatch',
-  'Domination',
-];
-export const gameMaps: GameMap[] = [
-  'Any',
-  'Fountain Of Dreams',
-  'Final Destination',
-  'Yoshi Story',
-];

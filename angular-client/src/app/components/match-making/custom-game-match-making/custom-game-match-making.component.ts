@@ -1,11 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  GameMap,
-  GameMode,
-  gameMaps,
-  gameModes,
-} from 'src/app/models/status/status.model';
-import { Visibility, visibilities } from 'src/app/models/visibility/visibility';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 
 @Component({
@@ -16,19 +9,47 @@ import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator
 export class CustomGameMatchMakingComponent implements OnInit {
   activeTabIndex = 0;
 
-  selectedGameMode: GameMode = 'Any';
-  gameModes: GameMode[] = gameModes;
+  playerCount = 12;
+  players: any[] = [];
 
-  selectedGameMap: GameMap = 'Any';
-  gameMaps: GameMap[] = gameMaps;
-
-  selectedVisibility: Visibility = 'Private (Invite Only)';
-  visibilities: Visibility[] = visibilities;
+  team1Rows: { player: any | null }[] = [];
+  team2Rows: { player: any | null }[] = [];
 
   constructor(private lobbyOrchestratorService: LobbyOrchestratorService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.players = [
+      { username: 'AceGamer' },
+      { username: 'MysticShadow' },
+      { username: 'PixelPirate' },
+      { username: 'CyberWizard' },
+      { username: 'RogueRaider' },
+      { username: 'TacticalTrooper' },
+      { username: 'StealthStriker' },
+      { username: 'VirtualValkyrie' },
+      { username: 'NeonNinja' },
+      { username: 'GalacticGuardian' },
+    ];
 
+    this.initializeTeamRows();
+    this.populateTeamsWithPlayers();
+  }
+
+  initializeTeamRows(): void {
+    const rowsPerTeam = this.playerCount / 2;
+    this.team1Rows = Array(rowsPerTeam).fill({ player: null });
+    this.team2Rows = Array(rowsPerTeam).fill({ player: null });
+  }
+
+  populateTeamsWithPlayers(): void {
+    this.players.forEach((player, index) => {
+      if (index < this.team1Rows.length) {
+        this.team1Rows[index] = { player };
+      } else {
+        this.team2Rows[index - this.team1Rows.length] = { player };
+      }
+    });
+  }
   onTabChanged(index: number): void {
     this.activeTabIndex = index;
   }

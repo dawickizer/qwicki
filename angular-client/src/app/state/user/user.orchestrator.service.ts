@@ -5,7 +5,7 @@ import { UserService } from '../user/user.service';
 import { InboxService } from '../inbox/inbox.service';
 import { Room } from 'colyseus.js';
 import { InactivityService } from '../inactivity/inactivity.service';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 
 @Injectable({
   providedIn: 'root',

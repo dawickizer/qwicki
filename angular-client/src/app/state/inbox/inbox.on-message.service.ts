@@ -12,7 +12,7 @@ import { FriendRequest } from '../friend-request/friend-requests.model';
 import { FriendRequestService } from '../friend-request/friend-request.service';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.model';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 
 @Injectable({
   providedIn: 'root',

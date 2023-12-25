@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {
-  GameMap,
-  GameMode,
-  gameMaps,
-  gameModes,
-} from 'src/app/models/status/status.model';
-import { Visibility, visibilities } from 'src/app/models/visibility/visibility';
+  Visibility,
+  visibilities,
+} from 'src/app/types/visibility/visibility.type';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
+import { GameMode, gameModes } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap, gameMaps } from 'src/app/types/game-map/game-map.type';
 
 @Component({
   selector: 'app-custom-game-settings',

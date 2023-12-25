@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { GameType } from 'src/app/models/status/status.model';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
+import { GameType } from 'src/app/types/game-type/game-type.type';
 
 @Component({
   selector: 'app-match-making-sidenav',

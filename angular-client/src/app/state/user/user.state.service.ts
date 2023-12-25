@@ -12,7 +12,7 @@ import {
 } from './user.state.selectors';
 import { User } from './user.model';
 import { Status } from 'src/app/models/status/status.model';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 
 @Injectable({
   providedIn: 'root',

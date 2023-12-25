@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { InactivityStateService } from './inactivity.state.service';
 import { InactivityEffectService } from './inactivity.effect.service';
 import { InactivityState } from './inactivity.state';
-import { Presence } from 'src/app/models/presence/presence';
+import { Presence } from 'src/app/types/presence/presence.type';
 
 @Injectable({
   providedIn: 'root',
