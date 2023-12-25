@@ -16,6 +16,7 @@ export class Lobby {
   messages: LobbyMessage[];
   outboundInvites: Invite[];
 
+  // TODO: Not deep copying...should prob update this to be like game.model.ts
   constructor(lobby?: Partial<Lobby>) {
     if (lobby) {
       this._id = lobby._id;

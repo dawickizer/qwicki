@@ -3,20 +3,20 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { catchError } from 'rxjs/operators';
 import { Observable, throwError } from 'rxjs';
-import { LobbyMessage } from './lobby-message.model';
+import { GameMessage } from './game-message.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LobbyApiService {
+export class GameApiService {
   readonly API = environment.EXPRESS_SERVER;
-  private endpoint = '/lobbies';
+  private endpoint = '/games';
 
   constructor(private http: HttpClient) {}
 
-  sendMessage(message: LobbyMessage): Observable<LobbyMessage> {
+  sendMessage(message: GameMessage): Observable<GameMessage> {
     return this.http
-      .post<LobbyMessage>(
+      .post<GameMessage>(
         `${this.API}${this.endpoint}/${message.to}/messages`,
         message
       )

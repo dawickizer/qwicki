@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as Colyseus from 'colyseus.js';
+import { ClientType } from 'src/app/types/client-type/client-type.type';
+import { RoomName } from 'src/app/types/room-name/room-name.type';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -147,6 +149,3 @@ export class ColyseusService {
     return this._clients.get(clientType);
   }
 }
-
-export type ClientType = 'social' | 'game';
-export type RoomName = 'inbox' | 'lobby';

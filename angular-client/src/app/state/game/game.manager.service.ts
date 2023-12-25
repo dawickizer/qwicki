@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { AuthService } from '../auth/auth.service';
-import { LobbyService } from './lobby.service';
-import { Lobby } from './game.model';
-import { Member } from './member.model';
-import { LobbyMessage } from './lobby-message.model';
+import { GameService } from './game.service';
+import { Game } from './game.model';
+import { Player } from './player.model';
+import { GameMessage } from './game-message.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { tap } from 'rxjs';
@@ -11,19 +11,21 @@ import { UserService } from '../user/user.service';
 import { Status } from 'src/app/models/status/status.model';
 import { Room } from 'colyseus.js';
 import { InboxService } from '../inbox/inbox.service';
+import { LobbyService } from '../lobby/lobby.service';
 
 @Injectable({
   providedIn: 'root',
 })
-export class LobbyManagerService {
+export class GameManagerService {
   private jwt: string;
   private decodedJwt: DecodedJwt;
   private friendsInboxes: Room<any>[];
   private personalInbox: Room<any>;
-  private joinLobbyAudio = new Audio('assets/notifications/sounds/join.mp3');
-  private leaveLobbyAudio = new Audio('assets/notifications/sounds/leave.mp3');
+  private joinGameAudio = new Audio('assets/notifications/sounds/join.mp3');
+  private leaveGameAudio = new Audio('assets/notifications/sounds/leave.mp3');
 
   constructor(
+    private gameService: GameService,
     private lobbyService: LobbyService,
     private userService: UserService,
     private authService: AuthService,
@@ -46,20 +48,17 @@ export class LobbyManagerService {
     );
   }
 
-  setListeners(lobby: Lobby) {
+  setListeners(game: Game) {
     let wasKicked = false;
     let wasSelfInitiated = false;
 
-    lobby.room.state.host.onChange = () => {
-      this.lobbyService.setHost(lobby.room.state.host);
+    game.room.state.host.onChange = () => {
+      this.gameService.setHost(game.room.state.host);
     };
 
-    lobby.room.state.listen('isReady', (current: boolean) => {
-      this.lobbyService.setIsReady(current);
-    });
-
-    lobby.room.state.status.onChange = () => {
-      const updatedStatus = new Status(lobby.room.state.status);
+    game.room.state.activity.onChange = () => {
+      const updatedStatus = new Status({ activity: game.room.state.activity });
+      this.gameService.setActivity(game.room.state.activity);
       this.lobbyService.updateStatus(updatedStatus);
       this.userService.updateStatus(updatedStatus);
 
@@ -73,37 +72,33 @@ export class LobbyManagerService {
       });
     };
 
-    lobby.room.state.members.onAdd = (member: Member | any) => {
-      member.listen('isHost', (current: boolean) => {
-        this.lobbyService.setMemberIsHost(member, current);
+    game.room.state.players.onAdd = (player: Player | any) => {
+      player.listen('isHost', (current: boolean) => {
+        this.gameService.setPlayerIsHost(player, current);
       });
 
-      member.listen('isReady', (current: boolean) => {
-        this.lobbyService.setMemberIsReady(member, current);
-      });
-
-      this.joinLobbyAudio.play();
-      this.lobbyService.addMember(member);
+      this.joinGameAudio.play();
+      this.gameService.addPlayer(player);
     };
 
-    lobby.room.state.members.onRemove = (member: Member) => {
-      this.leaveLobbyAudio.play();
-      this.lobbyService.removeMember(member);
+    game.room.state.players.onRemove = (player: Player) => {
+      this.leaveGameAudio.play();
+      this.gameService.removePlayer(player);
     };
 
-    lobby.room.state.messages.onAdd = (message: LobbyMessage) => {
-      this.lobbyService.addMessage(message);
+    game.room.state.messages.onAdd = (message: GameMessage) => {
+      this.gameService.addMessage(message);
     };
 
-    lobby.room.onLeave(() => {
-      this.lobbyService.setInitialState();
+    game.room.onLeave(() => {
+      this.gameService.setInitialState();
       if (wasKicked || wasSelfInitiated) {
-        this.lobbyService
-          .createLobby({ jwt: this.jwt })
+        this.gameService
+          .createGame({ jwt: this.jwt })
           .pipe(
-            tap(lobby => {
-              if (lobby?.room) {
-                this.setListeners(lobby);
+            tap(game => {
+              if (game?.room) {
+                this.setListeners(game);
               }
             })
           )
@@ -113,24 +108,24 @@ export class LobbyManagerService {
       }
     });
 
-    lobby.room.onMessage('transferHost', (host: Member) => {
-      this.joinLobbyAudio.play();
+    game.room.onMessage('transferHost', (host: Player) => {
+      this.joinGameAudio.play();
       this.snackBar.open(`${host.username} is now the host!`, 'Dismiss', {
         duration: 5000,
       });
     });
 
-    lobby.room.onMessage('kickMember', (member: Member) => {
-      let message = `${member.username} was kicked from the lobby!`;
-      if (member._id === this.decodedJwt._id) {
-        message = 'You were kicked from the lobby!';
+    game.room.onMessage('kickPlayer', (player: Player) => {
+      let message = `${player.username} was kicked from the game!`;
+      if (player._id === this.decodedJwt._id) {
+        message = 'You were kicked from the game!';
         wasKicked = true;
       }
       this.snackBar.open(message, 'Dismiss', { duration: 5000 });
     });
 
-    lobby.room.onMessage('leaveLobby', () => {
-      const message = `You left the lobby!`;
+    game.room.onMessage('leaveGame', () => {
+      const message = `You left the game!`;
       wasSelfInitiated = true;
       this.snackBar.open(message, 'Dismiss', { duration: 5000 });
     });
