@@ -29,6 +29,10 @@ export class LobbyService {
     return this.lobbyStateService.lobby$;
   }
 
+  get route$(): Observable<string | null> {
+    return this.lobbyStateService.route$;
+  }
+
   get activity$(): Observable<Activity | null> {
     return this.lobbyStateService.activity$;
   }
@@ -107,6 +111,10 @@ export class LobbyService {
 
   setLobby(lobby: Lobby): void {
     this.lobbyStateService.setLobby(lobby);
+  }
+
+  setRoute(route: string): void {
+    this.lobbyStateService.setRoute(route);
   }
 
   setActivity(activity: Activity): void {

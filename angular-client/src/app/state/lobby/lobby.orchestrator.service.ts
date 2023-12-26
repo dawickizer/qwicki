@@ -77,6 +77,11 @@ export class LobbyOrchestratorService {
     return of(member);
   }
 
+  setRoute(route: string): Observable<string> {
+    this.lobby.room.send('setRoute', route);
+    return of(route);
+  }
+
   setActivity(activity: Activity): Observable<Activity> {
     this.lobby.room.send('setActivity', activity);
     return of(activity);

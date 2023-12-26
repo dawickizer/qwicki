@@ -10,10 +10,12 @@ import { GameType } from 'src/app/types/game-type/game-type.type';
 })
 export class MatchMakingSidenavComponent implements OnInit {
   gameType$: Observable<GameType>;
+  route$: Observable<string>;
 
   constructor(private lobbyService: LobbyService) {}
 
   ngOnInit() {
     this.gameType$ = this.lobbyService.gameType$;
+    this.route$ = this.lobbyService.route$;
   }
 }

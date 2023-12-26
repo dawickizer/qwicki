@@ -114,8 +114,10 @@ export class LobbyComponent implements OnInit, OnDestroy {
   }
 
   start() {
-    if (this.gameType === 'Custom')
+    if (this.gameType === 'Custom') {
       this.lobbyOrchestratorService.setActivity('In Pregame Lobby').subscribe();
+      this.lobbyOrchestratorService.setRoute('custom-game').subscribe();
+    }
   }
 
   isHost(): boolean {

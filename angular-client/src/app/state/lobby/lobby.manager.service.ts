@@ -15,6 +15,7 @@ import { QueueType } from 'src/app/types/queue-type/queue-type.type';
 import { GameType } from 'src/app/types/game-type/game-type.type';
 import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
 import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
@@ -32,7 +33,8 @@ export class LobbyManagerService {
     private userService: UserService,
     private authService: AuthService,
     private inboxService: InboxService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.subscribeToState();
   }
@@ -59,13 +61,16 @@ export class LobbyManagerService {
       this.lobbyService.setHost(lobby.room.state.host);
     };
 
+    lobby.room.state.listen('route', (current: string) => {
+      this.lobbyService.setRoute(current);
+      this.router.navigate([current]);
+    });
+
     lobby.room.state.listen('isReady', (current: boolean) => {
-      console.log('setting isReady');
       this.lobbyService.setIsReady(current);
     });
 
     lobby.room.state.listen('activity', (current: Activity) => {
-      console.log('setting activity');
       this.lobbyService.setActivity(current);
       this.userService.setActivity(current);
 
@@ -79,7 +84,6 @@ export class LobbyManagerService {
     });
 
     lobby.room.state.listen('queueType', (current: QueueType) => {
-      console.log('setting queueType');
       this.lobbyService.setQueueType(current);
       this.userService.setQueueType(current);
 
@@ -93,7 +97,6 @@ export class LobbyManagerService {
     });
 
     lobby.room.state.listen('gameType', (current: GameType) => {
-      console.log('setting gameType');
       this.lobbyService.setGameType(current);
       this.userService.setGameType(current);
 
@@ -107,7 +110,6 @@ export class LobbyManagerService {
     });
 
     lobby.room.state.listen('gameMode', (current: GameMode) => {
-      console.log('setting gameMode');
       this.lobbyService.setGameMode(current);
       this.userService.setGameMode(current);
 
@@ -121,7 +123,6 @@ export class LobbyManagerService {
     });
 
     lobby.room.state.listen('gameMap', (current: GameMap) => {
-      console.log('setting gameMap');
       this.lobbyService.setGameMap(current);
       this.userService.setGameMap(current);
 

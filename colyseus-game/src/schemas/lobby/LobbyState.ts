@@ -12,6 +12,7 @@ import { GameMap } from '../../types/game-map/game-map.type';
 
 export class LobbyState extends Schema {
   @type('string') _id: string;
+  @type('string') route: string;
   @type('string') activity?: Activity;
   @type('string') queueType?: QueueType;
   @type('string') gameType?: GameType;
@@ -131,6 +132,10 @@ export class LobbyState extends Schema {
       })
     );
     console.log(`${this.host.username} is the host`);
+  }
+
+  setRoute(route: string) {
+    this.route = route;
   }
 
   setActivity(activity: Activity) {

@@ -1,17 +1,19 @@
-<ng-container *ngIf="gameType$ | async as gameType">
-  <ng-template [ngIf]="gameType === 'Normal'">
+<ng-container
+  *ngIf="{ gameType: gameType$ | async, route: route$ | async } as data">
+  <ng-template [ngIf]="data.gameType === 'Normal'">
     <app-normal-game-match-making></app-normal-game-match-making>
   </ng-template>
 
-  <ng-template [ngIf]="gameType === 'Ranked'">
+  <ng-template [ngIf]="data.gameType === 'Ranked'">
     <app-ranked-game-match-making></app-ranked-game-match-making>
   </ng-template>
 
-  <ng-template [ngIf]="gameType === 'Custom'">
+  <ng-template
+    [ngIf]="data.gameType === 'Custom' && data.route === 'custom-game'">
     <app-custom-game-settings></app-custom-game-settings>
   </ng-template>
 
-  <ng-template [ngIf]="gameType === 'Money Match'">
+  <ng-template [ngIf]="data.gameType === 'Money Match'">
     <app-money-match-game-match-making></app-money-match-game-match-making>
   </ng-template>
 </ng-container>

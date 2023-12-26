@@ -17,6 +17,7 @@ export class Lobby extends Room<LobbyState> {
         activity: 'In Lobby',
         queueType: 'Solo',
         gameType: 'Normal',
+        route: 'dashboard'
       })
     );
     this.maxClients = 5;

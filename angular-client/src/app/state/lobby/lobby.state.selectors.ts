@@ -36,6 +36,14 @@ export const isReadySelector = (
     distinctUntilChanged(isEqual)
   );
 
+export const routeSelector = (
+  lobby$: Observable<Lobby | null>
+): Observable<string | null> =>
+  lobby$.pipe(
+    map(lobby => (lobby ? lobby.route : null)),
+    distinctUntilChanged(isEqual)
+  );
+
 export const activitySelector = (
   lobby$: Observable<Lobby | null>
 ): Observable<Activity | null> =>

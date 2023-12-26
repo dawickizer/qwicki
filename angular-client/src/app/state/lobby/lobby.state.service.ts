@@ -15,6 +15,7 @@ import {
   isReadySelector,
   gameModeSelector,
   gameMapSelector,
+  routeSelector,
 } from './lobby.state.selectors';
 import { Lobby } from './lobby.model';
 import { Member } from 'src/app/state/lobby/member.model';
@@ -35,6 +36,7 @@ export class LobbyStateService {
   public isLoading$ = isLoadingSelector(this.lobbyState$);
   public lobby$ = lobbySelector(this.lobbyState$);
   public isReady$ = isReadySelector(this.lobby$);
+  public route$ = routeSelector(this.lobby$);
   public activity$ = activitySelector(this.lobby$);
   public queueType$ = queueTypeSelector(this.lobby$);
   public gameType$ = gameTypeSelector(this.lobby$);
@@ -56,6 +58,14 @@ export class LobbyStateService {
   setLobby(lobby: Lobby): void {
     const currentState = this._lobbyState.value;
     this._lobbyState.next({ ...currentState, lobby: new Lobby(lobby) });
+  }
+
+  setRoute(route: string): void {
+    const currentState = this._lobbyState.value;
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({ ...currentState.lobby, route }),
+    });
   }
 
   setActivity(activity: Activity): void {

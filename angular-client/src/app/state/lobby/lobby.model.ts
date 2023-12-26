@@ -12,12 +12,13 @@ import { GameMap } from 'src/app/types/game-map/game-map.type';
 export class Lobby {
   _id?: string;
   room: Room;
+  isReady: boolean;
+  route: string;
   activity?: Activity;
   queueType?: QueueType;
   gameType?: GameType;
   gameMode?: GameMode;
   gameMap?: GameMap;
-  isReady: boolean;
   visibility: Visibility;
   host: Member;
   members: Map<string, Member>;
@@ -29,12 +30,13 @@ export class Lobby {
     if (lobby) {
       this._id = lobby._id;
       this.room = lobby.room;
+      this.isReady = lobby.isReady ?? false;
+      this.route = lobby.route;
       this.activity = lobby.activity;
       this.queueType = lobby.queueType;
       this.gameType = lobby.gameType;
       this.gameMode = lobby.gameMode;
       this.gameMap = lobby.gameMap;
-      this.isReady = lobby.isReady ?? false;
       this.visibility = lobby.visibility;
       this.host = lobby.host;
       this.members = lobby.members;

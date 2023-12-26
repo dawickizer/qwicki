@@ -66,6 +66,12 @@ export class LobbyManager {
       }
     });
 
+    this.lobby.onMessage('setRoute', (client: Client, route: string) => {
+      if (this.lobby.isHost(client)) {
+        this.lobby.state.setRoute(route);
+      }
+    });
+
     this.lobby.onMessage(
       'setActivity',
       (client: Client, activity: Activity) => {
