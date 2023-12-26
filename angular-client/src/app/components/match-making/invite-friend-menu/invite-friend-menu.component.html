@@ -31,8 +31,10 @@
         {{ friend.username }}
         <app-status-bubble
           class="status-bubble"
-          [status]="friend.status"
-          [presence]="friend.presence"></app-status-bubble>
+          [activity]="friend?.activity"
+          [queueType]="friend?.queueType"
+          [gameType]="friend?.gameType"
+          [presence]="friend?.presence"></app-status-bubble>
       </button>
     </div>
   </div>

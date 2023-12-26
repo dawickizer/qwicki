@@ -6,7 +6,6 @@ import {
   gameTypeSelector,
   isLoadingSelector,
   queueTypeSelector,
-  statusSelector,
   lobbySelector,
   hostSelector,
   membersSelector,
@@ -14,11 +13,17 @@ import {
   outboundInvitesSelector,
   isReadyByMemberSessionIdSelector,
   isReadySelector,
+  gameModeSelector,
+  gameMapSelector,
 } from './lobby.state.selectors';
 import { Lobby } from './lobby.model';
-import { Status } from 'src/app/models/status/status.model';
 import { Member } from 'src/app/state/lobby/member.model';
 import { LobbyMessage } from './lobby-message.model';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -29,11 +34,12 @@ export class LobbyStateService {
   public lobbyState$: Observable<LobbyState> = this._lobbyState.asObservable();
   public isLoading$ = isLoadingSelector(this.lobbyState$);
   public lobby$ = lobbySelector(this.lobbyState$);
-  public status$ = statusSelector(this.lobby$);
   public isReady$ = isReadySelector(this.lobby$);
-  public activity$ = activitySelector(this.status$);
-  public queueType$ = queueTypeSelector(this.status$);
-  public gameType$ = gameTypeSelector(this.status$);
+  public activity$ = activitySelector(this.lobby$);
+  public queueType$ = queueTypeSelector(this.lobby$);
+  public gameType$ = gameTypeSelector(this.lobby$);
+  public gameMode$ = gameModeSelector(this.lobby$);
+  public gameMap$ = gameMapSelector(this.lobby$);
   public host$ = hostSelector(this.lobby$);
   public members$ = membersSelector(this.lobby$);
   public messages$ = messagesSelector(this.lobby$);
@@ -52,35 +58,43 @@ export class LobbyStateService {
     this._lobbyState.next({ ...currentState, lobby: new Lobby(lobby) });
   }
 
-  setStatus(status: Status): void {
+  setActivity(activity: Activity): void {
     const currentState = this._lobbyState.value;
-    if (!currentState.lobby) return;
     this._lobbyState.next({
       ...currentState,
-      lobby: new Lobby({ ...currentState.lobby, status } as Lobby),
+      lobby: new Lobby({ ...currentState.lobby, activity }),
     });
   }
 
-  updateStatus(status: Partial<Status>): void {
+  setQueueType(queueType: QueueType): void {
     const currentState = this._lobbyState.value;
-    if (!currentState.lobby) return;
-
-    // Merge new status with existing status
-    const updatedStatus = new Status({
-      ...currentState.lobby.status,
-      ...status,
-    });
-
-    // Update the lobby with the new status
-    const updatedLobby = new Lobby({
-      ...currentState.lobby,
-      status: updatedStatus,
-    });
-
-    // Emit the updated lobby state
     this._lobbyState.next({
       ...currentState,
-      lobby: updatedLobby,
+      lobby: new Lobby({ ...currentState.lobby, queueType }),
+    });
+  }
+
+  setGameType(gameType: GameType): void {
+    const currentState = this._lobbyState.value;
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({ ...currentState.lobby, gameType }),
+    });
+  }
+
+  setGameMode(gameMode: GameMode): void {
+    const currentState = this._lobbyState.value;
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({ ...currentState.lobby, gameMode }),
+    });
+  }
+
+  setGameMap(gameMap: GameMap): void {
+    const currentState = this._lobbyState.value;
+    this._lobbyState.next({
+      ...currentState,
+      lobby: new Lobby({ ...currentState.lobby, gameMap }),
     });
   }
 

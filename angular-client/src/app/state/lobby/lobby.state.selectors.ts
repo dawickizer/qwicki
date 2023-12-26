@@ -3,13 +3,14 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { LobbyState } from './lobby.state';
 import { isEqual } from 'lodash';
 import { Lobby } from './lobby.model';
-import { Status } from 'src/app/models/status/status.model';
 import { Member } from 'src/app/state/lobby/member.model';
 import { Invite } from '../invite/invite.model';
 import { LobbyMessage } from './lobby-message.model';
 import { Activity } from 'src/app/types/activity/activity.type';
 import { QueueType } from 'src/app/types/queue-type/queue-type.type';
 import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 export const lobbySelector = (
   lobbyState$: Observable<LobbyState>
@@ -27,14 +28,6 @@ export const isLoadingSelector = (
     distinctUntilChanged()
   );
 
-export const statusSelector = (
-  lobby$: Observable<Lobby | null>
-): Observable<Status | null> =>
-  lobby$.pipe(
-    map(lobby => (lobby ? lobby.status : null)),
-    distinctUntilChanged()
-  );
-
 export const isReadySelector = (
   lobby$: Observable<Lobby | null>
 ): Observable<boolean | null> =>
@@ -44,27 +37,43 @@ export const isReadySelector = (
   );
 
 export const activitySelector = (
-  status$: Observable<Status | null>
+  lobby$: Observable<Lobby | null>
 ): Observable<Activity | null> =>
-  status$.pipe(
-    map(status => (status ? status.activity : null)),
-    distinctUntilChanged()
+  lobby$.pipe(
+    map(lobby => (lobby ? lobby.activity : null)),
+    distinctUntilChanged(isEqual)
   );
 
 export const queueTypeSelector = (
-  status$: Observable<Status | null>
+  lobby$: Observable<Lobby | null>
 ): Observable<QueueType | null> =>
-  status$.pipe(
-    map(status => (status ? status.queueType : null)),
-    distinctUntilChanged()
+  lobby$.pipe(
+    map(lobby => (lobby ? lobby.queueType : null)),
+    distinctUntilChanged(isEqual)
   );
 
 export const gameTypeSelector = (
-  status$: Observable<Status | null>
+  lobby$: Observable<Lobby | null>
 ): Observable<GameType | null> =>
-  status$.pipe(
-    map(status => (status ? status.gameType : null)),
-    distinctUntilChanged()
+  lobby$.pipe(
+    map(lobby => (lobby ? lobby.gameType : null)),
+    distinctUntilChanged(isEqual)
+  );
+
+export const gameModeSelector = (
+  lobby$: Observable<Lobby | null>
+): Observable<GameMode | null> =>
+  lobby$.pipe(
+    map(lobby => (lobby ? lobby.gameMode : null)),
+    distinctUntilChanged(isEqual)
+  );
+
+export const gameMapSelector = (
+  lobby$: Observable<Lobby | null>
+): Observable<GameMap | null> =>
+  lobby$.pipe(
+    map(lobby => (lobby ? lobby.gameMap : null)),
+    distinctUntilChanged(isEqual)
   );
 
 export const hostSelector = (

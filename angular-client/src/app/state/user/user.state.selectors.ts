@@ -3,11 +3,12 @@ import { map, distinctUntilChanged } from 'rxjs/operators';
 import { UserState } from './user.state';
 import { isEqual } from 'lodash';
 import { User } from './user.model';
-import { Status } from 'src/app/models/status/status.model';
 import { Presence } from 'src/app/types/presence/presence.type';
 import { Activity } from 'src/app/types/activity/activity.type';
 import { QueueType } from 'src/app/types/queue-type/queue-type.type';
 import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 export const userSelector = (
   userState$: Observable<UserState>
@@ -25,14 +26,6 @@ export const isLoadingSelector = (
     distinctUntilChanged()
   );
 
-export const statusSelector = (
-  user$: Observable<User | null>
-): Observable<Status | null> =>
-  user$.pipe(
-    map(user => (user ? user.status : null)),
-    distinctUntilChanged()
-  );
-
 export const presenceSelector = (
   user$: Observable<User | null>
 ): Observable<Presence | null> =>
@@ -42,25 +35,41 @@ export const presenceSelector = (
   );
 
 export const activitySelector = (
-  status$: Observable<Status | null>
+  user$: Observable<User | null>
 ): Observable<Activity | null> =>
-  status$.pipe(
-    map(status => (status ? status.activity : null)),
+  user$.pipe(
+    map(user => (user ? user.activity : null)),
     distinctUntilChanged()
   );
 
 export const queueTypeSelector = (
-  status$: Observable<Status | null>
+  user$: Observable<User | null>
 ): Observable<QueueType | null> =>
-  status$.pipe(
-    map(status => (status ? status.queueType : null)),
+  user$.pipe(
+    map(user => (user ? user.queueType : null)),
     distinctUntilChanged()
   );
 
 export const gameTypeSelector = (
-  status$: Observable<Status | null>
+  user$: Observable<User | null>
 ): Observable<GameType | null> =>
-  status$.pipe(
-    map(status => (status ? status.gameType : null)),
+  user$.pipe(
+    map(user => (user ? user.gameType : null)),
+    distinctUntilChanged()
+  );
+
+export const gameModeSelector = (
+  user$: Observable<User | null>
+): Observable<GameMode | null> =>
+  user$.pipe(
+    map(user => (user ? user.gameMode : null)),
+    distinctUntilChanged()
+  );
+
+export const gameMapSelector = (
+  user$: Observable<User | null>
+): Observable<GameMap | null> =>
+  user$.pipe(
+    map(user => (user ? user.gameMap : null)),
     distinctUntilChanged()
   );

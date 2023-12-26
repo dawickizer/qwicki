@@ -29,6 +29,6 @@ export class PresenceComponent {
       default:
         this.presence = 'Online';
     }
-    this.userOrchestratorService.updatePresence(this.presence).subscribe();
+    this.userOrchestratorService.setPresence(this.presence).subscribe();
   }
 }

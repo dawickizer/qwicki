@@ -6,7 +6,6 @@ import { LobbyStateService } from './lobby.state.service';
 import { Lobby } from './lobby.model';
 import { Room } from 'colyseus.js';
 import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
-import { Status } from 'src/app/models/status/status.model';
 import { LobbyMessage } from './lobby-message.model';
 import { LobbyApiService } from './lobby.api.service';
 
@@ -29,7 +28,6 @@ export class LobbyEffectService {
           new Lobby({
             _id: lobby.id,
             room: lobby,
-            status: new Status({}),
             host: null,
             members: new Map(),
             outboundInvites: [],
@@ -59,7 +57,6 @@ export class LobbyEffectService {
           new Lobby({
             _id: lobby.id,
             room: lobby,
-            status: new Status({}),
             host: null,
             members: new Map(),
             outboundInvites: [],
@@ -84,7 +81,6 @@ export class LobbyEffectService {
           new Lobby({
             _id: lobby.id,
             room: lobby,
-            status: new Status({}),
             host: null,
             members: new Map(),
             outboundInvites: [],

@@ -19,7 +19,11 @@ export class FriendManager extends InboxManager {
         this.inbox.hostClient.send('acceptFriendRequest', {
           friendRequest,
           presence: user.presence,
-          status: user.status,
+          activity: user.activity,
+          queueType: user.queueType,
+          gameType: user.gameType,
+          gameMode: user.gameMode,
+          gameMap: user.gameMap,
         });
     });
 

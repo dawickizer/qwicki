@@ -7,10 +7,11 @@ import { Invite } from '../invite/invite.model';
 import { Member } from 'src/app/state/lobby/member.model';
 import { Room } from 'colyseus.js';
 import { LobbyMessage } from './lobby-message.model';
-import { Status } from 'src/app/models/status/status.model';
 import { Activity } from 'src/app/types/activity/activity.type';
 import { QueueType } from 'src/app/types/queue-type/queue-type.type';
 import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -28,14 +29,6 @@ export class LobbyService {
     return this.lobbyStateService.lobby$;
   }
 
-  get status$(): Observable<Status | null> {
-    return this.lobbyStateService.status$;
-  }
-
-  get isReady$(): Observable<boolean | null> {
-    return this.lobbyStateService.isReady$;
-  }
-
   get activity$(): Observable<Activity | null> {
     return this.lobbyStateService.activity$;
   }
@@ -46,6 +39,18 @@ export class LobbyService {
 
   get gameType$(): Observable<GameType | null> {
     return this.lobbyStateService.gameType$;
+  }
+
+  get gameMode$(): Observable<GameMode | null> {
+    return this.lobbyStateService.gameMode$;
+  }
+
+  get gameMap$(): Observable<GameMap | null> {
+    return this.lobbyStateService.gameMap$;
+  }
+
+  get isReady$(): Observable<boolean | null> {
+    return this.lobbyStateService.isReady$;
   }
 
   get host$(): Observable<Member | null> {
@@ -104,12 +109,24 @@ export class LobbyService {
     this.lobbyStateService.setLobby(lobby);
   }
 
-  setStatus(status: Status): void {
-    this.lobbyStateService.setStatus(status);
+  setActivity(activity: Activity): void {
+    this.lobbyStateService.setActivity(activity);
   }
 
-  updateStatus(status: Partial<Status>): void {
-    this.lobbyStateService.updateStatus(status);
+  setQueueType(queueType: QueueType): void {
+    this.lobbyStateService.setQueueType(queueType);
+  }
+
+  setGameType(gameType: GameType): void {
+    this.lobbyStateService.setGameType(gameType);
+  }
+
+  setGameMode(gameMode: GameMode): void {
+    this.lobbyStateService.setGameMode(gameMode);
+  }
+
+  setGameMap(gameMap: GameMap): void {
+    this.lobbyStateService.setGameMap(gameMap);
   }
 
   setIsReady(isReady: boolean): void {

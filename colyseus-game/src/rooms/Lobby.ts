@@ -3,7 +3,6 @@ import { isAuthenticatedJWT } from '../middleware/auth';
 import LobbyState from '../schemas/lobby/LobbyState';
 import { Member } from '../schemas/lobby/Member';
 import { LobbyManager } from '../managers/LobbyManager';
-import { Status } from '../schemas/lobby/Status';
 
 export class Lobby extends Room<LobbyState> {
   hostClient: Client;
@@ -15,7 +14,9 @@ export class Lobby extends Room<LobbyState> {
       new LobbyState({
         _id: this.roomId,
         isReady: false,
-        status: new Status({ activity: 'In Lobby' }),
+        activity: 'In Lobby',
+        queueType: 'Solo',
+        gameType: 'Normal',
       })
     );
     this.maxClients = 5;

@@ -1,14 +1,22 @@
 import { Schema, type, ArraySchema, MapSchema } from '@colyseus/schema';
-import { Status } from './Status';
 import { Member } from './Member';
 import { Message } from './Message';
 import { Invite } from './Invite';
 import { Client } from 'colyseus';
 import { generateRandomUUID } from '../../utils/generateRandomUUID';
+import { Activity } from '../../types/activity/activity.type';
+import { QueueType } from '../../types/queue-type/queue-type.type';
+import { GameType } from '../../types/game-type/game-type.type';
+import { GameMode } from '../../types/game-mode/game-mode.type.';
+import { GameMap } from '../../types/game-map/game-map.type';
 
 export class LobbyState extends Schema {
   @type('string') _id: string;
-  @type(Status) status = new Status();
+  @type('string') activity?: Activity;
+  @type('string') queueType?: QueueType;
+  @type('string') gameType?: GameType;
+  @type('string') gameMode?: GameMode;
+  @type('string') gameMap?: GameMap;
   @type(Member) host = new Member();
   @type({ map: Member }) members = new MapSchema<Member>();
   @type([Message]) messages = new ArraySchema<Message>();
@@ -33,7 +41,11 @@ export class LobbyState extends Schema {
   constructor(lobbyState?: Partial<LobbyState>) {
     super();
     this._id = lobbyState?._id ?? '';
-    this.status = new Status(lobbyState?.status) ?? new Status();
+    this.activity = lobbyState?.activity;
+    this.queueType = lobbyState?.queueType;
+    this.gameType = lobbyState?.gameType;
+    this.gameMode = lobbyState?.gameMode;
+    this.gameMap = lobbyState?.gameMap;
     this.host = new Member(lobbyState?.host) ?? new Member();
     this.members = lobbyState?.members
       ? new MapSchema<Member>(lobbyState?.members)
@@ -121,12 +133,24 @@ export class LobbyState extends Schema {
     console.log(`${this.host.username} is the host`);
   }
 
-  setStatus(status: Status) {
-    this.status = new Status(status);
+  setActivity(activity: Activity) {
+    this.activity = activity;
   }
 
-  updateStatus(status: Partial<Status>) {
-    this.status = new Status({ ...this.status, ...status });
+  setQueueType(queueType: QueueType) {
+    this.queueType = queueType;
+  }
+
+  setGameType(gameType: GameType) {
+    this.gameType = gameType;
+  }
+
+  setGameMode(gameMode: GameMode) {
+    this.gameMode = gameMode;
+  }
+
+  setGameMap(gameMap: GameMap) {
+    this.gameMap = gameMap;
   }
 
   toggleReady(member: Member) {

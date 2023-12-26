@@ -16,8 +16,10 @@
       <app-status-bubble
         *ngIf="!panelOpenState"
         class="status-bubble"
-        [status]="friend.status"
-        [presence]="friend.presence">
+        [activity]="friend?.activity"
+        [queueType]="friend?.queueType"
+        [gameType]="friend?.gameType"
+        [presence]="friend?.presence">
       </app-status-bubble>
     </mat-panel-title>
     <mat-panel-description>

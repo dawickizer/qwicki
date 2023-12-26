@@ -3,16 +3,21 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { UserState, initialState } from './user.state';
 import {
   activitySelector,
+  gameMapSelector,
+  gameModeSelector,
   gameTypeSelector,
   isLoadingSelector,
   presenceSelector,
   queueTypeSelector,
-  statusSelector,
   userSelector,
 } from './user.state.selectors';
 import { User } from './user.model';
-import { Status } from 'src/app/models/status/status.model';
 import { Presence } from 'src/app/types/presence/presence.type';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { Activity } from 'src/app/types/activity/activity.type';
 
 @Injectable({
   providedIn: 'root',
@@ -23,11 +28,12 @@ export class UserStateService {
   public userState$: Observable<UserState> = this._userState.asObservable();
   public isLoading$ = isLoadingSelector(this.userState$);
   public user$ = userSelector(this.userState$);
-  public status$ = statusSelector(this.user$);
   public presence$ = presenceSelector(this.user$);
-  public activity$ = activitySelector(this.status$);
-  public queueType$ = queueTypeSelector(this.status$);
-  public gameType$ = gameTypeSelector(this.status$);
+  public activity$ = activitySelector(this.user$);
+  public queueType$ = queueTypeSelector(this.user$);
+  public gameType$ = gameTypeSelector(this.user$);
+  public gameMode$ = gameModeSelector(this.user$);
+  public gameMap$ = gameMapSelector(this.user$);
 
   setInitialState() {
     this._userState.next(initialState);
@@ -38,40 +44,51 @@ export class UserStateService {
     this._userState.next({ ...currentState, user: new User(user) });
   }
 
-  setStatus(status: Status): void {
-    const currentState = this._userState.value;
-    if (!currentState.user) return;
-    this._userState.next({
-      ...currentState,
-      user: new User({ ...currentState.user, status } as User),
-    });
-  }
-
-  updateStatus(status: Partial<Status>): void {
-    const currentState = this._userState.value;
-    if (!currentState.user) return;
-
-    // Merge new status with existing status
-    const updatedStatus = { ...currentState.user.status, ...status };
-
-    // Update the user with the new status
-    const updatedUser = new User({
-      ...currentState.user,
-      status: updatedStatus,
-    });
-
-    // Emit the updated user state
-    this._userState.next({
-      ...currentState,
-      user: updatedUser,
-    });
-  }
-
-  updatePresence(presence: Presence): void {
+  setPresence(presence: Presence): void {
     const currentState = this._userState.value;
     this._userState.next({
       ...currentState,
       user: new User({ ...currentState.user, presence }),
+    });
+  }
+
+  setActivity(activity: Activity): void {
+    const currentState = this._userState.value;
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, activity }),
+    });
+  }
+
+  setQueueType(queueType: QueueType): void {
+    const currentState = this._userState.value;
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, queueType }),
+    });
+  }
+
+  setGameType(gameType: GameType): void {
+    const currentState = this._userState.value;
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, gameType }),
+    });
+  }
+
+  setGameMode(gameMode: GameMode): void {
+    const currentState = this._userState.value;
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, gameMode }),
+    });
+  }
+
+  setGameMap(gameMap: GameMap): void {
+    const currentState = this._userState.value;
+    this._userState.next({
+      ...currentState,
+      user: new User({ ...currentState.user, gameMap }),
     });
   }
 

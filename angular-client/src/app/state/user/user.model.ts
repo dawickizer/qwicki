@@ -1,8 +1,12 @@
 import { FriendRequest } from 'src/app/state/friend-request/friend-requests.model';
 import { Friend } from '../friend/friend.model';
 import { Invite } from '../invite/invite.model';
-import { Status } from 'src/app/models/status/status.model';
 import { Presence } from 'src/app/types/presence/presence.type';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 export class User {
   _id?: string;
@@ -14,7 +18,11 @@ export class User {
   middleName?: string;
   lastName: string;
   presence?: Presence = 'Offline';
-  status?: Status = new Status();
+  activity?: Activity;
+  queueType?: QueueType;
+  gameType?: GameType;
+  gameMode?: GameMode;
+  gameMap?: GameMap;
   friends: Friend[] = [];
   inboundFriendRequests: FriendRequest[] = [];
   outboundFriendRequests: FriendRequest[] = [];
@@ -32,7 +40,11 @@ export class User {
       this.middleName = user.middleName;
       this.lastName = user.lastName;
       this.presence = user.presence ?? 'Offline';
-      this.status = user.status ?? new Status();
+      this.activity = user.activity;
+      this.queueType = user.queueType;
+      this.gameType = user.gameType;
+      this.gameMode = user.gameMode;
+      this.gameMap = user.gameMap;
       this.friends = user.friends.map(friend => new Friend(friend));
       this.inboundFriendRequests = user.inboundFriendRequests.map(
         inboundFriendRequest => new FriendRequest(inboundFriendRequest)

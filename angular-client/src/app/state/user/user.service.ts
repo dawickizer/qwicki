@@ -3,11 +3,12 @@ import { Observable } from 'rxjs';
 import { UserStateService } from './user.state.service';
 import { User } from './user.model';
 import { UserEffectService } from './user.effect.service';
-import { Status } from 'src/app/models/status/status.model';
 import { Presence } from 'src/app/types/presence/presence.type';
 import { Activity } from 'src/app/types/activity/activity.type';
 import { QueueType } from 'src/app/types/queue-type/queue-type.type';
 import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -25,10 +26,6 @@ export class UserService {
     return this.userStateService.user$;
   }
 
-  get status$(): Observable<Status | null> {
-    return this.userStateService.status$;
-  }
-
   get presence$(): Observable<Presence | null> {
     return this.userStateService.presence$;
   }
@@ -43,6 +40,14 @@ export class UserService {
 
   get gameType$(): Observable<GameType | null> {
     return this.userStateService.gameType$;
+  }
+
+  get gameMode$(): Observable<GameMode | null> {
+    return this.userStateService.gameMode$;
+  }
+
+  get gameMap$(): Observable<GameMap | null> {
+    return this.userStateService.gameMap$;
   }
 
   constructor(
@@ -73,16 +78,28 @@ export class UserService {
     this.userStateService.setUser(user);
   }
 
-  setStatus(status: Status): void {
-    this.userStateService.setStatus(status);
+  setPresence(presence: Presence): void {
+    this.userStateService.setPresence(presence);
   }
 
-  updateStatus(status: Partial<Status>): void {
-    this.userStateService.updateStatus(status);
+  setActivity(activity: Activity): void {
+    this.userStateService.setActivity(activity);
   }
 
-  updatePresence(presence: Presence): void {
-    this.userStateService.updatePresence(presence);
+  setQueueType(queueType: QueueType): void {
+    this.userStateService.setQueueType(queueType);
+  }
+
+  setGameType(gameType: GameType): void {
+    this.userStateService.setGameType(gameType);
+  }
+
+  setGameMode(gameMode: GameMode): void {
+    this.userStateService.setGameMode(gameMode);
+  }
+
+  setGameMap(gameMap: GameMap): void {
+    this.userStateService.setGameMap(gameMap);
   }
 
   setIsLoading(isLoading: boolean): void {

@@ -174,10 +174,15 @@ export class AuthOrchestratorService {
       .createInbox(this.decodedJwt._id, {
         jwt: this.jwt,
         presence: 'Online',
+        activity: null,
+        queueType: null,
+        gameType: null,
+        gameMode: null,
+        gameMap: null,
       })
       .pipe(
         tap(inbox => {
-          this.userService.updatePresence('Online');
+          this.userService.setPresence('Online');
           inbox = this.inboxOnMessageService.setPersonalInboxListeners(inbox);
           this.inboxService.setPersonalInbox(inbox);
         })
@@ -191,7 +196,11 @@ export class AuthOrchestratorService {
       .joinExistingInboxesIfPresent(friendIds, {
         jwt: this.jwt,
         presence: this.user.presence,
-        status: this.user.status,
+        activity: this.user.activity,
+        queueType: this.user.queueType,
+        gameType: this.user.gameType,
+        gameMode: this.user.gameMode,
+        gameMap: this.user.gameMap,
       })
       .pipe(
         mergeMap(inboxes => {
@@ -204,19 +213,39 @@ export class AuthOrchestratorService {
           const statusObservables = inboxes.map(inbox => {
             return new Observable<Room<any>>(subscriber => {
               // Immediately use the current state if it's available.
-              const currentStatus = inbox.state.host.status;
               const currentPresence = inbox.state.host.presence;
-              if (currentStatus && currentPresence) {
+              if (currentPresence) {
                 inbox =
                   this.inboxOnMessageService.setFriendInboxListeners(inbox);
-                this.friendService.setFriendStatus(
-                  inbox.state.host._id,
-                  currentStatus
-                );
-                this.friendService.updateFriendPresence(
+                this.friendService.setFriendPresence(
                   inbox.state.host._id,
                   currentPresence
                 );
+                this.friendService.setFriendActivity(
+                  inbox.state.host._id,
+                  inbox.state.host.activity
+                );
+
+                this.friendService.setFriendQueueType(
+                  inbox.state.host._id,
+                  inbox.state.host.queueType
+                );
+
+                this.friendService.setFriendGameType(
+                  inbox.state.host._id,
+                  inbox.state.host.gameType
+                );
+
+                this.friendService.setFriendGameMode(
+                  inbox.state.host._id,
+                  inbox.state.host.gameMode
+                );
+
+                this.friendService.setFriendGameMap(
+                  inbox.state.host._id,
+                  inbox.state.host.gameMap
+                );
+
                 this.inboxService.updateConnectedInbox(inbox);
                 subscriber.next(inbox);
                 subscriber.complete();
@@ -225,14 +254,36 @@ export class AuthOrchestratorService {
                 inbox.onStateChange.once(state => {
                   inbox =
                     this.inboxOnMessageService.setFriendInboxListeners(inbox);
-                  this.friendService.setFriendStatus(
-                    state.host._id,
-                    state.host.status
-                  );
-                  this.friendService.updateFriendPresence(
+                  this.friendService.setFriendPresence(
                     state.host._id,
                     state.host.presence
                   );
+
+                  this.friendService.setFriendActivity(
+                    state.host._id,
+                    state.host.activity
+                  );
+
+                  this.friendService.setFriendQueueType(
+                    state.host._id,
+                    state.host.queueType
+                  );
+
+                  this.friendService.setFriendGameType(
+                    state.host._id,
+                    state.host.gameType
+                  );
+
+                  this.friendService.setFriendGameMode(
+                    state.host._id,
+                    state.host.gameMode
+                  );
+
+                  this.friendService.setFriendGameMap(
+                    state.host._id,
+                    state.host.gameMap
+                  );
+
                   this.inboxService.updateConnectedInbox(inbox);
                   subscriber.next(inbox);
                   subscriber.complete();

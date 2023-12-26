@@ -39,20 +39,20 @@ export class UserOrchestratorService {
         (this.user.presence === 'Offline' && presence === 'Away')
       )
         return;
-      this.updatePresence(presence).subscribe();
+      this.setPresence(presence).subscribe();
     });
   }
 
-  updatePresence(presence: Presence): Observable<Presence> {
+  setPresence(presence: Presence): Observable<Presence> {
     return new Observable(subscriber => {
-      this.personalInbox.send('updateHostPresence', presence);
+      this.personalInbox.send('setHostPresence', presence);
       this.friendsInboxes.forEach(friendsInbox => {
         friendsInbox.send('notifyHostPresence', {
           id: this.user._id,
           presence,
         });
       });
-      this.userService.updatePresence(presence);
+      this.userService.setPresence(presence);
       subscriber.next(presence);
       subscriber.complete();
     });

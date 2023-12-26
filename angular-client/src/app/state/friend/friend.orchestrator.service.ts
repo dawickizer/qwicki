@@ -84,7 +84,11 @@ export class FriendOrchestratorService {
           .joinExistingInboxIfPresent(friendRequest.from._id, {
             jwt: this.jwt,
             presence: this.user.presence,
-            status: this.user.status,
+            activity: this.user.activity,
+            queueType: this.user.queueType,
+            gameType: this.user.gameType,
+            gameMode: this.user.gameMode,
+            gameMap: this.user.gameMap,
           })
           .pipe(
             tap(inbox => {
@@ -95,21 +99,37 @@ export class FriendOrchestratorService {
                   inbox.send('acceptFriendRequest', friendRequest);
                   inbox =
                     this.inboxOnMessageService.setFriendInboxListeners(inbox);
-                  this.friendService.setFriendStatus(
-                    friendRequest.from._id,
-                    state.host.status
-                  );
-                  this.friendService.updateFriendPresence(
+                  this.friendService.setFriendPresence(
                     friendRequest.from._id,
                     state.host.presence
+                  );
+                  this.friendService.setFriendActivity(
+                    friendRequest.from._id,
+                    state.host.activity
+                  );
+                  this.friendService.setFriendQueueType(
+                    friendRequest.from._id,
+                    state.host.queueType
+                  );
+
+                  this.friendService.setFriendGameType(
+                    friendRequest.from._id,
+                    state.host.gameType
+                  );
+
+                  this.friendService.setFriendGameMode(
+                    friendRequest.from._id,
+                    state.host.gameMode
+                  );
+
+                  this.friendService.setFriendGameMap(
+                    friendRequest.from._id,
+                    state.host.gameMap
                   );
                   this.inboxService.updateConnectedInbox(inbox);
                 });
               } else {
-                this.friendService.setFriendStatus(friendRequest.from._id, {
-                  activity: 'In Lobby',
-                });
-                this.friendService.updateFriendPresence(
+                this.friendService.setFriendPresence(
                   friendRequest.from._id,
                   'Offline'
                 );

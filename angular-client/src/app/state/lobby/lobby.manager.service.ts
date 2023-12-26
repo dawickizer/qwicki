@@ -8,9 +8,13 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { tap } from 'rxjs';
 import { UserService } from '../user/user.service';
-import { Status } from 'src/app/models/status/status.model';
 import { Room } from 'colyseus.js';
 import { InboxService } from '../inbox/inbox.service';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -46,6 +50,7 @@ export class LobbyManagerService {
     );
   }
 
+  // TODO: Check to see if room listeners can be destroyed if lobby is nulled out
   setListeners(lobby: Lobby) {
     let wasKicked = false;
     let wasSelfInitiated = false;
@@ -55,23 +60,79 @@ export class LobbyManagerService {
     };
 
     lobby.room.state.listen('isReady', (current: boolean) => {
+      console.log('setting isReady');
       this.lobbyService.setIsReady(current);
     });
 
-    lobby.room.state.status.onChange = () => {
-      const updatedStatus = new Status(lobby.room.state.status);
-      this.lobbyService.updateStatus(updatedStatus);
-      this.userService.updateStatus(updatedStatus);
+    lobby.room.state.listen('activity', (current: Activity) => {
+      console.log('setting activity');
+      this.lobbyService.setActivity(current);
+      this.userService.setActivity(current);
 
-      // notify friends of status change
-      this.personalInbox.send('updateHostStatus', updatedStatus);
+      this.personalInbox.send('setHostActivity', current);
       this.friendsInboxes.forEach(friendsInbox => {
-        friendsInbox.send('notifyHostStatus', {
+        friendsInbox.send('notifyHostActivity', {
           id: this.decodedJwt._id,
-          status: updatedStatus,
+          activity: current,
         });
       });
-    };
+    });
+
+    lobby.room.state.listen('queueType', (current: QueueType) => {
+      console.log('setting queueType');
+      this.lobbyService.setQueueType(current);
+      this.userService.setQueueType(current);
+
+      this.personalInbox.send('setHostQueueType', current);
+      this.friendsInboxes.forEach(friendsInbox => {
+        friendsInbox.send('notifyHostQueueType', {
+          id: this.decodedJwt._id,
+          queueType: current,
+        });
+      });
+    });
+
+    lobby.room.state.listen('gameType', (current: GameType) => {
+      console.log('setting gameType');
+      this.lobbyService.setGameType(current);
+      this.userService.setGameType(current);
+
+      this.personalInbox.send('setHostGameType', current);
+      this.friendsInboxes.forEach(friendsInbox => {
+        friendsInbox.send('notifyHostGameType', {
+          id: this.decodedJwt._id,
+          gameType: current,
+        });
+      });
+    });
+
+    lobby.room.state.listen('gameMode', (current: GameMode) => {
+      console.log('setting gameMode');
+      this.lobbyService.setGameMode(current);
+      this.userService.setGameMode(current);
+
+      this.personalInbox.send('setHostGameMode', current);
+      this.friendsInboxes.forEach(friendsInbox => {
+        friendsInbox.send('notifyHostGameMode', {
+          id: this.decodedJwt._id,
+          gameMode: current,
+        });
+      });
+    });
+
+    lobby.room.state.listen('gameMap', (current: GameMap) => {
+      console.log('setting gameMap');
+      this.lobbyService.setGameMap(current);
+      this.userService.setGameMap(current);
+
+      this.personalInbox.send('setHostGameMap', current);
+      this.friendsInboxes.forEach(friendsInbox => {
+        friendsInbox.send('notifyHostGameMap', {
+          id: this.decodedJwt._id,
+          gameMap: current,
+        });
+      });
+    });
 
     lobby.room.state.members.onAdd = (member: Member | any) => {
       member.listen('isHost', (current: boolean) => {

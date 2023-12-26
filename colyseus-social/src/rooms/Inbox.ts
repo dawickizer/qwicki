@@ -6,7 +6,6 @@ import { FriendManager } from '../managers/FriendManager';
 import { ChatManager } from '../managers/ChatManager';
 import { PresenceManager } from '../managers/PresenceManager';
 import { InviteManager } from '../managers/InviteManager';
-import { Status } from '../schemas/Status';
 
 export class Inbox extends Room<InboxState> {
   hostClient: Client;
@@ -36,14 +35,22 @@ export class Inbox extends Room<InboxState> {
       _id: auth._id,
       sessionId: client.sessionId,
       username: auth.username,
-      status: options.status,
+      activity: options.activity,
+      queueType: options.queueType,
+      gameType: options.gameType,
+      gameMode: options.gameMode,
+      gameMap: options.gameMap,
       presence: options.presence,
     });
     this.determineHost(user);
     this.addUser(user);
     this.logUsers();
     if (!this.isHost(client)) {
-      this.presenceManager.notifyHostUserStatus(user);
+      this.presenceManager.notifyHostUserActivity(user);
+      this.presenceManager.notifyHostUserQueueType(user);
+      this.presenceManager.notifyHostUserGameType(user);
+      this.presenceManager.notifyHostUserGameMode(user);
+      this.presenceManager.notifyHostUserGameMap(user);
       this.presenceManager.notifyHostUserPresence(user);
     }
   }
@@ -64,7 +71,11 @@ export class Inbox extends Room<InboxState> {
   removeClient(client: Client) {
     const user: User = this.getUser(client);
     if (this.hostClient && user) {
-      this.presenceManager.notifyHostUserStatus(user, new Status());
+      this.presenceManager.notifyHostUserActivity(user, null);
+      this.presenceManager.notifyHostUserQueueType(user, null);
+      this.presenceManager.notifyHostUserGameType(user, null);
+      this.presenceManager.notifyHostUserGameMode(user, null);
+      this.presenceManager.notifyHostUserGameMap(user, null);
       this.presenceManager.notifyHostUserPresence(user, 'Offline');
     }
     this.deleteUser(user);

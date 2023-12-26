@@ -10,8 +10,12 @@ import {
 } from './friend.state.selectors';
 import { Friend } from './friend.model';
 import { Message } from '../message/message.model';
-import { Status } from 'src/app/models/status/status.model';
 import { Presence } from 'src/app/types/presence/presence.type';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
 
 @Injectable({
   providedIn: 'root',
@@ -81,17 +85,7 @@ export class FriendStateService {
     });
   }
 
-  setFriendStatus(friendId: string, status: Status): void {
-    this.setFriendStatusHelper(friendId, status);
-  }
-
-  setFriendsStatus(friendIds: string[], status: Status): void {
-    friendIds.forEach(friendId => {
-      this.setFriendStatus(friendId, status);
-    });
-  }
-
-  private setFriendStatusHelper(friendId: string, status: Status): void {
+  setFriendActivity(friendId: string, activity: Activity): void {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
@@ -104,10 +98,10 @@ export class FriendStateService {
     // Create a shallow copy of the friends array
     const updatedFriends = [...currentState.friends];
 
-    // Update the status of the specified friend
+    // Update the presence of the specified friend
     updatedFriends[friendIndex] = {
       ...updatedFriends[friendIndex],
-      status: Object.keys(status).length === 0 ? new Status() : status,
+      activity,
     };
 
     this._friendState.next({
@@ -116,20 +110,13 @@ export class FriendStateService {
     });
   }
 
-  updateFriendStatus(friendId: string, status: Partial<Status>): void {
-    this.updateFriendStatusHelper(friendId, status);
-  }
-
-  updateFriendsStatus(friendIds: string[], status: Partial<Status>): void {
+  setFriendsActivity(friendIds: string[], activity: Activity): void {
     friendIds.forEach(friendId => {
-      this.updateFriendStatus(friendId, status);
+      this.setFriendActivity(friendId, activity);
     });
   }
 
-  private updateFriendStatusHelper(
-    friendId: string,
-    status: Partial<Status>
-  ): void {
+  setFriendQueueType(friendId: string, queueType: QueueType): void {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 
@@ -137,22 +124,13 @@ export class FriendStateService {
       friend => friend._id === friendId
     );
 
-    if (friendIndex === -1) return; // if the friend with the given ID is not found
+    if (friendIndex === -1) return;
 
-    // Create a shallow copy of the friends array
     const updatedFriends = [...currentState.friends];
-
-    // Merge new status with existing status
-    const updatedStatus = {
-      ...updatedFriends[friendIndex].status,
-      ...status,
-    };
-
-    // Update the status of the specified friend
-    updatedFriends[friendIndex] = new Friend({
+    updatedFriends[friendIndex] = {
       ...updatedFriends[friendIndex],
-      status: updatedStatus,
-    });
+      queueType,
+    };
 
     this._friendState.next({
       ...currentState,
@@ -160,22 +138,109 @@ export class FriendStateService {
     });
   }
 
-  updateFriendPresence(friendId: string, presence: Presence): void {
-    this.updateFriendPresenceHelper(friendId, presence);
+  setFriendsQueueType(friendIds: string[], queueType: QueueType): void {
+    friendIds.forEach(friendId => {
+      this.setFriendQueueType(friendId, queueType);
+    });
+  }
+
+  setFriendGameType(friendId: string, gameType: GameType): void {
+    const currentState = this._friendState.value;
+    if (!currentState.friends) return;
+
+    const friendIndex = currentState.friends.findIndex(
+      friend => friend._id === friendId
+    );
+
+    if (friendIndex === -1) return;
+
+    const updatedFriends = [...currentState.friends];
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      gameType,
+    };
+
+    this._friendState.next({
+      ...currentState,
+      friends: updatedFriends.map(friend => new Friend(friend)),
+    });
+  }
+
+  setFriendsGameType(friendIds: string[], gameType: GameType): void {
+    friendIds.forEach(friendId => {
+      this.setFriendGameType(friendId, gameType);
+    });
+  }
+
+  setFriendGameMode(friendId: string, gameMode: GameMode): void {
+    const currentState = this._friendState.value;
+    if (!currentState.friends) return;
+
+    const friendIndex = currentState.friends.findIndex(
+      friend => friend._id === friendId
+    );
+
+    if (friendIndex === -1) return;
+
+    const updatedFriends = [...currentState.friends];
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      gameMode,
+    };
+
+    this._friendState.next({
+      ...currentState,
+      friends: updatedFriends.map(friend => new Friend(friend)),
+    });
+  }
+
+  setFriendsGameMode(friendIds: string[], gameMode: GameMode): void {
+    friendIds.forEach(friendId => {
+      this.setFriendGameMode(friendId, gameMode);
+    });
+  }
+
+  setFriendGameMap(friendId: string, gameMap: GameMap): void {
+    const currentState = this._friendState.value;
+    if (!currentState.friends) return;
+
+    const friendIndex = currentState.friends.findIndex(
+      friend => friend._id === friendId
+    );
+
+    if (friendIndex === -1) return;
+
+    const updatedFriends = [...currentState.friends];
+    updatedFriends[friendIndex] = {
+      ...updatedFriends[friendIndex],
+      gameMap,
+    };
+
+    this._friendState.next({
+      ...currentState,
+      friends: updatedFriends.map(friend => new Friend(friend)),
+    });
+  }
+
+  setFriendsGameMap(friendIds: string[], gameMap: GameMap): void {
+    friendIds.forEach(friendId => {
+      this.setFriendGameMap(friendId, gameMap);
+    });
+  }
+
+  setFriendPresence(friendId: string, presence: Presence): void {
+    this.setFriendPresenceHelper(friendId, presence);
     if (presence === 'Online') this.reorderFriend(friendId, 'front');
     else if (presence === 'Offline') this.reorderFriend(friendId, 'end');
   }
 
-  updateFriendsPresence(friendIds: string[], presence: Presence): void {
+  setFriendsPresence(friendIds: string[], presence: Presence): void {
     friendIds.forEach(friendId => {
-      this.updateFriendPresence(friendId, presence);
+      this.setFriendPresence(friendId, presence);
     });
   }
 
-  private updateFriendPresenceHelper(
-    friendId: string,
-    presence: Presence
-  ): void {
+  private setFriendPresenceHelper(friendId: string, presence: Presence): void {
     const currentState = this._friendState.value;
     if (!currentState.friends) return;
 

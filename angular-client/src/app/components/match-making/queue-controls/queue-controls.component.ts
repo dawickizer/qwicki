@@ -30,11 +30,11 @@ export class QueueControlsComponent implements OnInit {
   }
 
   onQueueTypeChange(queueType: QueueType) {
-    this.lobbyOrchestratorService.updateStatus({ queueType }).subscribe();
+    this.lobbyOrchestratorService.setQueueType(queueType).subscribe();
   }
 
   onGameTypeChange(gameType: GameType) {
-    this.lobbyOrchestratorService.updateStatus({ gameType }).subscribe();
+    this.lobbyOrchestratorService.setGameType(gameType).subscribe();
   }
 
   isHost(): boolean {

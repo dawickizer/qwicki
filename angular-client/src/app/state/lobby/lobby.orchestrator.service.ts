@@ -6,8 +6,12 @@ import { AuthService } from '../auth/auth.service';
 import { LobbyMessage } from './lobby-message.model';
 import { Member } from './member.model';
 import { LobbyManagerService } from './lobby.manager.service';
-import { Status } from 'src/app/models/status/status.model';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -73,9 +77,29 @@ export class LobbyOrchestratorService {
     return of(member);
   }
 
-  updateStatus(status: Partial<Status>): Observable<Status> {
-    this.lobby.room.send('updateStatus', status);
-    return of(status as Status);
+  setActivity(activity: Activity): Observable<Activity> {
+    this.lobby.room.send('setActivity', activity);
+    return of(activity);
+  }
+
+  setQueueType(queueType: QueueType): Observable<QueueType> {
+    this.lobby.room.send('setQueueType', queueType);
+    return of(queueType);
+  }
+
+  setGameType(gameType: GameType): Observable<GameType> {
+    this.lobby.room.send('setGameType', gameType);
+    return of(gameType);
+  }
+
+  setGameMode(gameMode: GameMode): Observable<GameMode> {
+    this.lobby.room.send('setGameMode', gameMode);
+    return of(gameMode);
+  }
+
+  setGameMap(gameMap: GameMap): Observable<GameMap> {
+    this.lobby.room.send('setGameMap', gameMap);
+    return of(gameMap);
   }
 
   toggleReady(member: Member): Observable<Member> {

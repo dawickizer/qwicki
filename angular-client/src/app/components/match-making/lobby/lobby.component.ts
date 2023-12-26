@@ -5,6 +5,7 @@ import { LobbyService } from 'src/app/state/lobby/lobby.service';
 import { Observable, Subscription } from 'rxjs';
 import { DecodedJwt } from 'src/app/state/auth/decoded-jwt.model';
 import { AuthService } from 'src/app/state/auth/auth.service';
+import { GameType } from 'src/app/types/game-type/game-type.type';
 
 @Component({
   selector: 'app-lobby',
@@ -13,7 +14,10 @@ import { AuthService } from 'src/app/state/auth/auth.service';
 })
 export class LobbyComponent implements OnInit, OnDestroy {
   panels: { member: Member | null; hideIsReady?: boolean }[] = [];
+  startButtonText = 'Start';
   membersSubscription: Subscription;
+  gameType: GameType;
+  gameTypeSubscription: Subscription;
   decodedJwt$: Observable<DecodedJwt>;
   host$: Observable<Member>;
   isReady$: Observable<boolean>;
@@ -28,13 +32,29 @@ export class LobbyComponent implements OnInit, OnDestroy {
     this.membersSubscription = this.lobbyService.members$.subscribe(members =>
       this.updatePanels(members)
     );
+    this.gameTypeSubscription = this.lobbyService.gameType$.subscribe(
+      gameType => {
+        this.gameType = gameType;
+        this.determineStartButtonText();
+      }
+    );
     this.decodedJwt$ = this.authService.decodedJwt$;
     this.host$ = this.lobbyService.host$;
     this.isReady$ = this.lobbyService.isReady$;
   }
 
   ngOnDestroy() {
-    this.membersSubscription.unsubscribe();
+    this.membersSubscription?.unsubscribe();
+    this.gameTypeSubscription?.unsubscribe();
+  }
+
+  determineStartButtonText() {
+    if (!this.gameType) this.startButtonText = 'Start';
+    if (this.gameType === 'Normal') this.startButtonText = 'Find Game';
+    if (this.gameType === 'Ranked') this.startButtonText = 'Find Game';
+    if (this.gameType === 'Custom') this.startButtonText = 'Create/Join Game';
+    if (this.gameType === 'Money Match')
+      this.startButtonText = 'Create/Join Game';
   }
 
   updatePanels(members: Map<string, Member> | null | undefined) {
@@ -94,7 +114,8 @@ export class LobbyComponent implements OnInit, OnDestroy {
   }
 
   start() {
-    console.log('start');
+    if (this.gameType === 'Custom')
+      this.lobbyOrchestratorService.setActivity('In Pregame Lobby').subscribe();
   }
 
   isHost(): boolean {

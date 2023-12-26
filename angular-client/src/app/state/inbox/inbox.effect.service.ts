@@ -5,8 +5,12 @@ import { ColyseusService } from 'src/app/services/colyseus/colyseus.service';
 import { Room } from 'colyseus.js';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { InboxStateService } from './inbox.state.service';
-import { Status } from 'src/app/models/status/status.model';
 import { Presence } from 'src/app/types/presence/presence.type';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -20,7 +24,15 @@ export class InboxEffectService {
 
   createInbox(
     inboxId: string,
-    options: { jwt: string; presence: Presence }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(
@@ -30,7 +42,15 @@ export class InboxEffectService {
 
   connectToInbox(
     inboxId: string,
-    options: { jwt: string; status: Partial<Status> }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(
@@ -40,7 +60,15 @@ export class InboxEffectService {
 
   connectToInboxes(
     inboxIds: string[],
-    options: { jwt: string; status: Partial<Status> }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
     return from(
@@ -53,7 +81,15 @@ export class InboxEffectService {
 
   joinExistingInboxIfPresent(
     inboxId: string,
-    options: { jwt: string; status: Partial<Status> }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>> {
     this.inboxStateService.setIsLoading(true);
     return from(
@@ -63,7 +99,15 @@ export class InboxEffectService {
 
   joinExistingInboxesIfPresent(
     inboxIds: string[],
-    options: { jwt: string; status: Partial<Status> }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>[]> {
     this.inboxStateService.setIsLoading(true);
     return from(

@@ -7,12 +7,16 @@ import { Message } from '../message/message.model';
 import { MessageService } from '../message/message.service';
 import { InviteService } from '../invite/invite.service';
 import { Invite } from '../invite/invite.model';
-import { Status } from 'src/app/models/status/status.model';
 import { FriendRequest } from '../friend-request/friend-requests.model';
 import { FriendRequestService } from '../friend-request/friend-request.service';
 import { UserService } from '../user/user.service';
 import { User } from '../user/user.model';
 import { Presence } from 'src/app/types/presence/presence.type';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -48,14 +52,42 @@ export class InboxOnMessageService {
       }
     );
 
-    inbox.onMessage('status', (friend: { id: string; status: Status }) => {
-      this.friendService.setFriendStatus(friend.id, friend.status);
+    inbox.onMessage(
+      'activity',
+      (friend: { id: string; activity: Activity }) => {
+        this.friendService.setFriendActivity(friend.id, friend.activity);
+      }
+    );
+
+    inbox.onMessage(
+      'queueType',
+      (friend: { id: string; queueType: QueueType }) => {
+        this.friendService.setFriendQueueType(friend.id, friend.queueType);
+      }
+    );
+
+    inbox.onMessage(
+      'gameType',
+      (friend: { id: string; gameType: GameType }) => {
+        this.friendService.setFriendGameType(friend.id, friend.gameType);
+      }
+    );
+
+    inbox.onMessage(
+      'gameMode',
+      (friend: { id: string; gameMode: GameMode }) => {
+        this.friendService.setFriendGameMode(friend.id, friend.gameMode);
+      }
+    );
+
+    inbox.onMessage('gameMap', (friend: { id: string; gameMap: GameMap }) => {
+      this.friendService.setFriendGameMap(friend.id, friend.gameMap);
     });
 
     inbox.onMessage(
       'presence',
       (friend: { id: string; presence: Presence }) => {
-        this.friendService.updateFriendPresence(friend.id, friend.presence);
+        this.friendService.setFriendPresence(friend.id, friend.presence);
       }
     );
 
@@ -76,21 +108,40 @@ export class InboxOnMessageService {
       (data: {
         friendRequest: FriendRequest;
         presence: Presence;
-        status: Status;
+        activity: Activity;
+        queueType: QueueType;
+        gameType: GameType;
+        gameMode: GameMode;
+        gameMap: GameMap;
       }) => {
         this.friendRequestService.removeOutboundFriendRequest(
           data.friendRequest
         );
         this.friendService.addFriend(data.friendRequest.to);
-        this.friendService.setFriendStatus(
-          data.friendRequest.to._id,
-          data.status
-        );
-        this.friendService.updateFriendPresence(
+        this.friendService.setFriendPresence(
           data.friendRequest.to._id,
           data.presence
         );
-
+        this.friendService.setFriendActivity(
+          data.friendRequest.to._id,
+          data.activity
+        );
+        this.friendService.setFriendQueueType(
+          data.friendRequest.to._id,
+          data.queueType
+        );
+        this.friendService.setFriendGameType(
+          data.friendRequest.to._id,
+          data.gameType
+        );
+        this.friendService.setFriendGameMode(
+          data.friendRequest.to._id,
+          data.gameMode
+        );
+        this.friendService.setFriendGameMap(
+          data.friendRequest.to._id,
+          data.gameMap
+        );
         this.messageService
           .getAllBetween(this.user, data.friendRequest.to)
           .subscribe();
@@ -149,14 +200,42 @@ export class InboxOnMessageService {
       this.inviteService.removeOutboundInvite(invite);
     });
 
-    inbox.onMessage('status', (friend: { id: string; status: Status }) => {
-      this.friendService.setFriendStatus(friend.id, friend.status);
+    inbox.onMessage(
+      'activity',
+      (friend: { id: string; activity: Activity }) => {
+        this.friendService.setFriendActivity(friend.id, friend.activity);
+      }
+    );
+
+    inbox.onMessage(
+      'queueType',
+      (friend: { id: string; queueType: QueueType }) => {
+        this.friendService.setFriendQueueType(friend.id, friend.queueType);
+      }
+    );
+
+    inbox.onMessage(
+      'gameType',
+      (friend: { id: string; gameType: GameType }) => {
+        this.friendService.setFriendGameType(friend.id, friend.gameType);
+      }
+    );
+
+    inbox.onMessage(
+      'gameMode',
+      (friend: { id: string; gameMode: GameMode }) => {
+        this.friendService.setFriendGameMode(friend.id, friend.gameMode);
+      }
+    );
+
+    inbox.onMessage('gameMap', (friend: { id: string; gameMap: GameMap }) => {
+      this.friendService.setFriendGameMap(friend.id, friend.gameMap);
     });
 
     inbox.onMessage(
       'presence',
       (friend: { id: string; presence: Presence }) => {
-        this.friendService.updateFriendPresence(friend.id, friend.presence);
+        this.friendService.setFriendPresence(friend.id, friend.presence);
       }
     );
 
@@ -175,8 +254,12 @@ export class InboxOnMessageService {
     });
 
     inbox.onMessage('dispose', (inboxId: string) => {
-      this.friendService.setFriendStatus(inboxId, new Status());
-      this.friendService.updateFriendPresence(inboxId, 'Offline');
+      this.friendService.setFriendActivity(inboxId, null);
+      this.friendService.setFriendQueueType(inboxId, null);
+      this.friendService.setFriendGameType(inboxId, null);
+      this.friendService.setFriendGameMode(inboxId, null);
+      this.friendService.setFriendGameMap(inboxId, null);
+      this.friendService.setFriendPresence(inboxId, 'Offline');
       this.inboxService.removeConnectedInboxById(inboxId);
     });
     inbox.onError((code, message) =>

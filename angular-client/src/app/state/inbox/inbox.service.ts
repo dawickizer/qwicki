@@ -3,9 +3,13 @@ import { InboxStateService } from './inbox.state.service';
 import { InboxEffectService } from './inbox.effect.service';
 import { Room } from 'colyseus.js';
 import { Observable } from 'rxjs';
-import { Status } from 'src/app/models/status/status.model';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { Presence } from 'src/app/types/presence/presence.type';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -38,14 +42,30 @@ export class InboxService {
 
   createInbox(
     inboxId: string,
-    options: { jwt: string; presence: Presence }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>> {
     return this.inboxEffectService.createInbox(inboxId, options);
   }
 
   joinExistingInboxesIfPresent(
     inboxIds: string[],
-    options: { jwt: string; presence: Presence; status: Partial<Status> }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>[]> {
     return this.inboxEffectService.joinExistingInboxesIfPresent(
       inboxIds,
@@ -55,7 +75,15 @@ export class InboxService {
 
   joinExistingInboxIfPresent(
     inboxId: string,
-    options: { jwt: string; presence: Presence; status: Partial<Status> }
+    options: {
+      jwt: string;
+      presence: Presence;
+      activity: Activity;
+      queueType: QueueType;
+      gameType: GameType;
+      gameMode: GameMode;
+      gameMap: GameMap;
+    }
   ): Observable<Room<any>> {
     return this.inboxEffectService.joinExistingInboxIfPresent(inboxId, options);
   }

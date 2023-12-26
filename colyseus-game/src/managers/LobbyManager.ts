@@ -3,7 +3,11 @@ import { Lobby } from '../rooms/Lobby';
 import { Member } from '../schemas/lobby/Member';
 import { Message } from '../schemas/lobby/Message';
 import { generateRandomUUID } from '../utils/generateRandomUUID';
-import { Status } from '../schemas/lobby/Status';
+import { Activity } from '../types/activity/activity.type';
+import { QueueType } from '../types/queue-type/queue-type.type';
+import { GameType } from '../types/game-type/game-type.type';
+import { GameMode } from '../types/game-mode/game-mode.type.';
+import { GameMap } from '../types/game-map/game-map.type';
 
 export class LobbyManager {
   lobby: Lobby;
@@ -63,13 +67,46 @@ export class LobbyManager {
     });
 
     this.lobby.onMessage(
-      'updateStatus',
-      (client: Client, status: Partial<Status>) => {
+      'setActivity',
+      (client: Client, activity: Activity) => {
         if (this.lobby.isHost(client)) {
-          this.lobby.state.updateStatus(status);
+          this.lobby.state.setActivity(activity);
         }
       }
     );
+
+    this.lobby.onMessage(
+      'setQueueType',
+      (client: Client, queueType: QueueType) => {
+        if (this.lobby.isHost(client)) {
+          this.lobby.state.setQueueType(queueType);
+        }
+      }
+    );
+
+    this.lobby.onMessage(
+      'setGameType',
+      (client: Client, gameType: GameType) => {
+        if (this.lobby.isHost(client)) {
+          this.lobby.state.setGameType(gameType);
+        }
+      }
+    );
+
+    this.lobby.onMessage(
+      'setGameMode',
+      (client: Client, gameMode: GameMode) => {
+        if (this.lobby.isHost(client)) {
+          this.lobby.state.setGameMode(gameMode);
+        }
+      }
+    );
+
+    this.lobby.onMessage('setGameMap', (client: Client, gameMap: GameMap) => {
+      if (this.lobby.isHost(client)) {
+        this.lobby.state.setGameMap(gameMap);
+      }
+    });
 
     this.lobby.onMessage('toggleReady', (client: Client, member: Member) => {
       if (client.sessionId === member.sessionId) {

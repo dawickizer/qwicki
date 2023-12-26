@@ -31,14 +31,14 @@ export class FriendsTabComponent {
         if (existingFriend?.presence !== friend?.presence) {
           existingFriend.presence = friend?.presence;
         }
-        if (existingFriend.status?.activity !== friend.status?.activity) {
-          existingFriend.status.activity = friend.status?.activity;
+        if (existingFriend?.activity !== friend?.activity) {
+          existingFriend.activity = friend?.activity;
         }
-        if (existingFriend.status?.queueType !== friend.status?.queueType) {
-          existingFriend.status.queueType = friend.status?.queueType;
+        if (existingFriend?.queueType !== friend?.queueType) {
+          existingFriend.queueType = friend?.queueType;
         }
-        if (existingFriend.status?.gameType !== friend.status?.gameType) {
-          existingFriend.status.gameType = friend.status?.gameType;
+        if (existingFriend?.gameType !== friend?.gameType) {
+          existingFriend.gameType = friend?.gameType;
         }
         if (existingFriend.isTyping !== friend.isTyping) {
           existingFriend.isTyping = friend.isTyping;
