@@ -34,8 +34,12 @@
   color: #6c757d;
 }
 
-.input-area {
-  height: 30%;
+::ng-deep .lobby-chat-box-input-area .mat-mdc-form-field-subscript-wrapper {
+  display: unset;
+}
+
+::ng-deep .lobby-chat-box-input-area .mat-mdc-form-field {
+  display: unset;
 }
 
 .input-field {
