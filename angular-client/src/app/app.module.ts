@@ -53,7 +53,12 @@ import { FriendsListComponent } from './components/social/friends-list/friends-l
 import { FriendsTabComponent } from './components/social/friends-tab/friends-tab.component';
 import { FpsService } from './services/fps/fps.service';
 import { GameComponent } from './components/game/game/game.component';
-import { GameService } from './services/game/game.service';
+import { GameApiService } from './state/game/game.api.service';
+import { GameEffectService } from './state/game/game.effect.service';
+import { GameManagerService } from './state/game/game.manager.service';
+import { GameOrchestratorService } from './state/game/game.orchestrator.service';
+import { GameService } from './state/game/game.service';
+import { GameStateService } from './state/game/game.state.service';
 import { GroupsListComponent } from './components/social/groups-list/groups-list.component';
 import { GroupsTabComponent } from './components/social/groups-tab/groups-tab.component';
 import { GunService } from './services/gun/gun.service';
@@ -204,7 +209,12 @@ import { CustomGameSettingsComponent } from './components/match-making/custom-ga
     FriendRequestStateService,
     FriendService,
     FriendStateService,
+    GameApiService,
+    GameEffectService,
+    GameManagerService,
+    GameOrchestratorService,
     GameService,
+    GameStateService,
     GunService,
     InactivityEffectService,
     InactivityService,

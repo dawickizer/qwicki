@@ -6,6 +6,7 @@ import { Observable, Subscription } from 'rxjs';
 import { DecodedJwt } from 'src/app/state/auth/decoded-jwt.model';
 import { AuthService } from 'src/app/state/auth/auth.service';
 import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameOrchestratorService } from 'src/app/state/game/game.orchestrator.service';
 
 @Component({
   selector: 'app-lobby',
@@ -23,6 +24,7 @@ export class LobbyComponent implements OnInit, OnDestroy {
   isReady$: Observable<boolean>;
   constructor(
     private lobbyOrchestratorService: LobbyOrchestratorService,
+    private gameOrchestratorService: GameOrchestratorService,
     private authService: AuthService,
     private lobbyService: LobbyService
   ) {}
@@ -115,8 +117,9 @@ export class LobbyComponent implements OnInit, OnDestroy {
 
   start() {
     if (this.gameType === 'Custom') {
+      this.gameOrchestratorService.createGame().subscribe();
       this.lobbyOrchestratorService.setActivity('In Pregame Lobby').subscribe();
-      this.lobbyOrchestratorService.setRoute('custom-game').subscribe();
+      this.lobbyOrchestratorService.setRoute('/custom-game').subscribe();
     }
   }
 

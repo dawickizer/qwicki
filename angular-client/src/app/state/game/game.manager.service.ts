@@ -7,11 +7,11 @@ import { GameMessage } from './game-message.model';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { tap } from 'rxjs';
-import { UserService } from '../user/user.service';
-import { Status } from 'src/app/models/status/status.model';
-import { Room } from 'colyseus.js';
-import { InboxService } from '../inbox/inbox.service';
-import { LobbyService } from '../lobby/lobby.service';
+import { Router } from '@angular/router';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { Activity } from 'src/app/types/activity/activity.type';
 
 @Injectable({
   providedIn: 'root',
@@ -19,18 +19,14 @@ import { LobbyService } from '../lobby/lobby.service';
 export class GameManagerService {
   private jwt: string;
   private decodedJwt: DecodedJwt;
-  private friendsInboxes: Room<any>[];
-  private personalInbox: Room<any>;
   private joinGameAudio = new Audio('assets/notifications/sounds/join.mp3');
   private leaveGameAudio = new Audio('assets/notifications/sounds/leave.mp3');
 
   constructor(
     private gameService: GameService,
-    private lobbyService: LobbyService,
-    private userService: UserService,
     private authService: AuthService,
-    private inboxService: InboxService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private router: Router
   ) {
     this.subscribeToState();
   }
@@ -39,12 +35,6 @@ export class GameManagerService {
     this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
     this.authService.decodedJwt$.subscribe(
       decodedJwt => (this.decodedJwt = decodedJwt)
-    );
-    this.inboxService.friendsInboxes$.subscribe(
-      friendsInboxes => (this.friendsInboxes = friendsInboxes)
-    );
-    this.inboxService.personalInbox$.subscribe(
-      personalInbox => (this.personalInbox = personalInbox)
     );
   }
 
@@ -56,21 +46,26 @@ export class GameManagerService {
       this.gameService.setHost(game.room.state.host);
     };
 
-    game.room.state.activity.onChange = () => {
-      const updatedStatus = new Status({ activity: game.room.state.activity });
-      this.gameService.setActivity(game.room.state.activity);
-      this.lobbyService.updateStatus(updatedStatus);
-      this.userService.updateStatus(updatedStatus);
+    game.room.state.listen('route', (current: string) => {
+      this.gameService.setRoute(current);
+      this.router.navigate([current]);
+    });
 
-      // notify friends of status change
-      this.personalInbox.send('updateHostStatus', updatedStatus);
-      this.friendsInboxes.forEach(friendsInbox => {
-        friendsInbox.send('notifyHostStatus', {
-          id: this.decodedJwt._id,
-          status: updatedStatus,
-        });
-      });
-    };
+    game.room.state.listen('activity', (current: Activity) => {
+      this.gameService.setActivity(current);
+    });
+
+    game.room.state.listen('gameType', (current: GameType) => {
+      this.gameService.setGameType(current);
+    });
+
+    game.room.state.listen('gameMode', (current: GameMode) => {
+      this.gameService.setGameMode(current);
+    });
+
+    game.room.state.listen('gameMap', (current: GameMap) => {
+      this.gameService.setGameMap(current);
+    });
 
     game.room.state.players.onAdd = (player: Player | any) => {
       player.listen('isHost', (current: boolean) => {

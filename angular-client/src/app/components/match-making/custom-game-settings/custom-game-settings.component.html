@@ -3,46 +3,64 @@
 </div>
 <mat-divider class="header-divider"></mat-divider>
 
-<mat-form-field class="game-name">
+<mat-form-field class="custom-game-name">
   <mat-label>Name</mat-label>
-  <input matInput name="name" #input maxlength="20" />
-  <mat-hint class="game-name-hint" align="end"
+  <input
+    matInput
+    name="name"
+    #input
+    maxlength="20"
+    (blur)="onGameNameBlur(input.value)" />
+  <mat-hint class="custom-game-name-hint" align="end"
     >{{ input.value?.length || 0 }}/20</mat-hint
   >
 </mat-form-field>
 
-<mat-form-field class="game-mode">
+<mat-form-field class="custom-game-mode">
   <mat-label>Game Mode</mat-label>
-  <mat-select [(value)]="selectedGameMode" panelClass="select">
+  <mat-select
+    [(value)]="selectedGameMode"
+    (valueChange)="onGameModeChange($event)"
+    panelClass="select">
     <mat-option *ngFor="let gameMode of gameModes" [value]="gameMode">
       {{ gameMode }}
     </mat-option>
   </mat-select>
 </mat-form-field>
 
-<mat-form-field class="game-map">
+<mat-form-field class="custom-game-map">
   <mat-label>Map</mat-label>
-  <mat-select [(value)]="selectedGameMap" panelClass="select">
+  <mat-select
+    [(value)]="selectedGameMap"
+    (valueChange)="onGameMapChange($event)"
+    panelClass="select">
     <mat-option *ngFor="let gameMap of gameMaps" [value]="gameMap">
       {{ gameMap }}
     </mat-option>
   </mat-select>
 </mat-form-field>
 
-<mat-form-field class="game-player-count">
-  <mat-label>Player Count</mat-label>
-  <mat-select [(value)]="selectedPlayerCount" panelClass="select">
-    <mat-option *ngFor="let playerCount of playerCounts" [value]="playerCount">
-      {{ playerCount }}
+<mat-form-field class="custom-game-max-player-count">
+  <mat-label>Max Player Count</mat-label>
+  <mat-select
+    [(value)]="selectedMaxPlayerCount"
+    (valueChange)="onMaxPlayerCountChange($event)"
+    panelClass="select">
+    <mat-option
+      *ngFor="let maxPlayerCount of maxPlayerCounts"
+      [value]="maxPlayerCount">
+      {{ maxPlayerCount }}
     </mat-option>
   </mat-select>
 </mat-form-field>
 
-<mat-divider></mat-divider>
-<mat-radio-group class="visibility" [(ngModel)]="selectedVisibility">
+<mat-radio-group
+  class="custom-game-visibility"
+  [(ngModel)]="selectedVisibility"
+  (ngModelChange)="onVisibilityChange($event)">
   <mat-label>Visibility</mat-label>
   <mat-radio-button
-    class="visibility-radio-button"
+    class="custom-game-visibility-radio-button"
     *ngFor="let visibility of visibilities"
     [value]="visibility">
     {{ visibility }}

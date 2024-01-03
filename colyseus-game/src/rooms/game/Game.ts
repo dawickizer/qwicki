@@ -1,7 +1,7 @@
 import { Room, Client } from 'colyseus';
-import { isAuthenticatedJWT } from '../middleware/auth';
-import { Player } from '../schemas/game/Player';
-import { GameState } from '../schemas/game/GameState';
+import { isAuthenticatedJWT } from '../../middleware/auth';
+import { Player } from '../../schemas/player/Player';
+import { GameState } from '../../schemas/game/GameState';
 
 export class Game extends Room<GameState> {
   private _hostJoined: boolean = false;
@@ -45,11 +45,11 @@ export class Game extends Room<GameState> {
       this.setMetadata(this.initMetadata(options));
     }
 
-    const player: Player = new Player(
-      auth._id,
-      client.sessionId,
-      auth.username
-    );
+    const player: Player = new Player({
+      _id: auth._id,
+      sessionId: client.sessionId,
+      username: auth.username,
+    });
     this.state.players.set(player.sessionId, player);
     console.log(`${player.username} joined`);
     this.logPlayers();

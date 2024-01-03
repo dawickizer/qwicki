@@ -13,6 +13,7 @@ import { Team } from './team.model';
 export class Game {
   _id?: string;
   room?: Room;
+  route?: string;
   activity?: Activity;
   gameType?: GameType;
   gameMode?: GameMode;
@@ -29,6 +30,7 @@ export class Game {
     if (game) {
       this._id = game._id;
       this.room = game.room;
+      this.route = game.route;
       this.activity = game.activity;
       this.gameType = game.gameType;
       this.gameMode = game.gameMode;

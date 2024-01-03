@@ -30,6 +30,14 @@ export const isLoadingSelector = (
     distinctUntilChanged()
   );
 
+export const routeSelector = (
+  game$: Observable<Game | null>
+): Observable<string | null> =>
+  game$.pipe(
+    map(game => (game ? game.route : null)),
+    distinctUntilChanged(isEqual)
+  );
+
 export const activitySelector = (
   status$: Observable<Game | null>
 ): Observable<Activity | null> =>

@@ -1,7 +1,7 @@
 import { Schema, type, ArraySchema, MapSchema } from '@colyseus/schema';
-import { Member } from './Member';
-import { Message } from './Message';
-import { Invite } from './Invite';
+import { Member } from '../member/Member';
+import { Message } from '../message/Message';
+import { Invite } from '../invite/Invite';
 import { Client } from 'colyseus';
 import { generateRandomUUID } from '../../utils/generateRandomUUID';
 import { Activity } from '../../types/activity/activity.type';

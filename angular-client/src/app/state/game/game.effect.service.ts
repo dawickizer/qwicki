@@ -23,7 +23,7 @@ export class GameEffectService {
   createGame(options: { jwt: string }): Observable<Game> {
     this.gameStateService.setIsLoading(true);
     return from(
-      this.colyseusService.createRoom('game', 'custom-game', options)
+      this.colyseusService.createRoom('game', 'custom_game', options)
     ).pipe(
       map(
         game =>

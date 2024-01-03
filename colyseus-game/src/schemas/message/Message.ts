@@ -1,12 +1,12 @@
 import { Schema, type } from '@colyseus/schema';
-import { Member } from './Member';
+import { Member } from '../member/Member';
 
 export class Message extends Schema {
   @type('string') _id: string;
   @type('number') createdAt: number;
   @type(Member) from: Member;
   @type('string') to: string;
-  @type('string') type: 'lobby-message' | 'system-message';
+  @type('string') type: 'lobby-message' | 'game-message' | 'system-message';
   @type('string') content: string;
 
   constructor(message?: Partial<Message>) {

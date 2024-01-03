@@ -31,6 +31,10 @@ export class GameService {
     return this.gameStateService.game$;
   }
 
+  get route$(): Observable<string | null> {
+    return this.gameStateService.route$;
+  }
+
   get activity$(): Observable<Activity | null> {
     return this.gameStateService.activity$;
   }
@@ -113,6 +117,10 @@ export class GameService {
 
   setHost(host: Player): void {
     this.gameStateService.setHost(host);
+  }
+
+  setRoute(route: string): void {
+    this.gameStateService.setRoute(route);
   }
 
   setActivity(activity: Activity): void {

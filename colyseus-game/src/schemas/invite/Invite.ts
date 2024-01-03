@@ -1,5 +1,5 @@
 import { Schema, type } from '@colyseus/schema';
-import { Member } from './Member';
+import { Member } from '../member/Member';
 
 export class Invite extends Schema {
   @type('string') _id: string;

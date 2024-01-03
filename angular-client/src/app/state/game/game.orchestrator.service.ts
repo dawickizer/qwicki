@@ -6,8 +6,12 @@ import { AuthService } from '../auth/auth.service';
 import { GameMessage } from './game-message.model';
 import { Player } from './player.model';
 import { GameManagerService } from './game.manager.service';
-import { Status } from 'src/app/models/status/status.model';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
+import { Activity } from 'src/app/types/activity/activity.type';
+import { QueueType } from 'src/app/types/queue-type/queue-type.type';
+import { GameType } from 'src/app/types/game-type/game-type.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
 
 @Injectable({
   providedIn: 'root',
@@ -73,9 +77,34 @@ export class GameOrchestratorService {
     return of(player);
   }
 
-  updateStatus(status: Partial<Status>): Observable<Status> {
-    this.game.room.send('updateStatus', status);
-    return of(status as Status);
+  setRoute(route: string): Observable<string> {
+    this.game.room.send('setRoute', route);
+    return of(route);
+  }
+
+  setActivity(activity: Activity): Observable<Activity> {
+    this.game.room.send('setActivity', activity);
+    return of(activity);
+  }
+
+  setQueueType(queueType: QueueType): Observable<QueueType> {
+    this.game.room.send('setQueueType', queueType);
+    return of(queueType);
+  }
+
+  setGameType(gameType: GameType): Observable<GameType> {
+    this.game.room.send('setGameType', gameType);
+    return of(gameType);
+  }
+
+  setGameMode(gameMode: GameMode): Observable<GameMode> {
+    this.game.room.send('setGameMode', gameMode);
+    return of(gameMode);
+  }
+
+  setGameMap(gameMap: GameMap): Observable<GameMap> {
+    this.game.room.send('setGameMap', gameMap);
+    return of(gameMap);
   }
 
   toggleReady(player: Player): Observable<Player> {

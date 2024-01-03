@@ -15,6 +15,7 @@ import {
   gameMapSelector,
   visibilitySelector,
   maxPlayerCountSelector,
+  routeSelector,
 } from './game.state.selectors';
 import { Game } from './game.model';
 import { Player } from 'src/app/state/game/player.model';
@@ -37,6 +38,7 @@ export class GameStateService {
   public gameState$: Observable<GameState> = this._gameState.asObservable();
   public isLoading$ = isLoadingSelector(this.gameState$);
   public game$ = gameSelector(this.gameState$);
+  public route$ = routeSelector(this.game$);
   public activity$ = activitySelector(this.game$);
   public gameType$ = gameTypeSelector(this.game$);
   public gameMode$ = gameModeSelector(this.game$);
@@ -63,6 +65,14 @@ export class GameStateService {
     this._gameState.next({
       ...currentState,
       game: new Game({ ...currentState.game, host: new Player(host) }),
+    });
+  }
+
+  setRoute(route: string): void {
+    const currentState = this._gameState.value;
+    this._gameState.next({
+      ...currentState,
+      game: new Game({ ...currentState.game, route }),
     });
   }
 

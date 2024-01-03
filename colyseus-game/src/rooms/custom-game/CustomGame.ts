@@ -1,25 +1,15 @@
 import { Room, Client } from 'colyseus';
-import { isAuthenticatedJWT } from '../middleware/auth';
-import LobbyState from '../schemas/lobby/LobbyState';
-import { Member } from '../schemas/lobby/Member';
-import { LobbyManager } from '../managers/LobbyManager';
+import { isAuthenticatedJWT } from '../../middleware/auth';
+import { Player } from '../../schemas/player/Player';
+import { CustomGameManager } from '../../managers/custom-game/CustomGameManager';
+import { CustomGameState } from '../../schemas/custom-game/CustomGameState';
 
-export class Lobby extends Room<LobbyState> {
+export class CustomGame extends Room<CustomGameState> {
   hostClient: Client;
-
-  lobbyManager: LobbyManager;
+  customGameManager: CustomGameManager;
 
   onCreate() {
-    this.setState(
-      new LobbyState({
-        _id: this.roomId,
-        isReady: false,
-        activity: 'In Lobby',
-        queueType: 'Solo',
-        gameType: 'Normal',
-        route: 'dashboard'
-      })
-    );
+    this.setState(new CustomGameState());
     this.maxClients = 5;
     this.setPrivate(true);
     this.setManagers();
@@ -27,7 +17,7 @@ export class Lobby extends Room<LobbyState> {
   }
 
   onAuth(client: Client, options: any) {
-    console.log('Authenticating member...');
+    console.log('Authenticating player...');
     // whatever is returned will be tacked onto the client object in onJoin()/onLeave()
     // as auth: {returnValue} and it will be added as a third optional auth
     // parameter to the onJoin() method
@@ -35,25 +25,25 @@ export class Lobby extends Room<LobbyState> {
   }
 
   onJoin(client: Client, options: any, auth: any) {
-    const member: Member = new Member({
+    const player: Player = new Player({
       _id: auth._id,
       sessionId: client.sessionId,
       username: auth.username,
       isHost: false,
       color: '#FFFFFF',
     });
-    this.state.addMember(member);
-    this.determineHost(member);
+    this.state.addPlayer(player);
+    this.determineHost(player);
   }
 
   onLeave(client: Client) {
     if (this.isHost(client)) {
-      const remainingMembers = Array.from(this.state.members.values()).filter(
+      const remainingPlayers = Array.from(this.state.players.values()).filter(
         m => m.sessionId !== client.sessionId
       );
-      if (remainingMembers.length > 0) {
+      if (remainingPlayers.length > 0) {
         this.transferHost(
-          this.clients.find(c => c.sessionId === remainingMembers[0].sessionId)
+          this.clients.find(c => c.sessionId === remainingPlayers[0].sessionId)
         );
         this.removeClient(client);
       } else {
@@ -68,18 +58,18 @@ export class Lobby extends Room<LobbyState> {
     console.log(`Room ${this.roomId} disposing`);
   }
 
-  getClient(member: Member): Client {
-    return this.clients.find(client => client.sessionId === member.sessionId);
+  getClient(player: Player): Client {
+    return this.clients.find(client => client.sessionId === player.sessionId);
   }
 
   removeClient(client: Client) {
-    const member: Member = this.state.getMember(client);
-    this.state.deleteMember(member);
+    const player: Player = this.state.getPlayer(client);
+    this.state.deletePlayer(player);
   }
 
-  determineHost(member: Member) {
+  determineHost(player: Player) {
     if (!this.hostClient) {
-      this.hostClient = this.getClient(member);
+      this.hostClient = this.getClient(player);
       this.state.setHost(this.hostClient);
     }
   }
@@ -87,12 +77,12 @@ export class Lobby extends Room<LobbyState> {
   transferHost(newHostClient: Client) {
     console.log(
       `Transfering host from ${
-        this.state.getMember(this.hostClient).username
-      } to ${this.state.getMember(newHostClient).username}`
+        this.state.getPlayer(this.hostClient).username
+      } to ${this.state.getPlayer(newHostClient).username}`
     );
     this.hostClient = newHostClient;
     this.state.setHost(newHostClient);
-    this.lobbyManager.broadcastTransferHost();
+    this.customGameManager.broadcastTransferHost();
   }
 
   isHost(client: Client): boolean {
@@ -105,6 +95,6 @@ export class Lobby extends Room<LobbyState> {
   }
 
   private setManagers() {
-    this.lobbyManager = new LobbyManager(this);
+    this.customGameManager = new CustomGameManager(this);
   }
 }

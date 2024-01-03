@@ -7,11 +7,11 @@
   margin-bottom: 20px;
 }
 
-.game-name {
+.custom-game-name {
   width: 100%;
 }
 
-.game-name-hint {
+.custom-game-name-hint {
   color: aliceblue;
 }
 
@@ -19,29 +19,29 @@
   background-color: var(--dark);
 }
 
-.game-mode {
+.custom-game-mode {
   width: 100%;
 }
 
-.game-map {
+.custom-game-map {
   width: 100%;
 }
 
-.game-player-count {
+.custom-game-max-player-count {
   width: 100%;
 }
 
-.visibility {
+.custom-game-visibility {
   display: flex;
   flex-direction: column;
   margin: 15px 0;
   align-items: flex-start;
 }
 
-.visibility-radio-button {
+.custom-game-visibility-radio-button {
   margin: 5px;
 }
 
-::ng-deep .visibility-radio-button label {
+::ng-deep .custom-game-visibility-radio-button label {
   margin-bottom: 0px;
 }

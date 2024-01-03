@@ -1,13 +1,13 @@
 import { Client } from 'colyseus';
-import { Lobby } from '../rooms/Lobby';
-import { Member } from '../schemas/lobby/Member';
-import { Message } from '../schemas/lobby/Message';
-import { generateRandomUUID } from '../utils/generateRandomUUID';
-import { Activity } from '../types/activity/activity.type';
-import { QueueType } from '../types/queue-type/queue-type.type';
-import { GameType } from '../types/game-type/game-type.type';
-import { GameMode } from '../types/game-mode/game-mode.type.';
-import { GameMap } from '../types/game-map/game-map.type';
+import { Lobby } from '../../rooms/lobby/Lobby';
+import { Member } from '../../schemas/member/Member';
+import { Message } from '../../schemas/message/Message';
+import { generateRandomUUID } from '../../utils/generateRandomUUID';
+import { Activity } from '../../types/activity/activity.type';
+import { QueueType } from '../../types/queue-type/queue-type.type';
+import { GameType } from '../../types/game-type/game-type.type';
+import { GameMode } from '../../types/game-mode/game-mode.type.';
+import { GameMap } from '../../types/game-map/game-map.type';
 
 export class LobbyManager {
   lobby: Lobby;
