@@ -7,6 +7,8 @@ import { Activity } from '../../types/activity/activity.type';
 import { GameType } from '../../types/game-type/game-type.type';
 import { GameMode } from '../../types/game-mode/game-mode.type.';
 import { GameMap } from '../../types/game-map/game-map.type';
+import { MaxPlayerCount } from '../../types/max-player-count/max-player-count.type';
+import { Visibility } from '../../types/visibility/visibility.type';
 
 export class CustomGameManager {
   customGame: CustomGame;
@@ -106,6 +108,30 @@ export class CustomGameManager {
         }
       }
     );
+
+    this.customGame.onMessage(
+      'setMaxPlayerCount',
+      (client: Client, maxPlayerCount: MaxPlayerCount) => {
+        if (this.customGame.isHost(client)) {
+          this.customGame.state.setMaxPlayerCount(maxPlayerCount);
+        }
+      }
+    );
+
+    this.customGame.onMessage(
+      'setVisibility',
+      (client: Client, visibility: Visibility) => {
+        if (this.customGame.isHost(client)) {
+          this.customGame.state.setVisibility(visibility);
+        }
+      }
+    );
+
+    this.customGame.onMessage('setName', (client: Client, name: string) => {
+      if (this.customGame.isHost(client)) {
+        this.customGame.state.setName(name);
+      }
+    });
 
     this.customGame.onMessage(
       'setGameMap',

@@ -42,6 +42,7 @@ export class LobbyState extends Schema {
   constructor(lobbyState?: Partial<LobbyState>) {
     super();
     this._id = lobbyState?._id ?? '';
+    this.route = lobbyState?.route;
     this.activity = lobbyState?.activity;
     this.queueType = lobbyState?.queueType;
     this.gameType = lobbyState?.gameType;

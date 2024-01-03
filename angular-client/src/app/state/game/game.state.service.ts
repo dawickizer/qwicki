@@ -16,6 +16,7 @@ import {
   visibilitySelector,
   maxPlayerCountSelector,
   routeSelector,
+  nameSelector,
 } from './game.state.selectors';
 import { Game } from './game.model';
 import { Player } from 'src/app/state/game/player.model';
@@ -45,6 +46,7 @@ export class GameStateService {
   public gameMap$ = gameMapSelector(this.game$);
   public visibility$ = visibilitySelector(this.game$);
   public maxPlayerCount$ = maxPlayerCountSelector(this.game$);
+  public name$ = nameSelector(this.game$);
   public host$ = hostSelector(this.game$);
   public players$ = playersSelector(this.game$);
   public messages$ = messagesSelector(this.game$);
@@ -121,6 +123,14 @@ export class GameStateService {
     this._gameState.next({
       ...currentState,
       game: new Game({ ...currentState.game, maxPlayerCount }),
+    });
+  }
+
+  setName(name: string): void {
+    const currentState = this._gameState.value;
+    this._gameState.next({
+      ...currentState,
+      game: new Game({ ...currentState.game, name }),
     });
   }
 

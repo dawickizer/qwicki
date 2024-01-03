@@ -13,6 +13,7 @@ import { Client } from 'colyseus';
 
 export class CustomGameState extends Schema {
   @type('string') _id: string;
+  @type('string') name?: string;
   @type('string') route: string;
   @type('string') activity?: Activity;
   @type('string') gameType?: GameType;
@@ -40,6 +41,30 @@ export class CustomGameState extends Schema {
     '#C72929',
   ];
   private colorAssignments = new Map<string, string>();
+
+  constructor(customGameState?: Partial<CustomGameState>) {
+    super();
+    this._id = customGameState?._id ?? '';
+    this.name = customGameState?.name;
+    this.route = customGameState?.route;
+    this.activity = customGameState?.activity;
+    this.gameType = customGameState?.gameType;
+    this.gameMode = customGameState?.gameMode;
+    this.gameMap = customGameState?.gameMap;
+    this.visibility = customGameState?.visibility;
+    this.maxPlayerCount = customGameState?.maxPlayerCount;
+    this.host = new Player(customGameState?.host) ?? new Player();
+    this.players = customGameState?.players
+      ? new MapSchema<Player>(customGameState?.players)
+      : new MapSchema<Player>();
+    this.messages = new ArraySchema<Message>(
+      ...(customGameState?.messages ?? [])
+    );
+    this.outboundInvites = new ArraySchema<Invite>(
+      ...(customGameState?.outboundInvites ?? [])
+    );
+    this.isReady = customGameState.isReady;
+  }
 
   addPlayer(player: Player) {
     this.players.set(player.sessionId, player);
@@ -91,7 +116,7 @@ export class CustomGameState extends Schema {
   }
 
   logPlayers() {
-    console.log('Players in the lobby:');
+    console.log('Players in the customGame:');
     this.players.forEach(player => console.log(`${player.username}`));
   }
 
@@ -135,6 +160,18 @@ export class CustomGameState extends Schema {
 
   setGameMap(gameMap: GameMap) {
     this.gameMap = gameMap;
+  }
+
+  setMaxPlayerCount(maxPlayerCount: MaxPlayerCount) {
+    this.maxPlayerCount = maxPlayerCount;
+  }
+
+  setVisibility(visibility: Visibility) {
+    this.visibility = visibility;
+  }
+
+  setName(name: string) {
+    this.name = name;
   }
 
   toggleReady(player: Player) {

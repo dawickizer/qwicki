@@ -86,6 +86,14 @@ export const maxPlayerCountSelector = (
     distinctUntilChanged(isEqual)
   );
 
+export const nameSelector = (
+  game$: Observable<Game | null>
+): Observable<string | null> =>
+  game$.pipe(
+    map(game => (game ? game.name : null)),
+    distinctUntilChanged(isEqual)
+  );
+
 export const hostSelector = (
   game$: Observable<Game | null>
 ): Observable<Player | null> =>

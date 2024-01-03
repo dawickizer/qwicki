@@ -59,6 +59,10 @@ export class GameService {
     return this.gameStateService.maxPlayerCount$;
   }
 
+  get name$(): Observable<string | null> {
+    return this.gameStateService.name$;
+  }
+
   get host$(): Observable<Player | null> {
     return this.gameStateService.host$;
   }
@@ -145,6 +149,10 @@ export class GameService {
 
   setMaxPlayerCount(maxPlayerCount: MaxPlayerCount): void {
     this.gameStateService.setMaxPlayerCount(maxPlayerCount);
+  }
+
+  setName(name: string): void {
+    this.gameStateService.setName(name);
   }
 
   setOutboundInvites(invites: Invite[]): void {

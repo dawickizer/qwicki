@@ -12,6 +12,7 @@ import { Team } from './team.model';
 
 export class Game {
   _id?: string;
+  name?: string;
   room?: Room;
   route?: string;
   activity?: Activity;
@@ -29,6 +30,7 @@ export class Game {
   constructor(game?: Partial<Game>) {
     if (game) {
       this._id = game._id;
+      this.name = game.name;
       this.room = game.room;
       this.route = game.route;
       this.activity = game.activity;

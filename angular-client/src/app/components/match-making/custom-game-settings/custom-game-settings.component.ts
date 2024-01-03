@@ -3,13 +3,15 @@ import {
   Visibility,
   visibilities,
 } from 'src/app/types/visibility/visibility.type';
-import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { GameMode, gameModes } from 'src/app/types/game-mode/game-mode.type.';
 import { GameMap, gameMaps } from 'src/app/types/game-map/game-map.type';
 import {
   MaxPlayerCount,
   maxPlayerCounts,
 } from 'src/app/types/max-player-count/max-player-count.type';
+import { GameOrchestratorService } from 'src/app/state/game/game.orchestrator.service';
+import { GameService } from 'src/app/state/game/game.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-custom-game-settings',
@@ -17,48 +19,52 @@ import {
   styleUrls: ['./custom-game-settings.component.css'],
 })
 export class CustomGameSettingsComponent implements OnInit {
-  selectedGameMode: GameMode = 'Any';
+  name$: Observable<string>;
+
+  gameMode$: Observable<GameMode>;
   gameModes: GameMode[] = gameModes;
 
-  selectedGameMap: GameMap = 'Any';
+  gameMap$: Observable<GameMap>;
   gameMaps: GameMap[] = gameMaps;
 
-  selectedVisibility: Visibility = 'Private (Invite Only)';
+  visibility$: Observable<Visibility>;
   visibilities: Visibility[] = visibilities;
 
-  selectedMaxPlayerCount = 12;
+  maxPlayerCount$: Observable<MaxPlayerCount>;
   maxPlayerCounts: MaxPlayerCount[] = maxPlayerCounts;
-  constructor(private lobbyOrchestratorService: LobbyOrchestratorService) {}
 
-  ngOnInit(): void {}
+  constructor(
+    private gameOrchestratorService: GameOrchestratorService,
+    private gameService: GameService
+  ) {}
 
-  onGameNameBlur(gameName: string) {
-    // Logic when game name input loses focus
-    console.log('Game Name:', gameName);
-    // Implement your logic here, e.g., update a state, call a service, etc.
+  ngOnInit(): void {
+    this.name$ = this.gameService.name$;
+    this.gameMode$ = this.gameService.gameMode$;
+    this.gameMap$ = this.gameService.gameMap$;
+    this.visibility$ = this.gameService.visibility$;
+    this.maxPlayerCount$ = this.gameService.maxPlayerCount$;
+  }
+
+  onGameNameBlur(newGameName: string) {
+    this.gameOrchestratorService.setName(newGameName).subscribe();
   }
 
   onGameModeChange(newGameMode: GameMode) {
-    // Logic when game mode changes
-    console.log('New Game Mode:', newGameMode);
-    // Call a method from the service or any other logic
+    this.gameOrchestratorService.setGameMode(newGameMode).subscribe();
   }
 
   onGameMapChange(newGameMap: GameMap) {
-    // Logic when game map changes
-    console.log('New Game Map:', newGameMap);
-    // Implement your logic here
+    this.gameOrchestratorService.setGameMap(newGameMap).subscribe();
   }
 
   onMaxPlayerCountChange(newMaxPlayerCount: MaxPlayerCount) {
-    // Logic when max player count changes
-    console.log('New Max Player Count:', newMaxPlayerCount);
-    // Implement your logic here
+    this.gameOrchestratorService
+      .setMaxPlayerCount(newMaxPlayerCount)
+      .subscribe();
   }
 
   onVisibilityChange(newVisibility: Visibility) {
-    // Logic when visibility changes
-    console.log('New Visibility:', newVisibility);
-    // Implement your logic here
+    this.gameOrchestratorService.setVisibility(newVisibility).subscribe();
   }
 }

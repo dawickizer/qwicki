@@ -9,8 +9,20 @@ export class CustomGame extends Room<CustomGameState> {
   customGameManager: CustomGameManager;
 
   onCreate() {
-    this.setState(new CustomGameState());
-    this.maxClients = 5;
+    this.setState(
+      new CustomGameState({
+        _id: this.roomId,
+        name: 'Custom Game',
+        route: '/custom-game',
+        activity: 'In Pregame Lobby',
+        gameType: 'Custom',
+        gameMode: 'Any',
+        gameMap: 'Any',
+        visibility: 'Private (Invite Only)',
+        maxPlayerCount: 12,
+      })
+    );
+    this.maxClients = 12;
     this.setPrivate(true);
     this.setManagers();
     console.log(`Room ${this.roomId} created`);

@@ -12,6 +12,8 @@ import { GameMap } from 'src/app/types/game-map/game-map.type';
 import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
 import { GameType } from 'src/app/types/game-type/game-type.type';
 import { Activity } from 'src/app/types/activity/activity.type';
+import { MaxPlayerCount } from 'src/app/types/max-player-count/max-player-count.type';
+import { Visibility } from 'src/app/types/visibility/visibility.type';
 
 @Injectable({
   providedIn: 'root',
@@ -65,6 +67,18 @@ export class GameManagerService {
 
     game.room.state.listen('gameMap', (current: GameMap) => {
       this.gameService.setGameMap(current);
+    });
+
+    game.room.state.listen('maxPlayerCount', (current: MaxPlayerCount) => {
+      this.gameService.setMaxPlayerCount(current);
+    });
+
+    game.room.state.listen('visibility', (current: Visibility) => {
+      this.gameService.setVisibility(current);
+    });
+
+    game.room.state.listen('name', (current: string) => {
+      this.gameService.setName(current);
     });
 
     game.room.state.players.onAdd = (player: Player | any) => {

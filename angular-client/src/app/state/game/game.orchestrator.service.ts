@@ -8,10 +8,11 @@ import { Player } from './player.model';
 import { GameManagerService } from './game.manager.service';
 import { DecodedJwt } from '../auth/decoded-jwt.model';
 import { Activity } from 'src/app/types/activity/activity.type';
-import { QueueType } from 'src/app/types/queue-type/queue-type.type';
 import { GameType } from 'src/app/types/game-type/game-type.type';
 import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
 import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { MaxPlayerCount } from 'src/app/types/max-player-count/max-player-count.type';
+import { Visibility } from 'src/app/types/visibility/visibility.type';
 
 @Injectable({
   providedIn: 'root',
@@ -87,11 +88,6 @@ export class GameOrchestratorService {
     return of(activity);
   }
 
-  setQueueType(queueType: QueueType): Observable<QueueType> {
-    this.game.room.send('setQueueType', queueType);
-    return of(queueType);
-  }
-
   setGameType(gameType: GameType): Observable<GameType> {
     this.game.room.send('setGameType', gameType);
     return of(gameType);
@@ -105,6 +101,23 @@ export class GameOrchestratorService {
   setGameMap(gameMap: GameMap): Observable<GameMap> {
     this.game.room.send('setGameMap', gameMap);
     return of(gameMap);
+  }
+
+  setMaxPlayerCount(
+    maxPlayerCount: MaxPlayerCount
+  ): Observable<MaxPlayerCount> {
+    this.game.room.send('setMaxPlayerCount', maxPlayerCount);
+    return of(maxPlayerCount);
+  }
+
+  setVisibility(visibility: Visibility): Observable<Visibility> {
+    this.game.room.send('setVisibility', visibility);
+    return of(visibility);
+  }
+
+  setName(name: string): Observable<string> {
+    this.game.room.send('setName', name);
+    return of(name);
   }
 
   toggleReady(player: Player): Observable<Player> {
