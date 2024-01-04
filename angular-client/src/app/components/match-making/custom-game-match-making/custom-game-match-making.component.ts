@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
+import { Observable } from 'rxjs';
+import { GameService } from 'src/app/state/game/game.service';
+import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
+import { MaxPlayerCount } from 'src/app/types/max-player-count/max-player-count.type';
 
 @Component({
   selector: 'app-custom-game-match-making',
@@ -9,15 +13,23 @@ import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator
 export class CustomGameMatchMakingComponent implements OnInit {
   activeTabIndex = 0;
 
+  gameMap$: Observable<GameMap>;
+  gameMode$: Observable<GameMode>;
+  maxPlayerCount$: Observable<MaxPlayerCount>;
+
   playerCount = 12;
   players: any[] = [];
 
   team1Rows: { player: any | null }[] = [];
   team2Rows: { player: any | null }[] = [];
 
-  constructor(private lobbyOrchestratorService: LobbyOrchestratorService) {}
+  constructor(private gameService: GameService) {}
 
   ngOnInit(): void {
+    this.gameMap$ = this.gameService.gameMap$;
+    this.gameMode$ = this.gameService.gameMode$;
+    this.maxPlayerCount$ = this.gameService.maxPlayerCount$;
+
     this.players = [
       { username: 'AceGamer' },
       { username: 'MysticShadow' },

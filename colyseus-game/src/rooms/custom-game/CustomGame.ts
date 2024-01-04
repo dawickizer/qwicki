@@ -16,8 +16,8 @@ export class CustomGame extends Room<CustomGameState> {
         route: '/custom-game',
         activity: 'In Pregame Lobby',
         gameType: 'Custom',
-        gameMode: 'Any',
-        gameMap: 'Any',
+        gameMode: 'Team Deathmatch',
+        gameMap: 'Bucheon',
         visibility: 'Private (Invite Only)',
         maxPlayerCount: 12,
       })

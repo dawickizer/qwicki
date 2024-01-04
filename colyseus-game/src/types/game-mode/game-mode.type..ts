@@ -10,3 +10,9 @@ export const gameModes: GameMode[] = [
   'Team Deathmatch',
   'Domination',
 ];
+
+export const gameModesNoAny: GameMode[] = [
+  'Free For All',
+  'Team Deathmatch',
+  'Domination',
+];

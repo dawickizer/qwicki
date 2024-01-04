@@ -1,49 +1,56 @@
-<div class="header">
-  <h1>Custom Game</h1>
-  <mat-divider></mat-divider>
-</div>
-<div class="top-div">
-  <mat-grid-list cols="2" rowHeight="100%">
-    <mat-grid-tile class="team1">
-      <h2>Team 1</h2>
-      <mat-card *ngFor="let row of team1Rows" class="player-row">
-        <mat-card-content>
-          {{ row.player?.username || 'Empty Slot' }}
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
+<ng-container
+  *ngIf="{
+    gameMode: gameMode$ | async,
+    gameMap: gameMap$ | async,
+    maxPlayerCount: maxPlayerCount$ | async
+  } as data">
+  <div class="header">
+    <h1>Custom Game</h1>
+    <mat-divider></mat-divider>
+  </div>
+  <div class="top-div">
+    <mat-grid-list cols="2" rowHeight="100%">
+      <mat-grid-tile class="team1">
+        <h2>Team 1</h2>
+        <mat-card *ngFor="let row of team1Rows" class="player-row">
+          <mat-card-content>
+            {{ row.player?.username || 'Empty Slot' }}
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
 
-    <mat-grid-tile class="team2">
-      <h2>Team 2</h2>
-      <mat-card *ngFor="let row of team2Rows" class="player-row">
-        <mat-card-content>
-          {{ row.player?.username || 'Empty Slot' }}
-        </mat-card-content>
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
-<div class="bottom-div">
-  <mat-grid-list cols="3" rowHeight="100%">
-    <mat-grid-tile class="chat">
-      <app-lobby-chat-box class="lobby-chat-box"></app-lobby-chat-box>
-    </mat-grid-tile>
-    <mat-grid-tile class="custom-start">
-      <ng-container>
-        <div class="start-button">
-          <button
-            class="start-button"
-            mat-raised-button
-            color="primary"
-            (click)="start()">
-            Start
-          </button>
-        </div>
-      </ng-container>
-    </mat-grid-tile>
-    <mat-grid-tile class="map">
-      <h2>Bucheon - Money Ball</h2>
-      <img src="/assets/qwicki-background.png" alt="map" />
-    </mat-grid-tile>
-  </mat-grid-list>
-</div>
+      <mat-grid-tile class="team2">
+        <h2>Team 2</h2>
+        <mat-card *ngFor="let row of team2Rows" class="player-row">
+          <mat-card-content>
+            {{ row.player?.username || 'Empty Slot' }}
+          </mat-card-content>
+        </mat-card>
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+  <div class="bottom-div">
+    <mat-grid-list cols="3" rowHeight="100%">
+      <mat-grid-tile class="chat">
+        <app-lobby-chat-box class="lobby-chat-box"></app-lobby-chat-box>
+      </mat-grid-tile>
+      <mat-grid-tile class="custom-start">
+        <ng-container>
+          <div class="start-button">
+            <button
+              class="start-button"
+              mat-raised-button
+              color="primary"
+              (click)="start()">
+              Start
+            </button>
+          </div>
+        </ng-container>
+      </mat-grid-tile>
+      <mat-grid-tile class="map">
+        <div class="map-info">{{ data.gameMap }} | {{ data.gameMode }}</div>
+        <img src="/assets/qwicki-background.png" alt="map" />
+      </mat-grid-tile>
+    </mat-grid-list>
+  </div>
+</ng-container>
