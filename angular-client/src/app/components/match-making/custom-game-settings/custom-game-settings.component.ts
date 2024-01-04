@@ -3,11 +3,8 @@ import {
   Visibility,
   visibilities,
 } from 'src/app/types/visibility/visibility.type';
-import {
-  GameMode,
-  gameModesNoAny,
-} from 'src/app/types/game-mode/game-mode.type.';
-import { GameMap, gameMapsNoAny } from 'src/app/types/game-map/game-map.type';
+import { GameMode, gameModes } from 'src/app/types/game-mode/game-mode.type.';
+import { GameMap, gameMaps } from 'src/app/types/game-map/game-map.type';
 import {
   MaxPlayerCount,
   maxPlayerCounts,
@@ -25,10 +22,10 @@ export class CustomGameSettingsComponent implements OnInit {
   name$: Observable<string>;
 
   gameMode$: Observable<GameMode>;
-  gameModes: GameMode[] = gameModesNoAny;
+  gameModes: GameMode[] = gameModes;
 
   gameMap$: Observable<GameMap>;
-  gameMaps: GameMap[] = gameMapsNoAny;
+  gameMaps: GameMap[] = gameMaps;
 
   visibility$: Observable<Visibility>;
   visibilities: Visibility[] = visibilities;

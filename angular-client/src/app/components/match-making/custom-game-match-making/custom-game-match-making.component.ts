@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { GameService } from 'src/app/state/game/game.service';
-import { GameMap } from 'src/app/types/game-map/game-map.type';
+import { GameMap, getMapImage } from 'src/app/types/game-map/game-map.type';
 import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
 import { MaxPlayerCount } from 'src/app/types/max-player-count/max-player-count.type';
 
@@ -69,5 +69,9 @@ export class CustomGameMatchMakingComponent implements OnInit {
   start(): void {
     console.log('Starting game...');
     // Implement game start logic here
+  }
+
+  getMapImage(mapName: string) {
+    return getMapImage(mapName);
   }
 }

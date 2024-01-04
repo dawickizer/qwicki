@@ -49,7 +49,7 @@
       </mat-grid-tile>
       <mat-grid-tile class="map">
         <div class="map-info">{{ data.gameMap }} | {{ data.gameMode }}</div>
-        <img src="/assets/qwicki-background.png" alt="map" />
+        <img [src]="getMapImage(data.gameMap)" alt="map" />
       </mat-grid-tile>
     </mat-grid-list>
   </div>
