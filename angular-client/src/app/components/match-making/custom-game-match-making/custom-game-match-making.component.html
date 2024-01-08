@@ -1,8 +1,7 @@
 <ng-container
   *ngIf="{
     gameMode: gameMode$ | async,
-    gameMap: gameMap$ | async,
-    maxPlayerCount: maxPlayerCount$ | async
+    gameMap: gameMap$ | async
   } as data">
   <div class="header">
     <h1>Custom Game</h1>
@@ -12,20 +11,28 @@
     <mat-grid-list cols="2" rowHeight="100%">
       <mat-grid-tile class="team1">
         <h2>Team 1</h2>
-        <mat-card *ngFor="let row of team1Rows" class="player-row">
-          <mat-card-content>
-            {{ row.player?.username || 'Empty Slot' }}
-          </mat-card-content>
-        </mat-card>
+        <ng-container *ngFor="let row of team1Rows">
+          <app-player-row
+            class="player-row"
+            *ngIf="row.player"
+            [player]="row.player"></app-player-row>
+          <app-empty-player-row
+            class="player-row"
+            *ngIf="!row.player"></app-empty-player-row>
+        </ng-container>
       </mat-grid-tile>
 
       <mat-grid-tile class="team2">
         <h2>Team 2</h2>
-        <mat-card *ngFor="let row of team2Rows" class="player-row">
-          <mat-card-content>
-            {{ row.player?.username || 'Empty Slot' }}
-          </mat-card-content>
-        </mat-card>
+        <ng-container *ngFor="let row of team2Rows">
+          <app-player-row
+            class="player-row"
+            *ngIf="row.player"
+            [player]="row.player"></app-player-row>
+          <app-empty-player-row
+            class="player-row"
+            *ngIf="!row.player"></app-empty-player-row>
+        </ng-container>
       </mat-grid-tile>
     </mat-grid-list>
   </div>

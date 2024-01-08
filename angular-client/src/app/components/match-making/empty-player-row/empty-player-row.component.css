@@ -1,0 +1,15 @@
+.empty-player-row {
+  width: 100%;
+  margin: 8px;
+  opacity: 0.3;
+}
+
+.empty-player-row:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+
+.empty-player-row .mat-mdc-card-content {
+  display: flex;
+  justify-content: center;
+}

@@ -25,9 +25,7 @@
 }
 
 .player-row {
-  /* background-color: deeppink; */
   width: 100%;
-  margin: 8px;
 }
 
 .bottom-div {
@@ -76,6 +74,8 @@
 }
 
 .map .map-info {
+  background-color: var(--purple-opacity-30);
+  width: 100%;
   align-self: flex-start;
   padding: 10px;
   color: #ffffff;

@@ -120,6 +120,8 @@ import { UserOrchestratorService } from './state/user/user.orchestrator.service'
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
 import { CustomGameSettingsComponent } from './components/match-making/custom-game-settings/custom-game-settings.component';
+import { EmptyPlayerRowComponent } from './components/match-making/empty-player-row/empty-player-row.component';
+import { PlayerRowComponent } from './components/match-making/player-row/player-row.component';
 
 @NgModule({
   declarations: [
@@ -163,6 +165,8 @@ import { CustomGameSettingsComponent } from './components/match-making/custom-ga
     StatusBubbleComponent,
     UserProfileComponent,
     CustomGameSettingsComponent,
+    EmptyPlayerRowComponent,
+    PlayerRowComponent,
   ],
   imports: [
     AppRoutingModule,
