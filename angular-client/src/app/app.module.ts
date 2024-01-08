@@ -39,6 +39,7 @@ import { ColyseusService } from './services/colyseus/colyseus.service';
 import { CreateGameComponent } from './components/match-making/create-game/create-game.component';
 import { CustomGameMatchMakingComponent } from './components/match-making/custom-game-match-making/custom-game-match-making.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { EmptyPlayerRowComponent } from './components/match-making/empty-player-row/empty-player-row.component';
 import { FriendApiService } from './state/friend/friend.api.service';
 import { FriendEffectService } from './state/friend/friend.effect.service';
 import { FriendOrchestratorService } from './state/friend/friend.orchestrator.service';
@@ -106,6 +107,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { NormalGameMatchMakingComponent } from './components/match-making/normal-game-match-making/normal-game-match-making.component';
 import { NotificationBadgeComponent } from './components/misc/notification-badge/notification-badge.component';
 import { OutboundNotificationsComponent } from './components/social/outbound-notifications/outbound-notifications.component';
+import { PlayerRowComponent } from './components/match-making/player-row/player-row.component';
 import { PlayerService } from './services/player/player.service';
 import { PresenceComponent } from './components/misc/presence/presence.component';
 import { QueueControlsComponent } from './components/match-making/queue-controls/queue-controls.component';
@@ -120,8 +122,6 @@ import { UserOrchestratorService } from './state/user/user.orchestrator.service'
 import { UserService } from './state/user/user.service';
 import { UserStateService } from './state/user/user.state.service';
 import { CustomGameSettingsComponent } from './components/match-making/custom-game-settings/custom-game-settings.component';
-import { EmptyPlayerRowComponent } from './components/match-making/empty-player-row/empty-player-row.component';
-import { PlayerRowComponent } from './components/match-making/player-row/player-row.component';
 
 @NgModule({
   declarations: [
@@ -133,6 +133,7 @@ import { PlayerRowComponent } from './components/match-making/player-row/player-
     CreateGameComponent,
     CustomGameMatchMakingComponent,
     DashboardComponent,
+    EmptyPlayerRowComponent,
     FriendsListComponent,
     FriendsTabComponent,
     GameComponent,
@@ -157,6 +158,7 @@ import { PlayerRowComponent } from './components/match-making/player-row/player-
     NormalGameMatchMakingComponent,
     NotificationBadgeComponent,
     OutboundNotificationsComponent,
+    PlayerRowComponent,
     PresenceComponent,
     QueueControlsComponent,
     RankedGameMatchMakingComponent,
@@ -165,8 +167,6 @@ import { PlayerRowComponent } from './components/match-making/player-row/player-
     StatusBubbleComponent,
     UserProfileComponent,
     CustomGameSettingsComponent,
-    EmptyPlayerRowComponent,
-    PlayerRowComponent,
   ],
   imports: [
     AppRoutingModule,
