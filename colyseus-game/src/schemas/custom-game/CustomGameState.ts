@@ -10,6 +10,7 @@ import { Message } from '../message/Message';
 import { Invite } from '../invite/Invite';
 import { generateRandomUUID } from '../../utils/generateRandomUUID';
 import { Client } from 'colyseus';
+import { Team } from '../team/Team';
 
 export class CustomGameState extends Schema {
   @type('string') _id: string;
@@ -23,6 +24,7 @@ export class CustomGameState extends Schema {
   @type('number') maxPlayerCount?: MaxPlayerCount;
   @type(Player) host = new Player();
   @type({ map: Player }) players = new MapSchema<Player>();
+  @type({ map: Team }) teams = new MapSchema<Team>();
   @type([Message]) messages = new ArraySchema<Message>();
   @type([Invite]) outboundInvites = new ArraySchema<Invite>();
   @type('boolean') isReady: boolean;
@@ -57,13 +59,16 @@ export class CustomGameState extends Schema {
     this.players = customGameState?.players
       ? new MapSchema<Player>(customGameState?.players)
       : new MapSchema<Player>();
+    this.teams = customGameState?.teams
+      ? new MapSchema<Team>(customGameState?.teams)
+      : new MapSchema<Team>();
     this.messages = new ArraySchema<Message>(
       ...(customGameState?.messages ?? [])
     );
     this.outboundInvites = new ArraySchema<Invite>(
       ...(customGameState?.outboundInvites ?? [])
     );
-    this.isReady = customGameState.isReady;
+    this.isReady = customGameState?.isReady;
   }
 
   addPlayer(player: Player) {

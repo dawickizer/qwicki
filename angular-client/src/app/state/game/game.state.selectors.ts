@@ -13,6 +13,7 @@ import { Visibility } from 'src/app/types/visibility/visibility.type';
 import { GameMap } from 'src/app/types/game-map/game-map.type';
 import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
 import { Team } from './team.model';
+import { TeamName } from 'src/app/types/team-name/team-name.type';
 
 export const gameSelector = (
   gameState$: Observable<GameState>
@@ -128,8 +129,22 @@ export const outboundInvitesSelector = (
 
 export const teamsSelector = (
   game$: Observable<Game | null>
-): Observable<Map<string, Team> | null> =>
+): Observable<Map<TeamName, Team> | null> =>
   game$.pipe(
     map(game => (game ? game.teams : null)),
+    distinctUntilChanged(isEqual)
+  );
+
+export const teamByIdSelector = (
+  teams$: Observable<Map<string, Team> | null>,
+  id: string
+): Observable<Team | null> =>
+  teams$.pipe(
+    map(teams => {
+      if (teams) {
+        return teams.get(id);
+      }
+      return null;
+    }),
     distinctUntilChanged(isEqual)
   );

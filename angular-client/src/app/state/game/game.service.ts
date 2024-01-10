@@ -83,6 +83,10 @@ export class GameService {
     return this.gameStateService.teams$;
   }
 
+  teamById$(id: string): Observable<Team | null> {
+    return this.gameStateService.teamById$(id);
+  }
+
   constructor(
     private gameEffectService: GameEffectService,
     private gameStateService: GameStateService

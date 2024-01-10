@@ -1,30 +1,13 @@
-<ng-container
-  *ngIf="{
-    gameMode: gameMode$ | async,
-    gameMap: gameMap$ | async
-  } as data">
+<ng-container *ngIf="gameMap && gameMode">
   <div class="header">
     <h1>Custom Game</h1>
     <mat-divider></mat-divider>
   </div>
   <div class="top-div">
-    <mat-grid-list cols="2" rowHeight="100%">
-      <mat-grid-tile class="team1">
-        <h2>Team 1</h2>
-        <ng-container *ngFor="let row of team1Rows">
-          <app-player-row
-            class="player-row"
-            *ngIf="row.player"
-            [player]="row.player"></app-player-row>
-          <app-empty-player-row
-            class="player-row"
-            *ngIf="!row.player"></app-empty-player-row>
-        </ng-container>
-      </mat-grid-tile>
-
-      <mat-grid-tile class="team2">
-        <h2>Team 2</h2>
-        <ng-container *ngFor="let row of team2Rows">
+    <mat-grid-list [cols]="dynamicTeams.length" rowHeight="100%">
+      <mat-grid-tile *ngFor="let dynamicTeam of dynamicTeams" class="team">
+        <h2>{{ dynamicTeam.team.name }}</h2>
+        <ng-container *ngFor="let row of dynamicTeam.rows">
           <app-player-row
             class="player-row"
             *ngIf="row.player"
@@ -55,8 +38,8 @@
         </ng-container>
       </mat-grid-tile>
       <mat-grid-tile class="map">
-        <div class="map-info">{{ data.gameMap }} | {{ data.gameMode }}</div>
-        <img [src]="getMapImage(data.gameMap)" alt="map" />
+        <div class="map-info">{{ gameMap }} | {{ gameMode }}</div>
+        <img [src]="getMapImage(gameMap)" alt="map" />
       </mat-grid-tile>
     </mat-grid-list>
   </div>

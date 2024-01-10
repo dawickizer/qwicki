@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import {  Subscription } from 'rxjs';
 import { GameService } from 'src/app/state/game/game.service';
 import { Player } from 'src/app/state/game/player.model';
 import { Team } from 'src/app/state/game/team.model';
@@ -15,28 +15,37 @@ import { MaxPlayerCount } from 'src/app/types/max-player-count/max-player-count.
 export class CustomGameMatchMakingComponent implements OnInit, OnDestroy {
   activeTabIndex = 0;
 
-  gameMap$: Observable<GameMap>;
-  gameMode$: Observable<GameMode>;
+  gameMap: GameMap;
+  gameMode: GameMode;
 
   maxPlayerCount: MaxPlayerCount = 12;
 
   players: Map<string, Player> = new Map();
 
   teams: Map<string, Team> = new Map();
-  team1Rows: { player: Player | null }[] = [];
-  team2Rows: { player: Player | null }[] = [];
+  dynamicTeams: { team: Team; rows: { player: Player | null }[] }[] = [];
 
   subscription: Subscription = new Subscription();
 
   constructor(private gameService: GameService) {}
 
   ngOnInit(): void {
-    this.gameMap$ = this.gameService.gameMap$;
-    this.gameMode$ = this.gameService.gameMode$;
+    this.subscription.add(
+      this.gameService.gameMap$.subscribe(gameMap => {
+        this.gameMap = gameMap;
+      })
+    );
+
+    this.subscription.add(
+      this.gameService.gameMode$.subscribe(gameMode => {
+        this.gameMode = gameMode;
+      })
+    );
+
     this.subscription.add(
       this.gameService.maxPlayerCount$.subscribe(maxPlayerCount => {
         this.maxPlayerCount = maxPlayerCount;
-        this.initializeTeamRows();
+        this.initializeDynamicTeams();
       })
     );
 
@@ -49,7 +58,7 @@ export class CustomGameMatchMakingComponent implements OnInit, OnDestroy {
     this.subscription.add(
       this.gameService.teams$.subscribe(teams => {
         this.teams = teams;
-        this.initializeTeamRows();
+        this.initializeDynamicTeams();
       })
     );
   }
@@ -58,10 +67,27 @@ export class CustomGameMatchMakingComponent implements OnInit, OnDestroy {
     this.subscription.unsubscribe();
   }
 
-  initializeTeamRows(): void {
-    const rowsPerTeam = Math.ceil((this.maxPlayerCount ?? 0) / 2);
-    this.team1Rows = Array(rowsPerTeam).fill({ player: null });
-    this.team2Rows = Array(rowsPerTeam).fill({ player: null });
+  initializeDynamicTeams(): void {
+    this.dynamicTeams = Array.from(this.teams?.values() ?? []).map(team => {
+      // Calculate the number of rows per team
+      const rowsPerTeam = Math.ceil(this.maxPlayerCount / this.teams.size);
+
+      // Create an array of players in the team, padded with nulls if necessary
+      const playersArray = [
+        ...team.players.values(),
+        ...Array(rowsPerTeam).fill(null),
+      ];
+
+      // Slice the array to ensure it's not longer than the required number of rows
+      const teamRows = playersArray
+        .slice(0, rowsPerTeam)
+        .map(player => ({ player }));
+
+      return {
+        team: team,
+        rows: teamRows,
+      };
+    });
   }
 
   onTabChanged(index: number): void {

@@ -1,14 +1,24 @@
 import { Room, Client } from 'colyseus';
+import { MapSchema } from '@colyseus/schema';
 import { isAuthenticatedJWT } from '../../middleware/auth';
 import { Player } from '../../schemas/player/Player';
 import { CustomGameManager } from '../../managers/custom-game/CustomGameManager';
 import { CustomGameState } from '../../schemas/custom-game/CustomGameState';
+import { Team } from '../../schemas/team/Team';
+import { teamNames } from '../../types/team-name/team-name.type';
+import { generateRandomUUID } from '../../utils/generateRandomUUID';
 
 export class CustomGame extends Room<CustomGameState> {
   hostClient: Client;
   customGameManager: CustomGameManager;
 
   onCreate() {
+    const teams = new MapSchema<Team>();
+    for (const teamName of teamNames) {
+      const teamId = generateRandomUUID();
+      teams.set(teamId, new Team({ _id: teamId, name: teamName }));
+    }
+
     this.setState(
       new CustomGameState({
         _id: this.roomId,
@@ -20,6 +30,7 @@ export class CustomGame extends Room<CustomGameState> {
         gameMap: 'Bucheon',
         visibility: 'Private (Invite Only)',
         maxPlayerCount: 12,
+        teams,
       })
     );
     this.maxClients = 12;
@@ -45,6 +56,14 @@ export class CustomGame extends Room<CustomGameState> {
       color: '#FFFFFF',
     });
     this.state.addPlayer(player);
+    if (this.state.gameMode !== 'Free For All') {
+      for (const key of this.state.teams.keys()) {
+        this.state.teams.get(key).players.set(player.sessionId, player);
+        break;
+      }
+
+      console.log(`Adding ${player.username} to ${teamNames[0]}`);
+    }
     this.determineHost(player);
   }
 

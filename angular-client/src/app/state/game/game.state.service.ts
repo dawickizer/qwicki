@@ -17,6 +17,7 @@ import {
   maxPlayerCountSelector,
   routeSelector,
   nameSelector,
+  teamByIdSelector,
 } from './game.state.selectors';
 import { Game } from './game.model';
 import { Player } from 'src/app/state/game/player.model';
@@ -52,6 +53,11 @@ export class GameStateService {
   public messages$ = messagesSelector(this.game$);
   public outboundInvites$ = outboundInvitesSelector(this.game$);
   public teams$ = teamsSelector(this.game$);
+
+  // dynamic selectors
+  teamById$(id: string): Observable<Team | null> {
+    return teamByIdSelector(this.teams$, id);
+  }
 
   setInitialState() {
     this._gameState.next(initialState);

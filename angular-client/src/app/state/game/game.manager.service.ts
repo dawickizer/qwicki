@@ -14,6 +14,7 @@ import { GameType } from 'src/app/types/game-type/game-type.type';
 import { Activity } from 'src/app/types/activity/activity.type';
 import { MaxPlayerCount } from 'src/app/types/max-player-count/max-player-count.type';
 import { Visibility } from 'src/app/types/visibility/visibility.type';
+import { Team } from './team.model';
 
 @Injectable({
   providedIn: 'root',
@@ -93,6 +94,14 @@ export class GameManagerService {
     game.room.state.players.onRemove = (player: Player) => {
       this.leaveGameAudio.play();
       this.gameService.removePlayer(player);
+    };
+
+    game.room.state.teams.onAdd = (team: Team) => {
+      this.gameService.addTeam(team);
+    };
+
+    game.room.state.players.onRemove = (team: Team) => {
+      this.gameService.removeTeam(team);
     };
 
     game.room.state.messages.onAdd = (message: GameMessage) => {
