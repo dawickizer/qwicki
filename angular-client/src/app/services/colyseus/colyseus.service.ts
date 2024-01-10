@@ -134,6 +134,14 @@ export class ColyseusService {
     }
   }
 
+  async getAvailableRooms(
+    clientType: ClientType,
+    roomName?: RoomName
+  ): Promise<Colyseus.RoomAvailable[]> {
+    const client = this.getClient(clientType);
+    return await client.getAvailableRooms(roomName);
+  }
+
   leaveRoom(room: Colyseus.Room): Promise<number> {
     return room ? room.leave() : Promise.resolve(-1);
   }

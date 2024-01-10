@@ -88,7 +88,7 @@ export class CustomGameSettingsComponent implements OnInit, OnDestroy {
       });
   }
 
-  onVisibilityChange(newVisibility: Visibility) {
+  async onVisibilityChange(newVisibility: Visibility) {
     this.gameOrchestratorService.setVisibility(newVisibility).subscribe();
   }
 }

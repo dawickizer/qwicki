@@ -125,6 +125,7 @@ export class CustomGameManager {
       'setVisibility',
       (client: Client, visibility: Visibility) => {
         if (this.customGame.isHost(client)) {
+          this.customGame.setPrivate(visibility === 'Private (Invite Only)');
           this.customGame.state.setVisibility(visibility);
         }
       }
