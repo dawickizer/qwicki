@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Observable, tap, of } from 'rxjs';
+import { Observable, tap, of, throwError } from 'rxjs';
 import { Game } from './game.model';
 import { GameService } from './game.service';
 import { AuthService } from '../auth/auth.service';
@@ -13,6 +13,7 @@ import { GameMode } from 'src/app/types/game-mode/game-mode.type.';
 import { GameMap } from 'src/app/types/game-map/game-map.type';
 import { MaxPlayerCount } from 'src/app/types/max-player-count/max-player-count.type';
 import { Visibility } from 'src/app/types/visibility/visibility.type';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +26,8 @@ export class GameOrchestratorService {
   constructor(
     private gameService: GameService,
     private gameManagerService: GameManagerService,
-    private authService: AuthService
+    private authService: AuthService,
+    private snackBar: MatSnackBar
   ) {
     this.subscribeToState();
   }
@@ -106,8 +108,15 @@ export class GameOrchestratorService {
   setMaxPlayerCount(
     maxPlayerCount: MaxPlayerCount
   ): Observable<MaxPlayerCount> {
-    this.game.room.send('setMaxPlayerCount', maxPlayerCount);
-    return of(maxPlayerCount);
+    if (maxPlayerCount >= this.game.players.size) {
+      this.game.room.send('setMaxPlayerCount', maxPlayerCount);
+      return of(maxPlayerCount);
+    } else {
+      const errorMessage =
+        'Cannot set Max Players lower than the current number of players in the game';
+      this.snackBar.open(errorMessage, 'Dismiss', { duration: 5000 });
+      return throwError(() => this.game.maxPlayerCount);
+    }
   }
 
   setVisibility(visibility: Visibility): Observable<Visibility> {
