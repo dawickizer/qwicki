@@ -112,7 +112,10 @@ export class CustomGameManager {
     this.customGame.onMessage(
       'setMaxPlayerCount',
       (client: Client, maxPlayerCount: MaxPlayerCount) => {
-        if (this.customGame.isHost(client)) {
+        if (
+          this.customGame.isHost(client) &&
+          maxPlayerCount >= this.customGame.state.players.size
+        ) {
           this.customGame.state.setMaxPlayerCount(maxPlayerCount);
         }
       }
