@@ -69,6 +69,7 @@ export class CustomGameMatchMakingComponent implements OnInit, OnDestroy {
       }
     });
   }
+
   onTabChanged(index: number): void {
     this.activeTabIndex = index;
   }
