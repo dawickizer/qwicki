@@ -6,7 +6,18 @@
   <div class="top-div">
     <mat-grid-list [cols]="dynamicTeams.length" rowHeight="100%">
       <mat-grid-tile *ngFor="let dynamicTeam of dynamicTeams" class="team">
-        <h2>{{ dynamicTeam.team.name }}</h2>
+        <div class="team-header">
+          <div class="team-header-content">
+            <h2>{{ dynamicTeam.team.name }}</h2>
+            <span
+              matTooltip="Join Team"
+              class="material-icons-outlined"
+              (click)="joinTeam(dynamicTeam.team._id)"
+              aria-label="Join Team">
+              add_circle
+            </span>
+          </div>
+        </div>
         <ng-container *ngFor="let row of dynamicTeam.rows">
           <app-player-row
             class="player-row"

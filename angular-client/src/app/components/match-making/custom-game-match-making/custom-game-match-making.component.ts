@@ -1,5 +1,5 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import {  Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { GameService } from 'src/app/state/game/game.service';
 import { Player } from 'src/app/state/game/player.model';
 import { Team } from 'src/app/state/game/team.model';
@@ -101,5 +101,10 @@ export class CustomGameMatchMakingComponent implements OnInit, OnDestroy {
 
   getMapImage(mapName: string) {
     return getMapImage(mapName);
+  }
+
+  joinTeam(teamId: string) {
+    console.log('Join team:', teamId);
+    // Add your logic here to handle joining the team
   }
 }

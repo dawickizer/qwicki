@@ -16,6 +16,22 @@
   padding: 8px;
 }
 
+.team-header {
+  padding: 10px;
+}
+
+.team-header-content {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.team-header h2 {
+  margin: 0;
+  margin-right: 8px;
+  font-size: 1.5rem;
+}
+
 .player-row {
   width: 100%;
 }
