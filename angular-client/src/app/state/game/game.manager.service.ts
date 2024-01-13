@@ -96,11 +96,23 @@ export class GameManagerService {
       this.gameService.removePlayer(player);
     };
 
-    game.room.state.teams.onAdd = (team: Team) => {
+    game.room.state.teams.onAdd = (team: Team | any) => {
+      team.players.onAdd = (player: Player) => {
+        this.gameService.joinTeam(team._id, player.sessionId);
+      };
+
+      team.players.onRemove = (player: Player) => {
+        this.gameService.leaveTeam(team._id, player.sessionId);
+      };
+
+      team.listen('maxPlayerCount', (current: MaxPlayerCount) => {
+        this.gameService.setMaxPlayerCountByTeamId(team._id, current);
+      });
+
       this.gameService.addTeam(team);
     };
 
-    game.room.state.players.onRemove = (team: Team) => {
+    game.room.state.teams.onRemove = (team: Team) => {
       this.gameService.removeTeam(team);
     };
 

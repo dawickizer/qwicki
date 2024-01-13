@@ -53,6 +53,18 @@ export class GameOrchestratorService {
     );
   }
 
+  joinTeam(teamId: string): Observable<string> {
+    const teamToJoin = this.game.teams.get(teamId);
+    if (teamToJoin.players.size < teamToJoin.maxPlayerCount) {
+      this.game.room.send('joinTeam', teamId);
+      return of(teamId);
+    } else {
+      const errorMessage = 'Cannot join. Team is full';
+      this.snackBar.open(errorMessage, 'Dismiss', { duration: 5000 });
+      return of(teamId);
+    }
+  }
+
   sendMessage(message: GameMessage): Observable<GameMessage> {
     this.game.room.send('sendMessage', message);
     return of(null);

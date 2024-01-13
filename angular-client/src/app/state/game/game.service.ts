@@ -87,6 +87,10 @@ export class GameService {
     return this.gameStateService.teamById$(id);
   }
 
+  maxPlayerCountByTeamId$(id: string): Observable<MaxPlayerCount | null> {
+    return this.gameStateService.maxPlayerCountByTeamId$(id);
+  }
+
   constructor(
     private gameEffectService: GameEffectService,
     private gameStateService: GameStateService
@@ -205,6 +209,18 @@ export class GameService {
 
   removeTeam(team: Team): void {
     this.gameStateService.removeTeam(team);
+  }
+
+  joinTeam(teamId: string, playerId: string): void {
+    this.gameStateService.joinTeam(teamId, playerId);
+  }
+
+  leaveTeam(teamId: string, playerId: string): void {
+    this.gameStateService.leaveTeam(teamId, playerId);
+  }
+
+  setMaxPlayerCountByTeamId(teamId: string, maxPlayerCount: MaxPlayerCount) {
+    this.gameStateService.setMaxPlayerCountByTeamId(teamId, maxPlayerCount);
   }
 
   setIsLoading(isLoading: boolean): void {

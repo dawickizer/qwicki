@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { GameOrchestratorService } from 'src/app/state/game/game.orchestrator.service';
 import { GameService } from 'src/app/state/game/game.service';
 import { Player } from 'src/app/state/game/player.model';
 import { Team } from 'src/app/state/game/team.model';
@@ -27,7 +28,10 @@ export class CustomGameMatchMakingComponent implements OnInit, OnDestroy {
 
   subscription: Subscription = new Subscription();
 
-  constructor(private gameService: GameService) {}
+  constructor(
+    private gameService: GameService,
+    private gameOrchestratorService: GameOrchestratorService
+  ) {}
 
   ngOnInit(): void {
     this.subscription.add(
@@ -104,7 +108,6 @@ export class CustomGameMatchMakingComponent implements OnInit, OnDestroy {
   }
 
   joinTeam(teamId: string) {
-    console.log('Join team:', teamId);
-    // Add your logic here to handle joining the team
+    this.gameOrchestratorService.joinTeam(teamId).subscribe();
   }
 }

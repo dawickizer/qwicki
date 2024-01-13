@@ -154,5 +154,9 @@ export class CustomGameManager {
         }
       }
     );
+
+    this.customGame.onMessage('joinTeam', (client: Client, teamId: string) => {
+      this.customGame.state.joinTeam(teamId, client.sessionId);
+    });
   }
 }

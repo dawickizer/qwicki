@@ -18,6 +18,7 @@ import {
   routeSelector,
   nameSelector,
   teamByIdSelector,
+  maxPlayerCountByTeamSelector,
 } from './game.state.selectors';
 import { Game } from './game.model';
 import { Player } from 'src/app/state/game/player.model';
@@ -57,6 +58,10 @@ export class GameStateService {
   // dynamic selectors
   teamById$(id: string): Observable<Team | null> {
     return teamByIdSelector(this.teams$, id);
+  }
+
+  maxPlayerCountByTeamId$(id: string): Observable<MaxPlayerCount | null> {
+    return maxPlayerCountByTeamSelector(this.teamById$(id));
   }
 
   setInitialState() {
@@ -281,6 +286,60 @@ export class GameStateService {
     const currentState = this._gameState.value;
     const updatedTeams = new Map(currentState.game.teams);
     updatedTeams.delete(team._id);
+
+    this._gameState.next({
+      ...currentState,
+      game: new Game({ ...currentState.game, teams: updatedTeams }),
+    });
+  }
+
+  joinTeam(teamId: string, playerId: string): void {
+    const currentState = this._gameState.value;
+    const updatedTeams = new Map(currentState.game.teams);
+
+    updatedTeams.forEach(team => {
+      if (team.players.has(playerId)) {
+        team.players.delete(playerId);
+      }
+    });
+
+    const teamToJoin = updatedTeams.get(teamId);
+    if (teamToJoin && !teamToJoin.players.has(playerId)) {
+      teamToJoin.players.set(playerId, currentState.game.players.get(playerId));
+    }
+
+    this._gameState.next({
+      ...currentState,
+      game: new Game({ ...currentState.game, teams: updatedTeams }),
+    });
+  }
+
+  leaveTeam(teamId: string, playerId: string): void {
+    const currentState = this._gameState.value;
+    const updatedTeams = new Map(currentState.game.teams);
+    const team = updatedTeams.get(teamId);
+
+    if (team && team.players.has(playerId)) {
+      team.players.delete(playerId);
+    }
+
+    this._gameState.next({
+      ...currentState,
+      game: new Game({ ...currentState.game, teams: updatedTeams }),
+    });
+  }
+
+  setMaxPlayerCountByTeamId(
+    teamId: string,
+    maxPlayerCount: MaxPlayerCount
+  ): void {
+    const currentState = this._gameState.value;
+    const updatedTeams = new Map(currentState.game.teams);
+    const team = updatedTeams.get(teamId);
+
+    if (team) {
+      team.maxPlayerCount = maxPlayerCount;
+    }
 
     this._gameState.next({
       ...currentState,

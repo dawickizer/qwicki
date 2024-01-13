@@ -169,6 +169,13 @@ export class CustomGameState extends Schema {
 
   setMaxPlayerCount(maxPlayerCount: MaxPlayerCount) {
     this.maxPlayerCount = maxPlayerCount;
+    this.setTeamsMaxPlayerCount(maxPlayerCount);
+  }
+
+  setTeamsMaxPlayerCount(maxPlayerCount: MaxPlayerCount) {
+    this.teams.forEach(team => {
+      team.maxPlayerCount = (maxPlayerCount / 2) as MaxPlayerCount;
+    });
   }
 
   setVisibility(visibility: Visibility) {
@@ -184,6 +191,43 @@ export class CustomGameState extends Schema {
       player.sessionId
     ).isReady;
     this.determineIsReady();
+  }
+
+  joinTeam(teamId: string, sessionId: string) {
+    const teamToJoin = this.teams.get(teamId);
+    const player = this.players.get(sessionId);
+
+    if (!teamToJoin || !player) {
+      console.log('Team or player not found');
+      return;
+    }
+
+    if (teamToJoin.players.size < teamToJoin.maxPlayerCount) {
+      this.leaveOtherTeams(teamId, sessionId);
+      teamToJoin.players.set(sessionId, player);
+      console.log(`${player.username} joined ${teamToJoin.name}`);
+      console.log(`Player count: ${teamToJoin.players.size}`);
+    } else {
+      console.log(`${teamToJoin.name} is full.`);
+    }
+  }
+
+  leaveTeam(teamId: string, sessionId: string) {
+    const team = this.teams.get(teamId);
+    const player = this.players.get(sessionId);
+
+    if (team && player && team.players.has(sessionId)) {
+      team.players.delete(sessionId);
+      console.log(`${player.username} left ${team.name}`);
+    }
+  }
+
+  leaveOtherTeams(exceptTeamId: string, sessionId: string) {
+    this.teams.forEach((team, teamId) => {
+      if (teamId !== exceptTeamId) {
+        this.leaveTeam(teamId, sessionId);
+      }
+    });
   }
 
   determineIsReady(): boolean {

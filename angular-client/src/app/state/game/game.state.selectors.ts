@@ -148,3 +148,11 @@ export const teamByIdSelector = (
     }),
     distinctUntilChanged(isEqual)
   );
+
+export const maxPlayerCountByTeamSelector = (
+  team$: Observable<Team | null>
+): Observable<MaxPlayerCount | null> =>
+  team$.pipe(
+    map(team => team.maxPlayerCount),
+    distinctUntilChanged(isEqual)
+  );

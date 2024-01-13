@@ -7,6 +7,7 @@ import { CustomGameState } from '../../schemas/custom-game/CustomGameState';
 import { Team } from '../../schemas/team/Team';
 import { teamNames } from '../../types/team-name/team-name.type';
 import { generateRandomUUID } from '../../utils/generateRandomUUID';
+import { MaxPlayerCount } from '../../types/max-player-count/max-player-count.type';
 
 export class CustomGame extends Room<CustomGameState> {
   hostClient: Client;
@@ -16,7 +17,14 @@ export class CustomGame extends Room<CustomGameState> {
     const teams = new MapSchema<Team>();
     for (const teamName of teamNames) {
       const teamId = generateRandomUUID();
-      teams.set(teamId, new Team({ _id: teamId, name: teamName }));
+      teams.set(
+        teamId,
+        new Team({
+          _id: teamId,
+          name: teamName,
+          maxPlayerCount: (12 / 2) as MaxPlayerCount,
+        })
+      );
     }
 
     this.setState(
@@ -56,13 +64,12 @@ export class CustomGame extends Room<CustomGameState> {
       color: '#FFFFFF',
     });
     this.state.addPlayer(player);
+
     if (this.state.gameMode !== 'Free For All') {
       for (const key of this.state.teams.keys()) {
-        this.state.teams.get(key).players.set(player.sessionId, player);
+        this.state.joinTeam(key, player.sessionId);
         break;
       }
-
-      console.log(`Adding ${player.username} to ${teamNames[0]}`);
     }
     this.determineHost(player);
   }
