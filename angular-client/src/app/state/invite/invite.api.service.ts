@@ -46,6 +46,7 @@ export class InviteApiService {
       to: invite.to._id,
       type: invite.type,
       roomId: invite.roomId,
+      channelId: invite.channelId,
       metadata: invite.metadata,
     };
 

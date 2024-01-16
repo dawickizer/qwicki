@@ -1,26 +1,30 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/state/auth/auth.service';
 import { DecodedJwt } from 'src/app/state/auth/decoded-jwt.model';
 import { LobbyOrchestratorService } from 'src/app/state/lobby/lobby.orchestrator.service';
 import { Member } from 'src/app/state/lobby/member.model';
-import { Observable, map } from 'rxjs';
+import { Observable, Subscription, map } from 'rxjs';
 import { LobbyService } from 'src/app/state/lobby/lobby.service';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { FriendService } from 'src/app/state/friend/friend.service';
 import { FriendRequestOrchestratorService } from 'src/app/state/friend-request/friend-request.orchestrator.service';
+import { Invite } from 'src/app/state/invite/invite.model';
 
 @Component({
   selector: 'app-lobby-panel',
   templateUrl: './lobby-panel.component.html',
   styleUrls: ['./lobby-panel.component.css'],
 })
-export class LobbyPanelComponent implements OnInit {
+export class LobbyPanelComponent implements OnInit, OnDestroy {
   @Input() member: Member;
   @Input() hideIsReady: boolean;
   friends$: Observable<Friend[]>;
   decodedJwt$: Observable<DecodedJwt>;
   host$: Observable<Member>;
   isReady$: Observable<boolean>;
+  lobbyId: string;
+  invite: Invite;
+  private subscription: Subscription = new Subscription();
 
   constructor(
     private lobbyOrchestratorService: LobbyOrchestratorService,
@@ -37,6 +41,16 @@ export class LobbyPanelComponent implements OnInit {
     this.isReady$ = this.lobbyService.isReadyByMemberSessionId$(
       this.member?.sessionId
     );
+    this.subscription.add(
+      this.lobbyService.id$.subscribe(id => {
+        this.lobbyId = id;
+        this.invite = new Invite({ type: 'party', roomId: this.lobbyId });
+      })
+    );
+  }
+
+  ngOnDestroy() {
+    this.subscription.unsubscribe();
   }
 
   kickMember(member: Member) {

@@ -16,6 +16,7 @@ import {
   gameModeSelector,
   gameMapSelector,
   routeSelector,
+  idSelector,
 } from './lobby.state.selectors';
 import { Lobby } from './lobby.model';
 import { Member } from 'src/app/state/lobby/member.model';
@@ -35,6 +36,7 @@ export class LobbyStateService {
   public lobbyState$: Observable<LobbyState> = this._lobbyState.asObservable();
   public isLoading$ = isLoadingSelector(this.lobbyState$);
   public lobby$ = lobbySelector(this.lobbyState$);
+  public id$ = idSelector(this.lobby$);
   public isReady$ = isReadySelector(this.lobby$);
   public route$ = routeSelector(this.lobby$);
   public activity$ = activitySelector(this.lobby$);

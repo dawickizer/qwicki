@@ -6,6 +6,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { MessageOrchestratorService } from 'src/app/state/message/message.orchestrator';
 import { FriendOrchestratorService } from 'src/app/state/friend/friend.orchestrator.service';
 import { InviteOrchestratorService } from 'src/app/state/invite/invite.orchestrator.service';
+import { LobbyService } from 'src/app/state/lobby/lobby.service';
+import { GameService } from 'src/app/state/game/game.service';
+import { Invite } from 'src/app/state/invite/invite.model';
 
 @Component({
   selector: 'app-chat-cell',
@@ -18,13 +21,17 @@ export class ChatCellComponent implements OnInit, OnDestroy {
   panelOpenState = false;
   messages: Map<string, Message[]> = new Map();
   unviewedMessages: Message[] = [];
+  gameId: string;
+  lobbyId: string;
   unsubscribe$ = new Subject<void>();
 
   constructor(
     private friendOrchestratorService: FriendOrchestratorService,
     private inviteOrchestratorService: InviteOrchestratorService,
     private messageOrchestratorService: MessageOrchestratorService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private lobbyService: LobbyService,
+    private gameService: GameService
   ) {}
 
   ngOnInit(): void {
@@ -46,6 +53,14 @@ export class ChatCellComponent implements OnInit, OnDestroy {
           this.markMessagesAsViewed();
         }
       });
+
+    this.lobbyService.id$.pipe(takeUntil(this.unsubscribe$)).subscribe(id => {
+      this.lobbyId = id;
+    });
+
+    this.gameService.id$.pipe(takeUntil(this.unsubscribe$)).subscribe(id => {
+      this.gameId = id;
+    });
   }
 
   ngOnDestroy() {
@@ -75,6 +90,13 @@ export class ChatCellComponent implements OnInit, OnDestroy {
   }
 
   sendInvite() {
-    this.inviteOrchestratorService.sendInvite(this.friend).subscribe();
+    let invite: Invite;
+    if (this.gameId) {
+      invite = new Invite({ type: 'game', roomId: this.gameId });
+    } else if (this.lobbyId) {
+      invite = new Invite({ type: 'party', roomId: this.lobbyId });
+    }
+
+    this.inviteOrchestratorService.sendInvite(this.friend, invite).subscribe();
   }
 }

@@ -4,6 +4,7 @@ import { MatMenuTrigger } from '@angular/material/menu';
 import { Observable, combineLatest, map, startWith } from 'rxjs';
 import { Friend } from 'src/app/state/friend/friend.model';
 import { FriendService } from 'src/app/state/friend/friend.service';
+import { Invite } from 'src/app/state/invite/invite.model';
 import { InviteOrchestratorService } from 'src/app/state/invite/invite.orchestrator.service';
 
 @Component({
@@ -16,6 +17,8 @@ export class InviteFriendMenuComponent implements OnInit {
   @ViewChild(MatMenuTrigger) menuTrigger: MatMenuTrigger;
 
   @Input() toolTipText: string | null = 'Invite Friend';
+
+  @Input() invite: Invite;
 
   friendSearchCtrl = new FormControl();
   filteredFriends$: Observable<Friend[]>;
@@ -43,8 +46,8 @@ export class InviteFriendMenuComponent implements OnInit {
     }
   }
 
-  invite(friend: Friend) {
-    this.inviteOrchestatorService.sendInvite(friend).subscribe();
+  sendInvite(friend: Friend) {
+    this.inviteOrchestatorService.sendInvite(friend, this.invite).subscribe();
   }
 
   onMenuOpened() {

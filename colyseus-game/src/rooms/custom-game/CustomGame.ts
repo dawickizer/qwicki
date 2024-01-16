@@ -17,6 +17,7 @@ export class CustomGame extends Room<CustomGameState> {
     const teams = new MapSchema<Team>();
     const maxPlayerCount: MaxPlayerCount = 12;
 
+    // temp init teams based on available team names
     for (const teamName of teamNames) {
       const teamId = generateRandomUUID();
       teams.set(
@@ -67,6 +68,7 @@ export class CustomGame extends Room<CustomGameState> {
     });
     this.state.addPlayer(player);
 
+    // temp join team 1 always on join
     if (this.state.gameMode !== 'Free For All') {
       for (const key of this.state.teams.keys()) {
         this.state.joinTeam(key, player.sessionId);

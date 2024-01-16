@@ -206,7 +206,6 @@ export class CustomGameState extends Schema {
       this.leaveOtherTeams(teamId, sessionId);
       teamToJoin.players.set(sessionId, player);
       console.log(`${player.username} joined ${teamToJoin.name}`);
-      console.log(`Player count: ${teamToJoin.players.size}`);
     } else {
       console.log(`${teamToJoin.name} is full.`);
     }

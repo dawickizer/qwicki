@@ -19,6 +19,7 @@ import {
   nameSelector,
   teamByIdSelector,
   maxPlayerCountByTeamSelector,
+  idSelector,
 } from './game.state.selectors';
 import { Game } from './game.model';
 import { Player } from 'src/app/state/game/player.model';
@@ -41,6 +42,7 @@ export class GameStateService {
   public gameState$: Observable<GameState> = this._gameState.asObservable();
   public isLoading$ = isLoadingSelector(this.gameState$);
   public game$ = gameSelector(this.gameState$);
+  public id$ = idSelector(this.game$);
   public route$ = routeSelector(this.game$);
   public activity$ = activitySelector(this.game$);
   public gameType$ = gameTypeSelector(this.game$);

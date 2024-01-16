@@ -31,6 +31,14 @@ export const isLoadingSelector = (
     distinctUntilChanged()
   );
 
+export const idSelector = (
+  game$: Observable<Game | null>
+): Observable<string | null> =>
+  game$.pipe(
+    map(game => (game ? game._id : null)),
+    distinctUntilChanged(isEqual)
+  );
+
 export const routeSelector = (
   game$: Observable<Game | null>
 ): Observable<string | null> =>

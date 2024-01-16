@@ -24,7 +24,7 @@
       <button
         mat-menu-item
         *ngFor="let friend of filteredFriends$ | async"
-        (click)="invite(friend)">
+        (click)="sendInvite(friend)">
         <app-presence
           class="presence"
           [presence]="friend?.presence"></app-presence>

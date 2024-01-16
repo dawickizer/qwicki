@@ -31,6 +31,10 @@ export class GameService {
     return this.gameStateService.game$;
   }
 
+  get id$(): Observable<string | null> {
+    return this.gameStateService.id$;
+  }
+
   get route$(): Observable<string | null> {
     return this.gameStateService.route$;
   }

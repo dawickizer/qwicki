@@ -25,7 +25,8 @@
             [player]="row.player"></app-player-row>
           <app-empty-player-row
             class="player-row"
-            *ngIf="!row.player"></app-empty-player-row>
+            *ngIf="!row.player"
+            [team]="dynamicTeam.team"></app-empty-player-row>
         </ng-container>
       </mat-grid-tile>
     </mat-grid-list>

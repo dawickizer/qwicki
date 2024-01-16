@@ -41,18 +41,11 @@ export class InviteOrchestratorService {
     this.inboxService.personalInbox$.subscribe(
       personalInbox => (this.personalInbox = personalInbox)
     );
-    // potentially just get the relevant slice instead of the entire lobby
-    this.lobbyService.lobby$.subscribe(lobby => (this.lobby = lobby));
     this.authService.jwt$.subscribe(jwt => (this.jwt = jwt));
   }
 
-  sendInvite(friend: Friend): Observable<Invite> {
-    const invite = new Invite();
-    invite.to = friend;
-    invite.type = 'party';
-    invite.roomId = this.lobby._id;
-    invite.metadata = 'Domination';
-
+  sendInvite(friend: Friend, invite: Invite): Observable<Invite> {
+    invite = { ...invite, to: friend };
     return this.inviteService.sendInvite(this.user, invite).pipe(
       tap(invite => {
         if (invite) {

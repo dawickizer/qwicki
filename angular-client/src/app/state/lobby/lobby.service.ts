@@ -29,6 +29,10 @@ export class LobbyService {
     return this.lobbyStateService.lobby$;
   }
 
+  get id$(): Observable<string | null> {
+    return this.lobbyStateService.id$;
+  }
+
   get route$(): Observable<string | null> {
     return this.lobbyStateService.route$;
   }
