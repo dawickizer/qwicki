@@ -15,6 +15,8 @@ export class CustomGame extends Room<CustomGameState> {
 
   onCreate() {
     const teams = new MapSchema<Team>();
+    const maxPlayerCount: MaxPlayerCount = 12;
+
     for (const teamName of teamNames) {
       const teamId = generateRandomUUID();
       teams.set(
@@ -22,7 +24,7 @@ export class CustomGame extends Room<CustomGameState> {
         new Team({
           _id: teamId,
           name: teamName,
-          maxPlayerCount: (12 / 2) as MaxPlayerCount,
+          maxPlayerCount: (maxPlayerCount / 2) as MaxPlayerCount,
         })
       );
     }
@@ -37,11 +39,11 @@ export class CustomGame extends Room<CustomGameState> {
         gameMode: 'Team Deathmatch',
         gameMap: 'Bucheon',
         visibility: 'Private (Invite Only)',
-        maxPlayerCount: 12,
+        maxPlayerCount: maxPlayerCount,
         teams,
       })
     );
-    this.maxClients = 12;
+    this.maxClients = maxPlayerCount;
     this.setPrivate(true);
     this.setManagers();
     console.log(`Room ${this.roomId} created`);
